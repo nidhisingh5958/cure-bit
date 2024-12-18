@@ -1,0 +1,12 @@
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/cure_bit
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.json
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z

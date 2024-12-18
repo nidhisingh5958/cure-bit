@@ -170,10 +170,10 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2024-12-16T14:39:33.528660Z",
+  "generated": "2024-12-17T09:27:53.490329Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",
-  "flutterVersion": "3.27.0",
+  "flutterVersion": "3.27.1",
   "pubCache": "file:///home/nid/.pub-cache"
 }
