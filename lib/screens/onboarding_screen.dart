@@ -3,6 +3,8 @@ import 'package:flutter_svg/svg.dart';
 // import 'package:provider/provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
+  static String routeName = "/onboarding";
+
   const OnboardingScreen({super.key});
 
   @override
