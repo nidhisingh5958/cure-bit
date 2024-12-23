@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-// import 'package:provider/provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
   static String routeName = "/onboarding";
@@ -75,10 +73,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         //     ),
                         //   );
                         // } else {
-                        _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
+                        if (_pageIndex == onBoardData.length - 1) {
+                          Navigator.pushNamed(context, '/login');
+                        } else {
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
                         // }
                       },
                       style: ElevatedButton.styleFrom(
@@ -87,12 +89,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 32, vertical: 16),
                       ),
-                      child: SvgPicture.asset(
+                      child: Image.asset(
                         'assets/icons/arrow_right.svg',
-                        colorFilter: ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
                       ),
                     ),
                   ),
@@ -121,7 +119,7 @@ class DotIndicator extends StatelessWidget {
       height: isActive ? 12 : 4,
       width: 4,
       decoration: BoxDecoration(
-        color: isActive ? Theme.of(context).colorScheme.primary : null,
+        color: isActive ? Theme.of(context).colorScheme.primary : Colors.grey,
         borderRadius: const BorderRadius.all(Radius.circular(4)),
       ),
     );
@@ -145,12 +143,12 @@ final List<OnBoard> onBoardData = [
         'Your health is our priority. Let us help you take care of it.',
   ),
   OnBoard(
-    image: 'assets/images/onboarding_2.png',
+    image: 'assets/images/onboarding2.png',
     title: 'Your personal health record maintainer.',
     description: 'Access your health records anytime, anywhere.',
   ),
   OnBoard(
-    image: 'assets/images/onboarding_3.png',
+    image: 'assets/images/onboarding3.png',
     title: 'Your personal appointment tracker.',
     description: 'Never miss an appointment again.',
   ),
@@ -188,7 +186,9 @@ class OnboardContent extends StatelessWidget {
         Text(
           description,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                fontWeight: FontWeight.w400,
+              ),
         ),
         const Spacer(),
       ],

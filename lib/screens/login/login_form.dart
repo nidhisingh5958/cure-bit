@@ -1,6 +1,7 @@
 import 'package:cure_bit/components/constants.dart';
+import 'package:cure_bit/screens/forgot_pass/forgot_pass.dart';
+import 'package:cure_bit/screens/otp.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -22,114 +23,200 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        children: [
-          buildEmailFormField(),
-          SizedBox(height: 20),
-          buildPassFormField(),
-          SizedBox(height: 20),
-          Row(
-            children: [
-              Checkbox(
-                value: remember,
-                activeColor: Theme.of(context).colorScheme.secondary,
-                onChanged: (value) {
-                  setState(() {
-                    remember = value!;
-                  });
-                },
+      child: SafeArea(
+        child: Column(
+          children: [
+            buildEmailFormField(),
+            SizedBox(height: 20),
+            buildPassFormField(),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                // remember me checkbox
+                Checkbox(
+                  value: remember,
+                  activeColor: Theme.of(context).colorScheme.secondary,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onChanged: (value) {
+                    setState(() {
+                      remember = value!;
+                    });
+                  },
+                ),
+                Text(
+                  "Remember me",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 12,
+                  ),
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(
+                      context, ForgotPasswordScreen.routeName),
+                  child: Text(
+                    "Forgot Password",
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            FormError(errors: errors),
+            SizedBox(height: 10),
+            ElevatedButton(
+              child: Text('Login'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(50, 36), // set the width to double.infinity
               ),
-              Text("Remember me"),
-              Spacer(),
-              Text(
-                "Forgot Password",
-                style: TextStyle(decoration: TextDecoration.underline),
-              ),
-            ],
-          ),
-          FormError(errors: errors),
-          SizedBox(height: 20),
-          ElevatedButton(
-            child: const Text('Login'),
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-              } else {
-                debugPrint('Form is invalid');
-              }
-            },
-          ),
-        ],
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  Navigator.pushNamed(context, OtpScreen.routeName);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
+// password form field
   buildPassFormField() {
-    TextFormField(
-      obscureText: true,
-      onSaved: (newValue) => password = newValue!,
-      validator: (value) {
-        if (value!.isNotEmpty && !errors.contains(kPassNullError)) {
-          setState(() {
-            errors.remove(kPassNullError);
-          });
-        } else if (value.length >= 8 && !errors.contains(kShortPassError)) {
-          setState(() {
-            errors.remove(kPassNullError);
-          });
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: 'Password',
-        hintText: 'Enter your password',
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon("assets/icons/padlock.png"),
-        filled: true,
+    return SizedBox(
+      height: 50,
+      width: 300,
+      child: TextFormField(
+        obscureText: true,
+        onSaved: (newValue) => password = newValue!,
+        validator: (value) {
+          if (value!.isNotEmpty && !errors.contains(kPassNullError)) {
+            setState(() {
+              errors.remove(kPassNullError);
+            });
+            return "";
+          } else if (value.length >= 8 && !errors.contains(kShortPassError)) {
+            setState(() {
+              errors.remove(kPassNullError);
+            });
+            return "";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: 'Password',
+          hintText: 'Enter your password',
+          labelStyle: TextStyle(
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          hintStyle: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          contentPadding: EdgeInsets.all(8),
+          constraints: BoxConstraints(maxWidth: 350),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:
+                BorderSide(color: Theme.of(context).colorScheme.primary),
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: CustomSuffixIcon("assets/icons/padlock.png"),
+          filled: true,
+        ),
+        style: TextStyle(
+          fontSize: 12,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
     );
   }
 
+// email form field
   buildEmailFormField() {
-    TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      onSaved: (newValue) => email = newValue!,
-      onChanged: (value) {
-        if (value.isNotEmpty && errors.contains(kEmailNullError)) {
-          setState(() {
-            errors.remove(kEmailNullError);
-          });
-        } else if (emailValidatorRegExp.hasMatch(value) &&
-            errors.contains(kInvalidEmailError)) {
-          setState(() {
-            errors.remove(kInvalidEmailError);
-          });
-        }
-      },
-      validator: (value) {
-        if (value!.isEmpty && !errors.contains(kEmailNullError)) {
-          setState(() {
-            errors.remove(kEmailNullError);
-          });
-        } else if (!emailValidatorRegExp.hasMatch(value) &&
-            !errors.contains(kInvalidEmailError)) {
-          setState(() {
-            errors.remove(kInvalidEmailError);
-          });
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: 'Email',
-        hintText: 'Enter your email',
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon("assets/icons/Mail.png"),
-        filled: true,
+    return SizedBox(
+      height: 50,
+      width: 300,
+      child: TextFormField(
+        keyboardType: TextInputType.emailAddress,
+        onSaved: (newValue) => email = newValue!,
+        onChanged: (value) {
+          if (value.isNotEmpty && errors.contains(kEmailNullError)) {
+            setState(() {
+              errors.remove(kEmailNullError);
+            });
+          } else if (emailValidatorRegExp.hasMatch(value) &&
+              errors.contains(kInvalidEmailError)) {
+            setState(() {
+              errors.remove(kInvalidEmailError);
+            });
+          }
+        },
+        validator: (value) {
+          if (value!.isEmpty && !errors.contains(kEmailNullError)) {
+            setState(() {
+              errors.remove(kEmailNullError);
+            });
+          } else if (!emailValidatorRegExp.hasMatch(value) &&
+              !errors.contains(kInvalidEmailError)) {
+            setState(() {
+              errors.remove(kInvalidEmailError);
+            });
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: 'Email',
+          hintText: 'Enter your email',
+          labelStyle: TextStyle(
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          hintStyle: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          contentPadding: const EdgeInsets.all(8),
+          constraints: const BoxConstraints(maxWidth: 300),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:
+                BorderSide(color: Theme.of(context).colorScheme.primary),
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: CustomSuffixIcon("assets/icons/mail.png"),
+          filled: true,
+        ),
+        style: TextStyle(
+          fontSize: 12,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
     );
   }
 }
 
+// error message
 class FormError extends StatelessWidget {
   const FormError({
     super.key,
@@ -151,28 +238,30 @@ class FormError extends StatelessWidget {
   Row formErrorText({error}) {
     return Row(
       children: [
-        SvgPicture.asset(
-          "assets/icons/Error.png",
-          height: 14,
-          width: 14,
-        ),
-        SizedBox(width: 10),
+        Image(image: AssetImage("assets/icons/error.png")),
+        SizedBox(width: 20),
         Text(error),
       ],
     );
   }
 }
 
+// input field suffix icon
 class CustomSuffixIcon extends StatelessWidget {
-  const CustomSuffixIcon(this.svgIcon, {super.key});
+  const CustomSuffixIcon(this.icon, {super.key});
 
-  final String svgIcon;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 20, 20, 20),
-      child: SvgPicture.asset(svgIcon, height: 18),
+      child: Image.asset(
+        icon,
+        color: Theme.of(context).colorScheme.primary,
+        width: 20,
+        height: 20,
+      ),
     );
   }
 }
