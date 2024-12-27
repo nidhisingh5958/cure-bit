@@ -1,4 +1,5 @@
 import 'package:cure_bit/screens/forgot_pass/forgot_pass.dart';
+import 'package:cure_bit/screens/home_screen.dart';
 import 'package:cure_bit/screens/login/login_screen.dart';
 import 'package:cure_bit/screens/onboarding_screen.dart';
 import 'package:cure_bit/screens/otp.dart';
@@ -9,4 +10,5 @@ final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (context) => LoginScreen(),
   ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
   OtpScreen.routeName: (context) => OtpScreen(),
+  HomeScreen.routeName: (context) => HomeScreen(),
 };

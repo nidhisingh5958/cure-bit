@@ -40,15 +40,11 @@ class _OtpScreenState extends State<OtpScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Spacer(),
-                OtpForm(),
-                Spacer(),
-                OtpForm(),
-                Spacer(),
-                OtpForm(),
-                Spacer(),
-                OtpForm(),
-                Spacer()
+                for (int i = 0; i < 4; i++) ...[
+                  Spacer(),
+                  OtpForm(),
+                  Spacer(),
+                ],
               ],
             ),
             SizedBox(
@@ -59,7 +55,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 "Resend OTP Code",
                 style: TextStyle(
                   color: Color.fromARGB(255, 67, 132, 237),
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
               onTap: () {
@@ -71,7 +67,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 "I didn't receive the code",
                 style: TextStyle(
                   color: Color.fromARGB(255, 116, 161, 235),
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
               onTap: () {

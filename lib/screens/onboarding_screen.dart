@@ -1,3 +1,5 @@
+import 'package:cure_bit/screens/home_screen.dart';
+import 'package:cure_bit/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -60,40 +62,44 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
                   const Spacer(),
+                  // next buttom
                   SizedBox(
                     height: 60,
                     width: 60,
                     child: ElevatedButton(
                       onPressed: () {
-                        // if (_pageController.page == 2) {
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => const Login(),
-                        //     ),
-                        //   );
-                        // } else {
-                        if (_pageIndex == onBoardData.length - 1) {
-                          Navigator.pushNamed(context, '/login');
-                        } else {
-                          _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
+                        if (_pageController.page == 2) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomeScreen(),
+                              // LoginScreen(),
+                            ),
                           );
+                        } else {
+                          if (_pageIndex == onBoardData.length - 1) {
+                            Navigator.pushNamed(context, '/login');
+                          } else {
+                            _pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          }
                         }
-                        // }
                       },
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
+                        padding: const EdgeInsets.all(16),
                       ),
-                      child: Image.asset(
-                        'assets/icons/arrow_right.svg',
+                      child: Icon(
+                        _pageIndex == onBoardData.length - 1
+                            ? Icons.arrow_forward
+                            : Icons.arrow_forward,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ],
@@ -125,6 +131,33 @@ class DotIndicator extends StatelessWidget {
     );
   }
 }
+
+// class DotIndicator extends StatelessWidget {
+//   const DotIndicator({
+//     required this.isActive,
+//     required this.onTap,
+//     super.key,
+//   });
+
+//   final bool isActive;
+//   final VoidCallback onTap;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: onTap,
+//       child: AnimatedContainer(
+//         duration: const Duration(milliseconds: 300),
+//         height: isActive ? 12 : 4,
+//         width: 4,
+//         decoration: BoxDecoration(
+//           color: isActive ? Theme.of(context).colorScheme.primary : Colors.grey,
+//           borderRadius: const BorderRadius.all(Radius.circular(4)),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class OnBoard {
   final String image;
