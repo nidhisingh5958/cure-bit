@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+class ChatBotScreen extends StatelessWidget {
+  const ChatBotScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Chat Bot"),
+      ),
+      body: Center(
+        child: Text("Chat Bot Screen"),
+      ),
+    );
   }
 }

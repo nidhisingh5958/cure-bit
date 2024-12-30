@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cure_bit/screens/forgot_pass/forgot_pass.dart';
 
 class LoginScreen extends StatelessWidget {
-  static String routeName = "/login";
-
   const LoginScreen({super.key});
 
   @override

@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
-  static String routeName = "/otp";
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();

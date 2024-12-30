@@ -1,10 +1,9 @@
+import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:cure_bit/screens/home_screen.dart';
-import 'package:cure_bit/screens/login/login_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  static String routeName = "/onboarding";
-
   const OnboardingScreen({super.key});
 
   @override
@@ -78,7 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           );
                         } else {
                           if (_pageIndex == onBoardData.length - 1) {
-                            Navigator.pushNamed(context, '/login');
+                            context.pushNamed(RouteConstants.forgotPass);
                           } else {
                             _pageController.nextPage(
                               duration: const Duration(milliseconds: 300),

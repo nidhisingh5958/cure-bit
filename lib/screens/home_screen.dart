@@ -1,8 +1,7 @@
+import 'package:cure_bit/components/navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
-  static String routeName = "/home_screen";
-
   const HomeScreen({super.key});
 
   @override
@@ -25,43 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       // BottomNavigationBar widget
-      bottomNavigationBar: BottomNavigationBar(
-        iconSize: 24,
-        selectedItemColor: Color.fromARGB(255, 5, 78, 130),
-        unselectedIconTheme: IconThemeData(
-          color: Color.fromARGB(255, 148, 194, 227),
-        ),
-        selectedFontSize: 0,
-        unselectedFontSize: 0,
-        currentIndex: currentPage,
-        onTap: (value) {
-          setState(() {
-            currentPage = value;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_filled),
-            label: '',
-          ),
-          const BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage("assets/icons/chatbot.png")),
-            label: '',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: '',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.book_outlined),
-            label: '',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.menu),
-            label: '',
-          ),
-        ],
-      ),
+
+      bottomNavigationBar: CustomGNav(),
     );
   }
 }
@@ -80,32 +44,36 @@ class _MainBodyState extends State<MainBody> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // user profile
-                  Text(
-                    "Hi, Aiden!",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // user profile
+                    Text(
+                      "Hi, Aiden!",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 3),
-                  // current date and time
-                  Text(
-                    "26 December 2024",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
+                    SizedBox(height: 3),
+                    // current date and time
+                    Text(
+                      "26 December 2024",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Spacer(),
 
@@ -121,11 +89,11 @@ class _MainBodyState extends State<MainBody> {
 
         // search bar
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(9.0),
           child: searchBar(),
         ),
 
-        SizedBox(height: 8),
+        SizedBox(height: 3),
 
         // actionbuttons
         Padding(
@@ -157,9 +125,9 @@ class _MainBodyState extends State<MainBody> {
                       // Add your code here
                     },
                   ),
-                  //  ActionButton (
-                  //   icon: Icons.medical_information,
-                  //   label: 'PRESCRIPTION',
+                  // ActionButton (
+                  //   icon: ,
+                  //   label: 'MEDICINES',
                   //   onTap: () {
                   //     // Add your code here
                   //   },
@@ -192,8 +160,7 @@ class _MainBodyState extends State<MainBody> {
                         Text(
                           'Recent',
                           style: TextStyle(
-                            color: Colors
-                                .black, // Changed to black since background is white
+                            color: Colors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -203,8 +170,7 @@ class _MainBodyState extends State<MainBody> {
                           child: Text(
                             'See all',
                             style: TextStyle(
-                              color: Colors
-                                  .blue, // Changed to blue for better contrast
+                              color: Colors.blue,
                               fontSize: 14,
                             ),
                           ),
@@ -230,7 +196,7 @@ class _MainBodyState extends State<MainBody> {
                         AppointmentCard(
                           isScheduled: true,
                           date: '23 Mar',
-                          backgroundColor: Colors.red.shade300,
+                          backgroundColor: Color.fromRGBO(66, 188, 229, 1),
                         ),
                         SizedBox(height: 10),
                         AppointmentCard(

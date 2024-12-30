@@ -1,7 +1,7 @@
 import 'package:cure_bit/components/constants.dart';
-import 'package:cure_bit/screens/forgot_pass/forgot_pass.dart';
-import 'package:cure_bit/screens/otp.dart';
+import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -52,8 +52,9 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 Spacer(),
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(
-                      context, ForgotPasswordScreen.routeName),
+                  onTap: () {
+                    context.pushNamed(RouteConstants.forgotPass);
+                  },
                   child: Text(
                     "Forgot Password",
                     style: TextStyle(
@@ -75,7 +76,7 @@ class _LoginFormState extends State<LoginForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  Navigator.pushNamed(context, OtpScreen.routeName);
+                  context.pushNamed(RouteConstants.forgotPass);
                 }
               },
             ),

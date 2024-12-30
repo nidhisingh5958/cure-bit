@@ -1,10 +1,10 @@
 import 'package:cure_bit/components/constants.dart';
+import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:cure_bit/screens/login/login_form.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  static String routeName = "/forgot_password";
-
   const ForgotPasswordScreen({super.key});
 
   @override
@@ -201,7 +201,7 @@ class NoAccountText extends StatelessWidget {
           SizedBox(width: 5),
           GestureDetector(
             onTap: () {
-              // Navigator.pushNamed(context, "/register");
+              context.pushNamed(RouteConstants.signUp);
             },
             child: const Text(
               "Register",
