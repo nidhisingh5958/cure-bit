@@ -1,5 +1,7 @@
 import 'package:cure_bit/components/routes/route_constants.dart';
-import 'package:cure_bit/screens/home_screen.dart';
+import 'package:cure_bit/screens/home_screen/home_screen.dart';
+import 'package:cure_bit/screens/login/login_form.dart';
+import 'package:cure_bit/screens/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
@@ -71,7 +73,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const HomeScreen(),
+                              builder: (context) => const LoginScreen(),
                               // LoginScreen(),
                             ),
                           );
