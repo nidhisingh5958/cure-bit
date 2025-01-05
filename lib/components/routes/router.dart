@@ -1,5 +1,7 @@
-import 'package:cure_bit/screens/chat_bot_screen.dart';
-import 'package:cure_bit/screens/chat_screen.dart';
+import 'package:cure_bit/screens/chat/chat_home.dart';
+import 'package:cure_bit/screens/chatbot/chat_bot_home.dart';
+import 'package:cure_bit/screens/chatbot/chat_with_ai.dart';
+import 'package:cure_bit/screens/chat/chat_screen.dart';
 import 'package:cure_bit/screens/document_screen.dart';
 import 'package:cure_bit/screens/forgot_pass/forgot_pass.dart';
 import 'package:cure_bit/screens/home_screen/home_screen.dart';
@@ -13,12 +15,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cure_bit/components/routes/route_constants.dart';
 
+import '../../screens/chat/entities/chat_data.dart';
+
 class AppRouter {
   GoRouter router = GoRouter(
+    initialLocation: '/chat',
     routes: [
       GoRoute(
         name: RouteConstants.splash,
-        path: '/splash',
+        path: '/',
         pageBuilder: (context, state) {
           return MaterialPage(
             child: SplashScreen(),
@@ -72,7 +77,7 @@ class AppRouter {
       ),
       GoRoute(
         name: RouteConstants.home,
-        path: '/',
+        path: '/home',
         pageBuilder: (context, state) {
           return MaterialPage(
             child: HomeScreen(),
@@ -84,6 +89,15 @@ class AppRouter {
         path: '/chat-bot',
         pageBuilder: (context, state) {
           return MaterialPage(
+            child: ChatBotHome(),
+          );
+        },
+      ),
+      GoRoute(
+        name: RouteConstants.chatBotScreen,
+        path: '/chatBotScreen',
+        pageBuilder: (context, state) {
+          return MaterialPage(
             child: ChatBotScreen(),
           );
         },
@@ -93,7 +107,17 @@ class AppRouter {
         path: '/chat',
         pageBuilder: (context, state) {
           return MaterialPage(
-            child: ChatScreen(),
+            child: ChatListScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        name: RouteConstants.chatScreen,
+        path: '/chatScreen',
+        pageBuilder: (context, state) {
+          final chat = state.extra as ChatData;
+          return MaterialPage(
+            child: ChatScreen(chat: chat),
           );
         },
       ),

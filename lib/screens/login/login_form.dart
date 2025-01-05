@@ -135,7 +135,6 @@ class _LoginFormState extends State<LoginForm> {
           ),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           suffixIcon: CustomSuffixIcon("assets/icons/padlock.png"),
-          filled: true,
         ),
         style: TextStyle(
           fontSize: 12,
@@ -206,7 +205,6 @@ class _LoginFormState extends State<LoginForm> {
           ),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           suffixIcon: CustomSuffixIcon("assets/icons/mail.png"),
-          filled: true,
         ),
         style: TextStyle(
           fontSize: 12,

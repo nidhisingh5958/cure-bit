@@ -105,7 +105,7 @@
     },
     {
       "name": "http_parser",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/http_parser-4.1.1",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/http_parser-4.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -129,7 +129,7 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/lints-5.1.0",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/lints-5.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
@@ -260,7 +260,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2024-12-30T18:27:44.608832Z",
+  "generated": "2025-01-03T20:08:04.604558Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",

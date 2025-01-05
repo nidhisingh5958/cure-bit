@@ -1,5 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:cure_bit/screens/home_screen/home_screen.dart';
+import 'package:cure_bit/screens/login/login_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -25,7 +26,7 @@ class SplashScreen extends StatelessWidget {
       ),
 
       //  yahan change hoga abhi home screen hai
-      nextScreen: HomeScreen(),
+      nextScreen: LoginScreen(),
       splashIconSize: size.height * 0.7,
       splashTransition: SplashTransition.fadeTransition,
       backgroundColor: Color.fromARGB(255, 15, 107, 228),
