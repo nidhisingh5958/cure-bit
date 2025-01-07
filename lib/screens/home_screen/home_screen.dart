@@ -1,4 +1,3 @@
-import 'package:cure_bit/components/navigation_bar.dart';
 import 'package:cure_bit/screens/home_screen/widgets/appointment_card.dart';
 import 'package:flutter/material.dart';
 
@@ -197,9 +196,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-
-      // bottom navigation bar from components/navigation_bar.dart
-      bottomNavigationBar: const BottomNavigation(),
     );
   }
 

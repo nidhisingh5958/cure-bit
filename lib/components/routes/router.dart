@@ -1,3 +1,4 @@
+import 'package:cure_bit/components/routes/navigation_bar.dart';
 import 'package:cure_bit/screens/chat/chat_home.dart';
 import 'package:cure_bit/screens/chatbot/chat_bot_home.dart';
 import 'package:cure_bit/screens/chatbot/chat_with_ai.dart';
@@ -14,138 +15,148 @@ import 'package:cure_bit/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cure_bit/components/routes/route_constants.dart';
-
 import '../../screens/chat/entities/chat_data.dart';
 
-class AppRouter {
-  GoRouter router = GoRouter(
-    initialLocation: '/chat',
-    routes: [
-      GoRoute(
-        name: RouteConstants.splash,
-        path: '/',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: SplashScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.onboarding,
-        path: '/onboarding',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: OnboardingScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.forgotPass,
-        path: '/forgot-password',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: ForgotPasswordScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.login,
-        path: '/login',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: LoginScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.signUp,
-        path: '/sign-up',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: SignUpScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.otp,
-        path: '/otp',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: OtpScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.home,
-        path: '/home',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: HomeScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.chatBot,
-        path: '/chat-bot',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: ChatBotHome(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.chatBotScreen,
-        path: '/chatBotScreen',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: ChatBotScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.chat,
-        path: '/chat',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: ChatListScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.chatScreen,
-        path: '/chatScreen',
-        pageBuilder: (context, state) {
-          final chat = state.extra as ChatData;
-          return MaterialPage(
-            child: ChatScreen(chat: chat),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.profile,
-        path: '/profile',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: ProfileScreen(),
-          );
-        },
-      ),
-      GoRoute(
-        name: RouteConstants.documents,
-        path: '/documents',
-        pageBuilder: (context, state) {
-          return MaterialPage(
-            child: DocumentsScreen(),
-          );
-        },
-      ),
-    ],
-    // redirect: (context, state) {
-    //   bool isAuthenticated = true;
-    //   if (!isAuthenticated) {
-    //     return state.namedLocation(RouteConstants.login);
-    //   }
-    //   return null;
-    // },
-  );
-}
+// Navigation keys for each branch
+final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final _homeNavigatorKey = GlobalKey<NavigatorState>();
+final _chatNavigatorKey = GlobalKey<NavigatorState>();
+final _chatbotNavigatorKey = GlobalKey<NavigatorState>();
+final _documentsNavigatorKey = GlobalKey<NavigatorState>();
+final _profileNavigatorKey = GlobalKey<NavigatorState>();
+
+final router = GoRouter(
+  navigatorKey: _rootNavigatorKey,
+  initialLocation: '/home',
+  debugLogDiagnostics: true,
+  routes: [
+    // Auth and onboarding routes (outside shell)
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RouteConstants.splash,
+      path: '/',
+      builder: (context, state) => SplashScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RouteConstants.onboarding,
+      path: '/onboarding',
+      builder: (context, state) => OnboardingScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RouteConstants.login,
+      path: '/login',
+      builder: (context, state) => LoginScreen(),
+      routes: [
+        GoRoute(
+          name: RouteConstants.forgotPass,
+          path: 'forgot-password',
+          builder: (context, state) => ForgotPasswordScreen(),
+        ),
+        GoRoute(
+          name: RouteConstants.signUp,
+          path: 'sign-up',
+          builder: (context, state) => SignUpScreen(),
+        ),
+        GoRoute(
+          name: RouteConstants.otp,
+          path: 'otp',
+          builder: (context, state) => OtpScreen(),
+        ),
+      ],
+    ),
+
+    // Main app shell with bottom navigation
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return BottomNavigation(navigationShell: navigationShell);
+      },
+      branches: [
+        // Home Branch
+        StatefulShellBranch(
+          navigatorKey: _homeNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/home',
+              name: RouteConstants.home,
+              builder: (context, state) => const HomeScreen(),
+            ),
+          ],
+        ),
+        // Chat Branch
+        StatefulShellBranch(
+          navigatorKey: _chatNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/chat',
+              name: RouteConstants.chat,
+              builder: (context, state) => const ChatListScreen(),
+              routes: [
+                GoRoute(
+                  path: 'screen',
+                  name: RouteConstants.chatScreen,
+                  builder: (context, state) {
+                    final chat = state.extra as ChatData;
+                    return ChatScreen(chat: chat);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        // Chatbot Branch
+        StatefulShellBranch(
+          navigatorKey: _chatbotNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/chat-bot',
+              name: RouteConstants.chatBot,
+              builder: (context, state) => const ChatBotHome(),
+              routes: [
+                GoRoute(
+                  path: 'screen',
+                  name: RouteConstants.chatBotScreen,
+                  builder: (context, state) => const ChatBotScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+        // Documents Branch
+        StatefulShellBranch(
+          navigatorKey: _documentsNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/documents',
+              name: RouteConstants.documents,
+              builder: (context, state) => const DocumentsScreen(),
+            ),
+          ],
+        ),
+        // Profile Branch
+        StatefulShellBranch(
+          navigatorKey: _profileNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/profile',
+              name: RouteConstants.profile,
+              builder: (context, state) => const ProfileScreen(),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ],
+  redirect: (BuildContext context, GoRouterState state) {
+    final bool isAuthenticated = true;
+    if (!isAuthenticated &&
+        !state.uri.toString().startsWith('/login') &&
+        !state.uri.toString().startsWith('/onboarding') &&
+        state.uri.toString() != '/') {
+      return '/login';
+    }
+    return null;
+  },
+);

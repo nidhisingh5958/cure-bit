@@ -17,10 +17,10 @@ class ChatListScreen extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () => Navigator.of(context).pop(),
+        // ),
         actions: [
           IconButton(
             icon: Icon(Icons.search),

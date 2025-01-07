@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'CureBit',
       debugShowCheckedModeBanner: false,
       theme: theme(),
-      routeInformationParser: AppRouter().router.routeInformationParser,
-      routerDelegate: AppRouter().router.routerDelegate,
-      routeInformationProvider: AppRouter().router.routeInformationProvider,
+      routerConfig: router,
     );
   }
 }

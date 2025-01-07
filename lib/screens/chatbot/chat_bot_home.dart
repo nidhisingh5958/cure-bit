@@ -10,12 +10,12 @@ class ChatBotHome extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chatbot"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            // Navigator.pop(context);
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     // Navigator.pop(context);
+        //   },
+        // ),
       ),
       body: SafeArea(
         child: ListView(
@@ -102,7 +102,9 @@ class OptionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         child: InkWell(
-          onTap: () => context.push(RouteConstants.chatBotScreen),
+          onTap: () => context.pushNamed(
+            RouteConstants.chatBotScreen,
+          ),
           borderRadius: BorderRadius.circular(16),
           child: Container(
             decoration: BoxDecoration(
