@@ -95,7 +95,9 @@ final router = GoRouter(
               builder: (context, state) => const ChatListScreen(),
               routes: [
                 GoRoute(
-                  path: 'screen',
+                  // Individual Chat Screen
+                  path: 'chat-screen',
+                  parentNavigatorKey: _rootNavigatorKey,
                   name: RouteConstants.chatScreen,
                   builder: (context, state) {
                     final chat = state.extra as ChatData;
@@ -115,8 +117,10 @@ final router = GoRouter(
               name: RouteConstants.chatBot,
               builder: (context, state) => const ChatBotHome(),
               routes: [
+                // Chat with AI
                 GoRoute(
                   path: 'screen',
+                  parentNavigatorKey: _rootNavigatorKey,
                   name: RouteConstants.chatBotScreen,
                   builder: (context, state) => const ChatBotScreen(),
                 ),

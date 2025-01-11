@@ -1,11 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:cure_bit/screens/chatbot/data/messages_bot.dart';
 import 'package:cure_bit/screens/chatbot/entities/message_bot.dart';
 import 'package:cure_bit/screens/chatbot/widgets/media_message.dart';
 import 'package:cure_bit/screens/chatbot/widgets/text_message.dart';
-
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class ChatBotScreen extends StatefulWidget {
   const ChatBotScreen({super.key});
@@ -36,89 +35,131 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: Center(child: Text("Chat with AI Bot")),
+        centerTitle: true,
+        title: Column(
+          children: [
+            const Text(
+              "AI Health Assistant",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            Text(
+              "Online",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.green.shade600,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go(RouteConstants.chatBot);
-          },
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => context.pop(),
         ),
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_horiz_rounded),
           ),
         ],
       ),
       body: SafeArea(
         child: Column(
-          // ss
           children: [
             Expanded(
               child: ListView.separated(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return Align(
-                      alignment: message.sender == MessageSender.bot
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
+                controller: _scrollController,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  return Align(
+                    alignment: message.sender == MessageSender.bot
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.75,
+                      ),
                       child: message.type == MessageType.text
                           ? TextMessage(message: message)
                           : MediaMessage(message: message),
-                    );
-                  },
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 20),
-                  itemCount: messages.length),
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 16),
+                itemCount: messages.length,
+              ),
             ),
-
-            //  bottom search bar
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextFormField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(8),
-                  prefixIcon: IconButton(
-                    icon: Icon(Icons.attachment_outlined),
-                    onPressed: () {
-                      // uploading part
-                    },
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.send),
-                    // send message button
-                    onPressed: () {
-                      if (_controller.text.isNotEmpty) {
-                        setState(() {
-                          messages.add(Message(
-                            type: MessageType.text,
-                            sender: MessageSender.user,
-                            text: _controller.text,
-                          ));
-                          _scrollToBottom();
-                          _controller.clear();
-                        });
-                      }
-                    },
+                ],
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.add_circle_outline_rounded,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    onPressed: () {},
                   ),
-                  isDense: false,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
+                  Expanded(
+                    child: TextFormField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: "Type your health query...",
+                        hintStyle: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade500,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            Icons.send_rounded,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          onPressed: () {
+                            if (_controller.text.isNotEmpty) {
+                              setState(() {
+                                messages.add(Message(
+                                  type: MessageType.text,
+                                  sender: MessageSender.user,
+                                  text: _controller.text,
+                                ));
+                                _scrollToBottom();
+                                _controller.clear();
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      style: const TextStyle(fontSize: 14),
+                      minLines: 1,
+                      maxLines: 4,
+                    ),
                   ),
-                  hintText: "Type your query here",
-                  hintStyle: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-                style: TextStyle(
-                  fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
+                ],
               ),
             ),
           ],

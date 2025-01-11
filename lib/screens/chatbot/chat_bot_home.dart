@@ -9,55 +9,81 @@ class ChatBotHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chatbot"),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     // Navigator.pop(context);
-        //   },
-        // ),
+        title: const Text("AI Health Assistant"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: SafeArea(
         child: ListView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(24),
           children: [
-            // options for choosing (text, image)
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  "How can I help you today?",
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Choose an option below to get started",
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w400,
+                      ),
+                ),
+                const SizedBox(height: 24),
                 Wrap(
-                  runSpacing: 16,
                   spacing: 16,
-                  children: [
+                  runSpacing: 16,
+                  children: const [
                     OptionCard(
-                      text: "Ask your queries",
-                      icon: Icons.edit,
+                      text: "Ask your health queries",
+                      icon: Icons.edit_note_rounded,
+                      description:
+                          "Get instant answers to your health questions",
                     ),
                     OptionCard(
-                      text: "Upload and ask",
-                      icon: Icons.image_outlined,
+                      text: "Analyze medical reports",
+                      icon: Icons.document_scanner_rounded,
+                      description: "Upload and understand your medical reports",
                     ),
                   ],
                 ),
-                const SizedBox(width: 30),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: Text(
-                      "History",
-                      style: Theme.of(context).textTheme.bodyLarge,
+                const SizedBox(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Recent Conversations",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 20,
+                          ),
                     ),
-                  ),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        "See all",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-
-                // History of chat tiles
+                const SizedBox(height: 16),
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _historyItems.length,
                   separatorBuilder: (context, index) =>
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     return BotHistory(text: _historyItems[index]);
                   },
@@ -75,10 +101,12 @@ class OptionCard extends StatelessWidget {
   const OptionCard({
     required this.text,
     required this.icon,
+    required this.description,
     super.key,
   });
 
   final String text;
+  final String description;
   final IconData icon;
 
   @override
@@ -86,25 +114,14 @@ class OptionCard extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width > 600
           ? 260
-          : (MediaQuery.of(context).size.width - 56) / 2,
-      height: 140,
-      // child: Card.filled(
-      //   clipBehavior: Clip.hardEdge,
-      //   elevation: 2,
-      //   color: Theme.of(context).colorScheme.secondaryContainer,
-      //   child: InkWell(
-      //     onTap: () {
-      //       // context.go(RouteConstants.chatBotScreen);
-      //     },
+          : (MediaQuery.of(context).size.width - 64) / 2,
       child: Card(
-        elevation: 2,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
         child: InkWell(
-          onTap: () => context.pushNamed(
-            RouteConstants.chatBotScreen,
-          ),
+          onTap: () => context.pushNamed(RouteConstants.chatBotScreen),
           borderRadius: BorderRadius.circular(16),
           child: Container(
             decoration: BoxDecoration(
@@ -113,31 +130,44 @@ class OptionCard extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Theme.of(context).colorScheme.primaryContainer,
-                  Theme.of(context).colorScheme.secondaryContainer,
+                  Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  Theme.of(context).colorScheme.primary.withOpacity(0.05),
                 ],
               ),
             ),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Icon(
                     icon,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 24,
                   ),
                 ),
+                const SizedBox(height: 16),
                 Text(
                   text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 16,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                      ),
                 ),
               ],
             ),
@@ -153,34 +183,48 @@ class BotHistory extends StatelessWidget {
     required this.text,
     super.key,
   });
-  // final redirect;
+
   final String text;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      color: Colors.blue.shade50,
+      color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
       child: ListTile(
         onTap: () {
           context.push(RouteConstants.chatBotScreen);
         },
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          // side: BorderSide(width: 0.5, color: Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(12),
         ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Text(
           text,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w500,
+                color: Colors.grey.shade800,
               ),
         ),
-        leading:
-            Icon(Icons.chat_outlined, color: Colors.blue.shade700, size: 22),
-        trailing: Icon(Icons.arrow_forward_rounded,
-            color: Colors.blue.shade700, size: 22),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            Icons.chat_outlined,
+            color: Theme.of(context).colorScheme.primary,
+            size: 20,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios_rounded,
+          color: Theme.of(context).colorScheme.primary,
+          size: 16,
+        ),
       ),
     );
   }
@@ -190,9 +234,9 @@ const _historyItems = [
   "What is helirab-d used for?",
   "What are the symptoms of malaria?",
   "What is the dosage of paracetamol?",
-  "Suggest a medicine for headache?",
-  "Suggest a medicine for stomachache?",
-  "Home remedies for treating cold?",
+  "Suggest a medicine for headache",
+  "Suggest a medicine for stomachache",
+  "Home remedies for treating cold",
   "What should I do to control my cholesterol?",
   "How can I treat headache?",
 ];

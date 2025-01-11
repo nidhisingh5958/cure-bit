@@ -39,7 +39,7 @@ class BottomNavigation extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
-        // Use the _onTap method instead of direct goBranch
+        // Use the _onTap method to navigate to the selected tab
         onDestinationSelected: (index) {
           _onTap(context, index);
           _onTapWithLogging(context, index);

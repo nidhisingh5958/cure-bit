@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:cure_bit/screens/chat/data/chat_sample_data.dart';
 import 'package:cure_bit/screens/chat/chat_screen.dart';
 import 'package:cure_bit/screens/chat/entities/chat_data.dart';
-import 'package:flutter/material.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -10,30 +10,22 @@ class ChatListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Chat',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () => Navigator.of(context).pop(),
-        // ),
+        title: const Text('Messages'),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search, size: 24),
             onPressed: () {},
           ),
           IconButton(
-            icon: Icon(Icons.add_box_outlined),
+            icon: const Icon(Icons.add_box_outlined, size: 24),
             onPressed: () {},
           ),
         ],
       ),
-      body: ListView.builder(
+      body: ListView.separated(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: chatData.length,
+        separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (context, index) {
           final chat = chatData[index];
           return ChatListTile(chat: chat);
@@ -43,7 +35,6 @@ class ChatListScreen extends StatelessWidget {
   }
 }
 
-// chat list tile
 class ChatListTile extends StatelessWidget {
   final ChatData chat;
 
@@ -60,21 +51,31 @@ class ChatListTile extends StatelessWidget {
           ),
         );
       },
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       leading: Stack(
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: NetworkImage(chat.avatarUrl),
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey.shade100,
+                width: 2,
+              ),
+            ),
+            child: CircleAvatar(
+              radius: 24,
+              backgroundImage: NetworkImage(chat.avatarUrl),
+            ),
           ),
           if (chat.isOnline)
             Positioned(
               right: 0,
               bottom: 0,
               child: Container(
-                width: 12,
-                height: 12,
+                width: 14,
+                height: 14,
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.green.shade400,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
@@ -84,26 +85,51 @@ class ChatListTile extends StatelessWidget {
       ),
       title: Text(
         chat.name,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: 16,
+            ),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          chat.lastMessage,
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 14,
+            height: 1.3,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
-      subtitle: Text(
-        chat.lastMessage,
-        style: TextStyle(
-          color: Colors.grey[600],
-          fontSize: 14,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: Text(
-        chat.time,
-        style: TextStyle(
-          color: Colors.grey[500],
-          fontSize: 12,
-        ),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            chat.time,
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              '2',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,9 +1,16 @@
 import 'package:cure_bit/components/routes/router.dart';
 import 'package:cure_bit/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final nameProvider = Provider<String>((ref) => 'Cura Docs');
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'CureBit',
+      title: 'Cura Docs',
       debugShowCheckedModeBanner: false,
       theme: theme(),
       routerConfig: router,

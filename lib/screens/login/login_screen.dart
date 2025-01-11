@@ -1,6 +1,5 @@
-import 'package:cure_bit/screens/login/login_form.dart';
 import 'package:flutter/material.dart';
-import 'package:cure_bit/screens/forgot_pass/forgot_pass.dart';
+import 'package:cure_bit/screens/login/login_form.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -9,21 +8,48 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20),
-                Image.asset(
-                  'assets/icons/login.png',
-                  height: 100,
+                const SizedBox(height: 20),
+                Center(
+                  child: Image.asset(
+                    'assets/icons/main_logo.png',
+                    height: 165,
+                  ),
                 ),
-                const SizedBox(height: 20),
-                // const Text("Login"),
-                // SizedBox(height: SizeConfig.screenHeight * 0.08),
-                LoginForm(),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                Text(
+                  "Welcome Back!",
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Sign in to continue to your health journey",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                const LoginForm(),
+                const SizedBox(height: 32),
+                Center(
+                  child: Text(
+                    "Or continue with",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -41,8 +67,31 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                NoAccountText(),
+                const SizedBox(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -60,24 +109,33 @@ class SocialCard extends StatelessWidget {
   });
 
   final String icon;
-  final GestureTapCallback press;
+  final VoidCallback press;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: press,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        padding: EdgeInsets.all(8),
-        height: 40,
-        width: 40,
+        margin: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.all(12),
+        height: 48,
+        width: 48,
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 135, 162, 242),
-          borderRadius: BorderRadius.circular(25),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
-        child: Image.asset(
-          icon,
-        ),
+        child: Image.asset(icon),
       ),
     );
   }

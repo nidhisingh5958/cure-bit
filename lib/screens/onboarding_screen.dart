@@ -1,8 +1,7 @@
-import 'package:cure_bit/components/routes/route_constants.dart';
-
-import 'package:cure_bit/screens/login/login_screen.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:cure_bit/components/routes/route_constants.dart';
+import 'package:cure_bit/screens/login/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -13,7 +12,6 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late PageController _pageController;
-
   int _pageIndex = 0;
 
   @override
@@ -33,7 +31,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
               Expanded(
@@ -52,54 +50,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ...List.generate(
-                    onBoardData.length,
-                    (index) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DotIndicator(isActive: index == _pageIndex),
+                  Row(
+                    children: List.generate(
+                      onBoardData.length,
+                      (index) => Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: DotIndicator(isActive: index == _pageIndex),
+                      ),
                     ),
                   ),
-                  const Spacer(),
-                  // next buttom
-                  SizedBox(
-                    height: 60,
-                    width: 60,
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    height: 56,
+                    width: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_pageController.page == 2) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                              // LoginScreen(),
-                            ),
-                          );
+                        if (_pageIndex == onBoardData.length - 1) {
+                          context.pushReplacement(RouteConstants.login);
+
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => const LoginScreen(),
+                          //   ),
+                          // );
                         } else {
-                          if (_pageIndex == onBoardData.length - 1) {
-                            context.pushNamed(RouteConstants.forgotPass);
-                          } else {
-                            _pageController.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          }
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOutQuint,
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(0),
                       ),
                       child: Icon(
                         _pageIndex == onBoardData.length - 1
-                            ? Icons.arrow_forward
+                            ? Icons.check
                             : Icons.arrow_forward,
-                        color: Colors.white,
+                        size: 24,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ],
@@ -122,50 +119,28 @@ class DotIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: isActive ? 12 : 4,
-      width: 4,
+      height: 8,
+      width: isActive ? 24 : 8,
       decoration: BoxDecoration(
-        color: isActive ? Theme.of(context).colorScheme.primary : Colors.grey,
-        borderRadius: const BorderRadius.all(Radius.circular(4)),
+        color: isActive
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
       ),
     );
   }
 }
-
-// class DotIndicator extends StatelessWidget {
-//   const DotIndicator({
-//     required this.isActive,
-//     required this.onTap,
-//     super.key,
-//   });
-
-//   final bool isActive;
-//   final VoidCallback onTap;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onTap,
-//       child: AnimatedContainer(
-//         duration: const Duration(milliseconds: 300),
-//         height: isActive ? 12 : 4,
-//         width: 4,
-//         decoration: BoxDecoration(
-//           color: isActive ? Theme.of(context).colorScheme.primary : Colors.grey,
-//           borderRadius: const BorderRadius.all(Radius.circular(4)),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class OnBoard {
   final String image;
   final String title;
   final String description;
 
-  OnBoard(
-      {required this.image, required this.title, required this.description});
+  OnBoard({
+    required this.image,
+    required this.title,
+    required this.description,
+  });
 }
 
 final List<OnBoard> onBoardData = [
@@ -177,12 +152,12 @@ final List<OnBoard> onBoardData = [
   ),
   OnBoard(
     image: 'assets/images/onboarding2.png',
-    title: 'Your personal health record maintainer.',
+    title: 'Your personal health record maintainer',
     description: 'Access your health records anytime, anywhere.',
   ),
   OnBoard(
     image: 'assets/images/onboarding3.png',
-    title: 'Your personal appointment tracker.',
+    title: 'Your personal appointment tracker',
     description: 'Never miss an appointment again.',
   ),
 ];
@@ -204,23 +179,25 @@ class OnboardContent extends StatelessWidget {
         const Spacer(),
         Image.asset(
           image,
-          height: 300,
+          height: 320,
+          fit: BoxFit.contain,
         ),
         const Spacer(),
         Text(
           title,
           textAlign: TextAlign.center,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium!
-              .copyWith(fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontSize: 24,
+                color: Theme.of(context).colorScheme.primary,
+              ),
         ),
         const SizedBox(height: 16),
         Text(
           description,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.w400,
+                color: Colors.grey.shade600,
+                height: 1.5,
               ),
         ),
         const Spacer(),

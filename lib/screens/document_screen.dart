@@ -7,11 +7,7 @@ class DocumentsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text("Document Screen"),
+        title: Text("Medical Records"),
       ),
       body: Center(
         child: Text("Document Screen"),
