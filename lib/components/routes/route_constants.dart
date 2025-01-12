@@ -7,6 +7,7 @@ class RouteConstants {
   static String forgotPass = "forgotPassword";
   static String login = "login";
   static String signUp = "signUp";
+  static String signUpProfile = "signUpProfile";
   static String otp = "otp";
 
   // inner routes

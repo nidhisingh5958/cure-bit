@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cure_bit/components/routes/route_constants.dart';
 import '../../screens/chat/entities/chat_data.dart';
+import '../../screens/signUp/sign_up_profile.dart';
 
 // Navigation keys for each branch
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -28,7 +29,7 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/home',
+  initialLocation: '/login',
   debugLogDiagnostics: true,
   routes: [
     // Auth and onboarding routes (outside shell)
@@ -46,6 +47,19 @@ final router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
+      name: RouteConstants.signUp,
+      path: '/sign-up',
+      builder: (context, state) => SignUpScreen(),
+      routes: [
+        GoRoute(
+          name: RouteConstants.signUpProfile,
+          path: 'sign-up-profile',
+          builder: (context, state) => SignUpProfile(),
+        ),
+      ],
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
       name: RouteConstants.login,
       path: '/login',
       builder: (context, state) => LoginScreen(),
@@ -54,11 +68,6 @@ final router = GoRouter(
           name: RouteConstants.forgotPass,
           path: 'forgot-password',
           builder: (context, state) => ForgotPasswordScreen(),
-        ),
-        GoRoute(
-          name: RouteConstants.signUp,
-          path: 'sign-up',
-          builder: (context, state) => SignUpScreen(),
         ),
         GoRoute(
           name: RouteConstants.otp,

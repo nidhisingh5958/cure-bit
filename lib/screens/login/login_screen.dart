@@ -1,5 +1,7 @@
+import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:cure_bit/screens/login/login_form.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -78,8 +80,15 @@ class LoginScreen extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {},
+                    TextButton(
+                      onPressed: () {
+                        context.goNamed(RouteConstants.signUp);
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                       child: Text(
                         "Sign Up",
                         style: TextStyle(
