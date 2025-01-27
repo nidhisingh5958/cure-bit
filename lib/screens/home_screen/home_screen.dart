@@ -1,4 +1,6 @@
+import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,8 +21,8 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     _buildGreeting(),
                     const SizedBox(height: 24),
-                    _buildAvailablePlansCard(context),
-                    const SizedBox(height: 32),
+                    // _buildAvailablePlansCard(context),
+                    // const SizedBox(height: 32),
                     _buildFeaturesSection(context),
                     const SizedBox(height: 32),
                     _buildUpcomingSection(context),
@@ -51,6 +53,7 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildSearchBar(context),
+          _buildChatButton(context),
           _buildNotificationButton(context),
         ],
       ),
@@ -83,18 +86,56 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationButton(BuildContext context) {
+  Widget _buildChatButton(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
+      margin: const EdgeInsets.only(left: 10),
+      padding: const EdgeInsets.all(6),
+      // decoration: BoxDecoration(
+      //   color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      //   borderRadius: BorderRadius.circular(12),
+      // ),
       child: Stack(
         children: [
-          Icon(Icons.notifications_outlined,
-              color: Theme.of(context).colorScheme.primary),
+          IconButton(
+            icon: Icon(Icons.chat_bubble_outline,
+                color: Theme.of(context).colorScheme.primary),
+            onPressed: () {
+              context.goNamed(RouteConstants.chat);
+            },
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              constraints: const BoxConstraints(
+                minWidth: 10,
+                minHeight: 10,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationButton(BuildContext context) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 0),
+      padding: const EdgeInsets.all(6),
+      // decoration: BoxDecoration(
+      //   color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      //   borderRadius: BorderRadius.circular(12),
+      // ),
+      child: Stack(
+        children: [
+          IconButton(
+            icon: Icon(Icons.notifications_none_outlined,
+                color: Theme.of(context).colorScheme.primary),
+            onPressed: () {
+              context.goNamed(RouteConstants.notifications);
+            },
+          ),
           Positioned(
             right: 0,
             top: 0,
@@ -109,8 +150,8 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               constraints: const BoxConstraints(
-                minWidth: 12,
-                minHeight: 12,
+                minWidth: 10,
+                minHeight: 10,
               ),
             ),
           ),
@@ -120,11 +161,12 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildGreeting() {
+    var name = 'User';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Hi, Kevin 👋',
+          'Hi, $name ',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -143,104 +185,112 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvailablePlansCard(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withOpacity(0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Available Plans',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Explore our new health plans tailored for you',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text('Learn More'),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(
-              Icons.trending_up_rounded,
-              color: Colors.white,
-              size: 32,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildAvailablePlansCard(BuildContext context) {
+  //   return Container(
+  //     padding: const EdgeInsets.all(24),
+  //     decoration: BoxDecoration(
+  //       gradient: LinearGradient(
+  //         colors: [
+  //           Theme.of(context).colorScheme.primary,
+  //           Theme.of(context).colorScheme.primary.withOpacity(0.8),
+  //         ],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       ),
+  //       borderRadius: BorderRadius.circular(20),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+  //           blurRadius: 20,
+  //           offset: const Offset(0, 10),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               const Text(
+  //                 'Available Plans',
+  //                 style: TextStyle(
+  //                   color: Colors.white,
+  //                   fontSize: 24,
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 12),
+  //               Text(
+  //                 'Explore our new health plans tailored for you',
+  //                 style: TextStyle(
+  //                   color: Colors.white.withOpacity(0.9),
+  //                   fontSize: 16,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               ElevatedButton(
+  //                 onPressed: () {},
+  //                 style: ElevatedButton.styleFrom(
+  //                   backgroundColor: Colors.white,
+  //                   foregroundColor: Theme.of(context).colorScheme.primary,
+  //                   padding: const EdgeInsets.symmetric(
+  //                       horizontal: 24, vertical: 12),
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(12),
+  //                   ),
+  //                 ),
+  //                 child: const Text('Learn More'),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         Container(
+  //           padding: const EdgeInsets.all(12),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white.withOpacity(0.2),
+  //             borderRadius: BorderRadius.circular(16),
+  //           ),
+  //           child: const Icon(
+  //             Icons.trending_up_rounded,
+  //             color: Colors.white,
+  //             size: 32,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildFeaturesSection(BuildContext context) {
     final features = [
       {
         'icon': Icons.description_outlined,
         'label': 'Prescription',
-        'color': Colors.blue
+        'onPressed': () {
+          context.goNamed('prescriptions');
+        }
       },
       {
         'icon': Icons.calendar_today_outlined,
         'label': 'Appointment',
-        'color': Colors.orange
+        'onPressed': () {
+          context.goNamed('appointments');
+        }
       },
       {
         'icon': Icons.science_outlined,
         'label': 'Test Records',
-        'color': Colors.purple
+        'onPressed': () {
+          context.goNamed('test-records');
+        }
       },
       {
         'icon': Icons.medication_outlined,
         'label': 'Medicines',
-        'color': Colors.green
+        'onPressed': () {
+          context.goNamed('medicines');
+        }
       },
     ];
 
@@ -276,7 +326,7 @@ class HomeScreen extends StatelessWidget {
                     context,
                     feature['icon'] as IconData,
                     feature['label'] as String,
-                    feature['color'] as Color,
+                    onPressed: feature['onPressed'] as void Function()?,
                   ))
               .toList(),
         ),
@@ -284,30 +334,33 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureItem(
-      BuildContext context, IconData icon, String label, Color color) {
-    return Container(
-      width: 80,
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: color.withOpacity(0.8),
+  Widget _buildFeatureItem(BuildContext context, IconData icon, String label,
+      {void Function()? onPressed}) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 80,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          // color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.blueAccent, size: 28),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.blueAccent.withOpacity(0.8),
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -341,7 +394,7 @@ class HomeScreen extends StatelessWidget {
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: 4,
+          itemCount: 2,
           itemBuilder: (context, index) {
             return _buildAppointmentCard(
               context,
@@ -359,10 +412,8 @@ class HomeScreen extends StatelessWidget {
   Widget _buildAppointmentCard(BuildContext context, String title,
       String? rating, String time, int index) {
     final colors = [
-      Colors.blue,
-      Colors.purple,
-      Colors.orange,
-      Colors.green,
+      Colors.blueAccent,
+      Colors.blueAccent,
     ];
 
     return Container(

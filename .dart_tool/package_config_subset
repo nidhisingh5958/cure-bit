@@ -4,8 +4,8 @@ file:///home/nid/.pub-cache/hosted/pub.dev/animated_splash_screen-1.3.0/
 file:///home/nid/.pub-cache/hosted/pub.dev/animated_splash_screen-1.3.0/lib/
 archive
 3.0
-file:///home/nid/.pub-cache/hosted/pub.dev/archive-3.6.1/
-file:///home/nid/.pub-cache/hosted/pub.dev/archive-3.6.1/lib/
+file:///home/nid/.pub-cache/hosted/pub.dev/archive-4.0.2/
+file:///home/nid/.pub-cache/hosted/pub.dev/archive-4.0.2/lib/
 async
 2.18
 file:///home/nid/.pub-cache/hosted/pub.dev/async-2.11.0/
@@ -38,6 +38,10 @@ fake_async
 2.12
 file:///home/nid/.pub-cache/hosted/pub.dev/fake_async-1.3.1/
 file:///home/nid/.pub-cache/hosted/pub.dev/fake_async-1.3.1/lib/
+ffi
+3.3
+file:///home/nid/.pub-cache/hosted/pub.dev/ffi-2.1.3/
+file:///home/nid/.pub-cache/hosted/pub.dev/ffi-2.1.3/lib/
 flutter_lints
 3.5
 file:///home/nid/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0/
@@ -47,9 +51,9 @@ flutter_riverpod
 file:///home/nid/.pub-cache/hosted/pub.dev/flutter_riverpod-2.6.1/
 file:///home/nid/.pub-cache/hosted/pub.dev/flutter_riverpod-2.6.1/lib/
 go_router
-3.3
-file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.6.2/
-file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.6.2/lib/
+3.4
+file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.6.3/
+file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.6.3/lib/
 google_nav_bar
 2.12
 file:///home/nid/.pub-cache/hosted/pub.dev/google_nav_bar-5.0.7/
@@ -84,8 +88,8 @@ file:///home/nid/.pub-cache/hosted/pub.dev/logging-1.3.0/
 file:///home/nid/.pub-cache/hosted/pub.dev/logging-1.3.0/lib/
 lottie
 3.6
-file:///home/nid/.pub-cache/hosted/pub.dev/lottie-3.3.0/
-file:///home/nid/.pub-cache/hosted/pub.dev/lottie-3.3.0/lib/
+file:///home/nid/.pub-cache/hosted/pub.dev/lottie-3.3.1/
+file:///home/nid/.pub-cache/hosted/pub.dev/lottie-3.3.1/lib/
 matcher
 3.0
 file:///home/nid/.pub-cache/hosted/pub.dev/matcher-0.12.16+1/
@@ -94,6 +98,10 @@ material_color_utilities
 2.17
 file:///home/nid/.pub-cache/hosted/pub.dev/material_color_utilities-0.11.1/
 file:///home/nid/.pub-cache/hosted/pub.dev/material_color_utilities-0.11.1/lib/
+material_design_icons_flutter
+2.12
+file:///home/nid/.pub-cache/hosted/pub.dev/material_design_icons_flutter-7.0.7296/
+file:///home/nid/.pub-cache/hosted/pub.dev/material_design_icons_flutter-7.0.7296/lib/
 meta
 2.12
 file:///home/nid/.pub-cache/hosted/pub.dev/meta-1.15.0/
@@ -110,6 +118,10 @@ path
 3.0
 file:///home/nid/.pub-cache/hosted/pub.dev/path-1.9.0/
 file:///home/nid/.pub-cache/hosted/pub.dev/path-1.9.0/lib/
+posix
+3.0
+file:///home/nid/.pub-cache/hosted/pub.dev/posix-6.0.1/
+file:///home/nid/.pub-cache/hosted/pub.dev/posix-6.0.1/lib/
 provider
 2.12
 file:///home/nid/.pub-cache/hosted/pub.dev/provider-6.1.2/

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({
@@ -38,6 +39,8 @@ class BottomNavigation extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
+        height: 50,
+
         selectedIndex: navigationShell.currentIndex,
         // Use the _onTap method to navigate to the selected tab
         onDestinationSelected: (index) {
@@ -48,7 +51,8 @@ class BottomNavigation extends StatelessWidget {
             .map((destination) => NavigationDestination(
                   icon: destination.icon,
                   selectedIcon: Icon(destination.icon.icon, color: Colors.blue),
-                  label: destination.label,
+                  label: '',
+                  // label: destination.label,
                 ))
             .toList(),
       ),
@@ -69,24 +73,24 @@ class Destination {
   final String label;
 }
 
-const destinations = <Destination>[
-  Destination(
+var destinations = <Destination>[
+  const Destination(
     icon: Icon(Icons.home_outlined),
     label: 'Home',
   ),
   Destination(
-    icon: Icon(Icons.chat_outlined),
-    label: 'Chat',
-  ),
-  Destination(
-    icon: Icon(Icons.rocket_outlined),
+    icon: Icon(MdiIcons.robot),
     label: 'Chatbot',
   ),
   Destination(
-    icon: Icon(Icons.receipt_outlined),
+    icon: Icon(Icons.add),
+    label: 'Add',
+  ),
+  const Destination(
+    icon: Icon(Icons.document_scanner_outlined),
     label: 'Documents',
   ),
-  Destination(
+  const Destination(
     icon: Icon(Icons.person_outline),
     label: 'Profile',
   ),

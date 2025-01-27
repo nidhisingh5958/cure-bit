@@ -42,7 +42,7 @@ rule CXX_EXECUTABLE_LINKER__cure_bit
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /snap/flutter/145/usr/bin/cmake -S/home/nid/desktop/cure_bit/cure-bit/linux -B/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug
+  command = /snap/flutter/149/usr/bin/cmake -S/home/nid/desktop/cure_bit/cure-bit/linux -B/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug
   description = Re-running CMake...
   generator = 1
 

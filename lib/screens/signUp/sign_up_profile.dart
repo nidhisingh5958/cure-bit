@@ -27,7 +27,6 @@ class _SignupProfilePageState extends State<SignUpProfile> {
     'Male',
     'Female',
     'Other',
-    'Prefer not to say'
   ];
 
   @override
@@ -49,14 +48,32 @@ class _SignupProfilePageState extends State<SignUpProfile> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Theme.of(context).colorScheme.primary,
+              primary: Colors.blue, // Header background color
               onPrimary: Colors.white,
               surface: AppColors.background,
+            ),
+            textTheme: TextTheme(
+              bodyLarge: TextStyle(fontSize: 16), // Reduces date text size
+              bodyMedium: TextStyle(fontSize: 12),
+              labelSmall: TextStyle(fontSize: 10),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue.shade500,
+              ),
+            ),
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: Colors.blue,
+              selectionColor: Colors.blue.withOpacity(0.3),
+              selectionHandleColor: Colors.blue,
             ),
           ),
           child: child!,
         );
       },
+      switchToInputEntryModeIcon: Icon(Icons.edit, color: Colors.blue),
+      switchToCalendarEntryModeIcon:
+          Icon(Icons.calendar_month_outlined, color: Colors.blue),
     );
 
     if (picked != null && picked != _selectedDate) {
@@ -129,7 +146,10 @@ class _SignupProfilePageState extends State<SignUpProfile> {
         elevation: 0,
         title: Text(
           'Complete Your Profile',
-          style: TextStyle(color: AppColors.textDark),
+          style: TextStyle(
+            color: AppColors.textDark,
+            fontSize: 16,
+          ),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.textDark),
@@ -221,11 +241,11 @@ class _SignupProfilePageState extends State<SignUpProfile> {
           TextFormField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: 'Full Name',
+              labelText: 'Email',
               labelStyle: TextStyle(
                 fontSize: 14,
               ),
-              prefixIcon: const Icon(Icons.person_outline),
+              prefixIcon: const Icon(Icons.mail_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -236,7 +256,7 @@ class _SignupProfilePageState extends State<SignUpProfile> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your name';
+                return 'Please enter your email';
               }
               return null;
             },
@@ -341,8 +361,8 @@ class _SignupProfilePageState extends State<SignUpProfile> {
           GestureDetector(
             onTap: _pickImage,
             child: Container(
-              width: 150,
-              height: 150,
+              width: 120,
+              height: 120,
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -358,7 +378,7 @@ class _SignupProfilePageState extends State<SignUpProfile> {
               child: _selectedImage == null
                   ? Icon(
                       Icons.add_a_photo,
-                      size: 40,
+                      size: 36,
                       color: Theme.of(context).colorScheme.primary,
                     )
                   : null,
@@ -367,7 +387,8 @@ class _SignupProfilePageState extends State<SignUpProfile> {
           const SizedBox(height: 16),
           Text(
             'Tap to add a profile picture',
-            style: TextStyle(color: AppColors.textDark.withOpacity(0.6)),
+            style: TextStyle(
+                color: AppColors.textDark.withOpacity(0.6), fontSize: 14),
           ),
         ],
       ),

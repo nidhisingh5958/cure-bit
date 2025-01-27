@@ -1,7 +1,9 @@
+import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:cure_bit/screens/chat/data/chat_sample_data.dart';
 import 'package:cure_bit/screens/chat/chat_screen.dart';
 import 'package:cure_bit/screens/chat/entities/chat_data.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -11,14 +13,18 @@ class ChatListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Messages'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => context.goNamed(RouteConstants.home),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search, size: 24),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.add_box_outlined, size: 24),
             onPressed: () {},
+            icon: const Icon(Icons.more_vert_rounded),
           ),
         ],
       ),

@@ -1,11 +1,16 @@
 import 'package:cure_bit/components/routes/navigation_bar.dart';
+import 'package:cure_bit/screens/appointment/appointment_screen.dart';
 import 'package:cure_bit/screens/chat/chat_home.dart';
 import 'package:cure_bit/screens/chatbot/chat_bot_home.dart';
 import 'package:cure_bit/screens/chatbot/chat_with_ai.dart';
 import 'package:cure_bit/screens/chat/chat_screen.dart';
-import 'package:cure_bit/screens/document_screen.dart';
+import 'package:cure_bit/screens/documents/add_document.dart';
+import 'package:cure_bit/screens/documents/document_screen.dart';
+import 'package:cure_bit/screens/documents/prescription.dart';
+import 'package:cure_bit/screens/documents/test_results.dart';
 import 'package:cure_bit/screens/forgot_pass/forgot_pass.dart';
 import 'package:cure_bit/screens/home_screen/home_screen.dart';
+import 'package:cure_bit/screens/home_screen/notification.dart';
 import 'package:cure_bit/screens/login/login_screen.dart';
 import 'package:cure_bit/screens/onboarding_screen.dart';
 import 'package:cure_bit/screens/otp.dart';
@@ -29,7 +34,7 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/login',
+  initialLocation: '/appointments',
   debugLogDiagnostics: true,
   routes: [
     // Auth and onboarding routes (outside shell)
@@ -77,6 +82,30 @@ final router = GoRouter(
       ],
     ),
 
+    GoRoute(
+      path: '/chat',
+      name: RouteConstants.chat,
+      builder: (context, state) => const ChatListScreen(),
+      routes: [
+        GoRoute(
+          // Individual Chat Screen
+          path: 'chat-screen',
+          parentNavigatorKey: _rootNavigatorKey,
+          name: RouteConstants.chatScreen,
+          builder: (context, state) {
+            final chat = state.extra as ChatData;
+            return ChatScreen(chat: chat);
+          },
+        ),
+      ],
+    ),
+
+    GoRoute(
+      path: '/appointments',
+      name: RouteConstants.appointments,
+      builder: (context, state) => const AppointmentScreen(),
+    ),
+
     // Main app shell with bottom navigation
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -91,32 +120,18 @@ final router = GoRouter(
               path: '/home',
               name: RouteConstants.home,
               builder: (context, state) => const HomeScreen(),
-            ),
-          ],
-        ),
-        // Chat Branch
-        StatefulShellBranch(
-          navigatorKey: _chatNavigatorKey,
-          routes: [
-            GoRoute(
-              path: '/chat',
-              name: RouteConstants.chat,
-              builder: (context, state) => const ChatListScreen(),
               routes: [
                 GoRoute(
-                  // Individual Chat Screen
-                  path: 'chat-screen',
+                  path: 'notifications',
                   parentNavigatorKey: _rootNavigatorKey,
-                  name: RouteConstants.chatScreen,
-                  builder: (context, state) {
-                    final chat = state.extra as ChatData;
-                    return ChatScreen(chat: chat);
-                  },
+                  name: RouteConstants.notifications,
+                  builder: (context, state) => const NotificationScreen(),
                 ),
               ],
             ),
           ],
         ),
+
         // Chatbot Branch
         StatefulShellBranch(
           navigatorKey: _chatbotNavigatorKey,
@@ -137,6 +152,31 @@ final router = GoRouter(
             ),
           ],
         ),
+
+        // Add document
+        StatefulShellBranch(
+          navigatorKey: _chatNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/add',
+              name: RouteConstants.addDocument,
+              builder: (context, state) => const AddDocument(),
+              // routes: [
+              // GoRoute(
+              //   // Individual Chat Screen
+              //   path: 'document-screen',
+              //   parentNavigatorKey: _rootNavigatorKey,
+              //   name: RouteConstants.documentScreen,
+              //   builder: (context, state) {
+              //     final chat = state.extra as ChatData;
+              //     return DocumentScreen(chat: chat);
+              //   },
+              // ),
+              // ],
+            ),
+          ],
+        ),
+
         // Documents Branch
         StatefulShellBranch(
           navigatorKey: _documentsNavigatorKey,
@@ -145,6 +185,20 @@ final router = GoRouter(
               path: '/documents',
               name: RouteConstants.documents,
               builder: (context, state) => const DocumentsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'prescription',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  name: RouteConstants.prescription,
+                  builder: (context, state) => const Prescription(),
+                ),
+                GoRoute(
+                  path: 'test-results',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  name: RouteConstants.testRecords,
+                  builder: (context, state) => const TestResults(),
+                ),
+              ],
             ),
           ],
         ),
