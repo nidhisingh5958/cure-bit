@@ -24,19 +24,23 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               color: Theme.of(context).colorScheme.primary,
               size: 20,
             ),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              context.goNamed('home');
+            },
           ),
         ),
-        body: Column(
-          children: [
-            _buildProfile(context),
-            SizedBox(height: 14),
-            _searchbar(context),
-            SizedBox(height: 14),
-            _buildCategoriesSection(context),
-            SizedBox(height: 14),
-            _buildAppointmentItem(context),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildProfile(context),
+              SizedBox(height: 14),
+              _searchbar(context),
+              SizedBox(height: 14),
+              _buildCategoriesSection(context),
+              SizedBox(height: 14),
+              _buildTopDoctorCategory(context),
+            ],
+          ),
         ),
       ),
     );
@@ -240,7 +244,55 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
   }
 
-  Widget _buildAppointmentItem(BuildContext context) {
+  Widget _buildTopDoctorCategory(BuildContext context) {
+    final items = [
+      {
+        'image': 'images/doctor.jpg',
+        'doctorName': 'Dr. John Doe',
+        'category': 'Dentist',
+        'location': 'Delhi, India',
+        'onPressed': () {
+          context.goNamed('bookAppointment');
+        }
+      },
+      {
+        'image': 'images/doctor.jpg',
+        'doctorName': 'Dr. Jane Doe',
+        'category': 'Cardiologist',
+        'location': 'Mumbai, India',
+        'onPressed': () {
+          context.goNamed('appointments');
+        }
+      },
+      {
+        'image': 'images/doctor.jpg',
+        'doctorName': 'Dr. Ravi Sharma',
+        'category': 'Opthomologist',
+        'location': 'Bangalore, India',
+        'onPressed': () {
+          context.goNamed('test-records');
+        }
+      },
+      {
+        'image': 'images/doctor.jpg',
+        'doctorName': 'Dr. Anil Kumar',
+        'category': 'Neurologist',
+        'location': 'Chennai, India',
+        'onPressed': () {
+          context.goNamed('medicines');
+        }
+      },
+      {
+        'image': 'images/doctor.jpg',
+        'doctorName': 'Dr. Sunita Singh',
+        'category': 'ENT',
+        'location': 'Kolkata, India',
+        'onPressed': () {
+          context.goNamed('hearing');
+        }
+      },
+    ];
+    // build the top doctors section
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -250,7 +302,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recents',
+                'Top Doctors',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -267,26 +319,53 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               ),
             ],
           ),
-          SizedBox(height: 16),
-          Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade200),
-            ),
-            child: Row(
+          const SizedBox(height: 16),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: items
+                .map((item) => _buildTopDoctorItem(
+                      context,
+                      item['image'] as String,
+                      item['doctorName'] as String,
+                      item['category'] as String,
+                      item['location'] as String,
+                      onPressed: item['onPressed'] as void Function()?,
+                    ))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // build the category item
+  Widget _buildTopDoctorItem(BuildContext context, String image,
+      String doctorName, String category, String location,
+      {void Function()? onPressed}) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundImage: AssetImage("images/doctor.jpg"),
+                  backgroundImage: AssetImage(image),
                 ),
                 SizedBox(width: 15),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Dr. John Doe',
+                      doctorName,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -295,10 +374,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     SizedBox(height: 5),
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.blue, size: 16),
+                        Icon(Icons.access_time, color: Colors.blue, size: 16),
                         SizedBox(width: 5),
                         Text(
-                          'Delhi, India',
+                          category,
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
@@ -309,10 +388,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     SizedBox(height: 5),
                     Row(
                       children: [
-                        Icon(Icons.access_time, color: Colors.blue, size: 16),
+                        Icon(Icons.location_on, color: Colors.blue, size: 16),
                         SizedBox(width: 5),
                         Text(
-                          '10:00 AM - 12:00 PM',
+                          location,
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
@@ -324,8 +403,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

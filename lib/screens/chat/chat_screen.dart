@@ -126,7 +126,7 @@ class _ChatScreenState extends State<ChatScreen> {
       elevation: 1,
       backgroundColor: Colors.white,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black87),
+        icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
         onPressed: () => context.pop(),
       ),
       titleSpacing: 0,

@@ -17,7 +17,7 @@ class MediaMessage extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: message.backgroundColor,
-          borderRadius: message.borderRadius,
+          borderRadius: message.getBorderRadius(),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +34,7 @@ class MediaMessage extends StatelessWidget {
                   return Container(
                     height: 180,
                     width: double.maxFinite,
-                    color: Colors.grey[200],
+                    color: Colors.blue[200],
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -44,7 +44,7 @@ class MediaMessage extends StatelessWidget {
                   return Container(
                     height: 180,
                     width: double.maxFinite,
-                    color: Colors.grey[200],
+                    color: Colors.blue[200],
                     child: const Center(
                       child: Icon(Icons.error_outline, size: 40),
                     ),
@@ -56,7 +56,7 @@ class MediaMessage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 message.text!,
-                style: TextStyle(color: message.TextColor),
+                style: TextStyle(color: message.textColor),
               ),
             ],
           ],

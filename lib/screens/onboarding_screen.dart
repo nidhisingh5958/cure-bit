@@ -70,7 +70,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_pageIndex == onBoardData.length - 1) {
-                          context.pushReplacement(RouteConstants.login);
+                          context.goNamed(RouteConstants.login);
 
                           // Navigator.pushReplacement(
                           //   context,

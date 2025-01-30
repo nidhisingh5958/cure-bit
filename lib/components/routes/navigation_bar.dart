@@ -39,7 +39,7 @@ class BottomNavigation extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
-        height: 50,
+        height: 70,
 
         selectedIndex: navigationShell.currentIndex,
         // Use the _onTap method to navigate to the selected tab

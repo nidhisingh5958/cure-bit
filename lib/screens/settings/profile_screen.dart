@@ -1,4 +1,6 @@
+import 'package:cure_bit/components/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -268,7 +270,9 @@ class ProfileScreen extends StatelessWidget {
                     title: 'Log Out',
                     subtitle: 'Sign out of your account',
                     isDestructive: true,
-                    onTap: () {},
+                    onTap: () {
+                      context.goNamed(RouteConstants.login);
+                    },
                   ),
                 ],
               ),

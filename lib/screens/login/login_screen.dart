@@ -17,12 +17,12 @@ class LoginScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                // Center(
-                //   child: Image.asset(
-                //     'assets/icons/main_logo.png',
-                //     height: 165,
-                //   ),
-                // ),
+                Center(
+                  child: Image.asset(
+                    'assets/icons/main_logo.png',
+                    height: 165,
+                  ),
+                ),
                 const SizedBox(height: 10),
                 Text(
                   "Welcome Back!",

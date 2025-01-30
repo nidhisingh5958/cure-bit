@@ -27,6 +27,7 @@
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/images/onboarding3.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/images/doctor.jpg
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/images/onboarding.png
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/images/logo.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/images/otp.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/animations/Animation2.json
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/animations/Animation1.json

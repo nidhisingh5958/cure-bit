@@ -13,6 +13,7 @@ class RouteConstants {
   // inner routes
   static String home = "home";
   static String appointments = "appointments";
+  static String bookAppointment = "bookAppointment";
   static String chatBot = "chatBot";
   static String chatBotScreen = "chatBotScreen";
   static String chat = "chat";

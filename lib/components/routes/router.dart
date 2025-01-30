@@ -1,5 +1,6 @@
 import 'package:cure_bit/components/routes/navigation_bar.dart';
 import 'package:cure_bit/screens/appointment/appointment_screen.dart';
+import 'package:cure_bit/screens/appointment/book_appointment.dart';
 import 'package:cure_bit/screens/chat/chat_home.dart';
 import 'package:cure_bit/screens/chatbot/chat_bot_home.dart';
 import 'package:cure_bit/screens/chatbot/chat_with_ai.dart';
@@ -34,7 +35,7 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/appointments',
+  initialLocation: '/onboarding',
   debugLogDiagnostics: true,
   routes: [
     // Auth and onboarding routes (outside shell)
@@ -104,6 +105,15 @@ final router = GoRouter(
       path: '/appointments',
       name: RouteConstants.appointments,
       builder: (context, state) => const AppointmentScreen(),
+      routes: [
+        GoRoute(
+          // Individual doctor booking screen
+          path: 'book-appointment',
+          parentNavigatorKey: _rootNavigatorKey,
+          name: RouteConstants.bookAppointment,
+          builder: (context, state) => BookAnAppointment(),
+        ),
+      ],
     ),
 
     // Main app shell with bottom navigation
