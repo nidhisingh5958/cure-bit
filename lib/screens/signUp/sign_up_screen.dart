@@ -1,4 +1,4 @@
-import 'package:cure_bit/screens/signUp/sign_up_form.dart';
+import 'package:CuraDocs/screens/signUp/sign_up_form.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

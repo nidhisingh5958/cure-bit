@@ -1,5 +1,5 @@
-import 'package:cure_bit/components/routes/router.dart';
-import 'package:cure_bit/theme.dart';
+import 'package:CuraDocs/components/routes/router.dart';
+import 'package:CuraDocs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

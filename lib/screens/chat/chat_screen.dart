@@ -1,9 +1,9 @@
-import 'package:cure_bit/screens/chat/widgets/build_message.dart';
+import 'package:CuraDocs/screens/chat/widgets/build_message.dart';
 import '/screens/chat/data/chat_sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cure_bit/screens/chat/entities/chat_data.dart';
-import 'package:cure_bit/screens/chat/entities/message.dart';
+import 'package:CuraDocs/screens/chat/entities/chat_data.dart';
+import 'package:CuraDocs/screens/chat/entities/message.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatData chat;

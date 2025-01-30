@@ -338,13 +338,13 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "cure_bit",
+      "name": "CuraDocs",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-01-30T17:10:31.162909Z",
+  "generated": "2025-01-30T17:44:35.718191Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",

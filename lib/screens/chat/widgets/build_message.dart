@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cure_bit/screens/chat/entities/message.dart';
+import 'package:CuraDocs/screens/chat/entities/message.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;

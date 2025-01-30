@@ -1,12 +1,12 @@
-import 'package:cure_bit/screens/chatbot/entities/message_group.dart';
-import 'package:cure_bit/screens/chatbot/widgets/chat_message_widget.dart';
+import 'package:CuraDocs/screens/chatbot/entities/message_group.dart';
+import 'package:CuraDocs/screens/chatbot/widgets/chat_message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:cure_bit/components/routes/route_constants.dart';
-import 'package:cure_bit/screens/chatbot/data/messages_bot.dart';
-import 'package:cure_bit/screens/chatbot/entities/message_bot.dart';
-// import 'package:cure_bit/screens/chatbot/widgets/media_message.dart';
-// import 'package:cure_bit/screens/chatbot/widgets/text_message.dart';
+// import 'package:CuraDocs/components/routes/route_constants.dart';
+import 'package:CuraDocs/screens/chatbot/data/messages_bot.dart';
+import 'package:CuraDocs/screens/chatbot/entities/message_bot.dart';
+// import 'package:CuraDocs/screens/chatbot/widgets/media_message.dart';
+// import 'package:CuraDocs/screens/chatbot/widgets/text_message.dart';
 
 class ChatBotScreen extends StatefulWidget {
   const ChatBotScreen({super.key});

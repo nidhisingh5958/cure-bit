@@ -1,6 +1,6 @@
-import 'package:cure_bit/components/routes/route_constants.dart';
+import 'package:CuraDocs/components/routes/route_constants.dart';
 import 'package:flutter/material.dart';
-import 'package:cure_bit/screens/login/login_form.dart';
+import 'package:CuraDocs/screens/login/login_form.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {

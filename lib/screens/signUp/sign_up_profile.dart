@@ -1,5 +1,5 @@
-import 'package:cure_bit/screens/signUp/widgets/phone_no.dart';
-import 'package:cure_bit/screens/signUp/sign_up_screen.dart';
+import 'package:CuraDocs/screens/signUp/widgets/phone_no.dart';
+import 'package:CuraDocs/screens/signUp/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';

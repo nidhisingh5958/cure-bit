@@ -1,5 +1,5 @@
-import 'package:cure_bit/screens/chat/entities/chat_data.dart';
-import 'package:cure_bit/screens/chat/entities/message.dart';
+import 'package:CuraDocs/screens/chat/entities/chat_data.dart';
+import 'package:CuraDocs/screens/chat/entities/message.dart';
 
 final List<ChatData> chatData = [
   ChatData(
