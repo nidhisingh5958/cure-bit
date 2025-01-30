@@ -146,7 +146,7 @@ class OnBoard {
 final List<OnBoard> onBoardData = [
   OnBoard(
     image: 'assets/images/onboarding.png',
-    title: 'Welcome to CureBit',
+    title: 'Welcome to Cura Docs',
     description:
         'Your health is our priority. Let us help you take care of it.',
   ),
