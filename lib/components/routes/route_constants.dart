@@ -23,6 +23,9 @@ class RouteConstants {
   static String prescription = "prescriptions";
   static String testRecords = "testRecords";
   static String addDocument = "addDocument";
+  static String doctorProfile = "doctorProfile";
+  static String doctorSearch = "doctorSearch";
+  static String medicineReminder = "medicineReminder";
 
   // settings routes
   static String notifications = "notifications";
@@ -31,6 +34,7 @@ class RouteConstants {
   static String securitySettings = "securitySettings";
   static String notificationsSettings = "notificationsSettings";
   static String about = "about";
+  static String help = "help";
 
   // error routes
   static String error = "error";

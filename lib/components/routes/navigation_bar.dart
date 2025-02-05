@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({
@@ -11,22 +11,7 @@ class BottomNavigation extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   void _onTap(BuildContext context, int index) {
-    // Check if we're selecting the same tab
     if (index != navigationShell.currentIndex) {
-      navigationShell.goBranch(
-        index,
-        // Set initial location to true only when we're on the same branch
-        initialLocation: false,
-      );
-    }
-  }
-
-  void _onTapWithLogging(BuildContext context, int index) {
-    debugPrint('Current index: ${navigationShell.currentIndex}');
-    debugPrint('Tapped index: $index');
-
-    if (index != navigationShell.currentIndex) {
-      debugPrint('Navigating to branch $index');
       navigationShell.goBranch(
         index,
         initialLocation: false,
@@ -38,29 +23,71 @@ class BottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        height: 70,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: NavigationBar(
+            height: 65,
+            elevation: 0,
+            backgroundColor: Colors.white,
+            indicatorColor: Colors.transparent,
+            selectedIndex: navigationShell.currentIndex,
+            onDestinationSelected: (index) => _onTap(context, index),
+            destinations: destinations.map((destination) {
+              final isSelected = destinations.indexOf(destination) ==
+                  navigationShell.currentIndex;
+              return NavigationDestination(
+                icon: _buildNavItem(
+                    context, destination.icon, destination.label, isSelected),
+                label: '',
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
 
-        selectedIndex: navigationShell.currentIndex,
-        // Use the _onTap method to navigate to the selected tab
-        onDestinationSelected: (index) {
-          _onTap(context, index);
-          _onTapWithLogging(context, index);
-        },
-        destinations: destinations
-            .map((destination) => NavigationDestination(
-                  icon: destination.icon,
-                  selectedIcon: Icon(destination.icon.icon, color: Colors.blue),
-                  label: '',
-                  // label: destination.label,
-                ))
-            .toList(),
+  Widget _buildNavItem(
+      BuildContext context, Icon defaultIcon, String label, bool isSelected) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: isSelected
+          ? BoxDecoration(
+              color: Colors.grey.shade100,
+              // circular border
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            )
+          : null,
+      padding: isSelected ? const EdgeInsets.all(12) : EdgeInsets.zero,
+      margin: isSelected
+          ? const EdgeInsets.only(top: 0)
+          : const EdgeInsets.only(top: 12),
+      child: Icon(
+        defaultIcon.icon,
+        color:
+            isSelected ? Theme.of(context).primaryColor : Colors.grey.shade400,
+        size: 24,
       ),
     );
   }
 }
-
-//
 
 class Destination {
   const Destination({
@@ -69,29 +96,28 @@ class Destination {
   });
 
   final Icon icon;
-
   final String label;
 }
 
 var destinations = <Destination>[
   const Destination(
-    icon: Icon(Icons.home_outlined),
+    icon: Icon(LucideIcons.home),
     label: 'Home',
   ),
   Destination(
-    icon: Icon(MdiIcons.robot),
+    icon: Icon(LucideIcons.bot),
     label: 'Chatbot',
   ),
   Destination(
-    icon: Icon(Icons.add),
+    icon: Icon(LucideIcons.plus),
     label: 'Add',
   ),
   const Destination(
-    icon: Icon(Icons.document_scanner_outlined),
+    icon: Icon(LucideIcons.database),
     label: 'Documents',
   ),
   const Destination(
-    icon: Icon(Icons.person_outline),
+    icon: Icon(LucideIcons.user),
     label: 'Profile',
   ),
 ];

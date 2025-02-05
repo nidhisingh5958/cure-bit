@@ -13,6 +13,7 @@ import 'package:CuraDocs/screens/forgot_pass/forgot_pass.dart';
 import 'package:CuraDocs/screens/home_screen/home_screen.dart';
 import 'package:CuraDocs/screens/home_screen/notification.dart';
 import 'package:CuraDocs/screens/login/login_screen.dart';
+import 'package:CuraDocs/screens/medicine.dart/medicine_screen.dart';
 import 'package:CuraDocs/screens/onboarding_screen.dart';
 import 'package:CuraDocs/screens/otp.dart';
 import 'package:CuraDocs/screens/settings/profile_screen.dart';
@@ -35,7 +36,7 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/onboarding',
+  initialLocation: '/home',
   debugLogDiagnostics: true,
   routes: [
     // Auth and onboarding routes (outside shell)
@@ -136,6 +137,12 @@ final router = GoRouter(
                   parentNavigatorKey: _rootNavigatorKey,
                   name: RouteConstants.notifications,
                   builder: (context, state) => const NotificationScreen(),
+                ),
+                GoRoute(
+                  path: 'medicine-reminder',
+                  parentNavigatorKey: _homeNavigatorKey,
+                  name: RouteConstants.medicineReminder,
+                  builder: (context, state) => const MedicineReminder(),
                 ),
               ],
             ),
