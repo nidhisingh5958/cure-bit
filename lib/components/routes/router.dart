@@ -142,7 +142,7 @@ final router = GoRouter(
                   path: 'medicine-reminder',
                   parentNavigatorKey: _homeNavigatorKey,
                   name: RouteConstants.medicineReminder,
-                  builder: (context, state) => const MedicineReminder(),
+                  builder: (context, state) => ReminderScreen(),
                 ),
               ],
             ),

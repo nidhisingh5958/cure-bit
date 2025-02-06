@@ -26,13 +26,13 @@ class BottomNavigation extends StatelessWidget {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black.withOpacity(0.05),
+          //     blurRadius: 10,
+          //     offset: const Offset(0, -5),
+          //   ),
+          // ],
         ),
         child: SafeArea(
           child: NavigationBar(
@@ -63,7 +63,7 @@ class BottomNavigation extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       decoration: isSelected
           ? BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Colors.grey.shade800,
               // circular border
               shape: BoxShape.circle,
               boxShadow: [
@@ -81,8 +81,7 @@ class BottomNavigation extends StatelessWidget {
           : const EdgeInsets.only(top: 12),
       child: Icon(
         defaultIcon.icon,
-        color:
-            isSelected ? Theme.of(context).primaryColor : Colors.grey.shade400,
+        color: isSelected ? Colors.white : Colors.grey.shade400,
         size: 24,
       ),
     );
