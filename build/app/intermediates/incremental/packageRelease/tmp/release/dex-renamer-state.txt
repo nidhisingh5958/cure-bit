@@ -1,0 +1,4 @@
+#Fri Jan 31 00:25:42 IST 2025
+base.0=/home/nid/desktop/cure_bit/cure-bit/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
