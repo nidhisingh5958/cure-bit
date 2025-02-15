@@ -59,30 +59,31 @@ class BottomNavigation extends StatelessWidget {
 
   Widget _buildNavItem(
       BuildContext context, Icon defaultIcon, String label, bool isSelected) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      decoration: isSelected
-          ? BoxDecoration(
-              color: Colors.grey.shade800,
-              // circular border
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            )
-          : null,
-      padding: isSelected ? const EdgeInsets.all(12) : EdgeInsets.zero,
-      margin: isSelected
-          ? const EdgeInsets.only(top: 0)
-          : const EdgeInsets.only(top: 12),
-      child: Icon(
-        defaultIcon.icon,
-        color: isSelected ? Colors.white : Colors.grey.shade400,
-        size: 24,
+    return Container(
+      height: 48,
+      width: 48,
+      margin: const EdgeInsets.only(top: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: isSelected
+            ? BoxDecoration(
+                color: Colors.grey.shade800,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              )
+            : null,
+        padding: const EdgeInsets.all(12),
+        child: Icon(
+          defaultIcon.icon,
+          color: isSelected ? Colors.white : Colors.grey.shade400,
+          size: 24,
+        ),
       ),
     );
   }
@@ -104,7 +105,7 @@ var destinations = <Destination>[
     label: 'Home',
   ),
   Destination(
-    icon: Icon(LucideIcons.bot),
+    icon: Icon(LucideIcons.messageCircle),
     label: 'Chatbot',
   ),
   Destination(
@@ -112,7 +113,7 @@ var destinations = <Destination>[
     label: 'Add',
   ),
   const Destination(
-    icon: Icon(LucideIcons.database),
+    icon: Icon(LucideIcons.fileText),
     label: 'Documents',
   ),
   const Destination(

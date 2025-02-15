@@ -16,91 +16,105 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 20),
-                Center(
-                  child: Image.asset(
-                    'assets/icons/main_logo.png',
-                    height: 165,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Welcome Back!",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Sign in to continue to your health journey",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                const LoginForm(),
-                const SizedBox(height: 32),
-                Center(
-                  child: Text(
-                    "Or continue with",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SocialCard(
-                      icon: 'assets/icons/google.png',
-                      press: () {},
-                    ),
-                    SocialCard(
-                      icon: 'assets/icons/yahoo.png',
-                      press: () {},
-                    ),
-                    SocialCard(
-                      icon: 'assets/icons/outlook.png',
-                      press: () {},
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don't have an account? ",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        context.goNamed(RouteConstants.signUp);
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.primary,
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 40),
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              "Sign In",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black.withOpacity(0.8),
+                                  ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "Sign in to continue to your health journey",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 50),
+                      const LoginForm(),
+                      const SizedBox(height: 40),
+                      Center(
+                        child: Text(
+                          "Or continue with",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SocialCard(
+                            icon: 'assets/icons/google.png',
+                            press: () {},
+                          ),
+                          SocialCard(
+                            icon: 'assets/icons/yahoo.png',
+                            press: () {},
+                          ),
+                          SocialCard(
+                            icon: 'assets/icons/outlook.png',
+                            press: () {},
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account? ",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              context.goNamed(RouteConstants.signUp);
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black.withOpacity(
+                                  0.8,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 24),
               ],
             ),
           ),

@@ -14,8 +14,11 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
-  bool _rememberMe = false;
   bool _isLoading = false;
+
+  final color = Colors.grey.shade600;
+  final color1 = Colors.black;
+  final color2 = Colors.black.withOpacity(0.8);
 
   @override
   void dispose() {
@@ -81,8 +84,24 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Text(
+            ' Email',
+            style: TextStyle(
+              fontSize: 14,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 8),
           _buildEmailField(),
           const SizedBox(height: 20),
+          Text(
+            ' Password',
+            style: TextStyle(
+              fontSize: 14,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 8),
           _buildPasswordField(),
           const SizedBox(height: 16),
           _buildRememberMeForgotPassword(),
@@ -100,20 +119,15 @@ class _LoginFormState extends State<LoginForm> {
       textInputAction: TextInputAction.next,
       validator: _validateEmail,
       decoration: InputDecoration(
-        labelText: 'Email',
-        labelStyle: TextStyle(
-          fontSize: 14,
-        ),
         hintText: 'Enter your email',
-        prefixIcon: Icon(Icons.email_outlined,
-            color: Theme.of(context).colorScheme.primary),
+        // prefixIcon: Icon(Icons.email_outlined, color: color2),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
       style: TextStyle(
-        fontSize: 12,
-        color: Theme.of(context).colorScheme.primary,
+        fontSize: 14,
+        color: color1,
       ),
     );
   }
@@ -124,17 +138,12 @@ class _LoginFormState extends State<LoginForm> {
       obscureText: !_isPasswordVisible,
       validator: _validatePassword,
       decoration: InputDecoration(
-        labelText: 'Password',
-        labelStyle: TextStyle(
-          fontSize: 14,
-        ),
         hintText: 'Enter your password',
-        prefixIcon: Icon(Icons.lock_outline,
-            color: Theme.of(context).colorScheme.primary),
+        // prefixIcon: Icon(Icons.lock_outline, color: color2),
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-            color: Theme.of(context).colorScheme.primary,
+            color: color2,
           ),
           onPressed: () {
             setState(() => _isPasswordVisible = !_isPasswordVisible);
@@ -145,8 +154,8 @@ class _LoginFormState extends State<LoginForm> {
         ),
       ),
       style: TextStyle(
-        fontSize: 12,
-        color: Theme.of(context).colorScheme.primary,
+        fontSize: 14,
+        color: color1,
       ),
     );
   }
@@ -154,28 +163,13 @@ class _LoginFormState extends State<LoginForm> {
   Widget _buildRememberMeForgotPassword() {
     return Row(
       children: [
-        Checkbox(
-          value: _rememberMe,
-          activeColor: Theme.of(context).colorScheme.secondary,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          onChanged: (value) {
-            setState(() => _rememberMe = value ?? false);
-          },
-        ),
-        Text(
-          'Remember me',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.secondary,
-            fontSize: 14,
-          ),
-        ),
         const Spacer(),
         TextButton(
           onPressed: () => context.pushNamed(RouteConstants.forgotPass),
           child: Text(
             'Forgot Password?',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+              color: color1,
             ),
           ),
         ),
@@ -185,11 +179,13 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget _buildLoginButton() {
     return ElevatedButton(
+      // prefixIcon: Icon(Icons.lock_outline, color: color2),
       onPressed: _isLoading ? null : _handleLogin,
       style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black54,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(22),
         ),
       ),
       child: _isLoading
@@ -199,7 +195,7 @@ class _LoginFormState extends State<LoginForm> {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : const Text(
-              'Login',
+              'Sign In',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
     );

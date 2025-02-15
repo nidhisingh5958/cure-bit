@@ -1,4 +1,3 @@
-import 'package:CuraDocs/screens/medicine.dart/widgets/custom_rect_tween.dart';
 import 'package:CuraDocs/components/status_bar_color.dart';
 import 'package:CuraDocs/screens/medicine.dart/widgets/hero_dialog_route.dart';
 import 'package:CuraDocs/screens/medicine.dart/reminder_details.dart';

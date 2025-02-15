@@ -112,7 +112,7 @@ final router = GoRouter(
           path: 'book-appointment',
           parentNavigatorKey: _rootNavigatorKey,
           name: RouteConstants.bookAppointment,
-          builder: (context, state) => BookAnAppointment(),
+          builder: (context, state) => DoctorProfile(),
         ),
       ],
     ),
