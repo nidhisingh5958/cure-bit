@@ -11,4 +11,4 @@ The platform offers real-time synchronization of medical records, enabling users
 
 
 
-<!-- <a href="https://www.flaticon.com/free-icons/login" title="icons"></a> -->
+<!-- <a href="https://www.flaticon.com/free-icons/login" title="icons"></a> --># cura_initial
