@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+final Color color1 = Colors.black;
+final Color color2 = Colors.black.withOpacity(0.8);
+final Color color3 = Colors.grey.shade600;
+
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
 
@@ -10,8 +14,8 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final List<TextEditingController> _controllers =
-      List.generate(4, (index) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
+      List.generate(6, (index) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   bool _isResendActive = false;
   int _resendTimer = 30;
 
@@ -19,6 +23,21 @@ class _OtpScreenState extends State<OtpScreen> {
   void initState() {
     super.initState();
     _startResendTimer();
+
+    // Set up focus listeners to prevent skipping fields
+    for (int i = 0; i < _focusNodes.length; i++) {
+      final node = _focusNodes[i];
+      node.addListener(() {
+        if (node.hasFocus) {
+          // If a field gets focus but the previous field is empty (except for first field)
+          if (i > 0 && _controllers[i - 1].text.isEmpty) {
+            // Move focus back to the previous empty field
+            _focusNodes[i].unfocus();
+            _focusNodes[i - 1].requestFocus();
+          }
+        }
+      });
+    }
   }
 
   void _startResendTimer() {
@@ -54,51 +73,36 @@ class _OtpScreenState extends State<OtpScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios,
-              color: Theme.of(context).colorScheme.primary),
+          icon: Icon(Icons.arrow_back_ios, color: color1),
           onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          "OTP Verification",
-          style: TextStyle(
-            fontSize: 20,
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
+              Center(
                 child: Column(
                   children: [
                     Text(
-                      "Code sent to",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.7),
-                      ),
+                      "OTP Verification",
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 40),
                     Text(
-                      "+91 898** *****",
+                      "We have sent an OTP to your registered mobile number and email, please enter any one of them.",
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 14,
+                        color: color3,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -107,9 +111,9 @@ class _OtpScreenState extends State<OtpScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(
-                  4,
+                  6,
                   (index) => SizedBox(
-                    width: 60,
+                    width: 50,
                     height: 60,
                     child: TextFormField(
                       controller: _controllers[index],
@@ -121,38 +125,46 @@ class _OtpScreenState extends State<OtpScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: color3,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.3),
-                          ),
+                          borderSide: BorderSide(color: color1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: color2,
                             width: 2,
                           ),
                         ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16),
                       ),
                       onChanged: (value) {
-                        if (value.length == 1 && index < 3) {
-                          _focusNodes[index + 1].requestFocus();
-                        }
-                        if (value.isEmpty && index > 0) {
+                        if (value.isNotEmpty) {
+                          // When a digit is entered
+                          if (index < 5) {
+                            // Move to next field if this isn't the last one
+                            _focusNodes[index + 1].requestFocus();
+                          } else {
+                            // This is the last field, unfocus to hide keyboard
+                            _focusNodes[index].unfocus();
+                          }
+                        } else if (value.isEmpty && index > 0) {
+                          // When a digit is deleted, move to previous field
                           _focusNodes[index - 1].requestFocus();
                         }
                       },
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: color1,
+                          fontWeight: FontWeight.bold),
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
+                      showCursor: true, // Show cursor for better visibility
+                      cursorColor: color3,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(1),
                         FilteringTextInputFormatter.digitsOnly,
@@ -164,26 +176,36 @@ class _OtpScreenState extends State<OtpScreen> {
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
+                  // Get the complete OTP
+                  final otp = _controllers.map((c) => c.text).join();
                   // Verify OTP logic
+                  if (otp.length == 6) {
+                    // Proceed with verification
+                    print('Verifying OTP: $otp');
+                  } else {
+                    // Show error
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please enter the complete 4-digit OTP'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
                 child: const Text(
                   'Verify',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 26),
               if (!_isResendActive) ...[
-                Text(
-                  'Resend code in ${_resendTimer}s',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 14,
+                Center(
+                  child: Text(
+                    'Resend code in ${_resendTimer}s',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ] else ...[
@@ -199,8 +221,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   child: Text(
                     'Resend Code',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 16,
+                      color: color2,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

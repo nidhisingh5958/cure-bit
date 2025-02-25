@@ -2,8 +2,12 @@ import 'package:CuraDocs/components/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+final Color color1 = Colors.black;
+final Color color2 = Colors.black.withOpacity(0.8);
+final Color color3 = Colors.grey.shade600;
+
 class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({super.key});
+  ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,8 +16,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios,
-              color: Theme.of(context).colorScheme.primary),
+          icon: Icon(Icons.arrow_back_ios, color: color2),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -22,44 +25,27 @@ class ForgotPasswordScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 20),
-                // Center(
-                //   child: Container(
-                //     width: 200,
-                //     height: 200,
-                // decoration: BoxDecoration(
-                //   color: Theme.of(context)
-                //       .colorScheme
-                //       .primary
-                //       .withOpacity(0.1),
-                //   shape: BoxShape.circle,
-                // ),
-                // child: Image.asset(
-                //   'assets/images/forgot_pass.png',
-                //   fit: BoxFit.contain,
-                // ),
-                // ),
-                // ),
                 const SizedBox(height: 40),
-                Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                Center(
+                  child: Text(
+                    "Forgot Password",
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  "Don't worry! It happens. Please enter the email address associated with your account.",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
+                const SizedBox(height: 40),
+                Center(
+                  child: Text(
+                    "Don't worry! It happens. Please enter the email address associated with your account where we can send you the confirmation link.",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: color3,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -93,7 +79,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return 'Email ';
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
@@ -131,52 +117,23 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
     return Form(
       key: _formKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
             decoration: InputDecoration(
-              labelText: 'Email',
-              labelStyle: TextStyle(
-                fontSize: 14,
-              ),
-              hintText: 'Enter your email address',
-              prefixIcon: Icon(
-                Icons.email_outlined,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 2,
-                ),
-              ),
+              hintText: 'Email',
             ),
             style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).colorScheme.primary,
+              fontSize: 14,
+              color: color1,
             ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _isLoading ? null : _handleSubmit,
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 56),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
             child: _isLoading
                 ? const SizedBox(
                     height: 24,
@@ -188,7 +145,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -196,8 +153,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
                 "Remember your password? ",
                 style: TextStyle(
                   fontSize: 14,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: color3,
                 ),
               ),
               GestureDetector(
@@ -207,7 +163,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: color2,
                   ),
                 ),
               ),

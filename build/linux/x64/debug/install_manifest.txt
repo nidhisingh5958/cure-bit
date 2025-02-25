@@ -18,9 +18,9 @@
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/fonts/Open_Sans/OpenSans-Bold.ttf
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/google.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/error.png
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/apple.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/padlock.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/mail.png
-/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/yahoo.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/outlook.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/chatbot.png
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/icons/main_logo.png

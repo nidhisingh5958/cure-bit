@@ -16,7 +16,6 @@ class _LoginFormState extends State<LoginForm> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
-  final color = Colors.grey.shade600;
   final color1 = Colors.black;
   final color2 = Colors.black.withOpacity(0.8);
 
@@ -58,11 +57,11 @@ class _LoginFormState extends State<LoginForm> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return 'Email, CIN, or phone number is required';
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
+      return 'Please enter a valid phone number, CIN, or email';
     }
     return null;
   }
@@ -84,27 +83,12 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            ' Email',
-            style: TextStyle(
-              fontSize: 14,
-              color: color,
-            ),
-          ),
           const SizedBox(height: 8),
           _buildEmailField(),
           const SizedBox(height: 20),
-          Text(
-            ' Password',
-            style: TextStyle(
-              fontSize: 14,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 8),
           _buildPasswordField(),
-          const SizedBox(height: 16),
-          _buildRememberMeForgotPassword(),
+          const SizedBox(height: 14),
+          _buildForgotPassword(),
           const SizedBox(height: 24),
           _buildLoginButton(),
         ],
@@ -119,11 +103,7 @@ class _LoginFormState extends State<LoginForm> {
       textInputAction: TextInputAction.next,
       validator: _validateEmail,
       decoration: InputDecoration(
-        hintText: 'Enter your email',
-        // prefixIcon: Icon(Icons.email_outlined, color: color2),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        hintText: 'Phone Number, CIN, or email',
       ),
       style: TextStyle(
         fontSize: 14,
@@ -138,8 +118,7 @@ class _LoginFormState extends State<LoginForm> {
       obscureText: !_isPasswordVisible,
       validator: _validatePassword,
       decoration: InputDecoration(
-        hintText: 'Enter your password',
-        // prefixIcon: Icon(Icons.lock_outline, color: color2),
+        hintText: 'Password',
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -149,9 +128,6 @@ class _LoginFormState extends State<LoginForm> {
             setState(() => _isPasswordVisible = !_isPasswordVisible);
           },
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
       ),
       style: TextStyle(
         fontSize: 14,
@@ -160,7 +136,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget _buildRememberMeForgotPassword() {
+  Widget _buildForgotPassword() {
     return Row(
       children: [
         const Spacer(),
@@ -170,6 +146,7 @@ class _LoginFormState extends State<LoginForm> {
             'Forgot Password?',
             style: TextStyle(
               color: color1,
+              fontSize: 14,
             ),
           ),
         ),
@@ -179,25 +156,19 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget _buildLoginButton() {
     return ElevatedButton(
-      // prefixIcon: Icon(Icons.lock_outline, color: color2),
       onPressed: _isLoading ? null : _handleLogin,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black54,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-        ),
+      child:
+          // _isLoading
+          //     ? const SizedBox(
+          //         height: 20,
+          //         width: 20,
+          //         child: CircularProgressIndicator(strokeWidth: 2),
+          //       )
+          //     :
+          const Text(
+        'Sign In',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
-      child: _isLoading
-          ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Text(
-              'Sign In',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
     );
   }
 }

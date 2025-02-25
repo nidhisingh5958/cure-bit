@@ -50,7 +50,6 @@ class _SignupProfilePageState extends State<SignUpProfile> {
             colorScheme: ColorScheme.light(
               primary: Colors.blue, // Header background color
               onPrimary: Colors.white,
-              surface: AppColors.background,
             ),
             textTheme: TextTheme(
               bodyLarge: TextStyle(fontSize: 16), // Reduces date text size
@@ -140,7 +139,6 @@ class _SignupProfilePageState extends State<SignUpProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

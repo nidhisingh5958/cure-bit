@@ -123,7 +123,7 @@
     },
     {
       "name": "go_router",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.7.2",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.8.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -356,7 +356,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-02-06T12:46:14.285268Z",
+  "generated": "2025-02-18T10:13:10.416522Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",

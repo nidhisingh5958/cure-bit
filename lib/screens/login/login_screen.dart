@@ -4,7 +4,11 @@ import 'package:CuraDocs/screens/login/login_form.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  LoginScreen({super.key});
+
+  final Color color1 = Colors.black;
+  final Color color2 = Colors.black.withOpacity(0.8);
+  final Color color3 = Colors.grey.shade600;
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +35,15 @@ class LoginScreen extends StatelessWidget {
                                   .headlineMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black.withOpacity(0.8),
+                                    color: color2,
                                   ),
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              "Sign in to continue to your health journey",
+                              "Sign In to continue to your health journey",
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey.shade600,
+                                color: color3,
                               ),
                             ),
                           ],
@@ -47,14 +51,47 @@ class LoginScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 50),
                       const LoginForm(),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 30),
                       Center(
+                          child: TextButton(
+                        onPressed: () {
+                          context.goNamed(RouteConstants.otp);
+                        },
                         child: Text(
-                          "Or continue with",
+                          'Sign In with OTP',
                           style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: color2,
                           ),
+                        ),
+                      )),
+                      const SizedBox(height: 30),
+                      Center(
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Container(
+                                height: 1.0,
+                                width: 90.0,
+                                color: color1,
+                              ),
+                            ),
+                            Text(
+                              "Or continue with",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: color3,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Container(
+                                height: 1.0,
+                                width: 90.0,
+                                color: color1,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -66,7 +103,7 @@ class LoginScreen extends StatelessWidget {
                             press: () {},
                           ),
                           SocialCard(
-                            icon: 'assets/icons/yahoo.png',
+                            icon: 'assets/icons/apple.png',
                             press: () {},
                           ),
                           SocialCard(
@@ -83,7 +120,7 @@ class LoginScreen extends StatelessWidget {
                             "Don't have an account? ",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey.shade600,
+                              color: color3,
                             ),
                           ),
                           SizedBox(
@@ -101,12 +138,9 @@ class LoginScreen extends StatelessWidget {
                             child: Text(
                               "Sign Up",
                               style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black.withOpacity(
-                                  0.8,
-                                ),
-                              ),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: color2),
                             ),
                           ),
                         ],

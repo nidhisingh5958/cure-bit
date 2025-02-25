@@ -5,14 +5,12 @@ ThemeData theme() {
   return ThemeData(
     appBarTheme: appBarTheme(),
     fontFamily: 'Inter',
-    primarySwatch: Colors.blue,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF1A73E8),
-      primary: const Color(0xFF1A73E8),
-      secondary: const Color(0xFF66B2FF),
-      tertiary: const Color(0xFF004AAD),
+    colorScheme: const ColorScheme.light(
+      primary: Color.fromARGB(255, 150, 184, 228),
+      secondary: Color.fromARGB(255, 157, 169, 185),
+      error: Color(0xFFE3342F),
       surface: Colors.white,
-      background: const Color(0xFFF8FAFC),
+      onSurface: Color(0xFFFAEECD),
     ),
     scaffoldBackgroundColor: const Color(0xFFF8FAFC),
     cardTheme: cardTheme(),
@@ -46,9 +44,9 @@ InputDecorationTheme inputDecorationTheme() {
     contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
     enabledBorder: outlineInputBorder,
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       borderSide: const BorderSide(
-        color: Color(0xFF1A73E8),
+        color: Colors.black45,
         width: 1.5,
       ),
     ),
@@ -83,11 +81,11 @@ ElevatedButtonThemeData elevatedButtonsTheme() {
   return ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       elevation: 0,
-      backgroundColor: const Color(0xFF1A73E8),
+      backgroundColor: Colors.black54,
       foregroundColor: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(22),
       ),
       textStyle: const TextStyle(
         fontSize: 16,
@@ -103,13 +101,17 @@ AppBarTheme appBarTheme() {
     elevation: 0,
     centerTitle: true,
     backgroundColor: Colors.white,
-    iconTheme: IconThemeData(color: Color(0xFF1A73E8)),
+    iconTheme: IconThemeData(color: Color.fromARGB(255, 26, 115, 232)),
     titleTextStyle: TextStyle(
       color: Color(0xFF1A1A1A),
       fontSize: 18,
       fontWeight: FontWeight.w600,
       letterSpacing: -0.3,
     ),
-    systemOverlayStyle: SystemUiOverlayStyle.dark,
+    systemOverlayStyle: const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+    ),
   );
 }

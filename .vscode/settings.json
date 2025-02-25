@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/nid/desktop/cure_bit/cure-bit/linux/flutter"
+    "cmake.sourceDirectory": "/home/nid/desktop/cure_bit/cure-bit/linux/flutter",
+    "java.compile.nullAnalysis.mode": "automatic"
 }

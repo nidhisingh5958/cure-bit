@@ -36,7 +36,7 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/home',
+  initialLocation: '/login',
   debugLogDiagnostics: true,
   routes: [
     // Auth and onboarding routes (outside shell)
