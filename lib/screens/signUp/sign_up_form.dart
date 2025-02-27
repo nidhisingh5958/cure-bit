@@ -3,6 +3,10 @@ import 'package:CuraDocs/screens/signUp/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+final Color color1 = Colors.black;
+final Color color2 = Colors.black.withOpacity(0.8);
+final Color color3 = Colors.grey.shade600;
+
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
 
@@ -22,6 +26,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String name = '';
   String email = '';
+  int phone = 0;
   String password = '';
 
   void _submitForm() async {
@@ -70,11 +75,10 @@ class _SignUpFormState extends State<SignUpForm> {
     return Form(
       key: _formKey,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildInputField(
-            label: 'Full Name',
-            icon: Icons.person_outline,
+            hint: 'Name',
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your name';
@@ -86,10 +90,9 @@ class _SignUpFormState extends State<SignUpForm> {
             },
             onSaved: (value) => name = value!,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           _buildInputField(
-            label: 'Email',
-            icon: Icons.email_outlined,
+            hint: 'Email',
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -102,19 +105,34 @@ class _SignUpFormState extends State<SignUpForm> {
             },
             onSaved: (value) => email = value!,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
+          _buildInputField(
+            hint: 'Phone Number',
+            keyboardType: TextInputType.phone,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your phone number';
+              }
+              if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                return 'Please enter a valid phone number';
+              }
+              return null;
+            },
+            onSaved: (value) => phone = int.parse(value!),
+          ),
+          const SizedBox(height: 14),
           _buildPasswordField(
             controller: _passwordController,
-            label: 'Password',
+            hint: 'Password',
             isVisible: _isPasswordVisible,
             onVisibilityToggle: () {
               setState(() => _isPasswordVisible = !_isPasswordVisible);
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           _buildPasswordField(
             controller: _confirmPasswordController,
-            label: 'Confirm Password',
+            hint: 'Confirm Password',
             isVisible: _isConfirmPasswordVisible,
             onVisibilityToggle: () {
               setState(
@@ -127,9 +145,9 @@ class _SignUpFormState extends State<SignUpForm> {
               return null;
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildTermsCheckbox(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildSignUpButton(),
         ],
       ),
@@ -137,8 +155,7 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   Widget _buildInputField({
-    required String label,
-    required IconData icon,
+    required String hint,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     void Function(String?)? onSaved,
@@ -147,32 +164,11 @@ class _SignUpFormState extends State<SignUpForm> {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(
-          fontSize: 14,
-        ),
-        prefixIcon: Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.5)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary, width: 2),
-        ),
+        hintText: hint,
       ),
       style: TextStyle(
-        fontSize: 12,
-        color: Theme.of(context).colorScheme.primary,
+        fontSize: 14,
+        color: color1,
       ),
       keyboardType: keyboardType,
       validator: validator,
@@ -182,7 +178,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Widget _buildPasswordField({
     required TextEditingController controller,
-    required String label,
+    required String hint,
     required bool isVisible,
     required VoidCallback onVisibilityToggle,
     String? Function(String?)? validator,
@@ -191,34 +187,20 @@ class _SignUpFormState extends State<SignUpForm> {
       controller: controller,
       obscureText: !isVisible,
       decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(
-          fontSize: 14,
-        ),
-        prefixIcon: Icon(Icons.lock_outline,
-            color: Theme.of(context).colorScheme.primary),
+        hintText: hint,
         suffixIcon: IconButton(
           icon: Icon(
-            isVisible ? Icons.visibility_off : Icons.visibility,
-            color: Theme.of(context).colorScheme.primary,
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: color2,
           ),
-          onPressed: onVisibilityToggle,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.5)),
+          onPressed: () {
+            setState(() => _isPasswordVisible = !_isPasswordVisible);
+          },
         ),
       ),
       style: TextStyle(
-        fontSize: 12,
-        color: Theme.of(context).colorScheme.primary,
+        fontSize: 14,
+        color: color1,
       ),
       validator: validator ??
           (value) {
@@ -245,20 +227,21 @@ class _SignUpFormState extends State<SignUpForm> {
         Checkbox(
           value: _isChecked,
           onChanged: (value) => setState(() => _isChecked = value!),
-          activeColor: Theme.of(context).colorScheme.secondary,
+          activeColor: color3,
+          focusColor: color3,
         ),
         Expanded(
           child: GestureDetector(
             onTap: () => setState(() => _isChecked = !_isChecked),
             child: RichText(
               text: TextSpan(
-                style: TextStyle(color: AppColors.textDark),
+                style: TextStyle(color: color2, fontSize: 14),
                 children: [
-                  const TextSpan(text: 'I agree to the '),
+                  const TextSpan(text: 'Accept '),
                   TextSpan(
                     text: 'Terms and Conditions',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: color1,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -281,23 +264,12 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Widget _buildSignUpButton() {
     return SizedBox(
-      width: double.infinity,
-      height: 56,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _submitForm,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 2,
-        ),
         child: _isLoading
             ? const CircularProgressIndicator(color: Colors.white)
             : const Text(
-                'Create Account',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                'Sign Up',
               ),
       ),
     );

@@ -6,7 +6,7 @@ ThemeData theme() {
     appBarTheme: appBarTheme(),
     fontFamily: 'Inter',
     colorScheme: const ColorScheme.light(
-      primary: Color.fromARGB(255, 150, 184, 228),
+      primary: Colors.black,
       secondary: Color.fromARGB(255, 157, 169, 185),
       error: Color(0xFFE3342F),
       surface: Colors.white,
@@ -34,7 +34,7 @@ CardTheme cardTheme() {
 
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(26),
     borderSide: BorderSide(
       color: Colors.grey.shade200,
       width: 1.5,
@@ -44,7 +44,7 @@ InputDecorationTheme inputDecorationTheme() {
     contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
     enabledBorder: outlineInputBorder,
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(26),
       borderSide: const BorderSide(
         color: Colors.black45,
         width: 1.5,

@@ -4,6 +4,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+final Color color1 = Colors.black;
+final Color color2 = Colors.black.withOpacity(0.8);
+final Color color3 = Colors.grey.shade600;
+final Color color4 = Colors.white;
+final Color color5 = Colors.transparent;
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -39,8 +45,6 @@ class HomeScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildGreeting(),
-          const SizedBox(height: 18),
-          _TopDoctorSection(),
           const SizedBox(height: 32),
           _buildFeaturesSection(context),
           const SizedBox(height: 32),
@@ -58,12 +62,6 @@ class HomeScreen extends StatelessWidget {
           Icons.search_outlined,
           RouteConstants.doctorSearch,
           hasNotification: false,
-        ),
-        _buildIconButton(
-          context,
-          Icons.chat_bubble_outline,
-          RouteConstants.chat,
-          hasNotification: true,
         ),
         _buildIconButton(
           context,
@@ -86,11 +84,10 @@ class HomeScreen extends StatelessWidget {
       child: Stack(
         children: [
           IconButton(
-            icon: Icon(icon, color: Theme.of(context).colorScheme.primary),
+            icon: Icon(icon, color: color1),
             onPressed: () => context.goNamed(route),
             style: IconButton.styleFrom(
-              backgroundColor:
-                  Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              backgroundColor: color5,
               padding: const EdgeInsets.all(12),
             ),
           ),
@@ -105,7 +102,7 @@ class HomeScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.error,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Theme.of(context).scaffoldBackgroundColor,
+                    color: color5,
                     width: 2,
                   ),
                 ),
@@ -120,35 +117,38 @@ class HomeScreen extends StatelessWidget {
     String name = 'Random';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.white,
-            backgroundImage: AssetImage('assets/images/profile_pic.jpeg'),
-          ),
-          SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              const Text(
-                'Hello',
+              Text(
+                'Hello, ',
                 style: TextStyle(
+                  color: color1,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   height: 1.2,
                 ),
               ),
-              const SizedBox(height: 8),
               Text(
                 name,
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                  height: 1.5,
+                  fontSize: 30,
+                  color: color1,
+                  height: 1.2,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Welcome to your health dashboard',
+            style: TextStyle(
+              fontSize: 16,
+              color: color2,
+              height: 1.5,
+            ),
           ),
         ],
       ),
@@ -169,7 +169,7 @@ class HomeScreen extends StatelessWidget {
       },
       {
         'icon': Icons.science_outlined,
-        'label': 'Test Records',
+        'label': 'Test Record',
         'route': 'test-records',
       },
       {
@@ -182,7 +182,7 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(context, 'Quick Access', onSeeAll: () {}),
+        _buildSectionHeader(context, 'Quick Access'),
         const SizedBox(height: 16),
         Container(
           width: double.infinity,
@@ -230,12 +230,12 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.blue, size: 24),
+            Icon(icon, color: color2, size: 24),
             const SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(
-                color: Colors.blue,
+                color: color2,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -252,7 +252,7 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(context, 'Upcoming Appointments', onSeeAll: () {}),
+        _buildSectionHeader(context, 'Upcoming ', onSeeAll: () {}),
         const SizedBox(height: 16),
         ListView.builder(
           shrinkWrap: true,
@@ -283,7 +283,8 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
+            color: color1,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -326,7 +327,7 @@ class HomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.grey.withOpacity(0.1),
+                color: color1,
                 width: 1,
               ),
               boxShadow: [
@@ -370,7 +371,8 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: const TextStyle(
+                            style: TextStyle(
+                              color: color1,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -399,7 +401,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         specialty,
                         style: TextStyle(
-                          color: Colors.grey.shade600,
+                          color: color3,
                           fontSize: 14,
                         ),
                       ),
@@ -431,7 +433,7 @@ class HomeScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 12),
                   child: Icon(
                     Icons.arrow_forward_ios,
-                    color: Colors.grey.shade400,
+                    color: color3,
                     size: 16,
                   ),
                 ),
@@ -473,166 +475,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _TopDoctorSection extends StatefulWidget {
-  const _TopDoctorSection({Key? key}) : super(key: key);
-
-  @override
-  __TopDoctorSectionState createState() => __TopDoctorSectionState();
-}
-
-class __TopDoctorSectionState extends State<_TopDoctorSection> {
-  final List<Map<String, dynamic>> doctors = [
-    {
-      'id': 1,
-      'icon': Icons.favorite_outline,
-      'doctorName': 'Dr. Jean Grey',
-      'specialisation': 'Cardiologist',
-      'rating': '4.8',
-      'route': RouteConstants.doctorProfile,
-    },
-    {
-      'id': 2,
-      'icon': Icons.medical_services_outlined,
-      'doctorName': 'Dr. Hema',
-      'specialisation': 'General Practitioner',
-      'rating': '4.5',
-      'route': RouteConstants.doctorProfile,
-    },
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withOpacity(0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Top Doctors',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          CarouselSlider.builder(
-            itemCount: doctors.length,
-            itemBuilder: (context, index, realIndex) {
-              final doctor = doctors[index];
-              return _buildTopDoctorCard(context, doctor);
-            },
-            options: CarouselOptions(
-              height: 160,
-              viewportFraction: 1.0,
-              enableInfiniteScroll: true,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 5),
-              autoPlayAnimationDuration: const Duration(milliseconds: 800),
-              scrollDirection: Axis.horizontal,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTopDoctorCard(
-      BuildContext context, Map<String, dynamic> doctor) {
-    return InkWell(
-      onTap: () => context.goNamed(doctor['route']),
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                doctor['icon'],
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    doctor['doctorName'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    doctor['specialisation'],
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.white, size: 14),
-                  const SizedBox(width: 4),
-                  Text(
-                    doctor['rating'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

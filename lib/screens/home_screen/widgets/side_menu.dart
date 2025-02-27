@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+
+final Color color1 = Colors.black;
+final Color color2 = Colors.black.withOpacity(0.8);
+final Color color3 = Colors.grey.shade600;
+final Color color4 = Colors.white;
+final Color color5 = Colors.transparent;
+final Color color6 = Colors.grey.withOpacity(0.1);
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -27,18 +33,19 @@ class SideMenu extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 50, 16, 16),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 20,
-            backgroundColor: Colors.grey,
+            backgroundColor: color3,
             backgroundImage: AssetImage('assets/images/profile_pic.jpeg'),
           ),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 "Retarded",
                 style: TextStyle(
+                  color: color1,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -47,7 +54,7 @@ class SideMenu extends StatelessWidget {
                 "retarded@gmail.com",
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey,
+                  color: color3,
                 ),
               ),
             ],
@@ -61,13 +68,13 @@ class SideMenu extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             "BROWSE",
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey,
+              color: color3,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -135,23 +142,23 @@ class SideMenu extends StatelessWidget {
     bool isSelected = false,
   }) {
     return Material(
-      color: Colors.transparent,
+      color: color5,
       child: ListTile(
         leading: Icon(
           icon,
-          color: isSelected ? Colors.blue : Colors.black87,
+          color: isSelected ? color1 : color3,
           size: 22,
         ),
         title: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.blue : Colors.black87,
+            color: isSelected ? color1 : color1,
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
           ),
         ),
         selected: isSelected,
-        selectedTileColor: Colors.blue.withOpacity(0.1),
+        selectedTileColor: color3,
         onTap: onTap,
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),

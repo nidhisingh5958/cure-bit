@@ -4,6 +4,7 @@ class RouteConstants {
   static String onboarding = "onboarding";
 
   // auth routes
+  static String role = "role";
   static String forgotPass = "forgotPassword";
   static String login = "login";
   static String signUp = "signUp";

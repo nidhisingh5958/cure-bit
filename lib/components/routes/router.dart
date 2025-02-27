@@ -1,4 +1,5 @@
 import 'package:CuraDocs/components/routes/navigation_bar.dart';
+import 'package:CuraDocs/role.dart';
 import 'package:CuraDocs/screens/appointment/appointment_screen.dart';
 import 'package:CuraDocs/screens/appointment/book_appointment.dart';
 import 'package:CuraDocs/screens/chat/chat_home.dart';
@@ -36,7 +37,7 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/login',
+  initialLocation: '/home',
   debugLogDiagnostics: true,
   routes: [
     // Auth and onboarding routes (outside shell)
@@ -51,6 +52,12 @@ final router = GoRouter(
       name: RouteConstants.onboarding,
       path: '/onboarding',
       builder: (context, state) => OnboardingScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RouteConstants.role,
+      path: '/role',
+      builder: (context, state) => RoleScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -84,20 +91,18 @@ final router = GoRouter(
       ],
     ),
 
+    // Chatbot routes
     GoRoute(
-      path: '/chat',
-      name: RouteConstants.chat,
-      builder: (context, state) => const ChatListScreen(),
+      path: '/chat-bot',
+      name: RouteConstants.chatBot,
+      builder: (context, state) => const ChatBotHome(),
       routes: [
+        // Chat with AI
         GoRoute(
-          // Individual Chat Screen
-          path: 'chat-screen',
+          path: 'screen',
           parentNavigatorKey: _rootNavigatorKey,
-          name: RouteConstants.chatScreen,
-          builder: (context, state) {
-            final chat = state.extra as ChatData;
-            return ChatScreen(chat: chat);
-          },
+          name: RouteConstants.chatBotScreen,
+          builder: (context, state) => const ChatBotScreen(),
         ),
       ],
     ),
@@ -154,42 +159,21 @@ final router = GoRouter(
           navigatorKey: _chatbotNavigatorKey,
           routes: [
             GoRoute(
-              path: '/chat-bot',
-              name: RouteConstants.chatBot,
-              builder: (context, state) => const ChatBotHome(),
+              path: '/chat',
+              name: RouteConstants.chat,
+              builder: (context, state) => const ChatListScreen(),
               routes: [
-                // Chat with AI
                 GoRoute(
-                  path: 'screen',
+                  // Individual Chat Screen
+                  path: 'chat-screen',
                   parentNavigatorKey: _rootNavigatorKey,
-                  name: RouteConstants.chatBotScreen,
-                  builder: (context, state) => const ChatBotScreen(),
+                  name: RouteConstants.chatScreen,
+                  builder: (context, state) {
+                    final chat = state.extra as ChatData;
+                    return ChatScreen(chat: chat);
+                  },
                 ),
               ],
-            ),
-          ],
-        ),
-
-        // Add document
-        StatefulShellBranch(
-          navigatorKey: _chatNavigatorKey,
-          routes: [
-            GoRoute(
-              path: '/add',
-              name: RouteConstants.addDocument,
-              builder: (context, state) => const AddDocument(),
-              // routes: [
-              // GoRoute(
-              //   // Individual Chat Screen
-              //   path: 'document-screen',
-              //   parentNavigatorKey: _rootNavigatorKey,
-              //   name: RouteConstants.documentScreen,
-              //   builder: (context, state) {
-              //     final chat = state.extra as ChatData;
-              //     return DocumentScreen(chat: chat);
-              //   },
-              // ),
-              // ],
             ),
           ],
         ),

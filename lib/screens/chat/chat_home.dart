@@ -5,38 +5,84 @@ import 'package:CuraDocs/screens/chat/chat_screen.dart';
 import 'package:CuraDocs/screens/chat/entities/chat_data.dart';
 import 'package:go_router/go_router.dart';
 
-class ChatListScreen extends StatelessWidget {
+final Color color1 = Colors.black;
+final Color color2 = Colors.black.withOpacity(0.8);
+final Color color3 = Colors.grey.shade600;
+
+class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
+
+  @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen>
+    with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Messages'),
+        title: const Text('Chat'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => context.goNamed(RouteConstants.home),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+          icon: const Icon(Icons.menu),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, size: 24),
+            icon: Icon(
+              Icons.search,
+              size: 24,
+              color: color2,
+            ),
             onPressed: () {},
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert_rounded),
           ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Messages'),
+            Tab(text: 'Requests'),
+          ],
+          // labelColor: Theme.of(context).colorScheme.primary,
+          unselectedLabelColor: Colors.grey,
+          indicatorColor: Theme.of(context).colorScheme.primary,
+        ),
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: chatData.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final chat = chatData[index];
-          return ChatListTile(chat: chat);
-        },
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildChatList(chatData),
+          _buildChatList(chatData), // Replace with request data when available
+        ],
       ),
+    );
+  }
+
+  Widget _buildChatList(List<ChatData> data) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: data.length,
+      separatorBuilder: (context, index) => const Divider(height: 1),
+      itemBuilder: (context, index) {
+        final chat = data[index];
+        return ChatListTile(chat: chat);
+      },
     );
   }
 }
@@ -123,7 +169,7 @@ class ChatListTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: color3,
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Text(
