@@ -62,6 +62,7 @@ class _ChatListScreenState extends State<ChatListScreen>
           // labelColor: Theme.of(context).colorScheme.primary,
           unselectedLabelColor: Colors.grey,
           indicatorColor: Theme.of(context).colorScheme.primary,
+          dividerColor: Colors.transparent, // Remove the tab bar divider line
         ),
       ),
       body: TabBarView(
@@ -75,10 +76,10 @@ class _ChatListScreenState extends State<ChatListScreen>
   }
 
   Widget _buildChatList(List<ChatData> data) {
-    return ListView.separated(
+    return ListView.builder(
+      // Changed from ListView.separated to ListView.builder
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: data.length,
-      separatorBuilder: (context, index) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final chat = data[index];
         return ChatListTile(chat: chat);
@@ -139,6 +140,7 @@ class ChatListTile extends StatelessWidget {
         chat.name,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
+              color: color1,
             ),
       ),
       subtitle: Padding(
@@ -146,7 +148,7 @@ class ChatListTile extends StatelessWidget {
         child: Text(
           chat.lastMessage,
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: color3,
             fontSize: 14,
             height: 1.3,
           ),

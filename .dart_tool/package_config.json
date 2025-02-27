@@ -314,6 +314,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "timeline_tile",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/timeline_tile-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "typed_data",
       "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/typed_data-1.4.0",
       "packageUri": "lib/",
@@ -356,7 +362,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-02-26T16:26:05.586650Z",
+  "generated": "2025-02-27T16:01:16.186906Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",

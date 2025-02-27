@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 250, 250, 250),
+        backgroundColor: color5,
         actions: [
           _buildActionButtons(context),
         ],
@@ -164,7 +164,7 @@ class HomeScreen extends StatelessWidget {
       },
       {
         'icon': Icons.calendar_today_outlined,
-        'label': 'Appointment',
+        'label': 'Booking',
         'route': 'appointments',
       },
       {

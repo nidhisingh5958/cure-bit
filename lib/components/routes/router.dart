@@ -9,7 +9,7 @@ import 'package:CuraDocs/screens/chat/chat_screen.dart';
 import 'package:CuraDocs/screens/documents/add_document.dart';
 import 'package:CuraDocs/screens/documents/document_screen.dart';
 import 'package:CuraDocs/screens/documents/prescription.dart';
-import 'package:CuraDocs/screens/documents/test_results.dart';
+import 'package:CuraDocs/screens/documents/test_records.dart';
 import 'package:CuraDocs/screens/forgot_pass/forgot_pass.dart';
 import 'package:CuraDocs/screens/home_screen/home_screen.dart';
 import 'package:CuraDocs/screens/home_screen/notification.dart';
@@ -185,20 +185,20 @@ final router = GoRouter(
             GoRoute(
               path: '/documents',
               name: RouteConstants.documents,
-              builder: (context, state) => const DocumentsScreen(),
+              builder: (context, state) => const DocumentScreen(),
               routes: [
-                GoRoute(
-                  path: 'prescription',
-                  parentNavigatorKey: _rootNavigatorKey,
-                  name: RouteConstants.prescription,
-                  builder: (context, state) => const Prescription(),
-                ),
-                GoRoute(
-                  path: 'test-results',
-                  parentNavigatorKey: _rootNavigatorKey,
-                  name: RouteConstants.testRecords,
-                  builder: (context, state) => const TestResults(),
-                ),
+                // GoRoute(
+                //   path: 'prescription',
+                //   parentNavigatorKey: _rootNavigatorKey,
+                //   name: RouteConstants.prescription,
+                //   builder: (context, state) => const Prescription(),
+                // ),
+                // GoRoute(
+                //   path: 'test-results',
+                //   parentNavigatorKey: _rootNavigatorKey,
+                //   name: RouteConstants.testRecords,
+                //   builder: (context, state) => const TestResults(),
+                // ),
               ],
             ),
           ],

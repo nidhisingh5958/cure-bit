@@ -106,11 +106,7 @@ var destinations = <Destination>[
   ),
   Destination(
     icon: Icon(LucideIcons.messageCircle),
-    label: 'Chatbot',
-  ),
-  Destination(
-    icon: Icon(LucideIcons.plus),
-    label: 'Add',
+    label: 'Chat',
   ),
   const Destination(
     icon: Icon(LucideIcons.fileText),
