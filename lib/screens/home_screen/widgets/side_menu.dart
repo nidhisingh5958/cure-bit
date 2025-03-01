@@ -1,12 +1,6 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-final Color color1 = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
-final Color color4 = Colors.white;
-final Color color5 = Colors.transparent;
-final Color color6 = Colors.grey.withOpacity(0.1);
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});

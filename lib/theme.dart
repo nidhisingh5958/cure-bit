@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,11 +7,11 @@ ThemeData theme() {
     appBarTheme: appBarTheme(),
     fontFamily: 'Inter',
     colorScheme: const ColorScheme.light(
-      primary: Colors.black,
+      primary: color1,
       secondary: Color.fromARGB(255, 157, 169, 185),
       error: Color(0xFFE3342F),
       surface: Colors.white,
-      onSurface: Color(0xFFFAEECD),
+      onSurface: color1,
     ),
     scaffoldBackgroundColor: const Color(0xFFF8FAFC),
     cardTheme: cardTheme(),
@@ -100,7 +101,7 @@ AppBarTheme appBarTheme() {
   return const AppBarTheme(
     elevation: 0,
     centerTitle: true,
-    backgroundColor: Colors.white,
+    backgroundColor: color5,
     iconTheme: IconThemeData(color: Color.fromARGB(255, 26, 115, 232)),
     titleTextStyle: TextStyle(
       color: Color(0xFF1A1A1A),

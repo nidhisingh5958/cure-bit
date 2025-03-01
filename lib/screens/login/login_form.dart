@@ -1,6 +1,9 @@
-import 'package:CuraDocs/components/routes/route_constants.dart';
+import 'dart:convert';
+import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -16,9 +19,6 @@ class _LoginFormState extends State<LoginForm> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
-  final color1 = Colors.black;
-  final color2 = Colors.black.withOpacity(0.8);
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -31,22 +31,44 @@ class _LoginFormState extends State<LoginForm> {
       setState(() => _isLoading = true);
 
       try {
-        // Simulate login delay
-        await Future.delayed(const Duration(seconds: 2));
+        // Simulate network request
+        Response response = await post(
+            Uri.parse(
+                'https://lb0ejwoox7.execute-api.us-east-1.amazonaws.com/Dev/auth/patient/login'),
+            body: jsonEncode({
+              'email': _emailController.text,
+              'password': _passwordController.text,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            });
+        await Future.delayed(const Duration(seconds: 1));
         // Add your login logic here
 
-        if (mounted) {
-          context.pushNamed(RouteConstants.otp);
-        }
-      } catch (e) {
-        if (mounted) {
+        if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Login failed: ${e.toString()}'),
+              content: Text('Login successful'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          GoRouter.of(context).go('/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Login failed. Please try again.'),
               backgroundColor: Colors.red,
             ),
           );
         }
+      } catch (e) {
+        print("failed");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Login failed. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       } finally {
         if (mounted) {
           setState(() => _isLoading = false);

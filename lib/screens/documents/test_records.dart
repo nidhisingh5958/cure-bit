@@ -1,8 +1,6 @@
+import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/screens/documents/components/search.dart';
 import 'package:flutter/material.dart';
-
-final Color color1 = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
 
 class TestRecords {
   final String date;
@@ -23,71 +21,7 @@ class TestRecordsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search and filter bar
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Search bar
-              GestureDetector(
-                child: Expanded(
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: color3),
-                    ),
-                    child: const Row(
-                      children: [
-                        SizedBox(width: 12),
-                        Icon(Icons.search, color: Colors.grey),
-                        SizedBox(width: 8),
-                        Text(
-                          "Search Medical Records",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                onTap: () => print('Search'
-                    ' Medical Records'),
-              ),
-              const SizedBox(width: 8),
-              // Filters button
-              GestureDetector(
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: color3),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Filters",
-                        style: TextStyle(
-                          color: color2,
-                          fontSize: 14,
-                        ),
-                      ),
-                      SizedBox(width: 4),
-                      Icon(Icons.arrow_drop_down, size: 20),
-                    ],
-                  ),
-                ),
-                onTap: () => print('Filters'),
-              ),
-            ],
-          ),
-        ),
+        SearchFilter(),
 
         // Header
         Padding(

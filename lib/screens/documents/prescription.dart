@@ -1,3 +1,5 @@
+import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/screens/documents/components/search.dart';
 import 'package:flutter/material.dart';
 
 class Prescriptions {
@@ -21,61 +23,7 @@ class PrescriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search and filter bar
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              // Search bar
-              Expanded(
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: const Row(
-                    children: [
-                      SizedBox(width: 12),
-                      Icon(Icons.search, color: Colors.grey),
-                      SizedBox(width: 8),
-                      Text(
-                        "Search Medical Records",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Filters button
-              Container(
-                height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: const Row(
-                  children: [
-                    Text(
-                      "Filters",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_drop_down, size: 20),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        SearchFilter(),
 
         // Header
         Padding(
@@ -88,7 +36,7 @@ class PrescriptionScreen extends StatelessWidget {
                   'Date',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: color1,
                   ),
                 ),
               ),
@@ -98,7 +46,7 @@ class PrescriptionScreen extends StatelessWidget {
                   'Diagnosis',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: color1,
                   ),
                 ),
               ),
@@ -108,7 +56,7 @@ class PrescriptionScreen extends StatelessWidget {
                   'Doctor',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: color1,
                   ),
                 ),
               ),
@@ -132,7 +80,7 @@ class PrescriptionScreen extends StatelessWidget {
                       child: Text(
                         record.date,
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: color1,
                           fontSize: 14,
                         ),
                       ),
@@ -142,7 +90,7 @@ class PrescriptionScreen extends StatelessWidget {
                       child: Text(
                         record.diagnosis,
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: color1,
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),
@@ -153,7 +101,7 @@ class PrescriptionScreen extends StatelessWidget {
                       child: Text(
                         record.doctor,
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: color1,
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),

@@ -9,7 +9,7 @@
     },
     {
       "name": "archive",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/archive-4.0.2",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/archive-4.0.4",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -68,6 +68,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "country_picker",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/country_picker-2.0.27",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/crypto-3.0.6",
       "packageUri": "lib/",
@@ -123,7 +129,7 @@
     },
     {
       "name": "go_router",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.8.0",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/go_router-14.8.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -147,7 +153,7 @@
     },
     {
       "name": "image",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/image-4.5.2",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/image-4.5.3",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -326,6 +332,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "universal_io",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/universal_io-2.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "vector_math",
       "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/vector_math-2.1.4",
       "packageUri": "lib/",
@@ -339,7 +351,7 @@
     },
     {
       "name": "web",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/web-1.1.0",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/web-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -362,7 +374,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-02-27T16:01:16.186906Z",
+  "generated": "2025-03-01T16:49:11.165990Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",

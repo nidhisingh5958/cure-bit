@@ -1,11 +1,8 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/components/circular_checkbox.dart';
-import 'package:CuraDocs/components/routes/route_constants.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-final Color color1 = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
 
 class RoleScreen extends StatefulWidget {
   @override

@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/screens/chat/widgets/build_message.dart';
 import '/screens/chat/data/chat_sample_data.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: color4,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -124,7 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 1,
-      backgroundColor: Colors.white,
+      backgroundColor: color4,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
         onPressed: () => context.pop(),
@@ -307,12 +308,12 @@ class _ChatScreenState extends State<ChatScreen> {
         12 + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: color4,
         boxShadow: [
           BoxShadow(
             offset: const Offset(0, -1),
             blurRadius: 8,
-            color: Colors.black.withOpacity(0.05),
+            color: color2,
           ),
         ],
       ),

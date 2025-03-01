@@ -1,14 +1,8 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
-
 import 'package:CuraDocs/screens/documents/prescription.dart';
 import 'package:CuraDocs/screens/documents/timeline.dart';
 import 'package:CuraDocs/screens/documents/test_records.dart';
-
-final Color color1 = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
-final Color color4 = Colors.grey.shade300;
-final Color color5 = Colors.transparent;
 
 class DocumentScreen extends StatefulWidget {
   const DocumentScreen({super.key});
@@ -20,6 +14,35 @@ class DocumentScreen extends StatefulWidget {
 class _DocumentScreenState extends State<DocumentScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
+
+  // Sample timeline data
+  final List<TimelineRecord> timelineData = [
+    TimelineRecord(
+      date: DateTime(2024, 1, 15),
+      diagnosis: 'Gallbladder Infection',
+      doctor: 'Dr. Smith',
+    ),
+    TimelineRecord(
+      date: DateTime(2024, 2, 20),
+      diagnosis: '',
+      doctor: '',
+    ),
+    TimelineRecord(
+      date: DateTime(2025, 1, 10),
+      diagnosis: 'Gallbladder Infection',
+      doctor: 'Dr. Johnson',
+    ),
+    TimelineRecord(
+      date: DateTime(2025, 2, 5),
+      diagnosis: '',
+      doctor: '',
+    ),
+    TimelineRecord(
+      date: DateTime(2025, 2, 25),
+      diagnosis: 'Gallbladder Infection',
+      doctor: 'Dr. Williams',
+    ),
+  ];
 
   @override
   void initState() {
@@ -35,6 +58,7 @@ class _DocumentScreenState extends State<DocumentScreen>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Records'),
@@ -61,6 +85,12 @@ class _DocumentScreenState extends State<DocumentScreen>
             Tab(text: 'Prescriptions'),
             Tab(text: 'Test Reports'),
           ],
+          indicator: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: color6, width: 2),
+            ),
+          ),
+          splashBorderRadius: BorderRadius.circular(38),
           unselectedLabelColor: color3,
           indicatorColor: color3,
           dividerColor: color5,
@@ -69,7 +99,9 @@ class _DocumentScreenState extends State<DocumentScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          TimelineScreen(timelineData: timelineData),
+          TimelineScreen(
+            timelineData: timelineData,
+          ),
           PrescriptionScreen(prescriptionData: prescriptionData),
           TestRecordsScreen(testRecordData: testRecordData),
         ],

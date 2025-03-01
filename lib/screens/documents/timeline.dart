@@ -1,200 +1,248 @@
-import 'package:CuraDocs/screens/documents/components/timelinetile.dart';
+import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:timeline_tile/timeline_tile.dart';
 
-final Color color1 = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
-
-class Timeline {
-  final String date;
-  final String month;
-  final String year;
+class TimelineRecord {
+  final DateTime date;
   final String diagnosis;
   final String doctor;
 
-  Timeline({
+  TimelineRecord({
     required this.date,
-    required this.month,
-    required this.year,
     required this.diagnosis,
     required this.doctor,
   });
 }
 
 class TimelineScreen extends StatelessWidget {
-  final List<Timeline> timelineData;
+  final List<TimelineRecord> timelineData;
 
   const TimelineScreen({required this.timelineData, super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Group timeline data by year
-    Map<String, List<Timeline>> groupedByYear = {};
-    for (var item in timelineData) {
-      if (!groupedByYear.containsKey(item.year)) {
-        groupedByYear[item.year] = [];
+    // Sample data if provided list is empty
+    final List<TimelineRecord> data = timelineData.isEmpty
+        ? [
+            TimelineRecord(
+              date: DateTime(2024, 1, 15),
+              diagnosis: 'Gallbladder Infection',
+              doctor: 'Dr. Smith',
+            ),
+            TimelineRecord(
+              date: DateTime(2024, 2, 20),
+              diagnosis: '',
+              doctor: '',
+            ),
+            TimelineRecord(
+              date: DateTime(2025, 1, 10),
+              diagnosis: 'Gallbladder Infection',
+              doctor: 'Dr. Johnson',
+            ),
+            TimelineRecord(
+              date: DateTime(2025, 2, 5),
+              diagnosis: '',
+              doctor: '',
+            ),
+            TimelineRecord(
+              date: DateTime(2025, 2, 25),
+              diagnosis: 'Gallbladder Infection',
+              doctor: 'Dr. Williams',
+            ),
+          ]
+        : timelineData;
+
+    // Group timeline records by year and month
+    Map<int, Map<int, List<TimelineRecord>>> groupedData = {};
+    for (var record in data) {
+      if (!groupedData.containsKey(record.date.year)) {
+        groupedData[record.date.year] = {};
       }
-      groupedByYear[item.year]!.add(item);
+      if (!groupedData[record.date.year]!.containsKey(record.date.month)) {
+        groupedData[record.date.year]![record.date.month] = [];
+      }
+      groupedData[record.date.year]![record.date.month]!.add(record);
     }
 
-    // Convert to sorted list of years and their items
-    List<MapEntry<String, List<Timeline>>> sortedYears = groupedByYear.entries
-        .toList()
-      ..sort(
-          (a, b) => b.key.compareTo(a.key)); // Sort years in descending order
+    // Generate timeline items
+    List<Widget> timelineItems = [];
+    List<int> years = groupedData.keys.toList()..sort();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: const [
-                Expanded(
-                  flex: 1,
-                  child: Text('Date',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text('Diagnosis',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text('Doctor',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          for (var yearEntry in sortedYears)
-            _buildYearSection(yearEntry.key, yearEntry.value),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildYearSection(String year, List<Timeline> items) {
-    // Sort items within a year by month (assuming month is a string like "JAN", "FEB")
-    List<Timeline> sortedItems = List.from(items);
-    const monthOrder = {
-      "JAN": 1,
-      "FEB": 2,
-      "MAR": 3,
-      "APR": 4,
-      "MAY": 5,
-      "JUN": 6,
-      "JUL": 7,
-      "AUG": 8,
-      "SEP": 9,
-      "OCT": 10,
-      "NOV": 11,
-      "DEC": 12
-    };
-
-    sortedItems.sort((a, b) {
-      int monthA = monthOrder[a.month] ?? 0;
-      int monthB = monthOrder[b.month] ?? 0;
-      return monthA.compareTo(monthB);
-    });
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    for (int year in years) {
+      // Add year header
+      timelineItems.add(
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, top: 16.0),
+          padding: const EdgeInsets.only(left: 16.0, top: 16.0),
           child: Text(
-            year,
-            style: const TextStyle(
-              fontSize: 18,
+            '$year',
+            style: TextStyle(
               fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: color1,
             ),
           ),
         ),
-        for (int i = 0; i < sortedItems.length; i++)
-          _buildMonthSection(
-              sortedItems[i], i == 0, i == sortedItems.length - 1)
-      ],
-    );
-  }
+      );
 
-  Widget _buildMonthSection(Timeline item, bool isFirst, bool isLast) {
-    Widget eventContent = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          item.diagnosis,
-          style: TextStyle(
-            color: color1,
-            fontWeight: FontWeight.w500,
+      // Add months for this year
+      List<int> months = groupedData[year]!.keys.toList()..sort();
+      for (int month in months) {
+        // Add month header
+        timelineItems.add(
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 8.0, bottom: 4.0),
+            child: Text(
+              _getMonthName(month),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: color2,
+              ),
+            ),
           ),
-        ),
-      ],
-    );
+        );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 60,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.month,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+        // Add timeline for this month
+        final records = groupedData[year]![month]!;
+        for (int i = 0; i < records.length; i++) {
+          final record = records[i];
+          final isFirst = i == 0;
+          final isLast = i == records.length - 1;
+
+          timelineItems.add(
+            TimelineTile(
+              alignment: TimelineAlign.manual,
+              lineXY: 0.15,
+              isFirst: isFirst,
+              isLast: isLast,
+              indicatorStyle: IndicatorStyle(
+                width: 20,
+                height: 20,
+                indicator: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    border: Border.all(
+                      color: color6,
+                      width: 2,
+                    ),
                   ),
                 ),
-              ],
+                padding: const EdgeInsets.all(6),
+              ),
+              beforeLineStyle: LineStyle(
+                color: color4,
+                thickness: 2,
+              ),
+              afterLineStyle: LineStyle(
+                color: color4,
+                thickness: 2,
+              ),
+              startChild: record.diagnosis.isNotEmpty
+                  ? SizedBox(
+                      width: 40,
+                      height: 20,
+                    )
+                  : null,
+              endChild: record.diagnosis.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            record.diagnosis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: color2,
+                            ),
+                          ),
+                          if (record.doctor.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                record.doctor,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: color6,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    )
+                  : SizedBox(height: 30),
             ),
+          );
+        }
+      }
+    }
+
+    return Column(
+      children: [
+        // Header
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 80,
+                child: Text(
+                  'Date',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color2,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'Diagnosis',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color2,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'Doctor',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color2,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+
+        // Timeline content
         Expanded(
-          child: MyTimelineTile(
-            isFirst: isFirst,
-            isLast: isLast,
-            isPast: true,
-            eventCard: eventContent,
+          child: ListView(
+            children: timelineItems,
           ),
         ),
       ],
     );
   }
-}
 
-// Sample timeline data
-final List<Timeline> timelineData = [
-  Timeline(
-    date: '15',
-    month: 'JAN',
-    year: '2024',
-    diagnosis: 'Gallbladder Infection',
-    doctor: 'Dr. Smith',
-  ),
-  Timeline(
-    date: '28',
-    month: 'FEB',
-    year: '2024',
-    diagnosis: 'Gallbladder Infection',
-    doctor: 'Dr. Smith',
-  ),
-  Timeline(
-    date: '10',
-    month: 'JAN',
-    year: '2025',
-    diagnosis: 'Gallbladder Infection',
-    doctor: 'Dr. Johnson',
-  ),
-  Timeline(
-    date: '22',
-    month: 'FEB',
-    year: '2025',
-    diagnosis: 'Gallbladder Infection',
-    doctor: 'Dr. Williams',
-  ),
-];
+  String _getMonthName(int month) {
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC'
+    ];
+    return months[month - 1];
+  }
+}

@@ -1,14 +1,11 @@
-import 'package:CuraDocs/components/routes/route_constants.dart';
+import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/screens/login/login_form.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
-
-  final Color color1 = Colors.black;
-  final Color color2 = Colors.black.withOpacity(0.8);
-  final Color color3 = Colors.grey.shade600;
 
   @override
   Widget build(BuildContext context) {
@@ -17,139 +14,134 @@ class LoginScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 40),
-                      Center(
-                        child: Column(
-                          children: [
-                            Text(
-                              "Sign In",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: color2,
-                                  ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "Sign In to continue to your health journey",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: color3,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 40),
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          "Sign In",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: color2,
                               ),
-                            ),
-                          ],
                         ),
-                      ),
-                      const SizedBox(height: 50),
-                      const LoginForm(),
-                      const SizedBox(height: 30),
-                      Center(
-                          child: TextButton(
-                        onPressed: () {
-                          context.goNamed(RouteConstants.otp);
-                        },
-                        child: Text(
-                          'Sign In with OTP',
+                        const SizedBox(height: 16),
+                        Text(
+                          "Sign In to continue to your health journey",
                           style: TextStyle(
-                            color: color2,
+                            fontSize: 14,
+                            color: color3,
                           ),
                         ),
-                      )),
-                      const SizedBox(height: 30),
-                      Center(
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Container(
-                                height: 1.0,
-                                width: 90.0,
-                                color: color1,
-                              ),
-                            ),
-                            Text(
-                              "Or continue with",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: color3,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Container(
-                                height: 1.0,
-                                width: 90.0,
-                                color: color1,
-                              ),
-                            ),
-                          ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  const LoginForm(),
+                  const SizedBox(height: 30),
+                  Center(
+                      child: TextButton(
+                    onPressed: () {
+                      context.goNamed(RouteConstants.otp);
+                    },
+                    child: Text(
+                      'Sign In with OTP',
+                      style: TextStyle(
+                        color: color2,
+                      ),
+                    ),
+                  )),
+                  const SizedBox(height: 30),
+                  Center(
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Container(
+                            height: 1.0,
+                            width: 90.0,
+                            color: color1,
+                          ),
                         ),
+                        Text(
+                          "Or continue with",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: color3,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Container(
+                            height: 1.0,
+                            width: 90.0,
+                            color: color1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SocialCard(
+                        icon: 'assets/icons/google.png',
+                        press: () {},
                       ),
-                      const SizedBox(height: 14),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SocialCard(
-                            icon: 'assets/icons/google.png',
-                            press: () {},
-                          ),
-                          SocialCard(
-                            icon: 'assets/icons/apple.png',
-                            press: () {},
-                          ),
-                          SocialCard(
-                            icon: 'assets/icons/outlook.png',
-                            press: () {},
-                          ),
-                        ],
+                      SocialCard(
+                        icon: 'assets/icons/apple.png',
+                        press: () {},
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Don't have an account? ",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: color3,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              context.goNamed(RouteConstants.signUp);
-                            },
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: color2),
-                            ),
-                          ),
-                        ],
+                      SocialCard(
+                        icon: 'assets/icons/outlook.png',
+                        press: () {},
                       ),
-                      const SizedBox(height: 24),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account? ",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: color3,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.goNamed(RouteConstants.signUp);
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          "Sign Up",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: color2),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ),
@@ -178,7 +170,7 @@ class SocialCard extends StatelessWidget {
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: color4,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: Colors.grey.shade200,

@@ -11,6 +11,8 @@
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/packages/material_design_icons_flutter/lib/fonts/materialdesignicons-webfont.ttf
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/packages/lucide_icons/assets/lucide.ttf
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin.json
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/fonts/Open_Sans/OpenSans-Regular.ttf
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/assets/fonts/Open_Sans/OpenSans-Medium.ttf

@@ -13,3 +13,17 @@ class ChatData {
     this.isOnline = false,
   });
 }
+
+class RequestData extends ChatData {
+  RequestData({
+    required String name,
+    required String avatarUrl,
+    required String firstMessage,
+    required String time,
+  }) : super(
+          name: name,
+          avatarUrl: avatarUrl,
+          lastMessage: firstMessage,
+          time: time,
+        );
+}

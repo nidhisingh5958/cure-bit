@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/components/routes/route_constants.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 // import 'package:CuraDocs/screens/login/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {

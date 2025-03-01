@@ -1,11 +1,9 @@
-import 'package:CuraDocs/components/routes/route_constants.dart';
-import 'package:CuraDocs/screens/signUp/sign_up_screen.dart';
+import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:country_picker/country_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-final Color color1 = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -26,9 +24,11 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String name = '';
   String email = '';
-  int phone = 0;
+  String phone = '';
   String password = '';
+  Country? country;
 
+// submit form
   void _submitForm() async {
     if (_formKey.currentState!.validate() && _isChecked) {
       setState(() => _isLoading = true);
@@ -45,7 +45,7 @@ class _SignUpFormState extends State<SignUpForm> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppColors.error,
+            backgroundColor: error,
           ),
         );
       } finally {
@@ -57,10 +57,21 @@ class _SignUpFormState extends State<SignUpForm> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please accept the Terms and Privacy Policy'),
-          backgroundColor: AppColors.error,
+          backgroundColor: error,
         ),
       );
     }
+  }
+
+// country picker
+  void pickCountry() {
+    showCountryPicker(
+      context: context,
+      showPhoneCode: true,
+      onSelect: (Country _country) {
+        setState(() => country = _country);
+      },
+    );
   }
 
   @override
@@ -106,20 +117,7 @@ class _SignUpFormState extends State<SignUpForm> {
             onSaved: (value) => email = value!,
           ),
           const SizedBox(height: 14),
-          _buildInputField(
-            hint: 'Phone Number',
-            keyboardType: TextInputType.phone,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your phone number';
-              }
-              if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                return 'Please enter a valid phone number';
-              }
-              return null;
-            },
-            onSaved: (value) => phone = int.parse(value!),
-          ),
+          _buildPhoneNumberField(),
           const SizedBox(height: 14),
           _buildPasswordField(
             controller: _passwordController,
@@ -176,6 +174,47 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
+// phonenumber field
+  Widget _buildPhoneNumberField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: 'Phone Number',
+        prefixText: country != null ? '+${country!.phoneCode} ' : '+00 ',
+        prefixStyle: TextStyle(
+          fontSize: 14,
+          color: color1,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: color2,
+          ),
+          onPressed: pickCountry,
+        ),
+      ),
+      style: TextStyle(
+        fontSize: 14,
+        color: color1,
+      ),
+      keyboardType: TextInputType.phone,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your phone number';
+        }
+        if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+          return 'Please enter a valid phone number';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        // Save the full phone number including country code
+        String countryCode = country != null ? '+${country!.phoneCode}' : '+00';
+        phone = '$countryCode${value!}';
+      },
+    );
+  }
+
+// password field
   Widget _buildPasswordField({
     required TextEditingController controller,
     required String hint,
@@ -221,6 +260,7 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
+// terms and conditions
   Widget _buildTermsCheckbox() {
     return Row(
       children: [
@@ -249,7 +289,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   // TextSpan(
                   //   text: 'Privacy Policy',
                   //   style: TextStyle(
-                  //     color: AppColors.primary,
+                  //     color: primary,
                   //     decoration: TextDecoration.underline,
                   //   ),
                   // ),
@@ -262,12 +302,13 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
+// sign up button
   Widget _buildSignUpButton() {
     return SizedBox(
       child: ElevatedButton(
         onPressed: _isLoading ? null : _submitForm,
         child: _isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
+            ? const CircularProgressIndicator(color: color4)
             : const Text(
                 'Sign Up',
               ),

@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/routes/route_constants.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
