@@ -1,9 +1,8 @@
+import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-final Color color1 = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
+import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -18,6 +17,7 @@ class _OtpScreenState extends State<OtpScreen> {
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   bool _isResendActive = false;
   int _resendTimer = 30;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -55,6 +55,20 @@ class _OtpScreenState extends State<OtpScreen> {
     });
   }
 
+  Future<void> _verify() async {
+    //   if (_formKey.currentState!.validate()) {
+    //     setState(() => _isLoading = true);
+
+    //     final authRepository = AuthRepository();
+    //     await authRepository.signInWithPass(
+    //       context,
+    //       _emailController.text,
+    //     );
+
+    //     setState(() => _isLoading = false);
+    //   }
+  }
+
   @override
   void dispose() {
     for (var controller in _controllers) {
@@ -87,6 +101,7 @@ class _OtpScreenState extends State<OtpScreen> {
               Center(
                 child: Column(
                   children: [
+                    // headings and intro
                     Text(
                       "OTP Verification",
                       style:
@@ -108,95 +123,9 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(
-                  6,
-                  (index) => SizedBox(
-                    width: 50,
-                    height: 60,
-                    child: TextFormField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
-                      decoration: InputDecoration(
-                        counterText: "",
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: color3,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: color1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: color2,
-                            width: 2,
-                          ),
-                        ),
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          // When a digit is entered
-                          if (index < 5) {
-                            // Move to next field if this isn't the last one
-                            _focusNodes[index + 1].requestFocus();
-                          } else {
-                            // This is the last field, unfocus to hide keyboard
-                            _focusNodes[index].unfocus();
-                          }
-                        } else if (value.isEmpty && index > 0) {
-                          // When a digit is deleted, move to previous field
-                          _focusNodes[index - 1].requestFocus();
-                        }
-                      },
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: color1,
-                          fontWeight: FontWeight.bold),
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      showCursor: true, // Show cursor for better visibility
-                      cursorColor: color3,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(1),
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              _buildOtpFields(),
               const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  // Get the complete OTP
-                  final otp = _controllers.map((c) => c.text).join();
-                  // Verify OTP logic
-                  if (otp.length == 6) {
-                    // Proceed with verification
-                    print('Verifying OTP: $otp');
-                  } else {
-                    // Show error
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please enter the complete 4-digit OTP'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                },
-                child: const Text(
-                  'Verify',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
+              _buildVerifyButton(),
               const SizedBox(height: 26),
               if (!_isResendActive) ...[
                 Center(
@@ -228,6 +157,101 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                 ),
               ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVerifyButton() {
+    return ElevatedButton(
+      onPressed: () {
+        // Get the complete OTP
+        final otp = _controllers.map((c) => c.text).join();
+        // Verify OTP logic
+        if (otp.length == 6) {
+          // Proceed with verification
+          _isLoading ? null : _verify();
+        } else {
+          // Show error
+          showSnackBar(
+            context: context,
+            message: 'Please enter the complete 6-digit OTP',
+          );
+        }
+      },
+      child: _isLoading
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Text(
+              'Verify',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+    );
+  }
+
+  Widget _buildOtpFields() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(
+        6,
+        (index) => SizedBox(
+          width: 50,
+          height: 60,
+          child: TextFormField(
+            controller: _controllers[index],
+            focusNode: _focusNodes[index],
+            decoration: InputDecoration(
+              counterText: "",
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: color3,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: color1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: color2,
+                  width: 2,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+            onChanged: (value) {
+              if (value.isNotEmpty) {
+                // When a digit is entered
+                if (index < 5) {
+                  // Move to next field if this isn't the last one
+                  _focusNodes[index + 1].requestFocus();
+                } else {
+                  // This is the last field, unfocus to hide keyboard
+                  _focusNodes[index].unfocus();
+                }
+              } else if (value.isEmpty && index > 0) {
+                // When a digit is deleted, move to previous field
+                _focusNodes[index - 1].requestFocus();
+              }
+            },
+            style: TextStyle(
+                fontSize: 16, color: color1, fontWeight: FontWeight.bold),
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            showCursor: true, // Show cursor for better visibility
+            cursorColor: color3,
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(1),
+              FilteringTextInputFormatter.digitsOnly,
             ],
           ),
         ),

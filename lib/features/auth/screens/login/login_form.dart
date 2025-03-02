@@ -30,7 +30,7 @@ class _LoginFormState extends State<LoginForm> {
       setState(() => _isLoading = true);
 
       final authRepository = AuthRepository();
-      await authRepository.signinWithPass(
+      await authRepository.signInWithPass(
         context,
         _emailController.text,
         _passwordController.text,

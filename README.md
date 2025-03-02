@@ -1,6 +1,6 @@
-# CureBit
+# Cura Docs
 
-CureBit is a comprehensive medical records management application designed to revolutionize healthcare data accessibility. 
+ Cura Docs is a comprehensive medical records management application designed to revolutionize healthcare data accessibility. 
 The platform offers real-time synchronization of medical records, enabling users to access their health information instantly through an intuitive and user-friendly interface. 
 
 <h2>Key Features</h2>
