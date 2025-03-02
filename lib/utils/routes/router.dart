@@ -3,8 +3,8 @@ import 'package:CuraDocs/role.dart';
 import 'package:CuraDocs/screens/appointment/appointment_screen.dart';
 import 'package:CuraDocs/screens/appointment/book_appointment.dart';
 import 'package:CuraDocs/screens/chat/chat_home.dart';
-import 'package:CuraDocs/screens/chatbot/chat_bot_home.dart';
-import 'package:CuraDocs/screens/chatbot/chat_with_ai.dart';
+import 'package:CuraDocs/screens/curabot/chat_bot_home.dart';
+import 'package:CuraDocs/screens/curabot/chat_with_ai.dart';
 import 'package:CuraDocs/screens/chat/chat_screen.dart';
 import 'package:CuraDocs/screens/documents/add_document.dart';
 import 'package:CuraDocs/screens/documents/document_screen.dart';
@@ -36,7 +36,7 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/login',
+  initialLocation: '/home',
   debugLogDiagnostics: true,
   routes: [
     // Auth and onboarding routes (outside shell)

@@ -1,5 +1,5 @@
-import 'package:CuraDocs/screens/chatbot/entities/message_bot.dart';
-import 'package:CuraDocs/screens/chatbot/entities/message_group.dart';
+import 'package:CuraDocs/screens/curabot/entities/message_bot.dart';
+import 'package:CuraDocs/screens/curabot/entities/message_group.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageWidget extends StatelessWidget {

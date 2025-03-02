@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +10,13 @@ class ChatBotHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AI Health Assistant"),
+        title: const Text("Cura Bot"),
+        leading: IconButton(
+          onPressed: () {
+            context.goNamed(RouteConstants.home);
+          },
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
@@ -164,7 +171,7 @@ class OptionCard extends StatelessWidget {
                 Text(
                   description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
+                        color: color3,
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
                       ),

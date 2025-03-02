@@ -1,10 +1,10 @@
-import 'package:CuraDocs/screens/chatbot/entities/message_group.dart';
-import 'package:CuraDocs/screens/chatbot/widgets/chat_message_widget.dart';
+import 'package:CuraDocs/screens/curabot/entities/message_group.dart';
+import 'package:CuraDocs/screens/curabot/widgets/chat_message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:CuraDocs/components/routes/route_constants.dart';
-import 'package:CuraDocs/screens/chatbot/data/messages_bot.dart';
-import 'package:CuraDocs/screens/chatbot/entities/message_bot.dart';
+import 'package:CuraDocs/screens/curabot/data/messages_bot.dart';
+import 'package:CuraDocs/screens/curabot/entities/message_bot.dart';
 // import 'package:CuraDocs/screens/chatbot/widgets/media_message.dart';
 // import 'package:CuraDocs/screens/chatbot/widgets/text_message.dart';
 

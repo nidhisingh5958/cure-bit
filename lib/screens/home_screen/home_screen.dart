@@ -20,6 +20,8 @@ class HomeScreen extends StatelessWidget {
       drawer: Drawer(
         child: SideMenu(),
       ),
+      // Add the floatingActionButton property to the Scaffold
+      floatingActionButton: _buildChatBotFloatingButton(context),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -44,8 +46,17 @@ class HomeScreen extends StatelessWidget {
           _buildFeaturesSection(context),
           const SizedBox(height: 32),
           _buildUpcomingSection(context),
+          // Remove the floating button from here
         ],
       ),
+    );
+  }
+
+  Widget _buildChatBotFloatingButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () => context.goNamed(RouteConstants.chatBot),
+      backgroundColor: color2,
+      child: Icon(Icons.chat_bubble_outline),
     );
   }
 

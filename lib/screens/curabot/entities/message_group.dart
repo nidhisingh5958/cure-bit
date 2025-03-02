@@ -1,4 +1,4 @@
-import 'package:CuraDocs/screens/chatbot/entities/message_bot.dart';
+import 'package:CuraDocs/screens/curabot/entities/message_bot.dart';
 
 class MessageGroup {
   final List<Message> messages;
