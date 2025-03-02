@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -30,50 +29,14 @@ class _LoginFormState extends State<LoginForm> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      try {
-        // Simulate network request
-        Response response = await post(
-            Uri.parse(
-                'https://lb0ejwoox7.execute-api.us-east-1.amazonaws.com/Dev/auth/patient/login'),
-            body: jsonEncode({
-              'email': _emailController.text,
-              'password': _passwordController.text,
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            });
-        await Future.delayed(const Duration(seconds: 1));
-        // Add your login logic here
+      final authRepository = AuthRepository();
+      await authRepository.signinWithPass(
+        context,
+        _emailController.text,
+        _passwordController.text,
+      );
 
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Login successful'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          GoRouter.of(context).go('/home');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Login failed. Please try again.'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } catch (e) {
-        print("failed");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
+      setState(() => _isLoading = false);
     }
   }
 
@@ -113,6 +76,8 @@ class _LoginFormState extends State<LoginForm> {
           _buildForgotPassword(),
           const SizedBox(height: 24),
           _buildLoginButton(),
+          const SizedBox(height: 30),
+          _buildLoginWithOtp(),
         ],
       ),
     );
@@ -179,17 +144,29 @@ class _LoginFormState extends State<LoginForm> {
   Widget _buildLoginButton() {
     return ElevatedButton(
       onPressed: _isLoading ? null : _handleLogin,
-      child:
-          // _isLoading
-          //     ? const SizedBox(
-          //         height: 20,
-          //         width: 20,
-          //         child: CircularProgressIndicator(strokeWidth: 2),
-          //       )
-          //     :
-          const Text(
-        'Sign In',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: _isLoading
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Text(
+              'Sign In',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+    );
+  }
+
+  Widget _buildLoginWithOtp() {
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          context.goNamed(RouteConstants.otp);
+        },
+        child: Text(
+          'Sign In with OTP',
+          style: TextStyle(fontSize: 16, color: color2),
+        ),
       ),
     );
   }

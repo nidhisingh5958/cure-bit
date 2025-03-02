@@ -46,3 +46,6 @@ app.*.map.json
 
 .vscode/
 .dart_tool/
+
+# Project related
+/lib/features/auth/repository/api_constants.dart

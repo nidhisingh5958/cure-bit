@@ -1,60 +1,53 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/screens/signUp/sign_up_form.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:CuraDocs/features/auth/screens/login/login_form.dart';
 import 'package:go_router/go_router.dart';
-import '../../utils/routes/route_constants.dart';
 
-// Custom color constants
-class AppColors {
-  static const textDark = Color(0xFF2D3142);
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
 
-  static const success = Color(0xFF2EC4B6);
-}
-
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
-
-  @override
-  State<SignUpScreen> createState() => _SignupPageState();
-}
-
-class _SignupPageState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    "Create Account",
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: color1,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Fill your information below or register with a social account.",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: color3,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 30),
-                  SignUpForm(),
                   const SizedBox(height: 40),
                   Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          "Sign In",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: color2,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Sign In to continue to your health journey",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: color3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  const LoginForm(),
+                  const SizedBox(height: 30),
+                  Center(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -105,7 +98,7 @@ class _SignupPageState extends State<SignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Have an account? ",
+                        "Don't have an account? ",
                         style: TextStyle(
                           fontSize: 14,
                           color: color3,
@@ -116,7 +109,7 @@ class _SignupPageState extends State<SignUpScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          context.goNamed(RouteConstants.login);
+                          context.goNamed(RouteConstants.signUp);
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -124,7 +117,7 @@ class _SignupPageState extends State<SignUpScreen> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          "Login",
+                          "Sign Up",
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -164,7 +157,7 @@ class SocialCard extends StatelessWidget {
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: color4,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: Colors.grey.shade200,
