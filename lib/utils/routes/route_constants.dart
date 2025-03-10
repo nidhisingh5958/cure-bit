@@ -1,5 +1,6 @@
 class RouteConstants {
-  // initial route
+  // common routes
+  // initial routes
   static String splash = "splash";
   static String onboarding = "onboarding";
 
@@ -10,7 +11,16 @@ class RouteConstants {
   static String signUp = "signUp";
   static String signUpProfile = "signUpProfile";
   static String otp = "otp";
+  static String resetPass = "resetPassword";
 
+  // error routes
+  static String error = "error";
+
+  // settings routes
+  static String aboutUs = "aboutUs";
+  static String contactUs = "contactUs";
+
+// Patients routes
   // inner routes
   static String home = "home";
   static String appointments = "appointments";
@@ -34,9 +44,31 @@ class RouteConstants {
   static String profileSettings = "profileSettings";
   static String securitySettings = "securitySettings";
   static String notificationsSettings = "notificationsSettings";
-  static String about = "about";
   static String help = "help";
 
-  // error routes
-  static String error = "error";
+// Doctor routes
+  // inner routes
+  static String doctorHome = "doctorHome";
+  static String doctorSchedule = "doctorSchedule";
+  static String doctorBookAppointment = "doctorBookAppointment";
+  static String doctorChatBot = "doctorChatBot";
+  static String doctorChatBotScreen = "doctorChatBotScreen";
+  static String doctorMyPatients = "doctorMyPatients";
+  static String doctorChat = "doctorChat";
+  static String doctorChatScreen = "doctorChatScreen";
+  static String doctorPersonalProfile = "doctortorpersonalProfile";
+  static String doctorDocuments = "doctorDocuments";
+  static String doctorPrescription = "doctorPrescription";
+  static String doctorTestRecords = "doctorTestRecords";
+  static String doctorAddDocument = "doctorAddDocument";
+  static String doctorPatientProfile = "doctorPatientProfile";
+  static String doctorPatientSearch = "doctorPatientSearch";
+
+  // settings routes
+  static String doctorNotifications = "doctorNotifications";
+  static String doctorSettings = "doctorSettings";
+  static String doctorProfileSettings = "doctorProfileSettings";
+  static String doctorSecuritySettings = "doctorsecuritySettings";
+  static String doctorNotificationsSettings = "doctorNotificationsSettings";
+  static String doctorHelp = "doctorHelp";
 }

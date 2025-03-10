@@ -1,23 +1,23 @@
 import 'package:CuraDocs/features/auth/repository/api_const.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 
 class AuthRepository {
-  // Future<User> login(String email, String password) async {
-  //   return _authDataSource.login(email, password);
-  // }
-
   Future<void> signInWithPass(
     BuildContext context,
     String email,
     String password,
+    String role,
   ) async {
     try {
-      // Simulate network request
-      Response response = await post(Uri.parse(login_api),
+      // Select the appropriate API endpoint based on role
+      final String apiEndpoint = role == 'Doctor' ? login_api_doc : login_api;
+
+      // Make API request with role-specific endpoint
+      Response response = await post(Uri.parse(apiEndpoint),
           body: jsonEncode({
             'email': email,
             'password': password,
@@ -25,12 +25,14 @@ class AuthRepository {
           headers: {
             'Content-Type': 'application/json',
           });
+
       await Future.delayed(const Duration(seconds: 1));
-      // login logic
 
       if (response.statusCode == 200) {
+        // Set user as authenticated with the specific role
+        await AppRouter.setAuthenticated(true, role);
         showSnackBar(context: context, message: 'Login successful');
-        GoRouter.of(context).go('/home');
+        // Router will automatically redirect to appropriate home screen based on role
       } else {
         showSnackBar(
             context: context, message: 'Login failed. Please try again.');
@@ -46,6 +48,7 @@ class AuthRepository {
     BuildContext context,
     String email,
     String otp,
+    String role,
   ) async {
     try {
       // Simulate network request
@@ -58,11 +61,12 @@ class AuthRepository {
             'Content-Type': 'application/json',
           });
       await Future.delayed(const Duration(seconds: 1));
-      // login logic
 
       if (response.statusCode == 200) {
+        // Set user as authenticated
+        await AppRouter.setAuthenticated(true, role);
         showSnackBar(context: context, message: 'Login successful');
-        GoRouter.of(context).go('/home');
+        // Router will automatically redirect to home screen
       } else {
         showSnackBar(
             context: context, message: 'Login failed. Please try again.');
@@ -80,6 +84,7 @@ class AuthRepository {
     String email,
     String phonenumber,
     String password,
+    String role,
   ) async {
     try {
       // Simulate network request
@@ -94,11 +99,12 @@ class AuthRepository {
             'Content-Type': 'application/json',
           });
       await Future.delayed(const Duration(seconds: 1));
-      // login logic
 
       if (response.statusCode == 200) {
+        // Set user as authenticated
+        await AppRouter.setAuthenticated(true, role);
         showSnackBar(context: context, message: 'Sign up successful');
-        GoRouter.of(context).go('/home');
+        // Router will automatically redirect to home screen
       } else {
         showSnackBar(
             context: context, message: 'Sign up failed. Please try again.');
@@ -107,6 +113,18 @@ class AuthRepository {
       print("failed");
       showSnackBar(
           context: context, message: 'Sign up failed. Please try again.');
+    }
+  }
+
+  // Add a sign out method
+  Future<void> signOut(BuildContext context) async {
+    try {
+      // Clear authentication state
+      await AppRouter.setAuthenticated(false, '');
+      showSnackBar(context: context, message: 'Signed out successfully');
+    } catch (e) {
+      showSnackBar(
+          context: context, message: 'Sign out failed. Please try again.');
     }
   }
 }

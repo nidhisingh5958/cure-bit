@@ -3,9 +3,12 @@ import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpForm extends StatefulWidget {
-  const SignUpForm({super.key});
+  final Map<String, dynamic>? extra;
+
+  const SignUpForm({super.key, this.extra});
 
   @override
   State<SignUpForm> createState() => _SignUpFormState();
@@ -37,42 +40,76 @@ class _SignUpFormState extends State<SignUpForm> {
   String phone = '';
   String password = '';
   Country? country;
+  late String _role;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRole();
+  }
+
+  Future<void> _loadRole() async {
+    // First check if role is passed in through router
+    if (widget.extra != null && widget.extra!.containsKey('role')) {
+      _role = widget.extra!['role'];
+    } else {
+      // Otherwise load from shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      _role = prefs.getString('userRole') ?? 'Patient'; // Default to Patient
+    }
+    setState(() {});
+  }
 
 // submit form
   void _submitForm() async {
-    if (_formKey.currentState!.validate() && _isChecked) {
-      // Only proceed if both email and phone are verified
-      if (!_isEmailVerified) {
-        showSnackBar(
-            context: context,
-            message: 'Please verify your email before continuing');
-        return;
-      }
-
-      if (!_isPhoneVerified) {
+    if (!_formKey.currentState!.validate() || !_isChecked) {
+      // Show message if terms not checked
+      if (!_isChecked) {
         showSnackBar(
           context: context,
-          message: 'Please verify your phone number before continuing',
+          message: 'Please accept the Terms and Conditions',
         );
-        return;
       }
+      return;
+    }
 
+    // Only proceed if both email and phone are verified
+    if (!_isEmailVerified) {
+      showSnackBar(
+        context: context,
+        message: 'Please verify your email before continuing',
+      );
+      return;
+    }
+
+    if (!_isPhoneVerified) {
+      showSnackBar(
+        context: context,
+        message: 'Please verify your phone number before continuing',
+      );
+      return;
+    }
+
+    try {
       setState(() => _isLoading = true);
 
-      if (_formKey.currentState!.validate()) {
-        setState(() => _isLoading = true);
-
-        final authRepository = AuthRepository();
-        await authRepository.signUp(
-          context,
-          _nameController.text,
-          _emailController.text,
-          _phoneController.text,
-          _passwordController.text,
-        );
-
-        setState(() => _isLoading = false);
-      }
+      final authRepository = AuthRepository();
+      await authRepository.signUp(
+        context,
+        _nameController.text,
+        _emailController.text,
+        _phoneController.text,
+        _passwordController.text,
+        _role,
+      );
+    } catch (e) {
+      showSnackBar(
+        context: context,
+        message: 'Error during signup: ${e.toString()}',
+      );
+      print(e);
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 

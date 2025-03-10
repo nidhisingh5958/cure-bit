@@ -1,6 +1,7 @@
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/cure_bit
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/icudtl.dat
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/lib/liburl_launcher_linux_plugin.so
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
 /home/nid/desktop/cure_bit/cure-bit/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag

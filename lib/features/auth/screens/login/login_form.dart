@@ -1,11 +1,15 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key});
+  final Map<String, dynamic>? extra;
+
+  const LoginForm({Key? key, this.extra}) : super(key: key);
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -17,6 +21,13 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  late String _role;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRole();
+  }
 
   @override
   void dispose() {
@@ -25,18 +36,35 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
+  Future<void> _loadRole() async {
+    // First check if role is passed in through router
+    if (widget.extra != null && widget.extra!.containsKey('role')) {
+      _role = widget.extra!['role'];
+    } else {
+      // Otherwise load from shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      _role = prefs.getString('userRole') ?? 'Patient'; // Default to Patient
+    }
+    setState(() {});
+  }
+
   Future<void> _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+    try {
+      if (_formKey.currentState!.validate()) {
+        setState(() => _isLoading = true);
 
-      final authRepository = AuthRepository();
-      await authRepository.signInWithPass(
-        context,
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      setState(() => _isLoading = false);
+        final authRepository = AuthRepository();
+        await authRepository.signInWithPass(
+          context,
+          _emailController.text,
+          _passwordController.text,
+          _role,
+        );
+        await AppRouter.setAuthenticated(true, _role);
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
