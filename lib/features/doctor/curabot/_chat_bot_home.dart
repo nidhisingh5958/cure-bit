@@ -4,8 +4,8 @@ import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ChatBotHome extends StatelessWidget {
-  const ChatBotHome({super.key});
+class ChatBotAssistantHome extends StatelessWidget {
+  const ChatBotAssistantHome({super.key});
 
   @override
   Widget build(BuildContext context) {

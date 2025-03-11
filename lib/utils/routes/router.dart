@@ -1,7 +1,9 @@
 import 'package:CuraDocs/features/doctor/appointment/appointment_screen.dart';
+import 'package:CuraDocs/features/doctor/curabot/_chat_bot_home.dart';
 import 'package:CuraDocs/features/doctor/home_screen/_home_screen_doc.dart';
 import 'package:CuraDocs/features/doctor/home_screen/_notification.dart';
 import 'package:CuraDocs/features/doctor/my_patients.dart/patients_screen.dart';
+import 'package:CuraDocs/features/doctor/settings/profile_screen.dart';
 import 'package:CuraDocs/utils/routes/doctor_navigation_bar.dart';
 import 'package:CuraDocs/utils/routes/patient_navigation_bar.dart';
 import 'package:CuraDocs/features/auth/landing/role.dart';
@@ -33,12 +35,17 @@ import '../../features/patient/chat/entities/chat_data.dart';
 
 // Navigation keys for each branch
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+// keys for patient routes
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _homeNavigatorKey = GlobalKey<NavigatorState>();
 final _chatNavigatorKey = GlobalKey<NavigatorState>();
-final _chatbotNavigatorKey = GlobalKey<NavigatorState>();
 final _documentsNavigatorKey = GlobalKey<NavigatorState>();
 final _profileNavigatorKey = GlobalKey<NavigatorState>();
+// keys for doctor routes
+final _doctorHomeNavigatorKey = GlobalKey<NavigatorState>();
+final _doctorChatNavigatorKey = GlobalKey<NavigatorState>();
+final _doctorProfileNavigatorKey = GlobalKey<NavigatorState>();
+final _doctorPatientsNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter {
   // SharedPreferences keys
@@ -65,7 +72,7 @@ class AppRouter {
 
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      initialLocation: '/',
+      initialLocation: '/home',
       debugLogDiagnostics: true,
       routes: [
         // Auth and onboarding routes (outside shell)
@@ -112,7 +119,7 @@ class AppRouter {
           ],
         ),
 
-        // Patients routes
+// Patients routes
         // Chatbot routes
         GoRoute(
           path: '/chat-bot',
@@ -178,7 +185,7 @@ class AppRouter {
 
             // Chat Branch
             StatefulShellBranch(
-              navigatorKey: _chatbotNavigatorKey,
+              navigatorKey: _chatNavigatorKey,
               routes: [
                 GoRoute(
                   path: '/chat',
@@ -205,7 +212,7 @@ class AppRouter {
               navigatorKey: _documentsNavigatorKey,
               routes: [
                 GoRoute(
-                  path: '/doctor/documents',
+                  path: 'documents',
                   name: RouteConstants.documents,
                   builder: (context, state) => const DocumentScreen(),
                   routes: [],
@@ -217,7 +224,7 @@ class AppRouter {
               navigatorKey: _profileNavigatorKey,
               routes: [
                 GoRoute(
-                  path: '/doctor/profile',
+                  path: 'profile',
                   name: RouteConstants.profile,
                   builder: (context, state) => ProfileScreen(),
                 ),
@@ -226,17 +233,23 @@ class AppRouter {
           ],
         ),
 
-        // Doctor routes
+// Doctor routes
+        // Chatbot routes
         GoRoute(
-          path: '/doctor/home',
-          name: RouteConstants.doctorHome,
-          builder: (context, state) => const DoctorHomeScreen(),
+          path: '/doctor/cura-bot',
+          name: RouteConstants.doctorChatBot,
+          builder: (context, state) => const ChatBotHome(),
+          routes: [
+            // Chat with AI
+            GoRoute(
+              path: 'screen',
+              parentNavigatorKey: _rootNavigatorKey,
+              name: RouteConstants.doctorChatBotScreen,
+              builder: (context, state) => ChatBotAssistantHome(),
+            ),
+          ],
         ),
-        GoRoute(
-          path: '/doctor/patients',
-          name: RouteConstants.doctorMyPatients,
-          builder: (context, state) => const PatientsListScreen(),
-        ),
+
         GoRoute(
           path: '/doctor/schedule',
           name: RouteConstants.doctorSchedule,
@@ -251,7 +264,7 @@ class AppRouter {
           branches: [
             // Home Branch
             StatefulShellBranch(
-              navigatorKey: _homeNavigatorKey,
+              navigatorKey: _doctorHomeNavigatorKey,
               routes: [
                 GoRoute(
                   path: '/doctor/home',
@@ -259,7 +272,7 @@ class AppRouter {
                   builder: (context, state) => const DoctorHomeScreen(),
                   routes: [
                     GoRoute(
-                      path: '/doctor/notifications',
+                      path: 'notifications',
                       parentNavigatorKey: _rootNavigatorKey,
                       name: RouteConstants.doctorNotifications,
                       builder: (context, state) =>
@@ -272,23 +285,69 @@ class AppRouter {
 
             // Chat Branch
             StatefulShellBranch(
-              navigatorKey: _chatbotNavigatorKey,
+              navigatorKey: _doctorChatNavigatorKey,
               routes: [
                 GoRoute(
                   path: '/doctor/chat',
-                  name: RouteConstants.chat,
+                  name: RouteConstants.doctorChat,
                   builder: (context, state) => const ChatListScreen(),
                   routes: [
                     GoRoute(
                       // Individual Chat Screen
-                      path: '/doctor/chat-screen',
+                      path: 'chat-screen',
                       parentNavigatorKey: _rootNavigatorKey,
-                      name: RouteConstants.chatScreen,
+                      name: RouteConstants.doctorChatScreen,
                       builder: (context, state) {
                         final chat = state.extra as ChatData;
                         return ChatScreen(chat: chat);
                       },
                     ),
+                  ],
+                ),
+              ],
+            ),
+
+            // My patients of doctor side
+            StatefulShellBranch(
+              navigatorKey: _doctorPatientsNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: '/doctor/my-patients',
+                  name: RouteConstants.doctorMyPatients,
+                  builder: (context, state) => const PatientsListScreen(),
+                  routes: [
+                    // GoRoute(
+                    //   path: '/doctor/my-patients',
+                    //   parentNavigatorKey: _rootNavigatorKey,
+                    //   name: RouteConstants.doctorMyPatients,
+                    //   builder: (context, state) {
+                    //     final chat = state.extra as ChatData;
+                    //     return ChatScreen(chat: chat);
+                    //   },
+                    // ),
+                  ],
+                ),
+              ],
+            ),
+
+            // My patients of doctor side
+            StatefulShellBranch(
+              navigatorKey: _doctorProfileNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: '/doctor/profile',
+                  name: RouteConstants.doctorProfile,
+                  builder: (context, state) => DoctorProfileScreen(),
+                  routes: [
+                    // GoRoute(
+                    //   path: '/doctor/my-patients',
+                    //   parentNavigatorKey: _rootNavigatorKey,
+                    //   name: RouteConstants.doctorMyPatients,
+                    //   builder: (context, state) {
+                    //     final chat = state.extra as ChatData;
+                    //     return ChatScreen(chat: chat);
+                    //   },
+                    // ),
                   ],
                 ),
               ],

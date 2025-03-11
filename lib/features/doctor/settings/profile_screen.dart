@@ -2,12 +2,12 @@ import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
 
-class ProfileScreen extends StatefulWidget {
+class DoctorProfileScreen extends StatefulWidget {
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<DoctorProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<DoctorProfileScreen> {
   String name = '';
   String cin = '';
   bool _medicineModeReminder = true;

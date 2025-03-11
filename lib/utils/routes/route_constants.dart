@@ -23,22 +23,32 @@ class RouteConstants {
 // Patients routes
   // inner routes
   static String home = "home";
+  static String medicineReminder = "medicineReminder";
+
+  // appointments routes
   static String appointments = "appointments";
   static String bookAppointment = "bookAppointment";
+  static String appointmentDetails = "appointmentDetails";
+
+  // chat bot routes
   static String chatBot = "chatBot";
   static String chatBotScreen = "chatBotScreen";
+
+  // chat routes
   static String chat = "chat";
   static String chatScreen = "chatScreen";
-  static String profile = "profile";
+
+  // profile routes
   static String documents = "documents";
   static String prescription = "prescriptions";
   static String testRecords = "testRecords";
   static String addDocument = "addDocument";
   static String doctorProfile = "doctorProfile";
   static String doctorSearch = "doctorSearch";
-  static String medicineReminder = "medicineReminder";
+  static String myDoctors = "myDoctors";
 
   // settings routes
+  static String profile = "profile";
   static String notifications = "notifications";
   static String settings = "settings";
   static String profileSettings = "profileSettings";
@@ -49,13 +59,20 @@ class RouteConstants {
 // Doctor routes
   // inner routes
   static String doctorHome = "doctorHome";
+
+  // bookings routes
   static String doctorSchedule = "doctorSchedule";
   static String doctorBookAppointment = "doctorBookAppointment";
+
+  // chat bot routes
   static String doctorChatBot = "doctorChatBot";
   static String doctorChatBotScreen = "doctorChatBotScreen";
-  static String doctorMyPatients = "doctorMyPatients";
+
+  // chat routes
   static String doctorChat = "doctorChat";
   static String doctorChatScreen = "doctorChatScreen";
+
+  // profile routes
   static String doctorPersonalProfile = "doctortorpersonalProfile";
   static String doctorDocuments = "doctorDocuments";
   static String doctorPrescription = "doctorPrescription";
@@ -63,6 +80,7 @@ class RouteConstants {
   static String doctorAddDocument = "doctorAddDocument";
   static String doctorPatientProfile = "doctorPatientProfile";
   static String doctorPatientSearch = "doctorPatientSearch";
+  static String doctorMyPatients = "doctorMyPatients";
 
   // settings routes
   static String doctorNotifications = "doctorNotifications";

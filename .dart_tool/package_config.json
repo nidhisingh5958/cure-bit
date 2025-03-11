@@ -116,6 +116,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "flutter_lints",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
       "name": "flutter_riverpod",
       "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/flutter_riverpod-2.6.1",
       "packageUri": "lib/",
@@ -192,6 +198,12 @@
       "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "lints",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/lints-5.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
     },
     {
       "name": "logging",
@@ -506,7 +518,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-03-10T08:49:59.930118Z",
+  "generated": "2025-03-11T12:26:16.521321Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",
