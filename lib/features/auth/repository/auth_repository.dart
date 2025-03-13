@@ -84,6 +84,7 @@ class AuthRepository {
     String email,
     String phonenumber,
     String password,
+    String confirmPassword,
     String role,
   ) async {
     try {
@@ -94,6 +95,7 @@ class AuthRepository {
             'email': email,
             'phone_number': phonenumber,
             'password': password,
+            'confirm_password': password,
           }),
           headers: {
             'Content-Type': 'application/json',

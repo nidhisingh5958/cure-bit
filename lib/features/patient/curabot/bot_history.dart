@@ -4,63 +4,196 @@ import 'package:go_router/go_router.dart';
 
 class BotHistory extends StatelessWidget {
   const BotHistory({
-    required this.text,
     super.key,
   });
 
-  final String text;
-
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
-      child: ListTile(
-        onTap: () {
-          context.push(RouteConstants.chatBotScreen);
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cura Bot'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => context.pop(),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Text(
-          text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey.shade800,
-              ),
-        ),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            Icons.chat_outlined,
-            color: Theme.of(context).colorScheme.primary,
-            size: 20,
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios_rounded,
-          color: Theme.of(context).colorScheme.primary,
-          size: 16,
+      ),
+      body: SafeArea(
+        child: ListView(
+          children: const [
+            // Today section
+            HistorySection(
+              title: 'Today',
+              items: ["Can you summarise Vishal's timeline"],
+            ),
+
+            // Previous 30 days section
+            HistorySection(
+              title: 'Previous 30 days',
+              items: [
+                "Highlight the main points of Rashmi's...",
+                "Analyze this prescription and give the...",
+                "Message Laxmi that she can be hosp..."
+              ],
+            ),
+
+            // Older section
+            HistorySection(
+              title: 'Older',
+              items: ["summarise Gautum's prescription"],
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-const _historyItems = [
-  "What is helirab-d used for?",
-  "What are the symptoms of malaria?",
-  "What is the dosage of paracetamol?",
-  "Suggest a medicine for headache",
-  "Suggest a medicine for stomachache",
-  "Home remedies for treating cold",
-  "What should I do to control my cholesterol?",
-  "How can I treat headache?",
-];
+class HistorySection extends StatelessWidget {
+  final String title;
+  final List<String> items;
+
+  const HistorySection({
+    required this.title,
+    required this.items,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+        ),
+        ...items.map((text) => HistoryItem(text: text)),
+      ],
+    );
+  }
+}
+
+class HistoryItem extends StatelessWidget {
+  final String text;
+
+  const HistoryItem({
+    required this.text,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        // Navigate to chat bot screen with the selected query
+        context.push(RouteConstants.chatBotScreen, extra: text);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Icon(
+                Icons.chat_outlined,
+                size: 18,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Define a more complete version of history management
+class ChatHistoryManager {
+  static final ChatHistoryManager _instance = ChatHistoryManager._internal();
+
+  factory ChatHistoryManager() {
+    return _instance;
+  }
+
+  ChatHistoryManager._internal();
+
+  // Get all history entries organized by date
+  Map<String, List<String>> getOrganizedHistory() {
+    return {
+      'Today': [
+        "Can you summarise Vishal's timeline",
+      ],
+      'Previous 30 days': [
+        "Highlight the main points of Rashmi's report",
+        "Analyze this prescription and give the dosage",
+        "Message Laxmi that she can be hospitalized tomorrow",
+      ],
+      'Older': [
+        "summarise Gautum's prescription",
+        "What is helirab-d used for?",
+        "What are the symptoms of malaria?",
+        "What is the dosage of paracetamol?",
+      ],
+    };
+  }
+
+  // Add a new history entry
+  void addHistoryEntry(String query) {
+    // Implementation would add to the appropriate date section
+    // and handle persistence with shared_preferences or other storage
+  }
+}
+
+// A version that integrates with the history manager
+class BotHistoryWithData extends StatefulWidget {
+  const BotHistoryWithData({Key? key}) : super(key: key);
+
+  @override
+  State<BotHistoryWithData> createState() => _BotHistoryWithDataState();
+}
+
+class _BotHistoryWithDataState extends State<BotHistoryWithData> {
+  final ChatHistoryManager _historyManager = ChatHistoryManager();
+  late Map<String, List<String>> _organizedHistory;
+
+  @override
+  void initState() {
+    super.initState();
+    _organizedHistory = _historyManager.getOrganizedHistory();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cura Bot'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: ListView(
+        children: _organizedHistory.entries.map((entry) {
+          return HistorySection(
+            title: entry.key,
+            items: entry.value,
+          );
+        }).toList(),
+      ),
+    );
+  }
+}

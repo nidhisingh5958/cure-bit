@@ -33,6 +33,7 @@ class RouteConstants {
   // chat bot routes
   static String chatBot = "chatBot";
   static String chatBotScreen = "chatBotScreen";
+  static String chatBotHistory = "chatBotHistory";
 
   // chat routes
   static String chat = "chat";
@@ -67,6 +68,7 @@ class RouteConstants {
   // chat bot routes
   static String doctorChatBot = "doctorChatBot";
   static String doctorChatBotScreen = "doctorChatBotScreen";
+  static String doctorChatBotHistory = "doctorChatBotHistory";
 
   // chat routes
   static String doctorChat = "doctorChat";

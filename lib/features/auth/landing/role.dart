@@ -26,12 +26,12 @@ class _RoleScreenState extends State<RoleScreen> {
                 child: Column(
                   children: [
                     Text(
-                      "Sign In",
-                      style:
-                          Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: color2,
-                              ),
+                      'Welcome to CuraDocs',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: color1,
+                      ),
                     ),
                     const SizedBox(height: 40),
                     Text(

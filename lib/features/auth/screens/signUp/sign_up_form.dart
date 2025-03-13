@@ -100,6 +100,7 @@ class _SignUpFormState extends State<SignUpForm> {
         _emailController.text,
         _phoneController.text,
         _passwordController.text,
+        _confirmPasswordController.text,
         _role,
       );
     } catch (e) {

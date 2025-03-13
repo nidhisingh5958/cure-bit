@@ -1,37 +1,54 @@
-import 'package:CuraDocs/features/doctor/appointment/appointment_screen.dart';
-import 'package:CuraDocs/features/doctor/curabot/_chat_bot_home.dart';
-import 'package:CuraDocs/features/doctor/home_screen/_home_screen_doc.dart';
-import 'package:CuraDocs/features/doctor/home_screen/_notification.dart';
-import 'package:CuraDocs/features/doctor/my_patients.dart/patients_screen.dart';
-import 'package:CuraDocs/features/doctor/settings/profile_screen.dart';
-import 'package:CuraDocs/utils/routes/doctor_navigation_bar.dart';
-import 'package:CuraDocs/utils/routes/patient_navigation_bar.dart';
-import 'package:CuraDocs/features/auth/landing/role.dart';
-import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
-import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
-import 'package:CuraDocs/features/patient/chat/chat_home.dart';
-import 'package:CuraDocs/features/patient/curabot/chat_bot_home.dart';
-import 'package:CuraDocs/features/patient/curabot/chat_with_ai.dart';
-import 'package:CuraDocs/features/patient/chat/chat_screen.dart';
-import 'package:CuraDocs/features/patient/documents/add_document.dart';
-import 'package:CuraDocs/features/patient/documents/document_screen.dart';
-import 'package:CuraDocs/features/patient/documents/prescription.dart';
-import 'package:CuraDocs/features/patient/documents/test_records.dart';
-import 'package:CuraDocs/features/auth/screens/login/forgot_pass.dart';
-import 'package:CuraDocs/features/patient/home_screen/home_screen.dart';
-import 'package:CuraDocs/features/patient/home_screen/notification.dart';
-import 'package:CuraDocs/features/auth/screens/login/login_screen.dart';
-import 'package:CuraDocs/features/patient/medicine.dart/medicine_screen.dart';
-import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
-import 'package:CuraDocs/features/auth/screens/login/otp.dart';
-import 'package:CuraDocs/features/patient/settings/profile_screen.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
 import 'package:CuraDocs/features/auth/landing/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:CuraDocs/features/auth/landing/role.dart';
+import 'package:CuraDocs/features/auth/screens/login/forgot_pass.dart';
+import 'package:CuraDocs/features/auth/screens/login/login_screen.dart';
+import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
+import 'package:CuraDocs/features/auth/screens/login/otp.dart';
+
+// PATIENT
+// appointment
+import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
+import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
+// chatbot
+import 'package:CuraDocs/features/patient/curabot/chat_bot_home.dart';
+import 'package:CuraDocs/features/patient/curabot/chat_with_ai.dart';
+import 'package:CuraDocs/features/patient/curabot/bot_history.dart' as patient;
+// chat
+import 'package:CuraDocs/features/patient/chat/chat_home.dart';
+import 'package:CuraDocs/features/patient/chat/chat_screen.dart';
 import '../../features/patient/chat/entities/chat_data.dart';
+// documents
+import 'package:CuraDocs/features/patient/documents/add_document.dart';
+import 'package:CuraDocs/features/patient/documents/document_screen.dart';
+import 'package:CuraDocs/features/patient/documents/prescription.dart';
+import 'package:CuraDocs/features/patient/documents/test_records.dart';
+// home
+import 'package:CuraDocs/features/patient/home_screen/home_screen.dart';
+import 'package:CuraDocs/features/patient/home_screen/notification.dart';
+import 'package:CuraDocs/features/patient/medicine.dart/medicine_screen.dart';
+// settings
+import 'package:CuraDocs/utils/routes/patient_navigation_bar.dart';
+import 'package:CuraDocs/features/patient/settings/profile_screen.dart';
+
+// DOCTOR
+// chatbot
+import 'package:CuraDocs/features/doctor/curabot/_chat_bot_home.dart';
+import 'package:CuraDocs/features/doctor/curabot/_chat_history.dart';
+// home
+import 'package:CuraDocs/features/doctor/home_screen/_home_screen_doc.dart';
+import 'package:CuraDocs/features/doctor/home_screen/_notification.dart';
+// appointment
+import 'package:CuraDocs/features/doctor/appointment/appointment_screen.dart';
+// my patients
+import 'package:CuraDocs/features/doctor/my_patients.dart/patients_screen.dart';
+// settings
+import 'package:CuraDocs/utils/routes/doctor_navigation_bar.dart';
+import 'package:CuraDocs/features/doctor/settings/profile_screen.dart';
 
 // Navigation keys for each branch
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -132,6 +149,12 @@ class AppRouter {
               parentNavigatorKey: _rootNavigatorKey,
               name: RouteConstants.chatBotScreen,
               builder: (context, state) => const ChatBotScreen(),
+            ),
+            GoRoute(
+              path: 'history',
+              parentNavigatorKey: _rootNavigatorKey,
+              name: RouteConstants.chatBotHistory,
+              builder: (context, state) => const patient.BotHistory(),
             ),
           ],
         ),
@@ -238,7 +261,7 @@ class AppRouter {
         GoRoute(
           path: '/doctor/cura-bot',
           name: RouteConstants.doctorChatBot,
-          builder: (context, state) => const ChatBotHome(),
+          builder: (context, state) => ChatBotHome(),
           routes: [
             // Chat with AI
             GoRoute(
@@ -246,6 +269,14 @@ class AppRouter {
               parentNavigatorKey: _rootNavigatorKey,
               name: RouteConstants.doctorChatBotScreen,
               builder: (context, state) => ChatBotAssistantHome(),
+            ),
+            GoRoute(
+              path: 'history',
+              parentNavigatorKey: _rootNavigatorKey,
+              name: RouteConstants.doctorChatBotHistory,
+              builder: (context, state) => DoctorBotHistory(
+                  // text: '',
+                  ),
             ),
           ],
         ),

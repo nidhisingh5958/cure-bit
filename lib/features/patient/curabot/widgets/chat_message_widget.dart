@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';
 import 'package:CuraDocs/features/patient/curabot/entities/message_group.dart';
 import 'package:flutter/material.dart';
@@ -29,19 +30,20 @@ class ChatMessageWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 12, bottom: 4),
                 child: Row(
+                  // heading above message box (bot side)
                   children: [
-                    CircleAvatar(
-                      radius: 12,
-                      backgroundColor: Colors.blue[100],
-                      child: Icon(Icons.health_and_safety,
-                          size: 16, color: Colors.blue[900]),
-                    ),
-                    SizedBox(width: 8),
+                    // CircleAvatar(
+                    //   radius: 12,
+                    //   backgroundColor: Colors.blue[100],
+                    //   child: Icon(Icons.health_and_safety,
+                    //       size: 16, color: Colors.blue[900]),
+                    // ),
+                    // SizedBox(width: 8),
                     Text(
-                      'Health Assistant',
+                      'Cura Bot',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: color2,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -75,6 +77,7 @@ class ChatMessageWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: message.backgroundColor,
         borderRadius: message.getBorderRadius(isFirst: isFirst, isLast: isLast),
+        // chat bubble shadow
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
