@@ -1,10 +1,10 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/features/patient/chat/widgets/build_message.dart';
+import 'package:CuraDocs/features/doctor/chat/widgets/_build_message.dart';
 import 'data/chat_sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/features/patient/chat/entities/chat_data.dart';
-import 'package:CuraDocs/features/patient/chat/entities/message.dart';
+import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
+import 'package:CuraDocs/features/doctor/chat/entities/_message.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatData chat;
@@ -113,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(value as double),
+              color: Colors.grey.withOpacity(value),
               shape: BoxShape.circle,
             ),
           );

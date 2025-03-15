@@ -54,7 +54,7 @@ class DoctorSideMenu extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "User",
+                "Dr. User",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 22,

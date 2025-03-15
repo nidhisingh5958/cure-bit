@@ -1,4 +1,4 @@
-import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
+import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
 
@@ -29,7 +29,7 @@ class _ProfileScreenState extends State<DoctorProfileScreen> {
         ],
         centerTitle: true,
       ),
-      drawer: SideMenu(),
+      drawer: DoctorSideMenu(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(

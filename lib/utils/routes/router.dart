@@ -31,6 +31,7 @@ import 'package:CuraDocs/features/patient/documents/test_records.dart';
 import 'package:CuraDocs/features/patient/home_screen/home_screen.dart';
 import 'package:CuraDocs/features/patient/home_screen/notification.dart';
 import 'package:CuraDocs/features/patient/medicine.dart/medicine_screen.dart';
+import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
 // settings
 import 'package:CuraDocs/utils/routes/patient_navigation_bar.dart';
 import 'package:CuraDocs/features/patient/settings/profile_screen.dart';
@@ -39,9 +40,11 @@ import 'package:CuraDocs/features/patient/settings/profile_screen.dart';
 // chatbot
 import 'package:CuraDocs/features/doctor/curabot/_chat_bot_home.dart';
 import 'package:CuraDocs/features/doctor/curabot/_chat_history.dart';
+import 'package:CuraDocs/features/doctor/curabot/_chat_with_ai.dart';
 // home
 import 'package:CuraDocs/features/doctor/home_screen/_home_screen_doc.dart';
 import 'package:CuraDocs/features/doctor/home_screen/_notification.dart';
+import 'package:CuraDocs/features/doctor/home_screen/_search_screen.dart';
 // appointment
 import 'package:CuraDocs/features/doctor/appointment/appointment_screen.dart';
 // my patients
@@ -53,7 +56,7 @@ import 'package:CuraDocs/features/doctor/settings/profile_screen.dart';
 // Navigation keys for each branch
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 // keys for patient routes
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
+// final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _homeNavigatorKey = GlobalKey<NavigatorState>();
 final _chatNavigatorKey = GlobalKey<NavigatorState>();
 final _documentsNavigatorKey = GlobalKey<NavigatorState>();
@@ -159,6 +162,16 @@ class AppRouter {
           ],
         ),
 
+        // Doctor search
+        GoRoute(
+          path: 'doctor-search',
+          parentNavigatorKey: _rootNavigatorKey,
+          name: RouteConstants.doctorSearch,
+          builder: (context, state) => DoctorSearchScreen(
+            map: {},
+          ),
+        ),
+
         GoRoute(
           path: '/appointments',
           name: RouteConstants.appointments,
@@ -261,14 +274,14 @@ class AppRouter {
         GoRoute(
           path: '/doctor/cura-bot',
           name: RouteConstants.doctorChatBot,
-          builder: (context, state) => ChatBotHome(),
+          builder: (context, state) => ChatBotAssistantHome(),
           routes: [
             // Chat with AI
             GoRoute(
               path: 'screen',
               parentNavigatorKey: _rootNavigatorKey,
               name: RouteConstants.doctorChatBotScreen,
-              builder: (context, state) => ChatBotAssistantHome(),
+              builder: (context, state) => DoctorBotScreen(),
             ),
             GoRoute(
               path: 'history',

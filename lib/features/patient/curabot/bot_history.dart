@@ -23,23 +23,23 @@ class BotHistory extends StatelessWidget {
             // Today section
             HistorySection(
               title: 'Today',
-              items: ["Can you summarise Vishal's timeline"],
+              items: ["What is helirab-d used for?"],
             ),
 
             // Previous 30 days section
             HistorySection(
               title: 'Previous 30 days',
               items: [
-                "Highlight the main points of Rashmi's...",
-                "Analyze this prescription and give the...",
-                "Message Laxmi that she can be hosp..."
+                "Suggest a medicine for stomachache",
+                "AWhat should I do to control my cholesterol?",
+                "What is the dosage of paracetamol"
               ],
             ),
 
             // Older section
             HistorySection(
               title: 'Older',
-              items: ["summarise Gautum's prescription"],
+              items: ["What are the symptoms of malaria?"],
             ),
           ],
         ),

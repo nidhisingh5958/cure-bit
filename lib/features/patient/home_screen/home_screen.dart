@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
       drawer: Drawer(
         child: SideMenu(),
       ),
-      // floatingActionButton property
+      // floatingActionButton property - chatbot
       floatingActionButton: _buildChatBotFloatingButton(context),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -44,8 +44,10 @@ class HomeScreen extends StatelessWidget {
           _buildGreeting(),
           const SizedBox(height: 32),
           _buildFeaturesSection(context),
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
           _buildUpcomingSection(context),
+          const SizedBox(height: 18),
+          _buildMedicalRecordsSection(context),
         ],
       ),
     );
@@ -235,8 +237,8 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color2, size: 24),
-            const SizedBox(height: 8),
+            Icon(icon, color: color2, size: 30),
+            const SizedBox(height: 18),
             Text(
               label,
               style: TextStyle(
@@ -311,6 +313,65 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildMedicalRecordsSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildMedSectionHeader(context, 'Upcoming ', onSeeAll: () {}),
+        const SizedBox(height: 16),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 2,
+          itemBuilder: (context, index) {
+            return _buildAppointmentCard(
+              context,
+              title: index == 0 ? 'Dr. Jean Grey' : 'Regular Checkup',
+              specialty: index == 0 ? 'Cardiologist' : 'General Practitioner',
+              rating: index == 0 ? '4.8' : null,
+              time: 'Today, ${index == 0 ? '15:00' : '14:00'} PM',
+              index: index,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMedSectionHeader(
+    BuildContext context,
+    String title, {
+    VoidCallback? onSeeAll,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: color1,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        TextButton(
+          onPressed: onSeeAll,
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          child: Row(
+            children: const [
+              Text('See All'),
+              SizedBox(width: 4),
+              Icon(Icons.arrow_forward, size: 16),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+// currently not in use
   Widget _buildAppointmentCard(
     BuildContext context, {
     required String title,

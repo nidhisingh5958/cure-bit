@@ -1,21 +1,19 @@
-import 'package:CuraDocs/features/patient/curabot/entities/message_group.dart';
-import 'package:CuraDocs/features/patient/curabot/widgets/chat_message_widget.dart';
+import 'package:CuraDocs/features/doctor/curabot/entities/message_group.dart';
+import 'package:CuraDocs/features/doctor/curabot/widgets/_bot_search_bar.dart';
+import 'package:CuraDocs/features/doctor/curabot/widgets/chat_message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:CuraDocs/components/routes/route_constants.dart';
-import 'package:CuraDocs/features/patient/curabot/data/messages_bot.dart';
-import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';
-// import 'package:CuraDocs/screens/chatbot/widgets/media_message.dart';
-// import 'package:CuraDocs/screens/chatbot/widgets/text_message.dart';
+import 'package:CuraDocs/features/doctor/curabot/data/messages_bot.dart';
+import 'package:CuraDocs/features/doctor/curabot/entities/message_bot.dart';
 
-class ChatBotScreen extends StatefulWidget {
-  const ChatBotScreen({super.key});
+class DoctorBotScreen extends StatefulWidget {
+  const DoctorBotScreen({super.key});
 
   @override
-  State<ChatBotScreen> createState() => _ChatBotScreenState();
+  State<DoctorBotScreen> createState() => _DoctorBotScreenState();
 }
 
-class _ChatBotScreenState extends State<ChatBotScreen> {
+class _DoctorBotScreenState extends State<DoctorBotScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   List<MessageGroup> messageGroups = [];
@@ -62,7 +60,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         title: Column(
           children: [
             Text(
-              "Health Assistant",
+              "Cura Bot",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -76,12 +74,6 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               size: 20, color: Colors.black87),
           onPressed: () => context.pop(),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.more_horiz_rounded, color: Colors.black87),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
@@ -96,90 +88,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                 itemCount: messageGroups.length,
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: Offset(0, -5),
-                  ),
-                ],
-              ),
-              padding: EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue[50],
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.add_circle_outline_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      onPressed: () {},
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: "Type your health query...",
-                        hintStyle:
-                            TextStyle(fontSize: 14, color: Colors.grey[500]),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Container(
-                          margin: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: Icon(Icons.send_rounded, color: Colors.white),
-                            onPressed: () {
-                              if (_controller.text.isNotEmpty) {
-                                setState(() {
-                                  messages.add(Message(
-                                    type: MessageType.text,
-                                    sender: MessageSender.user,
-                                    text: _controller.text,
-                                  ));
-                                  _groupMessages();
-                                  _controller.clear();
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    _scrollController.animateTo(
-                                      _scrollController
-                                          .position.maxScrollExtent,
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeOut,
-                                    );
-                                  });
-                                });
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      style: TextStyle(fontSize: 14),
-                      minLines: 1,
-                      maxLines: 4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            DoctorBotSearchBar(),
           ],
         ),
       ),
@@ -187,14 +96,14 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   }
 }
 
-// class ChatBotScreen extends StatefulWidget {
-//   const ChatBotScreen({super.key});
+// class DoctorBotScreen extends StatefulWidget {
+//   const DoctorBotScreen({super.key});
 
 //   @override
-//   State<ChatBotScreen> createState() => _ChatBotScreenState();
+//   State<DoctorBotScreen> createState() => _DoctorBotScreenState();
 // }
 
-// class _ChatBotScreenState extends State<ChatBotScreen> {
+// class _DoctorBotScreenState extends State<DoctorBotScreen> {
 //   final TextEditingController _controller = TextEditingController();
 //   final ScrollController _scrollController = ScrollController();
 
