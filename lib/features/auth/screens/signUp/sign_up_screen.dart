@@ -49,7 +49,7 @@ class _SignupPageState extends State<SignUpScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 50),
                   SignUpForm(),
                   const SizedBox(height: 40),
                   Center(

@@ -189,7 +189,14 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(context, 'Quick Access'),
+        Text(
+          'Quick Access',
+          style: TextStyle(
+            color: color1,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 16),
         Container(
           width: double.infinity,
@@ -313,18 +320,157 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildAppointmentCard(
+    BuildContext context, {
+    required String title,
+    required String specialty,
+    String? rating,
+    required String time,
+    required int index,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Material(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              // border: Border.all(
+              //   color: color1,
+              //   width: 1,
+              // ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // Doctor/Appointment Avatar
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        Icons.person_outline,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 32,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Appointment Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                              color: color1,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'Confirmed',
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        specialty,
+                        style: TextStyle(
+                          color: color3,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          _buildInfoChip(
+                            context,
+                            Icons.access_time,
+                            time,
+                            Colors.blue,
+                          ),
+                          if (rating != null) ...[
+                            const SizedBox(width: 12),
+                            _buildInfoChip(
+                              context,
+                              Icons.star,
+                              rating,
+                              Colors.amber,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Arrow indicator
+                Container(
+                  margin: const EdgeInsets.only(left: 12),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: color3,
+                    size: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildMedicalRecordsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildMedSectionHeader(context, 'Upcoming ', onSeeAll: () {}),
+        _buildMedSectionHeader(context, 'Medical Records ', onSeeAll: () {}),
         const SizedBox(height: 16),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: 2,
           itemBuilder: (context, index) {
-            return _buildAppointmentCard(
+            return _buildMedicalRecordsCard(
               context,
               title: index == 0 ? 'Dr. Jean Grey' : 'Regular Checkup',
               specialty: index == 0 ? 'Cardiologist' : 'General Practitioner',
@@ -371,8 +517,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-// currently not in use
-  Widget _buildAppointmentCard(
+  Widget _buildMedicalRecordsCard(
     BuildContext context, {
     required String title,
     required String specialty,
@@ -392,10 +537,10 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: color1,
-                width: 1,
-              ),
+              // border: Border.all(
+              //   color: color1,
+              //   width: 1,
+              // ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.05),

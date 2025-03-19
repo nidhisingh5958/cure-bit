@@ -1,9 +1,10 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class SignUpForm extends StatefulWidget {
   final Map<String, dynamic>? extra;
@@ -16,7 +17,8 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstnameController = TextEditingController();
+  final _lastnameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -34,8 +36,11 @@ class _SignUpFormState extends State<SignUpForm> {
   bool _isConfirmPasswordVisible = false;
   bool _isChecked = false;
   bool _isLoading = false;
+  bool _isVerifyingEmail = false;
+  bool _isVerifyingPhone = false;
 
-  String name = '';
+  String firstname = '';
+  String lastname = '';
   String email = '';
   String phone = '';
   String password = '';
@@ -46,6 +51,18 @@ class _SignUpFormState extends State<SignUpForm> {
   void initState() {
     super.initState();
     _loadRole();
+    country = Country(
+      phoneCode: '91',
+      countryCode: 'IN',
+      e164Sc: 0,
+      geographic: true,
+      level: 1,
+      name: 'India',
+      example: '9123456789',
+      displayName: 'India (IN) [+91]',
+      displayNameNoCountryCode: 'India (IN)',
+      e164Key: '91-IN-0',
+    );
   }
 
   Future<void> _loadRole() async {
@@ -90,17 +107,34 @@ class _SignUpFormState extends State<SignUpForm> {
       return;
     }
 
+    if (_passwordController.text != _confirmPasswordController.text) {
+      showSnackBar(
+        context: context,
+        message: 'Passwords do not match',
+      );
+      return;
+    }
+
+    if (country == null) {
+      showSnackBar(
+        context: context,
+        message: 'Please select a country code',
+      );
+      return;
+    }
+
     try {
       setState(() => _isLoading = true);
 
       final authRepository = AuthRepository();
       await authRepository.signUp(
         context,
-        _nameController.text,
+        _firstnameController.text,
+        _lastnameController.text,
         _emailController.text,
+        country!.phoneCode,
         _phoneController.text,
         _passwordController.text,
-        _confirmPasswordController.text,
         _role,
       );
     } catch (e) {
@@ -114,32 +148,16 @@ class _SignUpFormState extends State<SignUpForm> {
     }
   }
 
-// country picker
-  void pickCountry() {
-    showCountryPicker(
-      context: context,
-      showPhoneCode: true,
-      onSelect: (Country _country) {
-        setState(() => country = _country);
-      },
-    );
-  }
-
   @override
   void dispose() {
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _otpController.dispose();
-    _emailController.dispose();
+    _firstnameController.dispose();
+    _lastnameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _otpController.dispose();
     _emailController.dispose();
     _phoneOtpController.dispose();
     _phoneController.dispose();
-    _nameController.dispose();
     super.dispose();
   }
 
@@ -169,11 +187,11 @@ class _SignUpFormState extends State<SignUpForm> {
     // For this example, we'll just simulate verification
 
     setState(() {
-      _isLoading = true;
+      _isVerifyingEmail = true;
     });
 
     try {
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+      //  await authRepository.verifyEmailOtp(_emailController.text, _otpController.text);
 
       // For demo, we'll consider "123456" as correct OTP
       if (_otpController.text == "123456") {
@@ -193,22 +211,21 @@ class _SignUpFormState extends State<SignUpForm> {
       }
     } finally {
       setState(() {
-        _isLoading = false;
+        _isVerifyingEmail = false;
       });
     }
   }
 
-  // Add this method to request Phone OTP
+  //  request Phone OTP
   Future<void> _requestPhoneOtp() async {
     // Validate phone before showing OTP field
     final phoneValue = _phoneController.text;
-    if (phoneValue.isNotEmpty && RegExp(r'^[0-9]{10}$').hasMatch(phoneValue)) {
+    if (phoneValue.isNotEmpty) {
       setState(() {
         _showPhoneOtpField = true;
       });
 
       // Here you would typically call your API to send OTP
-      // For demo purposes, we'll just use a delay
       showSnackBar(
         context: context,
         message: 'OTP sent to +${country?.phoneCode ?? '00'} $phoneValue',
@@ -221,16 +238,16 @@ class _SignUpFormState extends State<SignUpForm> {
     }
   }
 
-// Add this method to verify Phone OTP
+// verify Phone OTP
   Future<void> _verifyPhoneOtp() async {
     // In a real app, you'd verify the OTP with your backend
 
     setState(() {
-      _isLoading = true;
+      _isVerifyingPhone = true;
     });
 
     try {
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+      //  await authRepository.verifyEmailOtp(_emailController.text, _otpController.text);
 
       // For demo, we'll consider "123456" as correct OTP
       if (_phoneOtpController.text == "123456") {
@@ -250,7 +267,7 @@ class _SignUpFormState extends State<SignUpForm> {
       }
     } finally {
       setState(() {
-        _isLoading = false;
+        _isVerifyingPhone = false;
       });
     }
   }
@@ -280,7 +297,7 @@ class _SignUpFormState extends State<SignUpForm> {
           _buildPasswordField(
             controller: _confirmPasswordController,
             hint: 'Confirm Password',
-            isVisible: _isConfirmPasswordVisible,
+            isVisible: _isConfirmPasswordVisible, // This is correct
             onVisibilityToggle: () {
               setState(
                   () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
@@ -303,26 +320,57 @@ class _SignUpFormState extends State<SignUpForm> {
 
 // name field
   Widget _buildNameField() {
-    return TextFormField(
-      controller: _nameController,
-      decoration: InputDecoration(
-        hintText: 'Name',
-      ),
-      style: TextStyle(
-        fontSize: 14,
-        color: color1,
-      ),
-      keyboardType: TextInputType.name,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your name';
-        }
-        if (value.length < 2) {
-          return 'Name must be at least 2 characters';
-        }
-        return null;
-      },
-      onSaved: (value) => name = value!,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _firstnameController,
+            decoration: InputDecoration(
+              hintText: 'First Name',
+            ),
+            style: TextStyle(
+              fontSize: 14,
+              color: color1,
+            ),
+            keyboardType: TextInputType.name,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your first name';
+              }
+              if (value.length < 2) {
+                return 'Name must be at least 2 characters';
+              }
+              return null;
+            },
+            onSaved: (value) => firstname = value!,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: TextFormField(
+            controller: _lastnameController,
+            decoration: InputDecoration(
+              hintText: 'Last Name',
+            ),
+            style: TextStyle(
+              fontSize: 14,
+              color: color1,
+            ),
+            keyboardType: TextInputType.name,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your last name';
+              }
+              if (value.length < 2) {
+                return 'Name must be at least 2 characters';
+              }
+              return null;
+            },
+            onSaved: (value) => lastname = value!,
+          ),
+        ),
+      ],
     );
   }
 
@@ -429,12 +477,12 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: _verifyEmailOtp,
+                  onPressed: _isVerifyingEmail ? null : _verifyEmailOtp,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 10),
                   ),
-                  child: _isLoading
+                  child: _isVerifyingEmail
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -460,89 +508,61 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget _buildPhoneNumberField() {
     return Column(
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(
-                  hintText: 'Phone Number',
-                  prefixText:
-                      country != null ? '+${country!.phoneCode} ' : '+00 ',
-                  prefixStyle: TextStyle(
-                    fontSize: 14,
-                    color: color1,
-                  ),
-                  suffixIcon: _isPhoneVerified
-                      ? const Icon(Icons.check_circle, color: Colors.green)
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (!_showPhoneOtpField &&
-                                _phoneController.text.isNotEmpty)
-                              TextButton(
-                                onPressed: _requestPhoneOtp,
-                                child: Text('Verify',
-                                    style: TextStyle(color: color3)),
-                              ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: color2,
-                              ),
-                              onPressed: pickCountry,
-                            ),
-                          ],
-                        ),
-                ),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: color1,
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                    return 'Please enter a valid phone number';
-                  }
-                  if (!_isPhoneVerified) {
-                    return 'Please verify your phone number';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  // If phone is changed after verification, reset verification
-                  if (_isPhoneVerified) {
-                    setState(() {
-                      _isPhoneVerified = false;
-                    });
-                  }
-                },
-                onSaved: (value) {
-                  // Save the full phone number including country code
-                  String countryCode =
-                      country != null ? '+${country!.phoneCode}' : '+00';
-                  phone = '$countryCode${value!}';
-                },
-              ),
-            ),
-            // if (_isPhoneVerified)
-            //   Padding(
-            //     padding:
-            //         const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-            //     child: Container(
-            //       width: 12,
-            //       height: 12,
-            //       decoration: const BoxDecoration(
-            //         color: Colors.green,
-            //         shape: BoxShape.circle,
-            //       ),
-            //     ),
-            //   ),
-          ],
+        IntlPhoneField(
+          controller: _phoneController,
+          decoration: InputDecoration(
+            hintText: 'Phone Number',
+            suffixIcon: _isPhoneVerified
+                ? const Icon(Icons.check_circle, color: Colors.green)
+                : (!_showPhoneOtpField && _phoneController.text.isNotEmpty
+                    ? TextButton(
+                        onPressed: _requestPhoneOtp,
+                        child: Text('Verify', style: TextStyle(color: color3)),
+                      )
+                    : null),
+          ),
+          initialCountryCode: 'IN', // Default to India
+          style: TextStyle(
+            fontSize: 14,
+            color: color1,
+          ),
+          onChanged: (phone) {
+            // If phone is changed after verification, reset verification
+            if (_isPhoneVerified) {
+              setState(() {
+                _isPhoneVerified = false;
+              });
+            }
+            // Update the phone controller with just the number part
+            _phoneController.text = phone.number;
+          },
+          onCountryChanged: (country) {
+            setState(() {
+              this.country = Country(
+                phoneCode: country.dialCode
+                    .replaceAll('+', ''), // Along with + sign country code
+                countryCode: country.code,
+                e164Sc: 0,
+                geographic: true,
+                level: 1,
+                name: country.name,
+                example: '',
+                displayName:
+                    '${country.name} (${country.code}) [${country.dialCode}]',
+                displayNameNoCountryCode: '${country.name} (${country.code})',
+                e164Key: '${country.dialCode.substring(1)}-${country.code}-0',
+              );
+            });
+          },
+          validator: (phoneField) {
+            if (phoneField == null || phoneField.number.isEmpty) {
+              return 'Please enter your phone number';
+            }
+            if (!_isPhoneVerified) {
+              return 'Please verify your phone number';
+            }
+            return null;
+          },
         ),
 
         // OTP field that appears conditionally
@@ -581,12 +601,12 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: _verifyPhoneOtp,
+                  onPressed: _isVerifyingPhone ? null : _verifyPhoneOtp,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 10),
                   ),
-                  child: _isLoading
+                  child: _isVerifyingPhone
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -620,12 +640,10 @@ class _SignUpFormState extends State<SignUpForm> {
         hintText: hint,
         suffixIcon: IconButton(
           icon: Icon(
-            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            isVisible ? Icons.visibility : Icons.visibility_off,
             color: color2,
           ),
-          onPressed: () {
-            setState(() => _isPasswordVisible = !_isPasswordVisible);
-          },
+          onPressed: onVisibilityToggle,
         ),
       ),
       style: TextStyle(

@@ -15,7 +15,7 @@
     },
     {
       "name": "args",
-      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/args-2.6.0",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/args-2.7.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -174,6 +174,12 @@
       "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/intl-0.20.2",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "intl_phone_field",
+      "rootUri": "file:///home/nid/.pub-cache/hosted/pub.dev/intl_phone_field-3.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "json_annotation",
@@ -518,7 +524,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-03-11T12:26:16.521321Z",
+  "generated": "2025-03-19T12:34:58.682746Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///home/nid/snap/flutter/common/flutter",

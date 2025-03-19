@@ -22,12 +22,12 @@ class DoctorBottomNavigation extends StatelessWidget {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Patients',
+            icon: Icon(Icons.chat_bubble_outline),
+            label: 'Chat',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Schedule',
+            icon: Icon(Icons.people_alt_outlined),
+            label: 'Patients',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

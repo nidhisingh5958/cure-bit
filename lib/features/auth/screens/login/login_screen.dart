@@ -48,6 +48,7 @@ class LoginScreen extends StatelessWidget {
                   const SizedBox(height: 30),
                   Center(
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.0),

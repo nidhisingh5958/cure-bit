@@ -1,4 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,106 +7,52 @@ import 'package:go_router/go_router.dart';
 // This is the search screen for the patient where he/she can search doctors
 class DoctorSearchScreen extends StatefulWidget {
   final Map<String, dynamic> map;
-  const DoctorSearchScreen({Key? key, required this.map}) : super(key: key);
+
+  DoctorSearchScreen({Key? key, required this.map}) : super(key: key);
 
   @override
   State<DoctorSearchScreen> createState() => _DoctorSearchScreenState();
 }
 
 class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
-  String searchString = '';
-  List<dynamic> filteredDoctors = [];
-  List<String> selectedSpecializations = [];
+  final FocusNode _focusNode = FocusNode();
+  bool isExpanded = false;
+  String query = '';
+
+  final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Initialize filtered doctors with all doctors
-    filteredDoctors = List.from(widget.map['doctors'] ?? []);
-  }
-
-  // Filter doctors based on search string and selected specializations
-  void _filterDoctors() {
-    setState(() {
-      if (searchString.isEmpty && selectedSpecializations.isEmpty) {
-        // If no filters, show all doctors
-        filteredDoctors = List.from(widget.map['doctors'] ?? []);
-      } else {
-        filteredDoctors =
-            (widget.map['doctors'] as List<dynamic>).where((doctor) {
-          bool matchesSearch = searchString.isEmpty ||
-              (doctor['name'] as String)
-                  .toLowerCase()
-                  .contains(searchString.toLowerCase()) ||
-              (doctor['specialization'] as String)
-                  .toLowerCase()
-                  .contains(searchString.toLowerCase());
-
-          bool matchesSpecialization = selectedSpecializations.isEmpty ||
-              selectedSpecializations.contains(doctor['specialization']);
-
-          return matchesSearch && matchesSpecialization;
-        }).toList();
-      }
+    // Listen for changes to update the isExpanded state
+    _textController.addListener(() {
+      setState(() {
+        isExpanded = _textController.text.isNotEmpty;
+      });
     });
   }
 
-  // Show filter dialog
-  void _showFilterDialog() {
-    // Get all unique specializations
-    final allSpecializations = (widget.map['doctors'] as List<dynamic>)
-        .map((doctor) => doctor['specialization'] as String)
-        .toSet()
-        .toList();
+  @override
+  void dispose() {
+    // Clean up resources
+    _textController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
 
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          return AlertDialog(
-            title: Text('Filter by Specialization'),
-            content: Container(
-              width: double.maxFinite,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: allSpecializations.length,
-                itemBuilder: (context, index) {
-                  final specialization = allSpecializations[index];
-                  return CheckboxListTile(
-                    title: Text(specialization),
-                    value: selectedSpecializations.contains(specialization),
-                    onChanged: (selected) {
-                      setDialogState(() {
-                        if (selected!) {
-                          selectedSpecializations.add(specialization);
-                        } else {
-                          selectedSpecializations.remove(specialization);
-                        }
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _filterDoctors();
-                },
-                child: Text('Apply'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+  void onQueryChanged(String newQuery) {
+    setState(() {
+      query = newQuery;
+    });
+  }
+
+  // delete items function to clear the text
+  void _deleteItems() {
+    setState(() {
+      _textController.clear();
+      query = '';
+      isExpanded = false;
+    });
   }
 
   @override
@@ -122,154 +69,143 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.filter_list),
-            onPressed: _showFilterDialog,
+            onPressed: () {
+              // Add filter functionality
+            },
           ),
         ],
       ),
-      body: Column(
-        children: [
-          _buildSearchBar(),
-          Expanded(
-            child: filteredDoctors.isEmpty
-                ? Center(child: Text('No doctors found'))
-                : _buildDoctorList(),
-          ),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildSearchBar(context),
+            // Uncomment this when you have the data ready
+            // _buildDoctorList(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 10,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 20,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3),
+  Widget _buildSearchBar(context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: TextField(
+        focusNode: _focusNode,
+        controller: _textController, // Use the controller
+        onChanged: onQueryChanged,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          prefixIcon: Icon(
+            Icons.search,
+            color: color1,
+            size: 20,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.search),
-          SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search for doctors',
-                border: InputBorder.none,
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isExpanded)
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: color1,
+                    size: 20,
+                  ),
+                  onPressed: _deleteItems,
+                )
+              else
+                Icon(
+                  Icons.mic,
+                  color: color1,
+                  size: 20,
+                ),
+            ],
+          ),
+          hintText: "Search for doctors",
+          hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey,
               ),
-              onChanged: (value) {
-                searchString = value;
-                _filterDoctors();
-              },
-            ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
-          if (searchString.isNotEmpty)
-            IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: () {
-                setState(() {
-                  searchString = '';
-                  _filterDoctors();
-                });
-              },
-            ),
-        ],
+        ),
+        style: TextStyle(fontSize: 14),
+        minLines: 1,
+        maxLines: 1,
+        onSubmitted: (value) {
+          if (value.isNotEmpty) {
+            context.pushNamed(
+              RouteConstants.chatBotScreen,
+              extra: value,
+            );
+          }
+        },
       ),
     );
   }
 
-  // Get category/specialization with null safety
+  // temporary function real will be fetched from api
   String getCategory(String? specialization) {
     return specialization ?? 'General Physician';
   }
 
   Widget _buildDoctorList() {
-    return ListView.builder(
-      itemCount: filteredDoctors.length,
-      itemBuilder: (context, index) {
-        final doctor = filteredDoctors[index];
-        return Card(
-          margin: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: getProportionateScreenHeight(16),
-              vertical: getProportionateScreenHeight(8),
-            ),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 64,
-                      minHeight: 64,
-                      maxWidth: 64,
-                      maxHeight: 64,
-                    ),
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(doctor['image'] ??
-                          'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
-                      radius: 30,
-                    ),
-                  ),
-                  title: Text(
-                    doctor['name'] ?? 'Unknown Doctor',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: color2,
-                    ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        getCategory(doctor['specialization']),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          color: color2,
-                        ),
+    return Expanded(
+      child: ListView.builder(
+        itemCount: widget.map['doctors']?.length ?? 0,
+        itemBuilder: (context, index) {
+          return Card(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenHeight(23),
+                vertical: getProportionateScreenHeight(9),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 64,
+                        minHeight: 64,
+                        maxWidth: 64,
+                        maxHeight: 64,
                       ),
-                      if (doctor['location'] != null)
-                        Text(
-                          'Location: ${doctor['location']}',
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
+                        radius: 30,
+                      ),
+                    ),
+                    title: Text(
+                      widget.map['doctors'][index]['name'],
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: color2,
+                      ),
+                    ),
+                    subtitle: Column(children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          getCategory(
+                              widget.map['doctors'][index]['specialization']),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.normal,
                             color: color2,
                           ),
                         ),
-                    ],
+                      ),
+                    ]),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.arrow_forward_ios, size: 16),
-                    onPressed: () {
-                      // Navigate to doctor details
-                      // context.push('/doctor-details', extra: doctor);
-                    },
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

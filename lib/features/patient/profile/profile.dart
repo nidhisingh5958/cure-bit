@@ -1,12 +1,12 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatefulWidget {
+class PublicProfileScreen extends StatefulWidget {
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<PublicProfileScreen> createState() => _PublicProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _PublicProfileScreenState extends State<PublicProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

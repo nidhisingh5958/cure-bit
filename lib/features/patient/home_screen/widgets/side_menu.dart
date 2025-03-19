@@ -14,6 +14,7 @@ class SideMenu extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
+          const SizedBox(height: 30),
           _buildHeader(),
           _line(),
           _buildProfileOptions(),

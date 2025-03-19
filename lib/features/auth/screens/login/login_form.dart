@@ -17,7 +17,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _inputController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
@@ -31,7 +31,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _inputController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -56,7 +56,7 @@ class _LoginFormState extends State<LoginForm> {
         final authRepository = AuthRepository();
         await authRepository.signInWithPass(
           context,
-          _emailController.text,
+          _inputController.text,
           _passwordController.text,
           _role,
         );
@@ -68,14 +68,24 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  String? _validateEmail(String? value) {
+  // validator for handling multiple input types
+  String? _validateInput(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email, CIN, or phone number is required';
+      return 'Please enter your phone number, user ID, or email';
     }
+
+    // Email validation (simple check for @)
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid phone number, CIN, or email';
+    // Phone validation (simple check for numbers only)
+    final phoneRegex = RegExp(r'^\d+$');
+
+    // If it's not email or phone, assume it's a user ID
+    if (!emailRegex.hasMatch(value) &&
+        !phoneRegex.hasMatch(value) &&
+        value.length < 3) {
+      return 'Please enter a valid phone number, user ID, or email';
     }
+
     return null;
   }
 
@@ -97,7 +107,7 @@ class _LoginFormState extends State<LoginForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 8),
-          _buildEmailField(),
+          _buildInputField(),
           const SizedBox(height: 20),
           _buildPasswordField(),
           const SizedBox(height: 14),
@@ -111,12 +121,12 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildInputField() {
     return TextFormField(
-      controller: _emailController,
+      controller: _inputController,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
-      validator: _validateEmail,
+      validator: _validateInput,
       decoration: InputDecoration(
         hintText: 'Phone Number, CIN, or email',
       ),

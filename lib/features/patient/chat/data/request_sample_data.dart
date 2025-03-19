@@ -3,15 +3,22 @@ import 'package:CuraDocs/features/patient/chat/entities/message.dart';
 
 final List<ChatData> requestData = [
   RequestData(
-    name: 'Dr. Hema',
+    name: 'Dr.Hema Patel',
     avatarUrl: 'https://i.pravatar.cc/150?img=1',
     firstMessage: 'Hey, how are you?',
     time: '2:30 PM',
   ),
   RequestData(
-    name: 'Dr. Ragheswari',
+    name: 'Dr. Ragheswari Jaiswal',
     avatarUrl: 'https://i.pravatar.cc/150?img=2',
     firstMessage: 'I don\'t think I can join later in the afternoon',
     time: '1:45 PM',
+  ),
+];
+
+final List<Message> messages = [
+  Message(
+    text: "I don't think I can join later in the afternoon 😔",
+    sender: MessageSender.bot,
   ),
 ];

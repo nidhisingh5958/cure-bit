@@ -92,7 +92,7 @@ class AppRouter {
 
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      initialLocation: '/home',
+      initialLocation: '/role',
       debugLogDiagnostics: true,
       routes: [
         // Auth and onboarding routes (outside shell)
@@ -164,8 +164,7 @@ class AppRouter {
 
         // Doctor search
         GoRoute(
-          path: 'doctor-search',
-          parentNavigatorKey: _rootNavigatorKey,
+          path: '/doctor-search',
           name: RouteConstants.doctorSearch,
           builder: (context, state) => DoctorSearchScreen(
             map: {},

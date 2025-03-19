@@ -1,5 +1,8 @@
+import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:CuraDocs/components/menu_pop_up.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -46,7 +49,22 @@ class NotificationScreen extends StatelessWidget {
               Icons.more_vert,
               color: Colors.black87,
             ),
-            onPressed: () {},
+            onPressed: () {
+              PopupMenuHelper.buildPopupMenu(
+                context,
+                onSelected: (value) {
+                  if (value == RouteConstants.settings) {
+                    Navigator.pushNamed(context, RouteConstants.settings);
+                  } else if (value == RouteConstants.help) {
+                    Navigator.pushNamed(context, RouteConstants.help);
+                  }
+                },
+                optionsList: [
+                  {'settings': 'Settings'},
+                  {'clear': 'Clear all'},
+                ],
+              );
+            },
           ),
         ],
       ),
