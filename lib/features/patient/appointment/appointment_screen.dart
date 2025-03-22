@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -10,6 +11,8 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  int _selectedRating = 0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,24 +25,50 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             icon: Icon(
               Icons.arrow_back_ios,
               color: Theme.of(context).colorScheme.primary,
-              size: 20,
             ),
             onPressed: () {
               context.goNamed('home');
             },
           ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                MdiIcons.heart,
+                color: color2,
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: color5,
+                padding: const EdgeInsets.all(12),
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(
+                MdiIcons.history,
+                color: color1,
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: color5,
+                padding: const EdgeInsets.all(12),
+              ),
+              onPressed: () {},
+            ),
+          ],
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildProfile(context),
-              SizedBox(height: 14),
-              _searchbar(context),
-              SizedBox(height: 14),
-              _buildCategoriesSection(context),
-              SizedBox(height: 14),
-              _buildTopDoctorCategory(context),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                _buildProfile(context),
+                SizedBox(height: 14),
+                _searchbar(context),
+                SizedBox(height: 14),
+                _buildCategoriesSection(context),
+                SizedBox(height: 14),
+                _buildTopDoctorCategory(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -49,39 +78,46 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget _buildProfile(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(20),
-      child: Center(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-              radius: 30,
+              radius: 36,
               backgroundImage: AssetImage("images/doctor.jpg"),
             ),
             SizedBox(width: 15),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'User',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Row(
-                  children: [
-                    Icon(Icons.location_on, color: Colors.blue, size: 16),
-                    SizedBox(width: 5),
-                    Text(
-                      'Delhi, India',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Akshay Kumar Singh',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
-              ],
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on, color: Colors.blue, size: 18),
+                      SizedBox(width: 5),
+                      Text(
+                        'Delhi, India',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -96,7 +132,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         children: [
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 15),
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(15),
@@ -106,23 +141,145 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   hintText: 'Search doctors...',
                   prefixIcon: Icon(Icons.search, color: Colors.grey),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 15),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
                 ),
                 style: TextStyle(fontSize: 14),
               ),
             ),
           ),
           SizedBox(width: 10),
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.circular(15),
+          GestureDetector(
+            onTap: () {
+              _showFilterDialog(context);
+            },
+            child: Container(
+              padding: EdgeInsets.all(12),
+              child: Icon(
+                MdiIcons.filter,
+                color: color1,
+                size: 28,
+              ),
             ),
-            child: Icon(Icons.filter_list, color: Colors.white),
           ),
         ],
       ),
+    );
+  }
+
+  void _showFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Filter doctors by',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Specialisation',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Location',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Rating',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: List.generate(
+                    5,
+                    (index) => GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedRating = index + 1;
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Icon(
+                          Icons.star,
+                          color: index < _selectedRating
+                              ? Colors.amber
+                              : Colors.grey.shade300,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Apply'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -177,9 +334,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             children: [
               Text(
                 'Categories',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               TextButton(
                 onPressed: () {},
@@ -226,12 +384,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+            Icon(icon, color: color1, size: 24),
             SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -303,9 +461,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             children: [
               Text(
                 'Top Doctors',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               TextButton(
                 onPressed: () {},
@@ -351,59 +510,81 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade200),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage(image),
-                ),
-                SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      doctorName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundImage: AssetImage(image),
+                  ),
+                  SizedBox(width: 30),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doctorName,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Icon(Icons.access_time, color: Colors.blue, size: 16),
-                        SizedBox(width: 5),
-                        Text(
-                          category,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Text(
+                            category,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Icon(Icons.location_on, color: Colors.blue, size: 16),
-                        SizedBox(width: 5),
-                        Text(
-                          location,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
+                          SizedBox(width: 5),
+                          Text('|',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              )),
+                          SizedBox(width: 5),
+                          Icon(
+                            Icons.star,
+                            color: Colors.yellow,
+                            size: 16,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                          SizedBox(width: 5),
+                          Text(
+                            '4.5',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on, color: Colors.blue, size: 16),
+                          SizedBox(width: 5),
+                          Text(
+                            location,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

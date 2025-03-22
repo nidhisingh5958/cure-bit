@@ -16,7 +16,7 @@ final loginWithOtp_api_email =
     'https://vv189flpy7.execute-api.us-east-1.amazonaws.com/Dev/auth/patient/login-otp';
 
 String getLoginWithOtpPhoneApi(String phoneNumber) {
-  return 'https://lb0ejwoox7.execute-api.us-east-1.amazonaws.com/Dev/auth/patient/+$phoneNumber/verify_otp_login_phone';
+  return 'https://vv189flpy7.execute-api.us-east-1.amazonaws.com/Dev/auth/patient/+$phoneNumber/verify_otp_login_phone';
 }
 
 // Doctors
@@ -35,5 +35,5 @@ final loginWithOtp_api_email_doc =
     'https://vv189flpy7.execute-api.us-east-1.amazonaws.com/Dev/auth/doctor/login-otp';
 
 String loginWithOtp_api_phone_doc(String phoneNumber) {
-  return 'https://lb0ejwoox7.execute-api.us-east-1.amazonaws.com/Dev/auth/doctor/+$phoneNumber/verify_otp_login_phone';
+  return 'https://vv189flpy7.execute-api.us-east-1.amazonaws.com/Dev/auth/doctor/+$phoneNumber/verify_otp_login_phone';
 }

@@ -13,7 +13,7 @@ import 'package:CuraDocs/features/auth/screens/login/otp.dart';
 // PATIENT
 // appointment
 import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
-import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
+import 'package:CuraDocs/features/patient/appointment/doctor_profile.dart';
 // chatbot
 import 'package:CuraDocs/features/patient/curabot/chat_bot_home.dart';
 import 'package:CuraDocs/features/patient/curabot/chat_with_ai.dart';
@@ -92,7 +92,7 @@ class AppRouter {
 
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      initialLocation: '/role',
+      initialLocation: '/home',
       debugLogDiagnostics: true,
       routes: [
         // Auth and onboarding routes (outside shell)

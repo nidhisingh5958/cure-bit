@@ -132,7 +132,7 @@ class _SignUpFormState extends State<SignUpForm> {
         _firstnameController.text,
         _lastnameController.text,
         _emailController.text,
-        country!.phoneCode,
+        '+${country!.phoneCode}',
         _phoneController.text,
         _passwordController.text,
         _role,
@@ -539,8 +539,7 @@ class _SignUpFormState extends State<SignUpForm> {
           onCountryChanged: (country) {
             setState(() {
               this.country = Country(
-                phoneCode: country.dialCode
-                    .replaceAll('+', ''), // Along with + sign country code
+                phoneCode: country.dialCode.substring(1), // Remove the + symbol
                 countryCode: country.code,
                 e164Sc: 0,
                 geographic: true,
