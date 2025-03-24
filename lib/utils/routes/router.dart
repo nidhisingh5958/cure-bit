@@ -14,6 +14,7 @@ import 'package:CuraDocs/features/auth/screens/login/otp.dart';
 // appointment
 import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
 import 'package:CuraDocs/features/patient/appointment/doctor_profile.dart';
+import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
 // chatbot
 import 'package:CuraDocs/features/patient/curabot/chat_bot_home.dart';
 import 'package:CuraDocs/features/patient/curabot/chat_with_ai.dart';
@@ -35,6 +36,7 @@ import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
 // settings
 import 'package:CuraDocs/utils/routes/patient_navigation_bar.dart';
 import 'package:CuraDocs/features/patient/settings/profile_screen.dart';
+import 'package:CuraDocs/features/patient/settings/profile_settings.dart';
 
 // DOCTOR
 // chatbot
@@ -177,11 +179,18 @@ class AppRouter {
           builder: (context, state) => const AppointmentScreen(),
           routes: [
             GoRoute(
+              // doctor public profile screen
+              path: 'doctor-profile',
+              parentNavigatorKey: _rootNavigatorKey,
+              name: RouteConstants.doctorProfile,
+              builder: (context, state) => DoctorProfile(),
+            ),
+            GoRoute(
               // Individual doctor booking screen
               path: 'book-appointment',
               parentNavigatorKey: _rootNavigatorKey,
               name: RouteConstants.bookAppointment,
-              builder: (context, state) => DoctorProfile(),
+              builder: (context, state) => BookAppointment(),
             ),
           ],
         ),
@@ -247,7 +256,7 @@ class AppRouter {
               navigatorKey: _documentsNavigatorKey,
               routes: [
                 GoRoute(
-                  path: 'documents',
+                  path: '/documents',
                   name: RouteConstants.documents,
                   builder: (context, state) => const DocumentScreen(),
                   routes: [],
@@ -259,9 +268,18 @@ class AppRouter {
               navigatorKey: _profileNavigatorKey,
               routes: [
                 GoRoute(
-                  path: 'profile',
+                  path: '/profile',
                   name: RouteConstants.profile,
                   builder: (context, state) => ProfileScreen(),
+                  routes: [
+                    GoRoute(
+                      // Settings Screen
+                      path: 'profile-settings',
+                      parentNavigatorKey: _rootNavigatorKey,
+                      name: RouteConstants.profileSettings,
+                      builder: (context, state) => const ProfileSettings(),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -379,7 +397,7 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: '/doctor/profile',
-                  name: RouteConstants.doctorProfile,
+                  name: RouteConstants.doctorPersonalProfile,
                   builder: (context, state) => DoctorProfileScreen(),
                   routes: [
                     // GoRoute(

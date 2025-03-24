@@ -13,7 +13,7 @@ const Color error = Color(0xFFE3342F); // red
 
 const Color1 = Color(0xFFCBE5E0); // greenish
 const Color2 = Color(0xFFDCCFF0); // purplish
-const Color3 = Color(0xFFF8DAC6); // orangeish
+const Color3 = Color.fromARGB(255, 251, 236, 226); // orangeish
 const blueish = Color(0xFFC7DFF2); // blueish
 const Color5 = Color(0xFFE8C0D9); // pinkish
 const Color6 = Color(0xFFFAEECD); // yellowish or peach

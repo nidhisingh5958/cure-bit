@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettings extends StatelessWidget {
@@ -7,7 +8,7 @@ class ProfileSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: color3,
         title: const Text(
           'Profile Details',
           style: TextStyle(

@@ -1,6 +1,9 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/components/menu_pop_up.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DoctorProfile extends StatefulWidget {
   const DoctorProfile({super.key});
@@ -9,7 +12,52 @@ class DoctorProfile extends StatefulWidget {
   State<DoctorProfile> createState() => _DoctorProfileState();
 }
 
-class _DoctorProfileState extends State<DoctorProfile> {
+class _DoctorProfileState extends State<DoctorProfile>
+    with TickerProviderStateMixin {
+  bool isConnected = false;
+  bool showConnectionAnimation = false;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1500),
+    );
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 1.2),
+        weight: 40,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.2, end: 1.0),
+        weight: 20,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 1.0),
+        weight: 40,
+      ),
+    ]).animate(_animationController);
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          showConnectionAnimation = false;
+        });
+        _animationController.reset();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,11 +91,27 @@ class _DoctorProfileState extends State<DoctorProfile> {
                       SizedBox(height: 4),
                       _buildActionButtons(),
                       SizedBox(height: 24),
-                      _buildInfoSection(),
-                      SizedBox(height: 24),
-                      _buildWorkingHours(),
-                      SizedBox(height: 24),
-                      _buildLocationSection(),
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Color3,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            _buildInfoSection(),
+                            _buildWorkingHours(),
+                            _buildLocationSection(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -123,49 +187,143 @@ class _DoctorProfileState extends State<DoctorProfile> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () {},
-            icon: Icon(Icons.message_outlined),
-            label: Text('Message'),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.grey[300]!),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(26),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () {},
+                icon: Icon(Icons.message_outlined),
+                label: Text('Message'),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.grey[300]!),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(26),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                ),
               ),
-              padding: EdgeInsets.symmetric(vertical: 12),
             ),
-          ),
-        ),
-        SizedBox(width: 12),
-        Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () {},
-            icon: Icon(Icons.phone_outlined),
-            label: Text('Connect'),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.grey[300]!),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(26),
+            SizedBox(width: 12),
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  if (!isConnected) {
+                    // Only show animation when connecting, not disconnecting
+                    setState(() {
+                      showConnectionAnimation = true;
+                      isConnected = true;
+                    });
+                    _animationController.forward();
+                  } else {
+                    setState(() {
+                      isConnected = false;
+                    });
+                  }
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: isConnected ? color2 : color3,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(26),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  foregroundColor:
+                      isConnected ? Theme.of(context).primaryColor : null,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Animated icon
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 300),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        );
+                      },
+                      child: Icon(
+                        isConnected ? Icons.check : MdiIcons.vectorLink,
+                        key: ValueKey<bool>(isConnected),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    // Animated text
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 300),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        );
+                      },
+                      child: Text(
+                        isConnected ? 'Connected' : 'Connect',
+                        key: ValueKey<bool>(isConnected),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              padding: EdgeInsets.symmetric(vertical: 12),
             ),
-          ),
+            SizedBox(width: 12),
+            PopupMenuHelper.buildPopupMenu(
+              context,
+              onSelected: (value) {
+                if (value == 'book') {
+                  // Handle book appointment action
+                  context.goNamed(RouteConstants.bookAppointment);
+                } else if (value == 'doctorQR') {
+                  // Handle help action
+                  context.goNamed(RouteConstants.help);
+                }
+              },
+              optionsList: [
+                {'book': 'Book an appointment'},
+                {'doctorQR': 'Doctor\'s QR'},
+              ],
+            ),
+          ],
         ),
-        SizedBox(width: 12),
-        IconButton(
-          icon: Icon(
-            Icons.more_vert,
-            color: Colors.black,
+        // Celebration animation overlay
+        if (showConnectionAnimation)
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return Positioned(
+                top: 0,
+                bottom: 0,
+                left: MediaQuery.of(context).size.width / 2 - 50,
+                child: Opacity(
+                  opacity: _scaleAnimation.value > 0.1 ? 1.0 : 0.0,
+                  child: Transform.scale(
+                    scale: _scaleAnimation.value,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.check_circle,
+                        color: Theme.of(context).primaryColor,
+                        size: 50,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
-          onPressed: () {
-            // Show more options
-          },
-        ),
       ],
     );
   }
@@ -208,7 +366,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
           label,
           style: TextStyle(
             fontSize: 16,
-            color: Colors.grey[600],
+            color: color3,
           ),
         ),
         Text(
@@ -225,7 +383,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
   Widget _buildWorkingHours() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -318,169 +476,6 @@ class _DoctorProfileState extends State<DoctorProfile> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCalendar() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Select Date',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2B3674),
-            letterSpacing: -0.5,
-          ),
-        ),
-        SizedBox(height: 16),
-        Container(
-          height: 110,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 7,
-            itemBuilder: (context, index) {
-              final isSelected = index == 2;
-              return Container(
-                width: 75,
-                margin: EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  gradient: isSelected
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF4A80F0), Color(0xFF3A66CC)],
-                        )
-                      : null,
-                  color: isSelected ? null : Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: isSelected
-                          ? Color(0xFF4A80F0).withOpacity(0.3)
-                          : Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${24 + index}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : Color(0xFF2B3674),
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index],
-                      style: TextStyle(
-                        color: isSelected ? Colors.white70 : Colors.grey[600],
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimeSlots() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Available Time',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2B3674),
-            letterSpacing: -0.5,
-          ),
-        ),
-        SizedBox(height: 16),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 2.5,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-          ),
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            final isSelected = index == 2;
-            return Container(
-              decoration: BoxDecoration(
-                gradient: isSelected
-                    ? LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFF4A80F0), Color(0xFF3A66CC)],
-                      )
-                    : null,
-                color: isSelected ? null : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: isSelected
-                        ? Color(0xFF4A80F0).withOpacity(0.3)
-                        : Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  '${9 + index}:00 AM',
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Color(0xFF2B3674),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBookButton() {
-    return Container(
-      width: double.infinity,
-      height: 60,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF4A80F0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 10,
-          shadowColor: Color(0xFF4A80F0).withOpacity(0.5),
-        ),
-        child: Text(
-          'Book Session',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
-        ),
       ),
     );
   }

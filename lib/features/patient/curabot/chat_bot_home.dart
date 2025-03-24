@@ -22,7 +22,7 @@ class _ChatBotHomeState extends State<ChatBotHome> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {
-            context.pop();
+            context.goNamed(RouteConstants.home);
           },
         ),
         actions: [

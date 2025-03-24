@@ -14,7 +14,7 @@ class BotHistory extends StatelessWidget {
         title: const Text('Cura Bot'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () => context.pop(),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(

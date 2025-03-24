@@ -63,7 +63,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_outlined),
           onPressed: () {
-            context.pop();
+            context.goNamed(RouteConstants.home);
           },
         ),
         actions: [

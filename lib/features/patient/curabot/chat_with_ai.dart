@@ -73,7 +73,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded,
               size: 20, color: Colors.black87),
-          onPressed: () => context.pop(),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(

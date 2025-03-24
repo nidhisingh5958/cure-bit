@@ -44,27 +44,19 @@ class NotificationScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.black87,
-            ),
-            onPressed: () {
-              PopupMenuHelper.buildPopupMenu(
-                context,
-                onSelected: (value) {
-                  if (value == RouteConstants.settings) {
-                    Navigator.pushNamed(context, RouteConstants.settings);
-                  } else if (value == RouteConstants.help) {
-                    Navigator.pushNamed(context, RouteConstants.help);
-                  }
-                },
-                optionsList: [
-                  {'settings': 'Settings'},
-                  {'clear': 'Clear all'},
-                ],
-              );
+          PopupMenuHelper.buildPopupMenu(
+            context,
+            onSelected: (value) {
+              if (value == RouteConstants.settings) {
+                Navigator.pushNamed(context, RouteConstants.settings);
+              } else if (value == RouteConstants.help) {
+                Navigator.pushNamed(context, RouteConstants.help);
+              }
             },
+            optionsList: [
+              {'settings': 'Settings'},
+              {'clear': 'Clear all'},
+            ],
           ),
         ],
       ),

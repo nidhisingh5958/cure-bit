@@ -27,6 +27,7 @@ class RouteConstants {
 
   // appointments routes
   static String appointments = "appointments";
+  static String appointmentHistory = "appointmentHistory";
   static String bookAppointment = "bookAppointment";
   static String appointmentDetails = "appointmentDetails";
 

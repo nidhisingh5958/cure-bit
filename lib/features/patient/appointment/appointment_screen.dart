@@ -410,7 +410,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         'category': 'Dentist',
         'location': 'Delhi, India',
         'onPressed': () {
-          context.goNamed('bookAppointment');
+          context.goNamed('doctorProfile');
         }
       },
       {
