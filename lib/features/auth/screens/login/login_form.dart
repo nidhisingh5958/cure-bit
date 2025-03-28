@@ -5,6 +5,8 @@ import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class LoginForm extends StatefulWidget {
   final Map<String, dynamic>? extra;
@@ -17,22 +19,43 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _inputController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _countryCodeController = TextEditingController(text: '+91');
+  final _phoneController = TextEditingController();
+
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  Country? country;
   late String _role;
+
+  // enum to track login method
+  LoginMethod _loginMethod = LoginMethod.email;
 
   @override
   void initState() {
     super.initState();
     _loadRole();
+    country = Country(
+      phoneCode: '91',
+      countryCode: 'IN',
+      e164Sc: 0,
+      geographic: true,
+      level: 1,
+      name: 'India',
+      example: '9123456789',
+      displayName: 'India (IN) [+91]',
+      displayNameNoCountryCode: 'India (IN)',
+      e164Key: '91-IN-0',
+    );
   }
 
   @override
   void dispose() {
-    _inputController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
+    _countryCodeController.dispose();
     super.dispose();
   }
 
@@ -54,39 +77,26 @@ class _LoginFormState extends State<LoginForm> {
         setState(() => _isLoading = true);
 
         final authRepository = AuthRepository();
+
+        // Pass the login method to the sign-up function
         await authRepository.signInWithPass(
           context,
-          _inputController.text,
+          _loginMethod == LoginMethod.email
+              ? _emailController.text
+              : _phoneController.text,
           _passwordController.text,
           _role,
+          countryCode: _loginMethod == LoginMethod.phone
+              ? _countryCodeController.text
+              : null,
         );
         await AppRouter.setAuthenticated(true, _role);
         setState(() => _isLoading = false);
       }
     } catch (e) {
       print(e);
+      setState(() => _isLoading = false);
     }
-  }
-
-  // validator for handling multiple input types
-  String? _validateInput(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your phone number, user ID, or email';
-    }
-
-    // Email validation (simple check for @)
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    // Phone validation (simple check for numbers only)
-    final phoneRegex = RegExp(r'^\d+$');
-
-    // If it's not email or phone, assume it's a user ID
-    if (!emailRegex.hasMatch(value) &&
-        !phoneRegex.hasMatch(value) &&
-        value.length < 3) {
-      return 'Please enter a valid phone number, user ID, or email';
-    }
-
-    return null;
   }
 
   String? _validatePassword(String? value) {
@@ -106,8 +116,14 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 8),
-          _buildInputField(),
+          // Login Method Toggle
+          _buildLoginMethodToggle(),
+          const SizedBox(height: 20),
+
+          _loginMethod == LoginMethod.email
+              ? _buildEmailField()
+              : _buildPhoneField(),
+
           const SizedBox(height: 20),
           _buildPasswordField(),
           const SizedBox(height: 14),
@@ -121,14 +137,76 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget _buildInputField() {
+  //  Widget to toggle between email and phone login
+  Widget _buildLoginMethodToggle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Email Toggle
+        ChoiceChip(
+          label: Text(
+            'Email',
+            style: TextStyle(
+              color: _loginMethod == LoginMethod.email
+                  ? Colors.white
+                  : Colors.black,
+            ),
+          ),
+          selected: _loginMethod == LoginMethod.email,
+          onSelected: (_) {
+            setState(() {
+              _loginMethod = LoginMethod.email;
+              // Clear input when switching
+              _emailController.clear();
+              _phoneController.clear();
+            });
+          },
+          selectedColor: color2,
+        ),
+        const SizedBox(width: 20),
+        // Phone Toggle
+        ChoiceChip(
+          label: Text(
+            'Phone',
+            style: TextStyle(
+              color: _loginMethod == LoginMethod.phone
+                  ? Colors.white
+                  : Colors.black,
+            ),
+          ),
+          selected: _loginMethod == LoginMethod.phone,
+          onSelected: (_) {
+            setState(() {
+              _loginMethod = LoginMethod.phone;
+              // Clear input when switching
+              _phoneController.clear();
+              _countryCodeController.clear();
+              _passwordController.clear();
+            });
+          },
+          selectedColor: color2,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmailField() {
     return TextFormField(
-      controller: _inputController,
+      controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
-      validator: _validateInput,
+      validator: (email) {
+        if (email == null || email.isEmpty) {
+          return 'Please enter your email address';
+        }
+        final emailRegex =
+            RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+        if (!emailRegex.hasMatch(email)) {
+          return 'Please enter a valid email address';
+        }
+      },
       decoration: InputDecoration(
-        hintText: 'Phone Number, CIN, or email',
+        hintText: 'Enter your email address',
       ),
       style: TextStyle(
         fontSize: 14,
@@ -137,6 +215,64 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
+  Widget _buildPhoneField() {
+    return Column(
+      children: [
+        IntlPhoneField(
+          controller: _phoneController,
+          keyboardType: TextInputType.phone,
+          textInputAction: TextInputAction.next,
+          onChanged: (phoneField) {
+            setState(() {
+              _phoneController.text = phoneField.number;
+            });
+          },
+          validator: (phoneField) {
+            if (phoneField == null || phoneField.number.isEmpty) {
+              return 'Please enter your phone number';
+            }
+          },
+          showCountryFlag: false,
+          decoration: InputDecoration(
+            hintText: 'Enter your phone number',
+            prefixIcon: _loginMethod == LoginMethod.phone
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      _countryCodeController.text,
+                      style: TextStyle(color: color1),
+                    ),
+                  )
+                : null,
+          ),
+          style: TextStyle(
+            fontSize: 14,
+            color: color1,
+          ),
+          initialCountryCode: 'IN',
+          onCountryChanged: (country) {
+            setState(() {
+              this.country = Country(
+                phoneCode: country.dialCode, // Remove the + symbol
+                countryCode: country.code,
+                e164Sc: 0,
+                geographic: true,
+                level: 1,
+                name: country.name,
+                example: '',
+                displayName:
+                    '${country.name} (${country.code}) [${country.dialCode}]',
+                displayNameNoCountryCode: '${country.name} (${country.code})',
+                e164Key: '${country.dialCode.substring(1)}-${country.code}-0',
+              );
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  // Password field
   Widget _buildPasswordField() {
     return TextFormField(
       controller: _passwordController,
@@ -208,6 +344,11 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
   }
+}
+
+enum LoginMethod {
+  email,
+  phone,
 }
 
 // error message

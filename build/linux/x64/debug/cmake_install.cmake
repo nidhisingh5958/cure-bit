@@ -1,4 +1,4 @@
-# Install script for directory: /home/nid/desktop/cure_bit/cure-bit/linux
+# Install script for directory: /home/hemant-kumar/Developer/cure_bit/cure-bit/linux
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

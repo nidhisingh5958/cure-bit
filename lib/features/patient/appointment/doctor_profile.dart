@@ -200,7 +200,7 @@ class _DoctorProfileState extends State<DoctorProfile>
                 icon: Icon(Icons.message_outlined),
                 label: Text('Message'),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.grey[300]!),
+                  side: BorderSide(color: color3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(26),
                   ),

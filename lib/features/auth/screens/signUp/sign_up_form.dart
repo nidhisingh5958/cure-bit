@@ -171,7 +171,7 @@ class _SignUpFormState extends State<SignUpForm> {
       });
 
       // Here you would typically call your API to send OTP
-      // For demo purposes, we'll just use a delay
+      // For demo purposes
       showSnackBar(
         context: context,
         message: 'OTP sent to your email',
@@ -193,7 +193,7 @@ class _SignUpFormState extends State<SignUpForm> {
     try {
       //  await authRepository.verifyEmailOtp(_emailController.text, _otpController.text);
 
-      // For demo, we'll consider "123456" as correct OTP
+      // For demo
       if (_otpController.text == "123456") {
         setState(() {
           _isEmailVerified = true;
@@ -539,7 +539,7 @@ class _SignUpFormState extends State<SignUpForm> {
           onCountryChanged: (country) {
             setState(() {
               this.country = Country(
-                phoneCode: country.dialCode.substring(1), // Remove the + symbol
+                phoneCode: country.dialCode, // Remove the + symbol
                 countryCode: country.code,
                 e164Sc: 0,
                 geographic: true,

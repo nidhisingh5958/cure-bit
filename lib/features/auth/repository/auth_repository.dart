@@ -10,29 +10,69 @@ import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 
+// Helper method to validate email
+bool _isValidEmail(String email) {
+  final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  return emailRegex.hasMatch(email);
+}
+
+// Helper method to validate phone number
+bool _isValidPhoneNumber(String phoneNumber) {
+  final phoneRegex = RegExp(r'^\+?[0-9]{10,15}$');
+  return phoneRegex.hasMatch(phoneNumber);
+}
+
 class AuthRepository {
   // sign in with password
   Future<void> signInWithPass(
     BuildContext context,
-    String email,
+    String input,
     String password,
-    String role,
-  ) async {
+    String role, {
+    String? countryCode,
+  }) async {
     try {
       // Select the appropriate API endpoint based on role
       final String apiEndpoint = role == 'Doctor' ? login_api_doc : login_api;
 
+      print('Email: $input');
+      print('Country Code: $countryCode');
+      print('Password: $password');
+
+      // Initialize an empty map to hold login payload
+      Map<String, dynamic> loginPayload = {};
+
+      if (_isValidEmail(input)) {
+        // Email login
+        loginPayload = {
+          'email': input,
+          'password': password,
+        };
+      } else if (_isValidPhoneNumber(input)) {
+        // Phone number login
+        loginPayload = {
+          'phone_number': input,
+          'country_code': countryCode ?? '+91',
+          // default country code is of India
+          'password': password,
+        };
+      } else {
+        showSnackBar(
+            context: context, message: 'Invalid email or phone number');
+        return;
+      }
+
       // Make API request with role-specific endpoint
       Response response = await post(Uri.parse(apiEndpoint),
-          body: jsonEncode({
-            'email': email,
-            'password': password,
-          }),
+          body: jsonEncode(loginPayload),
           headers: {
             'Content-Type': 'application/json',
           });
 
-      // Parse response
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      // Handle response
       if (response.statusCode == 200) {
         try {
           // Parse the response body to check for any error messages
@@ -159,23 +199,36 @@ class AuthRepository {
     String password,
     String role,
   ) async {
+    print('Signup Data:');
+    print('First Name: $firstName');
+    print('Last Name: $lastName');
+    print('Email: $email');
+    print('Country Code: $countrycode');
+    print('Phone Number: $phonenumber');
+    print('Password: $password');
+    print('Role: $role');
     try {
       // Select the appropriate API endpoint based on role
       final String apiEndpoint = role == 'Doctor' ? signup_api_doc : signup_api;
 
+      final Map<String, dynamic> payload = {
+        'first_name': firstName,
+        'last_name': lastName,
+        'email': email,
+        'country_code': countrycode,
+        'phone_number': phonenumber,
+        'password': password,
+      };
+
       // API request
-      Response response = await post(Uri.parse(apiEndpoint),
-          body: jsonEncode({
-            'email': email,
-            'password': password,
-            'first_name': firstName,
-            'last_name': lastName,
-            'phone_number': phonenumber,
-            'country_code': countrycode,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          });
+      final response = await post(
+        Uri.parse(apiEndpoint),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(payload),
+      );
 
       // Parse response
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -226,7 +279,11 @@ class AuthRepository {
             context: context, message: 'Sign up failed. Please try again.');
       }
     } on FormatException {
-      showSnackBar(context: context, message: 'Invalid response format');
+      print(email);
+      showSnackBar(
+        context: context,
+        message: 'Invalid response format',
+      );
     } on TimeoutException {
       showSnackBar(
           context: context,
