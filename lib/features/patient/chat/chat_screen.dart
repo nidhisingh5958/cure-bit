@@ -122,6 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // AppBar widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 1,
@@ -149,32 +150,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 Text(
                   widget.chat.name,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color:
-                            widget.chat.isOnline ? Colors.green : Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      widget.chat.isOnline ? 'Online' : 'Offline',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color:
-                            widget.chat.isOnline ? Colors.green : Colors.grey,
-                      ),
-                    ),
-                  ],
+                Text(
+                  widget.chat.specialization,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
                 ),
               ],
             ),
@@ -184,10 +171,6 @@ class _ChatScreenState extends State<ChatScreen> {
       actions: [
         IconButton(
           icon: const Icon(Icons.videocam_outlined, color: Colors.black87),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: const Icon(Icons.call_outlined, color: Colors.black87),
           onPressed: () {},
         ),
         IconButton(
@@ -302,41 +285,28 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildMessageInput() {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        16,
+        8,
         12,
-        16,
+        8,
         12 + MediaQuery.of(context).padding.bottom,
-      ),
-      decoration: BoxDecoration(
-        color: color4,
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, -1),
-            blurRadius: 8,
-            color: color2,
-          ),
-        ],
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.emoji_emotions_outlined),
-            onPressed: () {},
-            color: Colors.grey[600],
-          ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(24),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: TextField(
                 controller: _messageController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Type a message...',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
+                  prefixIcon: IconButton(
+                    icon: Icon(Icons.attach_file),
+                    onPressed: () {
+                      // Implement attachment functionality
+                    },
+                  ),
                 ),
                 style: const TextStyle(
                   fontSize: 14,
@@ -346,12 +316,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 textCapitalization: TextCapitalization.sentences,
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.attach_file),
-            onPressed: () {},
-            color: Colors.grey[600],
           ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
@@ -375,3 +339,27 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+
+//  Row(
+//                   children: [
+//                     Container(
+//                       width: 8,
+//                       height: 8,
+//                       decoration: BoxDecoration(
+//                         color:
+//                             widget.chat.isOnline ? Colors.green : Colors.grey,
+//                         // online or not
+//                         shape: BoxShape.circle,
+//                       ),
+//                     ),
+//                     const SizedBox(width: 4),
+//                     Text(
+//                       widget.chat.isOnline ? 'Online' : 'Offline',
+//                       style: TextStyle(
+//                         fontSize: 12,
+//                         color:
+//                             widget.chat.isOnline ? Colors.green : Colors.grey,
+//                       ),
+//                     ),
+//                   ],
+//                 ),

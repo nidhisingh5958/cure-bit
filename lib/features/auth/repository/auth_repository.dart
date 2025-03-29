@@ -230,6 +230,9 @@ class AuthRepository {
         body: jsonEncode(payload),
       );
 
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
       // Parse response
       if (response.statusCode == 200 || response.statusCode == 201) {
         try {
@@ -291,7 +294,7 @@ class AuthRepository {
     } catch (e) {
       print("Signup error: ${e.toString()}");
       showSnackBar(
-          context: context, message: 'Sign up failed. Please try again.');
+          context: context, message: 'Sign up failed. Please try again. $e');
     }
   }
 

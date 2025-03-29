@@ -239,7 +239,6 @@ class AppRouter {
                     GoRoute(
                       // Individual Chat Screen
                       path: 'chat-screen',
-                      parentNavigatorKey: _rootNavigatorKey,
                       name: RouteConstants.chatScreen,
                       builder: (context, state) {
                         final chat = state.extra as ChatData;

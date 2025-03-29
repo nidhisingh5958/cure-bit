@@ -139,54 +139,91 @@ class _LoginFormState extends State<LoginForm> {
 
   //  Widget to toggle between email and phone login
   Widget _buildLoginMethodToggle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Email Toggle
-        ChoiceChip(
-          label: Text(
-            'Email',
-            style: TextStyle(
-              color: _loginMethod == LoginMethod.email
-                  ? Colors.white
-                  : Colors.black,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: Material(
+                color: _loginMethod == LoginMethod.email
+                    ? color2
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+                child: InkWell(
+                  onTap: () => setState(() => _loginMethod = LoginMethod.email),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.email_outlined,
+                          size: 16,
+                          color: _loginMethod == LoginMethod.email
+                              ? Colors.white
+                              : Colors.black54,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Email',
+                          style: TextStyle(
+                            color: _loginMethod == LoginMethod.email
+                                ? Colors.white
+                                : Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-          selected: _loginMethod == LoginMethod.email,
-          onSelected: (_) {
-            setState(() {
-              _loginMethod = LoginMethod.email;
-              // Clear input when switching
-              _emailController.clear();
-              _phoneController.clear();
-            });
-          },
-          selectedColor: color2,
-        ),
-        const SizedBox(width: 20),
-        // Phone Toggle
-        ChoiceChip(
-          label: Text(
-            'Phone',
-            style: TextStyle(
-              color: _loginMethod == LoginMethod.phone
-                  ? Colors.white
-                  : Colors.black,
+            Expanded(
+              child: Material(
+                color: _loginMethod == LoginMethod.phone
+                    ? color2
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+                child: InkWell(
+                  onTap: () => setState(() => _loginMethod = LoginMethod.phone),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.phone_outlined,
+                          size: 16,
+                          color: _loginMethod == LoginMethod.phone
+                              ? Colors.white
+                              : Colors.black54,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Phone',
+                          style: TextStyle(
+                            color: _loginMethod == LoginMethod.phone
+                                ? Colors.white
+                                : Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-          selected: _loginMethod == LoginMethod.phone,
-          onSelected: (_) {
-            setState(() {
-              _loginMethod = LoginMethod.phone;
-              // Clear input when switching
-              _phoneController.clear();
-              _countryCodeController.clear();
-              _passwordController.clear();
-            });
-          },
-          selectedColor: color2,
+          ],
         ),
-      ],
+      ),
     );
   }
 

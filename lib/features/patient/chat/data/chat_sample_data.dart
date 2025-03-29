@@ -4,6 +4,7 @@ import 'package:CuraDocs/features/patient/chat/entities/message.dart';
 final List<ChatData> chatData = [
   ChatData(
     name: 'Dr. Hema',
+    specialization: 'Cardiologist',
     avatarUrl: 'https://i.pravatar.cc/150?img=1',
     lastMessage: 'Hey, how are you?',
     time: '2:30 PM',
@@ -11,6 +12,7 @@ final List<ChatData> chatData = [
   ),
   ChatData(
     name: 'Dr. Ragheswari',
+    specialization: 'Dermatologist',
     avatarUrl: 'https://i.pravatar.cc/150?img=2',
     lastMessage: 'I don\'t think I can join later in the afternoon',
     time: '1:45 PM',
@@ -18,6 +20,7 @@ final List<ChatData> chatData = [
   ),
   ChatData(
     name: 'Dr. Madhu',
+    specialization: 'Pediatrition',
     avatarUrl: 'https://i.pravatar.cc/150?img=3',
     lastMessage: 'I don\'t think I can join later in the afternoon',
     time: '1:45 PM',
