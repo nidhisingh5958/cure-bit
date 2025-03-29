@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 
 class LoginForm extends StatefulWidget {
   final Map<String, dynamic>? extra;
@@ -19,10 +18,10 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _countryCodeController = TextEditingController(text: '+91');
   final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
 
   bool _isPasswordVisible = false;
   bool _isLoading = false;
@@ -116,13 +115,8 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Login Method Toggle
-          _buildLoginMethodToggle(),
-          const SizedBox(height: 20),
-
-          _loginMethod == LoginMethod.email
-              ? _buildEmailField()
-              : _buildPhoneField(),
+          // Smart input field that auto-detects input type
+          _buildSmartInputField(),
 
           const SizedBox(height: 20),
           _buildPasswordField(),
@@ -137,173 +131,112 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  //  Widget to toggle between email and phone login
-  Widget _buildLoginMethodToggle() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: Material(
-                color: _loginMethod == LoginMethod.email
-                    ? color2
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-                child: InkWell(
-                  onTap: () => setState(() => _loginMethod = LoginMethod.email),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.email_outlined,
-                          size: 16,
-                          color: _loginMethod == LoginMethod.email
-                              ? Colors.white
-                              : Colors.black54,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                          'Email',
-                          style: TextStyle(
-                            color: _loginMethod == LoginMethod.email
-                                ? Colors.white
-                                : Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Material(
-                color: _loginMethod == LoginMethod.phone
-                    ? color2
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-                child: InkWell(
-                  onTap: () => setState(() => _loginMethod = LoginMethod.phone),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.phone_outlined,
-                          size: 16,
-                          color: _loginMethod == LoginMethod.phone
-                              ? Colors.white
-                              : Colors.black54,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                          'Phone',
-                          style: TextStyle(
-                            color: _loginMethod == LoginMethod.phone
-                                ? Colors.white
-                                : Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmailField() {
-    return TextFormField(
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      textInputAction: TextInputAction.next,
-      validator: (email) {
-        if (email == null || email.isEmpty) {
-          return 'Please enter your email address';
-        }
-        final emailRegex =
-            RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-        if (!emailRegex.hasMatch(email)) {
-          return 'Please enter a valid email address';
-        }
-      },
-      decoration: InputDecoration(
-        hintText: 'Enter your email address',
-      ),
-      style: TextStyle(
-        fontSize: 14,
-        color: color1,
-      ),
-    );
-  }
-
-  Widget _buildPhoneField() {
+  Widget _buildSmartInputField() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        IntlPhoneField(
-          controller: _phoneController,
-          keyboardType: TextInputType.phone,
+        // Combined input field with auto-detection
+        TextFormField(
+          controller: _loginMethod == LoginMethod.email
+              ? _emailController
+              : _phoneController,
+          keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
-          onChanged: (phoneField) {
-            setState(() {
-              _phoneController.text = phoneField.number;
-            });
-          },
-          validator: (phoneField) {
-            if (phoneField == null || phoneField.number.isEmpty) {
-              return 'Please enter your phone number';
+          onChanged: (value) {
+            // Auto-detect if input is email or phone
+            if (value.isNotEmpty) {
+              // Check if input contains @ symbol - likely an email
+              if (value.contains('@') || value.contains(RegExp(r'[a-z]'))) {
+                if (_loginMethod != LoginMethod.email) {
+                  setState(() {
+                    _loginMethod = LoginMethod.email;
+                    _emailController.text = value;
+                  });
+                }
+              }
+              // Check if input has digits only - likely a phone number
+              else if (RegExp(r'^[0-9+\s]+$').hasMatch(value)) {
+                if (_loginMethod != LoginMethod.phone) {
+                  setState(() {
+                    _loginMethod = LoginMethod.phone;
+                    _phoneController.text =
+                        value.replaceAll(RegExp(r'[^\d]'), '');
+                  });
+                }
+              }
             }
           },
-          showCountryFlag: false,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your email or phone number';
+            }
+
+            if (_loginMethod == LoginMethod.email) {
+              final emailRegex =
+                  RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+              if (!emailRegex.hasMatch(value)) {
+                return 'Please enter a valid email address';
+              }
+            } else {
+              if (value.length < 5) {
+                // Minimal phone validation
+                return 'Please enter a valid phone number';
+              }
+            }
+            return null;
+          },
           decoration: InputDecoration(
-            hintText: 'Enter your phone number',
+            hintText: 'Enter your email or phone number',
             prefixIcon: _loginMethod == LoginMethod.phone
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      _countryCodeController.text,
-                      style: TextStyle(color: color1),
+                ? GestureDetector(
+                    onTap: () {
+                      showCountryPicker(
+                        context: context,
+                        showPhoneCode: true,
+                        onSelect: (Country country) {
+                          setState(() {
+                            this.country = country;
+                            _countryCodeController.text =
+                                '+${country.phoneCode}';
+                          });
+                        },
+                      );
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      child: Text(
+                        _countryCodeController.text,
+                        style: TextStyle(
+                            color: color1, fontWeight: FontWeight.w500),
+                      ),
                     ),
                   )
-                : null,
+                : Icon(Icons.alternate_email, color: color2),
+            suffixIcon: _loginMethod == LoginMethod.email
+                ? Icon(Icons.email_outlined, color: color2)
+                : Icon(Icons.phone_android, color: color2),
           ),
           style: TextStyle(
             fontSize: 14,
             color: color1,
           ),
-          initialCountryCode: 'IN',
-          onCountryChanged: (country) {
-            setState(() {
-              this.country = Country(
-                phoneCode: country.dialCode, // Remove the + symbol
-                countryCode: country.code,
-                e164Sc: 0,
-                geographic: true,
-                level: 1,
-                name: country.name,
-                example: '',
-                displayName:
-                    '${country.name} (${country.code}) [${country.dialCode}]',
-                displayNameNoCountryCode: '${country.name} (${country.code})',
-                e164Key: '${country.dialCode.substring(1)}-${country.code}-0',
-              );
-            });
-          },
+        ),
+
+        // Input type indicator
+        AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          margin: EdgeInsets.only(top: 8),
+          child: Text(
+            _loginMethod == LoginMethod.email
+                ? 'Using email address'
+                : 'Using phone number',
+            style: TextStyle(
+              color: color2,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
       ],
     );

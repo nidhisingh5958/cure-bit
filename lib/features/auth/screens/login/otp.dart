@@ -1,9 +1,12 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/screens/login/otp_sheet.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -15,32 +18,40 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _inputController = TextEditingController();
+  final _countryCodeController = TextEditingController(text: '+91');
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+
   bool _isLoading = false;
+  Country? country;
   late String _role;
+
+  // enum to track login method
+  LoginMethod _loginMethod = LoginMethod.email;
 
   @override
   void initState() {
     super.initState();
     _loadRole();
-    // country = Country(
-    //   phoneCode: '91',
-    //   countryCode: 'IN',
-    //   e164Sc: 0,
-    //   geographic: true,
-    //   level: 1,
-    //   name: 'India',
-    //   example: '9123456789',
-    //   displayName: 'India (IN) [+91]',
-    //   displayNameNoCountryCode: 'India (IN)',
-    //   e164Key: '91-IN-0',
-    // );
+    country = Country(
+      phoneCode: '91',
+      countryCode: 'IN',
+      e164Sc: 0,
+      geographic: true,
+      level: 1,
+      name: 'India',
+      example: '9123456789',
+      displayName: 'India (IN) [+91]',
+      displayNameNoCountryCode: 'India (IN)',
+      e164Key: '91-IN-0',
+    );
   }
 
   @override
   void dispose() {
-    _inputController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _countryCodeController.dispose();
     super.dispose();
   }
 
@@ -56,37 +67,51 @@ class _OtpScreenState extends State<OtpScreen> {
     setState(() {});
   }
 
+  final _formKey = GlobalKey<FormState>();
+
   Future<void> _sendOTP() async {
-    if (_inputController.text.isEmpty) {
+    // Check the input based on the current login method
+    if ((_loginMethod == LoginMethod.email && _emailController.text.isEmpty) ||
+        (_loginMethod == LoginMethod.phone && _phoneController.text.isEmpty)) {
       showSnackBar(
-          context: context, message: 'Please enter your phone number or email');
+          context: context,
+          message:
+              'Please enter your ${_loginMethod == LoginMethod.email ? "email" : "phone number"}');
       return;
     }
 
     setState(() => _isLoading = true);
 
     try {
-      // Here you would call your API to send the OTP
-      // For example:
-      // await AuthRepository().sendOTP(context, _inputController.text);
+      if (_formKey.currentState!.validate()) {
+        final authRepository = AuthRepository();
 
-      // For now, we'll simulate success
-      await Future.delayed(Duration(seconds: 1));
+        await authRepository.sendOtp(
+          context,
+          _loginMethod == LoginMethod.email
+              ? _emailController.text
+              : _phoneController.text,
+          _role,
+          countryCode: _loginMethod == LoginMethod.phone
+              ? _countryCodeController.text
+              : null,
+        );
 
-      // Show success message
-      showSnackBar(context: context, message: 'OTP sent successfully');
+        // Show success message
+        showSnackBar(context: context, message: 'OTP sent successfully');
 
-      setState(() => _isLoading = false);
-
-      // Show the OTP entry bottom sheet
-      _showOtpBottomSheet();
+        // Show the OTP entry bottom sheet
+        _showOtpBottomSheet();
+      }
     } catch (e) {
       showSnackBar(
           context: context, message: 'Failed to send OTP. Please try again.');
+    } finally {
       setState(() => _isLoading = false);
     }
   }
 
+  // Function to show the OTP entry bottom sheet
   void _showOtpBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -94,36 +119,33 @@ class _OtpScreenState extends State<OtpScreen> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return OtpEntrySheet(
-          identifier: _inputController.text,
-          onVerificationComplete: () {
+          role: _role,
+          identifier: _emailController.text.isNotEmpty
+              ? _emailController.text
+              : _phoneController.text,
+          countryCode: _loginMethod == LoginMethod.phone
+              ? _countryCodeController.text
+              : null,
+          onVerificationComplete: () async {
             // Handle successful verification
             Navigator.pop(context); // Close the bottom sheet
-            // Navigate to the next screen or perform other actions
+            await AppRouter.setAuthenticated(true, _role);
+
+            showSnackBar(
+              context: context,
+              message: 'OTP verified successfully',
+            );
+
+            // Redirect based on user role
+            if (_role == 'Doctor') {
+              context.goNamed(RouteConstants.doctorHome);
+            } else {
+              context.goNamed(RouteConstants.home);
+            }
           },
         );
       },
     );
-  }
-
-  // validator for handling multiple input types
-  String? _validateInput(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your phone number or email';
-    }
-
-    // Email validation (simple check for @)
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    // Phone validation (simple check for numbers only)
-    final phoneRegex = RegExp(r'^\d+$');
-
-    // If it's not email or phone, assume it's a user ID
-    if (!emailRegex.hasMatch(value) &&
-        !phoneRegex.hasMatch(value) &&
-        value.length < 3) {
-      return 'Please enter a valid phone number or email';
-    }
-
-    return null;
   }
 
   @override
@@ -138,60 +160,160 @@ class _OtpScreenState extends State<OtpScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 40),
-              Center(
-                child: Column(
-                  children: [
-                    // headings and intro
-                    Text(
-                      "OTP Verification",
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                    ),
-                    const SizedBox(height: 40),
-                    Text(
-                      "To sign in using OTP, please enter your phone number or email.",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: color3,
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 40),
+                Center(
+                  child: Column(
+                    children: [
+                      // headings and intro
+                      Text(
+                        "OTP Verification",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 40),
-                    _buildInputField(),
-                  ],
+                      const SizedBox(height: 40),
+                      Text(
+                        "To sign in using OTP, please enter your phone number or email.",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: color3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 40),
+                      _buildSmartInputField(),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              _buildSendOtpButton(),
-            ],
+                const SizedBox(height: 40),
+                _buildSendOtpButton(),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildInputField() {
-    return TextFormField(
-      controller: _inputController,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
-      validator: _validateInput,
-      decoration: InputDecoration(
-        hintText: 'Enter Phone Number or Email',
-      ),
-      style: TextStyle(
-        fontSize: 14,
-        color: color1,
-      ),
+  Widget _buildSmartInputField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Combined input field with auto-detection
+        TextFormField(
+          controller: _loginMethod == LoginMethod.email
+              ? _emailController
+              : _phoneController,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+          onChanged: (value) {
+            // Auto-detect if input is email or phone
+            if (value.isNotEmpty) {
+              // Check if input contains @ symbol - likely an email
+              if (value.contains('@') || value.contains(RegExp(r'[a-z]'))) {
+                if (_loginMethod != LoginMethod.email) {
+                  setState(() {
+                    _loginMethod = LoginMethod.email;
+                    _emailController.text = value;
+                  });
+                }
+              }
+              // Check if input has digits only - likely a phone number
+              else if (RegExp(r'^[0-9+\s]+$').hasMatch(value)) {
+                if (_loginMethod != LoginMethod.phone) {
+                  setState(() {
+                    _loginMethod = LoginMethod.phone;
+                    _phoneController.text =
+                        value.replaceAll(RegExp(r'[^\d]'), '');
+                  });
+                }
+              }
+            }
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your email or phone number';
+            }
+
+            if (_loginMethod == LoginMethod.email) {
+              final emailRegex =
+                  RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+              if (!emailRegex.hasMatch(value)) {
+                return 'Please enter a valid email address';
+              }
+            } else {
+              if (value.length < 5) {
+                // Minimal phone validation
+                return 'Please enter a valid phone number';
+              }
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            hintText: 'Enter your email or phone number',
+            prefixIcon: _loginMethod == LoginMethod.phone
+                ? GestureDetector(
+                    onTap: () {
+                      showCountryPicker(
+                        context: context,
+                        showPhoneCode: true,
+                        onSelect: (Country country) {
+                          setState(() {
+                            this.country = country;
+                            _countryCodeController.text =
+                                '+${country.phoneCode}';
+                          });
+                        },
+                      );
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      child: Text(
+                        _countryCodeController.text,
+                        style: TextStyle(
+                            color: color1, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  )
+                : Icon(Icons.alternate_email, color: color2),
+            suffixIcon: _loginMethod == LoginMethod.email
+                ? Icon(Icons.email_outlined, color: color2)
+                : Icon(Icons.phone_android, color: color2),
+          ),
+          style: TextStyle(
+            fontSize: 14,
+            color: color1,
+          ),
+        ),
+
+        // Input type indicator
+        AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          margin: EdgeInsets.only(top: 8),
+          child: Text(
+            _loginMethod == LoginMethod.email
+                ? 'Using email address'
+                : 'Using phone number',
+            style: TextStyle(
+              color: color2,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -213,4 +335,9 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
     );
   }
+}
+
+enum LoginMethod {
+  email,
+  phone,
 }

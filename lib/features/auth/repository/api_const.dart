@@ -21,11 +21,12 @@ final verify_signup_otp = "$auth/patient/verify_otp_signup";
 // login api
 final login_api = '$auth/patient/login';
 
-final loginWithOtp_api_email = '$auth/patient/login-otp';
+final loginWithOtp_api = '$auth/patient/login-otp';
 
-String getLoginWithOtpPhoneApi(String phoneNumber) {
-  return '$auth/patient/+$phoneNumber/verify_otp_login_phone';
-}
+// login with otp api
+final verifyLoginWithOtp_api_email = '$auth/patient/verify_otp_login_email';
+
+final verifyLoginWithOtp_api_phone = '$auth/patient/verify_otp_login_phone';
 
 // Doctors
 // signup api
@@ -36,8 +37,9 @@ final verify_signup_otp_doc = "$auth/doctor/verify_otp_signup";
 // login api
 final login_api_doc = '$auth/doctor/login';
 
-final loginWithOtp_api_email_doc = '$auth/doctor/login-otp';
+final loginWithOtp_api_doc = '$auth/doctor/login-otp';
 
-String loginWithOtp_api_phone_doc(String phoneNumber) {
-  return '$auth/doctor/+$phoneNumber/verify_otp_login_phone';
-}
+// login with otp api
+final verifyLoginWithOtp_api_email_doc = '$auth/doctor/verify_otp_login_email';
+
+final verifyLoginWithOtp_api_phone_doc = '$auth/doctor/verify_otp_login_phone';

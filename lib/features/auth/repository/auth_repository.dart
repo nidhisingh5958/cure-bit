@@ -121,23 +121,126 @@ class AuthRepository {
     }
   }
 
-  // sign in with OTP
-  Future<void> signInWithOtp(
+  // send OTP
+  Future<void> sendOtp(
     BuildContext context,
-    String email,
+    String identifier,
+    String role, {
+    String? countryCode,
+  }) async {
+    try {
+      // Select the appropriate API endpoint based on role
+      final String apiEndpoint =
+          role == 'Doctor' ? loginWithOtp_api_doc : loginWithOtp_api;
+
+      print(
+          'Sending OTP to $identifier with role $role and country code $countryCode');
+
+      // Initialize an empty map to hold login payload
+      Map<String, dynamic> loginPayload = {};
+
+      if (_isValidEmail(identifier)) {
+        // Email login
+        loginPayload = {
+          'email': identifier,
+        };
+      } else if (_isValidPhoneNumber(identifier)) {
+        // Phone number login
+        loginPayload = {
+          'phone_number': identifier,
+          'country_code': countryCode ?? '+91',
+          // default country code is of India
+        };
+      } else {
+        showSnackBar(
+            context: context, message: 'Invalid email or phone number');
+        return;
+      }
+
+      Response response = await post(Uri.parse(apiEndpoint),
+          body: jsonEncode(loginPayload),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      // Parse response
+      if (response.statusCode == 200) {
+        showSnackBar(context: context, message: 'OTP sent successfully');
+      } else if (response.statusCode == 400) {
+        showSnackBar(context: context, message: 'Invalid input data');
+      } else if (response.statusCode >= 500) {
+        showSnackBar(
+            context: context, message: 'Server error. Please try again later');
+      } else {
+        showSnackBar(
+            context: context, message: 'Failed to send OTP. Please try again.');
+      }
+    } on FormatException {
+      showSnackBar(context: context, message: 'Invalid response format');
+    } on TimeoutException {
+      showSnackBar(
+          context: context,
+          message: 'Connection timeout. Please check your internet');
+    } catch (e) {
+      print("Send OTP error: ${e.toString()}");
+      showSnackBar(
+          context: context, message: 'Failed to send OTP. Please try again.');
+    }
+  }
+
+  // sign in with OTP
+  Future<void> verifyOtp(
+    BuildContext context,
+    String identifier,
     String otp,
     String role,
   ) async {
     try {
+      final String apiEndpoint = role == 'Doctor'
+          ? (identifier.contains('@') || identifier.contains(RegExp(r'[a-z]'))
+              ? verifyLoginWithOtp_api_email_doc
+              : verifyLoginWithOtp_api_email)
+          : (identifier.contains(RegExp(r'^\+?[0-9]{10,15}$'))
+              ? verifyLoginWithOtp_api_phone_doc
+              : verifyLoginWithOtp_api_phone);
+
+      print('Verifying OTP for $identifier with role $role');
+      print('OTP: $otp');
+      print('API Endpoint: $apiEndpoint');
+
+      // Initialize an empty map to hold login payload
+      Map<String, dynamic> loginPayload = {};
+
+      if (_isValidEmail(identifier)) {
+        // Email login
+        loginPayload = {
+          'email': identifier,
+          'otp': otp,
+        };
+      } else if (_isValidPhoneNumber(identifier)) {
+        // Phone number login
+        loginPayload = {
+          'phone_number': identifier,
+          'otp': otp,
+        };
+      } else {
+        showSnackBar(
+            context: context, message: 'Invalid email or phone number');
+        return;
+      }
+
       // API request
-      Response response = await post(Uri.parse(loginWithOtp_api_email),
-          body: jsonEncode({
-            'email': email,
-            'otp': otp,
-          }),
+      Response response = await post(Uri.parse(signup_api),
+          body: jsonEncode({loginPayload}),
           headers: {
             'Content-Type': 'application/json',
           });
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       // Parse response
       if (response.statusCode == 200) {

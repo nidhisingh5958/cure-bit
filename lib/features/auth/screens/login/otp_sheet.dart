@@ -9,11 +9,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class OtpEntrySheet extends StatefulWidget {
   final String identifier;
   final VoidCallback onVerificationComplete;
+  final String? countryCode;
+  final String role;
 
   const OtpEntrySheet({
     Key? key,
     required this.identifier,
     required this.onVerificationComplete,
+    this.countryCode,
+    required this.role,
   }) : super(key: key);
 
   @override
@@ -25,9 +29,10 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   bool _isResendActive = false;
-  int _resendTimer = 30;
+  int _resendTimer = 60;
   bool _isLoading = false;
   late String _role;
+
   @override
   void initState() {
     super.initState();
@@ -78,24 +83,29 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
   Future<void> _resendOTP() async {
     setState(() {
       _isResendActive = false;
-      _resendTimer = 30;
+      _resendTimer = 60;
       _isLoading = true;
     });
 
     try {
-      // Here you would call your API to resend the OTP
-      // For example:
-      // await AuthRepository().sendOTP(context, widget.identifier);
+      final authRepository = AuthRepository();
 
-      // For now, we'll simulate success
-      await Future.delayed(Duration(seconds: 1));
+      // Use the identifier passed from the parent
+      await authRepository.sendOtp(
+        context,
+        widget.identifier,
+        widget.role,
+        countryCode: widget.countryCode,
+      );
 
-      showSnackBar(context: context, message: 'OTP resent successfully');
-      setState(() => _isLoading = false);
+      // Start the timer again
       _startResendTimer();
+
+      showSnackBar(context: context, message: 'OTP sent successfully');
     } catch (e) {
       showSnackBar(
-          context: context, message: 'Failed to resend OTP. Please try again.');
+          context: context, message: 'Failed to send OTP. Please try again.');
+    } finally {
       setState(() => _isLoading = false);
     }
   }
@@ -111,7 +121,7 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
         // Call your verification API
         final authRepository = AuthRepository();
 
-        await authRepository.signInWithOtp(
+        await authRepository.verifyOtp(
           context,
           widget.identifier,
           otp,
@@ -125,6 +135,7 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
           context: context,
           message: 'OTP verification failed. Please try again.',
         );
+      } finally {
         setState(() => _isLoading = false);
       }
     } else {
