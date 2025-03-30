@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:math';
 import 'package:CuraDocs/features/auth/repository/api_const.dart';
+import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -165,6 +167,7 @@ class AuthRepository {
 
       print('Response Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
+      print('API Endpoint: $apiEndpoint');
 
       // Parse response
       if (response.statusCode == 200) {
@@ -233,7 +236,7 @@ class AuthRepository {
       }
 
       // API request
-      Response response = await post(Uri.parse(signup_api),
+      Response response = await post(Uri.parse(apiEndpoint),
           body: jsonEncode({loginPayload}),
           headers: {
             'Content-Type': 'application/json',
@@ -398,6 +401,186 @@ class AuthRepository {
       print("Signup error: ${e.toString()}");
       showSnackBar(
           context: context, message: 'Sign up failed. Please try again. $e');
+    }
+  }
+
+  // Update the signupOtp method in AuthRepository
+  Future<bool> signupOtp(
+    BuildContext context,
+    String identifier,
+    String? countryCode,
+  ) async {
+    try {
+      final String apiEndpoint = signupOtp_api;
+
+      print('Sending OTP to $identifier with country code $countryCode');
+      print('API Endpoint: $apiEndpoint');
+
+      // Initialize an empty map to hold login payload
+      Map<String, dynamic> payload = {};
+
+      if (_isValidEmail(identifier)) {
+        // Email login
+        payload = {
+          'email': identifier,
+        };
+      } else if (_isValidPhoneNumber(identifier)) {
+        // Phone number login
+        payload = {
+          'phone_number': identifier,
+          'country_code': countryCode ?? '+91',
+        };
+      } else {
+        showSnackBar(
+            context: context, message: 'Invalid email or phone number');
+        return false;
+      }
+
+      // API request
+      Response response = await post(Uri.parse(apiEndpoint),
+          body: jsonEncode(payload),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      // Parse response
+      if (response.statusCode == 200) {
+        try {
+          // Parse the response body to check for any error messages
+          Map<String, dynamic> responseData = jsonDecode(response.body);
+
+          // Check if response contains an error field
+          if (responseData.containsKey('error')) {
+            showSnackBar(context: context, message: responseData['error']);
+            return false;
+          }
+
+          // OTP sent successfully
+          return true;
+        } catch (e) {
+          // Handle JSON parse error
+          showSnackBar(
+              context: context, message: 'Invalid response from server');
+          return false;
+        }
+      } else {
+        String errorMsg = 'Failed to send OTP. Please try again.';
+
+        if (response.statusCode == 401) {
+          errorMsg = 'Authentication failed';
+        } else if (response.statusCode >= 500) {
+          errorMsg = 'Server error. Please try again later';
+        }
+
+        showSnackBar(context: context, message: errorMsg);
+        return false;
+      }
+    } catch (e) {
+      print("Signup OTP error: ${e.toString()}");
+      showSnackBar(
+          context: context, message: 'Failed to send OTP. Please try again.');
+      return false;
+    }
+  }
+
+  Future<bool> verifySignupOtp(
+    BuildContext context,
+    String identifier,
+    String plainOtp,
+    String? countryCode,
+  ) async {
+    try {
+      // Select the appropriate API endpoint for OTP verification
+      final String apiEndpoint = signupOtp_api;
+
+      // Initialize payload with OTP
+      Map<String, dynamic> payload = {
+        'otp': plainOtp, // Include the plaintext OTP in the request
+        'request_type': 'verify_otp',
+      };
+
+      if (_isValidEmail(identifier)) {
+        // Email verification
+        payload['email'] = identifier;
+      } else if (_isValidPhoneNumber(identifier)) {
+        // Phone number verification
+        payload['phone_number'] = identifier;
+        payload['country_code'] = countryCode ?? '+91';
+      } else {
+        showSnackBar(
+            context: context, message: 'Invalid email or phone number');
+        return false;
+      }
+
+      // API request to verify the OTP
+      Response response = await post(
+        Uri.parse(apiEndpoint),
+        body: jsonEncode(payload),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('Verify OTP Response Status Code: ${response.statusCode}');
+      print('Verify OTP Response Body: ${response.body}');
+
+      // Parse response
+      if (response.statusCode == 200) {
+        try {
+          Map<String, dynamic> responseData = jsonDecode(response.body);
+
+          // Check if the response indicates success
+          if (responseData.containsKey('success') && responseData['success']) {
+            return true;
+          } else if (responseData.containsKey('error')) {
+            showSnackBar(context: context, message: responseData['error']);
+            return false;
+          } else {
+            // If the backend still returns the hashed_otp for verification on client side
+            if (responseData.containsKey('hashed_otp')) {
+              String hashedOtp = responseData['hashed_otp'];
+
+              // Verify the plaintext OTP against the hashed one
+              bool isMatch = BCrypt.checkpw(plainOtp, hashedOtp);
+
+              if (isMatch) {
+                return true;
+              } else {
+                showSnackBar(context: context, message: 'Invalid OTP');
+                return false;
+              }
+            } else {
+              showSnackBar(
+                  context: context, message: 'Invalid server response');
+              return false;
+            }
+          }
+        } catch (e) {
+          print("Parse error: ${e.toString()}");
+          showSnackBar(context: context, message: 'Error parsing response');
+          return false;
+        }
+      } else {
+        // Handle specific error codes
+        String errorMsg = 'Verification failed. Please try again.';
+
+        if (response.statusCode == 401) {
+          errorMsg = 'Invalid OTP or expired';
+        } else if (response.statusCode >= 500) {
+          errorMsg = 'Server error. Please try again later';
+        }
+
+        showSnackBar(context: context, message: errorMsg);
+        return false;
+      }
+    } catch (e) {
+      print("Verify OTP error: ${e.toString()}");
+      showSnackBar(
+          context: context, message: 'Verification failed. Please try again.');
+      return false;
     }
   }
 

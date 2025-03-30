@@ -19,18 +19,22 @@ class DoctorBottomNavigation extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
+            backgroundColor: Colors.black26,
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble_outline),
+            backgroundColor: Colors.black26,
             label: 'Chat',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people_alt_outlined),
+            backgroundColor: Colors.black26,
             label: 'Patients',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
+            backgroundColor: Colors.black26,
             label: 'Profile',
           ),
         ],

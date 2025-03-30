@@ -5,6 +5,7 @@ import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:bcrypt/bcrypt.dart';
 
 class SignUpForm extends StatefulWidget {
   final Map<String, dynamic>? extra;
@@ -157,44 +158,77 @@ class _SignUpFormState extends State<SignUpForm> {
     _otpController.dispose();
     _emailController.dispose();
     _phoneOtpController.dispose();
-    _phoneController.dispose();
+    super.dispose();
     super.dispose();
   }
 
+// In _SignUpFormState class, replace _requestEmailOtp() with:
   Future<void> _requestEmailOtp() async {
     // Validate email before showing OTP field
     final emailValue = _emailController.text;
-    if (emailValue.isNotEmpty &&
-        RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailValue)) {
+    if (emailValue.isEmpty ||
+        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailValue)) {
+      showSnackBar(context: context, message: 'Please enter a valid email');
+      return;
+    }
+
+    try {
       setState(() {
         _showOtpField = true;
       });
 
-      // Here you would typically call your API to send OTP
-      // For demo purposes
+      final authRepository = AuthRepository();
+      bool sent = await authRepository.signupOtp(
+        context,
+        emailValue,
+        null, // No country code for email
+      );
+
+      if (sent) {
+        showSnackBar(
+          context: context,
+          message: 'OTP sent to your email',
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _showOtpField = false;
+      });
       showSnackBar(
         context: context,
-        message: 'OTP sent to your email',
+        message: 'Error sending OTP: ${e.toString()}',
       );
-    } else {
-      showSnackBar(context: context, message: 'Please enter a valid email');
     }
   }
 
-// Add this method to verify OTP
   Future<void> _verifyEmailOtp() async {
-    // In a real app, you'd verify the OTP with your backend
-    // For this example, we'll just simulate verification
-
     setState(() {
       _isVerifyingEmail = true;
     });
 
     try {
-      //  await authRepository.verifyEmailOtp(_emailController.text, _otpController.text);
+      String plainOtp = _otpController.text;
 
-      // For demo
-      if (_otpController.text == "123456") {
+      if (plainOtp.isEmpty) {
+        showSnackBar(
+          context: context,
+          message: 'Please enter OTP',
+        );
+        setState(() {
+          _isVerifyingEmail = false;
+        });
+        return;
+      }
+
+      final authRepository = AuthRepository();
+      bool verified = await authRepository.verifySignupOtp(
+        context,
+        _emailController.text,
+        plainOtp,
+        null, // No country code for email
+      );
+
+      if (verified) {
         setState(() {
           _isEmailVerified = true;
           _showOtpField = false; // Hide OTP field after verification
@@ -203,12 +237,13 @@ class _SignUpFormState extends State<SignUpForm> {
           context: context,
           message: 'Email verified successfully',
         );
-      } else {
-        showSnackBar(
-          context: context,
-          message: 'Invalid OTP, please try again',
-        );
       }
+    } catch (e) {
+      print("Email OTP verification error: ${e.toString()}");
+      showSnackBar(
+        context: context,
+        message: 'Error verifying OTP: ${e.toString()}',
+      );
     } finally {
       setState(() {
         _isVerifyingEmail = false;
@@ -220,37 +255,79 @@ class _SignUpFormState extends State<SignUpForm> {
   Future<void> _requestPhoneOtp() async {
     // Validate phone before showing OTP field
     final phoneValue = _phoneController.text;
-    if (phoneValue.isNotEmpty) {
-      setState(() {
-        _showPhoneOtpField = true;
-      });
-
-      // Here you would typically call your API to send OTP
-      showSnackBar(
-        context: context,
-        message: 'OTP sent to +${country?.phoneCode ?? '00'} $phoneValue',
-      );
-    } else {
+    if (phoneValue.isEmpty) {
       showSnackBar(
         context: context,
         message: 'Please enter a valid phone number',
       );
+      return;
+    }
+
+    if (country == null) {
+      showSnackBar(
+        context: context,
+        message: 'Please select a country code',
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        _showPhoneOtpField = true;
+      });
+
+      final authRepository = AuthRepository();
+      bool sent = await authRepository.signupOtp(
+        context,
+        phoneValue,
+        '+${country!.phoneCode}',
+      );
+
+      if (sent) {
+        showSnackBar(
+          context: context,
+          message: 'OTP sent to your phone number',
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _showPhoneOtpField = false;
+      });
+      showSnackBar(
+        context: context,
+        message: 'Error sending OTP: ${e.toString()}',
+      );
     }
   }
 
-// verify Phone OTP
   Future<void> _verifyPhoneOtp() async {
-    // In a real app, you'd verify the OTP with your backend
-
     setState(() {
       _isVerifyingPhone = true;
     });
 
     try {
-      //  await authRepository.verifyEmailOtp(_emailController.text, _otpController.text);
+      String plainOtp = _phoneOtpController.text;
 
-      // For demo, we'll consider "123456" as correct OTP
-      if (_phoneOtpController.text == "123456") {
+      if (plainOtp.isEmpty) {
+        showSnackBar(
+          context: context,
+          message: 'Please enter OTP',
+        );
+        setState(() {
+          _isVerifyingPhone = false;
+        });
+        return;
+      }
+
+      final authRepository = AuthRepository();
+      bool verified = await authRepository.verifySignupOtp(
+        context,
+        _phoneController.text,
+        plainOtp,
+        '+${country!.phoneCode}',
+      );
+
+      if (verified) {
         setState(() {
           _isPhoneVerified = true;
           _showPhoneOtpField = false; // Hide OTP field after verification
@@ -259,12 +336,13 @@ class _SignUpFormState extends State<SignUpForm> {
           context: context,
           message: 'Phone number verified successfully',
         );
-      } else {
-        showSnackBar(
-          context: context,
-          message: 'Invalid OTP, please try again',
-        );
       }
+    } catch (e) {
+      print("Phone number OTP verification error: ${e.toString()}");
+      showSnackBar(
+        context: context,
+        message: 'Error verifying OTP: ${e.toString()}',
+      );
     } finally {
       setState(() {
         _isVerifyingPhone = false;

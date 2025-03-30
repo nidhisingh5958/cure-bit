@@ -11,6 +11,8 @@ final appointment =
 final contact_us =
     'https://rydsfrzu8d.execute-api.us-east-1.amazonaws.com/Dev/contact';
 
+final signupOtp_api = '$auth/verify_otp_signup';
+
 // Patients
 // signup api
 
@@ -21,7 +23,7 @@ final verify_signup_otp = "$auth/patient/verify_otp_signup";
 // login api
 final login_api = '$auth/patient/login';
 
-final loginWithOtp_api = '$auth/patient/login-otp';
+final loginWithOtp_api = '$auth/patient/login_otp';
 
 // login with otp api
 final verifyLoginWithOtp_api_email = '$auth/patient/verify_otp_login_email';
@@ -37,7 +39,7 @@ final verify_signup_otp_doc = "$auth/doctor/verify_otp_signup";
 // login api
 final login_api_doc = '$auth/doctor/login';
 
-final loginWithOtp_api_doc = '$auth/doctor/login-otp';
+final loginWithOtp_api_doc = '$auth/doctor/login_otp';
 
 // login with otp api
 final verifyLoginWithOtp_api_email_doc = '$auth/doctor/verify_otp_login_email';

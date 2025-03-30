@@ -68,6 +68,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "bcrypt",
+      "rootUri": "file:///home/hemant-kumar/.pub-cache/hosted/pub.dev/bcrypt-1.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "boolean_selector",
       "rootUri": "file:///home/hemant-kumar/.pub-cache/hosted/pub.dev/boolean_selector-2.1.2",
       "packageUri": "lib/",
@@ -608,7 +614,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-03-26T15:42:13.369072Z",
+  "generated": "2025-03-30T16:07:57.831554Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///home/hemant-kumar/snap/flutter/common/flutter",
