@@ -120,27 +120,35 @@ class _OtpScreenState extends State<OtpScreen> {
       builder: (BuildContext context) {
         return OtpEntrySheet(
           role: _role,
-          identifier: _emailController.text.isNotEmpty
+          identifier: _loginMethod == LoginMethod.email
               ? _emailController.text
               : _phoneController.text,
           countryCode: _loginMethod == LoginMethod.phone
               ? _countryCodeController.text
               : null,
           onVerificationComplete: () async {
-            // Handle successful verification
-            Navigator.pop(context); // Close the bottom sheet
+            // First close the bottom sheet to prevent context issues
+            Navigator.of(context).pop();
+
+            // Then set the authentication state
             await AppRouter.setAuthenticated(true, _role);
 
-            showSnackBar(
-              context: context,
-              message: 'OTP verified successfully',
-            );
+            // Show success message
+            if (mounted) {
+              showSnackBar(
+                context: context,
+                message: 'OTP verified successfully',
+              );
+            }
 
-            // Redirect based on user role
-            if (_role == 'Doctor') {
-              context.goNamed(RouteConstants.doctorHome);
-            } else {
-              context.goNamed(RouteConstants.home);
+            // Use the correct context for navigation
+            if (mounted) {
+              // Redirect based on user role
+              if (_role == 'Doctor') {
+                context.go(RouteConstants.doctorHome);
+              } else {
+                context.go(RouteConstants.home);
+              }
             }
           },
         );

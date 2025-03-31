@@ -5,7 +5,6 @@ import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:bcrypt/bcrypt.dart';
 
 class SignUpForm extends StatefulWidget {
   final Map<String, dynamic>? extra;
@@ -47,6 +46,12 @@ class _SignUpFormState extends State<SignUpForm> {
   String password = '';
   Country? country;
   late String _role;
+
+  bool _canResendEmailOtp = false;
+  bool _canResendPhoneOtp = false;
+  int _emailResendSeconds = 30; // Cooldown period in seconds
+  int _phoneResendSeconds = 30;
+  bool _disposed = false;
 
   @override
   void initState() {
@@ -130,8 +135,8 @@ class _SignUpFormState extends State<SignUpForm> {
       final authRepository = AuthRepository();
       await authRepository.signUp(
         context,
-        _firstnameController.text,
-        _lastnameController.text,
+        _firstnameController.text.toLowerCase(),
+        _lastnameController.text.toLowerCase(),
         _emailController.text,
         '+${country!.phoneCode}',
         _phoneController.text,
@@ -151,6 +156,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   void dispose() {
+    _disposed = true;
     _firstnameController.dispose();
     _lastnameController.dispose();
     _passwordController.dispose();
@@ -159,10 +165,45 @@ class _SignUpFormState extends State<SignUpForm> {
     _emailController.dispose();
     _phoneOtpController.dispose();
     super.dispose();
-    super.dispose();
   }
 
-// In _SignUpFormState class, replace _requestEmailOtp() with:
+  // And update the timer methods to check for disposed state:
+  void startEmailResendTimer() {
+    if (_disposed) return;
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (_disposed) return;
+      if (_emailResendSeconds > 0 && _showOtpField && !_isEmailVerified) {
+        setState(() {
+          _emailResendSeconds--;
+        });
+        startEmailResendTimer();
+      } else if (_showOtpField && !_isEmailVerified) {
+        setState(() {
+          _canResendEmailOtp = true;
+        });
+      }
+    });
+  }
+
+  void startPhoneResendTimer() {
+    if (_disposed) return;
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (_disposed) return;
+      if (_phoneResendSeconds > 0 && _showPhoneOtpField && !_isPhoneVerified) {
+        setState(() {
+          _phoneResendSeconds--;
+        });
+        startPhoneResendTimer();
+      } else if (_showPhoneOtpField && !_isPhoneVerified) {
+        setState(() {
+          _canResendPhoneOtp = true;
+        });
+      }
+    });
+  }
+
   Future<void> _requestEmailOtp() async {
     // Validate email before showing OTP field
     final emailValue = _emailController.text;
@@ -175,7 +216,11 @@ class _SignUpFormState extends State<SignUpForm> {
     try {
       setState(() {
         _showOtpField = true;
+        _canResendEmailOtp = false;
+        _emailResendSeconds = 30;
       });
+
+      startEmailResendTimer();
 
       final authRepository = AuthRepository();
       bool sent = await authRepository.signupOtp(
@@ -274,7 +319,12 @@ class _SignUpFormState extends State<SignUpForm> {
     try {
       setState(() {
         _showPhoneOtpField = true;
+        _canResendPhoneOtp = false;
+        _phoneResendSeconds = 30;
       });
+
+      // Start the resend timer
+      startPhoneResendTimer();
 
       final authRepository = AuthRepository();
       bool sent = await authRepository.signupOtp(
@@ -523,57 +573,97 @@ class _SignUpFormState extends State<SignUpForm> {
         if (_showOtpField)
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _otpController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter OTP',
-                      hintStyle: TextStyle(
-                        fontSize: 14,
-                        color: color3,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: color1,
-                    ),
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                    buildCounter: (context,
-                            {required currentLength,
-                            required isFocused,
-                            maxLength}) =>
-                        null,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _isVerifyingEmail ? null : _verifyEmailOtp,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                  ),
-                  child: _isVerifyingEmail
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: color4),
-                        )
-                      : const Text(
-                          'Verify OTP',
-                          style: TextStyle(
-                            color: color4,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _otpController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter OTP',
+                          hintStyle: TextStyle(
                             fontSize: 14,
+                            color: color3,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: color1,
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
+                        buildCounter: (context,
+                                {required currentLength,
+                                required isFocused,
+                                maxLength}) =>
+                            null,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: _isVerifyingEmail ? null : _verifyEmailOtp,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                      ),
+                      child: _isVerifyingEmail
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: color4),
+                            )
+                          : const Text(
+                              'Verify OTP',
+                              style: TextStyle(
+                                color: color4,
+                                fontSize: 14,
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+                // Add the Resend OTP row
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Didn\'t receive OTP?',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: color2,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      _canResendEmailOtp
+                          ? GestureDetector(
+                              onTap: _requestEmailOtp,
+                              child: Text(
+                                'Resend OTP',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: color3,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              'Resend in $_emailResendSeconds s',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: color3,
+                              ),
+                            ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -646,54 +736,94 @@ class _SignUpFormState extends State<SignUpForm> {
         if (_showPhoneOtpField)
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _phoneOtpController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Phone OTP',
-                      hintStyle: TextStyle(
-                        fontSize: 14,
-                        color: color3,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: color1,
-                    ),
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                    buildCounter: (context,
-                            {required currentLength,
-                            required isFocused,
-                            maxLength}) =>
-                        null,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _isVerifyingPhone ? null : _verifyPhoneOtp,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                  ),
-                  child: _isVerifyingPhone
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: color4),
-                        )
-                      : const Text(
-                          'Verify OTP',
-                          style: TextStyle(color: color4, fontSize: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _phoneOtpController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Phone OTP',
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            color: color3,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: color1,
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
+                        buildCounter: (context,
+                                {required currentLength,
+                                required isFocused,
+                                maxLength}) =>
+                            null,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: _isVerifyingPhone ? null : _verifyPhoneOtp,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                      ),
+                      child: _isVerifyingPhone
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: color4),
+                            )
+                          : const Text(
+                              'Verify OTP',
+                              style: TextStyle(color: color4, fontSize: 14),
+                            ),
+                    ),
+                  ],
+                ),
+                // Resend OTP button
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Didn\'t receive OTP?',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: color2,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      _canResendPhoneOtp
+                          ? GestureDetector(
+                              onTap: _requestPhoneOtp,
+                              child: Text(
+                                'Resend OTP',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: color3,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              'Resend in $_phoneResendSeconds s',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: color3,
+                              ),
+                            ),
+                    ],
+                  ),
                 ),
               ],
             ),

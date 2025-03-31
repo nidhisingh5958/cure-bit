@@ -24,6 +24,12 @@ bool _isValidPhoneNumber(String phoneNumber) {
   return phoneRegex.hasMatch(phoneNumber);
 }
 
+String hashedOtp = '';
+
+Future<bool> verify(String hashedPassword, String plainPassword) async {
+  return BCrypt.checkpw(plainPassword, hashedPassword);
+}
+
 class AuthRepository {
   // sign in with password
   Future<void> signInWithPass(
@@ -404,7 +410,6 @@ class AuthRepository {
     }
   }
 
-  // Update the signupOtp method in AuthRepository
   Future<bool> signupOtp(
     BuildContext context,
     String identifier,
@@ -456,10 +461,18 @@ class AuthRepository {
           if (responseData.containsKey('error')) {
             showSnackBar(context: context, message: responseData['error']);
             return false;
+          } else {
+            // Extract the hashed OTP from the response
+            if (responseData.containsKey('otp')) {
+              hashedOtp = responseData['otp'];
+              showSnackBar(context: context, message: 'OTP sent successfully');
+              return true;
+            } else {
+              showSnackBar(
+                  context: context, message: 'OTP not received from server');
+              return false;
+            }
           }
-
-          // OTP sent successfully
-          return true;
         } catch (e) {
           // Handle JSON parse error
           showSnackBar(
@@ -493,87 +506,20 @@ class AuthRepository {
     String? countryCode,
   ) async {
     try {
-      // Select the appropriate API endpoint for OTP verification
-      final String apiEndpoint = signupOtp_api;
-
-      // Initialize payload with OTP
-      Map<String, dynamic> payload = {
-        'otp': plainOtp, // Include the plaintext OTP in the request
-        'request_type': 'verify_otp',
-      };
-
-      if (_isValidEmail(identifier)) {
-        // Email verification
-        payload['email'] = identifier;
-      } else if (_isValidPhoneNumber(identifier)) {
-        // Phone number verification
-        payload['phone_number'] = identifier;
-        payload['country_code'] = countryCode ?? '+91';
-      } else {
+      if (!_isValidEmail(identifier) && !_isValidPhoneNumber(identifier)) {
         showSnackBar(
             context: context, message: 'Invalid email or phone number');
         return false;
       }
 
-      // API request to verify the OTP
-      Response response = await post(
-        Uri.parse(apiEndpoint),
-        body: jsonEncode(payload),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
+      // Use the verify function to check the OTP
+      bool isMatch = await verify(hashedOtp, plainOtp);
 
-      print('Verify OTP Response Status Code: ${response.statusCode}');
-      print('Verify OTP Response Body: ${response.body}');
-
-      // Parse response
-      if (response.statusCode == 200) {
-        try {
-          Map<String, dynamic> responseData = jsonDecode(response.body);
-
-          // Check if the response indicates success
-          if (responseData.containsKey('success') && responseData['success']) {
-            return true;
-          } else if (responseData.containsKey('error')) {
-            showSnackBar(context: context, message: responseData['error']);
-            return false;
-          } else {
-            // If the backend still returns the hashed_otp for verification on client side
-            if (responseData.containsKey('hashed_otp')) {
-              String hashedOtp = responseData['hashed_otp'];
-
-              // Verify the plaintext OTP against the hashed one
-              bool isMatch = BCrypt.checkpw(plainOtp, hashedOtp);
-
-              if (isMatch) {
-                return true;
-              } else {
-                showSnackBar(context: context, message: 'Invalid OTP');
-                return false;
-              }
-            } else {
-              showSnackBar(
-                  context: context, message: 'Invalid server response');
-              return false;
-            }
-          }
-        } catch (e) {
-          print("Parse error: ${e.toString()}");
-          showSnackBar(context: context, message: 'Error parsing response');
-          return false;
-        }
+      if (isMatch) {
+        print('OTP verified successfully');
+        return true;
       } else {
-        // Handle specific error codes
-        String errorMsg = 'Verification failed. Please try again.';
-
-        if (response.statusCode == 401) {
-          errorMsg = 'Invalid OTP or expired';
-        } else if (response.statusCode >= 500) {
-          errorMsg = 'Server error. Please try again later';
-        }
-
-        showSnackBar(context: context, message: errorMsg);
+        showSnackBar(context: context, message: 'Invalid OTP');
         return false;
       }
     } catch (e) {
