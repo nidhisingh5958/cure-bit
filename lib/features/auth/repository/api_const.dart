@@ -3,14 +3,6 @@
 //  auth
 final auth = 'https://5waijy29ki.execute-api.us-east-1.amazonaws.com/Dev/auth';
 
-//  appointment
-final appointment =
-    'https://a7r3s7iyx1.execute-api.us-east-1.amazonaws.com/Dev/appointment';
-
-//  contact us
-final contact_us =
-    'https://rydsfrzu8d.execute-api.us-east-1.amazonaws.com/Dev/contact';
-
 final signupOtp_api = '$auth/verify_otp_signup';
 
 // Patients

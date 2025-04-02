@@ -1,6 +1,6 @@
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
 import 'package:CuraDocs/features/auth/landing/splash_screen.dart';
-import 'package:CuraDocs/features/patient/home_screen/contact_us.dart';
+import 'package:CuraDocs/features/patient/settings/support/contact_us.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
