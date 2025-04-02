@@ -19,6 +19,9 @@ class RouteConstants {
   // settings routes
   static String aboutUs = "aboutUs";
   static String contactUs = "contactUs";
+  static String termsAndConditions = "termsAndConditions";
+  static String privacyPolicy = "privacyPolicy";
+  static String feedback = "feedback";
 
 // Patients routes
   // inner routes

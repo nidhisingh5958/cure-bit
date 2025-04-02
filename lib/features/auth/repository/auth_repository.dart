@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-import 'dart:math';
 import 'package:CuraDocs/features/auth/repository/api_const.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';

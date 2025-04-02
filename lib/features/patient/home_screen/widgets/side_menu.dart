@@ -1,4 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
@@ -21,7 +22,8 @@ class SideMenu extends StatelessWidget {
           _line(),
           _buildSettingsSection(context),
           _line(),
-          _buildLanguageAndHelpSection(),
+          _buildLanguageAndHelpSection(context),
+          _line(),
           _buildAboutSection(context),
           _line(),
           _buildAccountsSection(context),
@@ -97,10 +99,12 @@ class SideMenu extends StatelessWidget {
         _buildOptionItem(
           icon: Icons.settings_outlined,
           label: 'Settings & Privacy',
+          onTap: () => context.goNamed(RouteConstants.settings),
         ),
         _buildOptionItem(
           icon: Icons.insights_outlined,
           label: 'Your Activity',
+          onTap: () => context.goNamed(RouteConstants.profile),
         ),
         _buildOptionItem(
           icon: Icons.brightness_6_outlined,
@@ -109,12 +113,13 @@ class SideMenu extends StatelessWidget {
         _buildOptionItem(
           icon: Icons.report_problem_outlined,
           label: 'Report a problem',
+          onTap: () => context.goNamed(RouteConstants.feedback),
         ),
       ],
     );
   }
 
-  Widget _buildLanguageAndHelpSection() {
+  Widget _buildLanguageAndHelpSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -123,18 +128,23 @@ class SideMenu extends StatelessWidget {
           Text(
             "Language",
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               color: color1,
               fontWeight: FontWeight.normal,
             ),
           ),
           SizedBox(height: 16),
-          Text(
-            "Help",
-            style: TextStyle(
-              fontSize: 14,
-              color: color1,
-              fontWeight: FontWeight.normal,
+          GestureDetector(
+            onTap: () {
+              context.goNamed(RouteConstants.help);
+            },
+            child: Text(
+              "Help & Support",
+              style: TextStyle(
+                fontSize: 16,
+                color: color1,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ),
         ],
@@ -145,23 +155,42 @@ class SideMenu extends StatelessWidget {
   Widget _buildAboutSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: GestureDetector(
-        onTap: () async {
-          final Uri url = Uri.parse('https://www.curadocs.in/about.html');
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url);
-          } else {
-            throw 'Could not launch $url';
-          }
-        },
-        child: Text(
-          "About Cura Docs",
-          style: TextStyle(
-            fontSize: 14,
-            color: color1,
-            fontWeight: FontWeight.normal,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () async {
+              final Uri url = Uri.parse('https://www.curadocs.in/about');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              } else {
+                throw 'Could not launch $url';
+              }
+            },
+            child: Text(
+              "About Cura Docs",
+              style: TextStyle(
+                fontSize: 16,
+                color: color1,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
           ),
-        ),
+          SizedBox(height: 16),
+          GestureDetector(
+            onTap: () {
+              context.goNamed(RouteConstants.contactUs);
+            },
+            child: Text(
+              "Contact Us",
+              style: TextStyle(
+                fontSize: 16,
+                color: color1,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -175,7 +204,7 @@ class SideMenu extends StatelessWidget {
           Text(
             "Switch accounts",
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               color: color1,
               fontWeight: FontWeight.normal,
             ),
@@ -184,7 +213,7 @@ class SideMenu extends StatelessWidget {
           Text(
             "Log Out",
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               color: color1,
               fontWeight: FontWeight.normal,
             ),
@@ -209,7 +238,7 @@ class SideMenu extends StatelessWidget {
         label,
         style: TextStyle(
           color: color1,
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.normal,
         ),
       ),

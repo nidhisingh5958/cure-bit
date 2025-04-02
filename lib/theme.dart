@@ -6,13 +6,7 @@ ThemeData theme() {
   return ThemeData(
     appBarTheme: appBarTheme(),
     fontFamily: 'Inter',
-    colorScheme: const ColorScheme.light(
-      primary: color1,
-      secondary: Color.fromARGB(255, 157, 169, 185),
-      error: Color(0xFFE3342F),
-      surface: Colors.white,
-      onSurface: color1,
-    ),
+    useMaterial3: true,
     scaffoldBackgroundColor: const Color(0xFFF8FAFC),
     cardTheme: cardTheme(),
     inputDecorationTheme: inputDecorationTheme(),
