@@ -94,7 +94,7 @@ class _DocumentScreenState extends State<DocumentScreen>
         ),
       ),
       drawer: SideMenu(),
-      floatingActionButton: _buildChatBotFloatingButton(context),
+      floatingActionButton: _buildAddFloatingButton(context),
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -108,10 +108,10 @@ class _DocumentScreenState extends State<DocumentScreen>
     );
   }
 
-  Widget _buildChatBotFloatingButton(BuildContext context) {
+  Widget _buildAddFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.addDocument),
-      backgroundColor: color2,
+      backgroundColor: color4,
       child: Icon(Icons.add),
     );
   }

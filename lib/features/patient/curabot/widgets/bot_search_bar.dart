@@ -97,7 +97,8 @@ class BotSearchBarState extends State<BotSearchBar>
       animation: _animationController,
       builder: (context, child) {
         return Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width - 32,
+          height: _heightAnimation.value,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             border: Border.all(color: Colors.grey.shade300),

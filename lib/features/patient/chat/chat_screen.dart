@@ -1,5 +1,7 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/components/pop_up.dart';
 import 'package:CuraDocs/features/patient/chat/widgets/build_message.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'data/chat_sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -52,6 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(context),
+      extendBody: false,
       body: Column(
         children: [
           _buildDateDivider(),
@@ -181,6 +184,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+// getting the time span of the message
   String _getMessageTimeSpan(DateTime messageTime) {
     final now = DateTime.now();
     final difference = now.difference(messageTime);
@@ -301,11 +305,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   hintText: 'Type a message...',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: IconButton(
-                    icon: Icon(Icons.attach_file),
-                    onPressed: () {
-                      // Implement attachment functionality
+                  prefixIcon: PopUp.buildPopupMenu(
+                    context,
+                    // icon: Icon(Icons.attach_file),
+                    onSelected: (value) {
+                      if (value == 'book') {
+                        // Handle book appointment action
+                        context.goNamed(RouteConstants.bookAppointment);
+                      } else if (value == 'doctorQR') {
+                        // Handle help action
+                        context.goNamed(RouteConstants.help);
+                      }
                     },
+                    optionsList: [
+                      {'book': 'Schedule Appointment'},
+                      {'attach': 'Attach'},
+                      {'doctorQR': 'Doctor\'s QR'},
+                    ],
                   ),
                 ),
                 style: const TextStyle(

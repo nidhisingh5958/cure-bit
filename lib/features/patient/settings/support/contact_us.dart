@@ -50,18 +50,12 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
 
         final ContactRepository = SettingsRepository();
         await ContactRepository.getContactUs(
-          _firstnameController.text.toLowerCase(),
-          _lastnameController.text.toLowerCase(),
+          _firstnameController.text,
+          _lastnameController.text,
           _emailController.text,
           topic,
           assistanceType,
           _messageController.text,
-        );
-
-        // Show success message
-        showSnackBar(
-          context: context,
-          message: 'Message sent successfully!',
         );
 
         // Clear form fields
@@ -588,7 +582,6 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     return ElevatedButton(
       onPressed: _isSubmitting ? null : _submitForm,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color5,
         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

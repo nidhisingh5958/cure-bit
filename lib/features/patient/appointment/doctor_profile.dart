@@ -1,5 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/components/menu_pop_up.dart';
+import 'package:CuraDocs/components/pop_up.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -366,7 +366,7 @@ class _DoctorProfileState extends State<DoctorProfile>
           label,
           style: TextStyle(
             fontSize: 16,
-            color: color3,
+            // color: color3,
           ),
         ),
         Text(

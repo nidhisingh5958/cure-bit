@@ -87,7 +87,7 @@ class _ChatListScreenState extends State<ChatListScreen>
   Widget _buildChatBotFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: color2,
+      backgroundColor: color4,
       child: Icon(Icons.chat_bubble_outline),
     );
   }

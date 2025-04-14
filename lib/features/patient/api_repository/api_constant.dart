@@ -4,4 +4,4 @@ final appointment =
 
 //  contact us
 final contact_us =
-    'https://rydsfrzu8d.execute-api.us-east-1.amazonaws.com/Dev/contact_us';
+    'https://rydsfrzu8d.execute-api.us-east-1.amazonaws.com/Dev/contact/contact_us';

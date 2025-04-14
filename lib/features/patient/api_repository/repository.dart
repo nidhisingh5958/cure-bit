@@ -118,7 +118,8 @@ class SettingsRepository {
       print('Contact us request successful');
     } else {
       // Handle error
-      print('Error: ${response.statusCode}');
+      print('Error: ${response.statusCode}, ${response.body}');
+      throw Exception('Failed to submit contact us form');
     }
     return 'Contact us content';
   }
