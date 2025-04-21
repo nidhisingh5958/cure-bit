@@ -130,7 +130,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       ],
                     ),
                     child: Text(
-                      '\"Have questions about your medical history or CuraDocs services? We\'re here to help with prompt and accurate support.\"',
+                      '"Have questions about your medical history or CuraDocs services? We\'re here to help with prompt and accurate support."',
                       style: TextStyle(
                         fontSize: 16,
                         color: color2,

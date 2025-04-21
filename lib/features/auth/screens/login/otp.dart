@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends StatefulWidget {
   final Map<String, dynamic>? extra;
-  const OtpScreen({this.extra, Key? key}) : super(key: key);
+  const OtpScreen({this.extra, super.key});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();

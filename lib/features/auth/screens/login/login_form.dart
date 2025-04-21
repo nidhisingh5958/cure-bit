@@ -10,7 +10,7 @@ import 'package:country_picker/country_picker.dart';
 class LoginForm extends StatefulWidget {
   final Map<String, dynamic>? extra;
 
-  const LoginForm({Key? key, this.extra}) : super(key: key);
+  const LoginForm({super.key, this.extra});
 
   @override
   State<LoginForm> createState() => _LoginFormState();

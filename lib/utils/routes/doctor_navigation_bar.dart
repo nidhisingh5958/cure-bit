@@ -5,9 +5,9 @@ class DoctorBottomNavigation extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   const DoctorBottomNavigation({
-    Key? key,
+    super.key,
     required this.navigationShell,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

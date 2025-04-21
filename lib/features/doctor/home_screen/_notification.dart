@@ -137,8 +137,7 @@ class _NotificationCard extends StatelessWidget {
 
   const _NotificationCard({
     required this.notification,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

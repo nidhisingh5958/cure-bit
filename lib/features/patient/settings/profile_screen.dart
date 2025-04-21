@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }

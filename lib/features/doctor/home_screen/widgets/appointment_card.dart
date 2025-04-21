@@ -54,7 +54,7 @@ class AppointmentCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          '${reviews} reviews',
+                          '$reviews reviews',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 12,

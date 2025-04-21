@@ -25,10 +25,7 @@ import 'package:CuraDocs/features/patient/chat/chat_home.dart';
 import 'package:CuraDocs/features/patient/chat/chat_screen.dart';
 import '../../features/patient/chat/entities/chat_data.dart';
 // documents
-import 'package:CuraDocs/features/patient/documents/add_document.dart';
 import 'package:CuraDocs/features/patient/documents/document_screen.dart';
-import 'package:CuraDocs/features/patient/documents/prescription.dart';
-import 'package:CuraDocs/features/patient/documents/test_records.dart';
 // home
 import 'package:CuraDocs/features/patient/home_screen/home_screen.dart';
 import 'package:CuraDocs/features/patient/home_screen/notification.dart';
@@ -47,7 +44,6 @@ import 'package:CuraDocs/features/doctor/curabot/_chat_with_ai.dart';
 // home
 import 'package:CuraDocs/features/doctor/home_screen/_home_screen_doc.dart';
 import 'package:CuraDocs/features/doctor/home_screen/_notification.dart';
-import 'package:CuraDocs/features/doctor/home_screen/_search_screen.dart';
 // appointment
 import 'package:CuraDocs/features/doctor/appointment/appointment_screen.dart';
 // my patients

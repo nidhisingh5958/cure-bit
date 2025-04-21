@@ -1,11 +1,10 @@
 import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class _TopDoctorSection extends StatefulWidget {
-  const _TopDoctorSection({Key? key}) : super(key: key);
+  const _TopDoctorSection();
 
   @override
   __TopDoctorSectionState createState() => __TopDoctorSectionState();

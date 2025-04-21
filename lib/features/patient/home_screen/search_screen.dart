@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 class DoctorSearchScreen extends StatefulWidget {
   final Map<String, dynamic> map;
 
-  DoctorSearchScreen({Key? key, required this.map}) : super(key: key);
+  const DoctorSearchScreen({super.key, required this.map});
 
   @override
   State<DoctorSearchScreen> createState() => _DoctorSearchScreenState();

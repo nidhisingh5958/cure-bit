@@ -1,7 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DoctorSideMenu extends StatelessWidget {

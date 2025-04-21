@@ -113,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(value as double),
+              color: Colors.grey.withOpacity(value),
               shape: BoxShape.circle,
             ),
           );

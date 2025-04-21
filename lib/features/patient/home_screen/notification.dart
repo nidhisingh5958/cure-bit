@@ -1,5 +1,4 @@
 import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:CuraDocs/components/pop_up.dart';
@@ -146,8 +145,7 @@ class _NotificationCard extends StatelessWidget {
 
   const _NotificationCard({
     required this.notification,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

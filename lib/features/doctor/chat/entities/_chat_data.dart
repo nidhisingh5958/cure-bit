@@ -16,14 +16,11 @@ class ChatData {
 
 class RequestData extends ChatData {
   RequestData({
-    required String name,
-    required String avatarUrl,
+    required super.name,
+    required super.avatarUrl,
     required String firstMessage,
-    required String time,
+    required super.time,
   }) : super(
-          name: name,
-          avatarUrl: avatarUrl,
           lastMessage: firstMessage,
-          time: time,
         );
 }

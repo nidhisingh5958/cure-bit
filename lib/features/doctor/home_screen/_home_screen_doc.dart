@@ -1,7 +1,6 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -189,7 +188,7 @@ class DoctorHomeScreen extends StatelessWidget {
       children: [
         _buildSectionHeader(context, 'Quick Access'),
         const SizedBox(height: 16),
-        Container(
+        SizedBox(
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

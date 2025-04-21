@@ -154,7 +154,7 @@ class _BookAppointmentState extends State<BookAppointment> {
             ),
           ),
           SizedBox(height: 40),
-          Container(
+          SizedBox(
             width: 200,
             child: ElevatedButton(
               onPressed: () {
@@ -362,7 +362,7 @@ class _BookAppointmentState extends State<BookAppointment> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children:
               ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day) {
-            return Container(
+            return SizedBox(
               width: 30,
               child: Text(
                 day,
@@ -508,7 +508,7 @@ class _BookAppointmentState extends State<BookAppointment> {
   }
 
   Widget _buildProblemSelection() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: TextField(
         focusNode: _focusNode,
@@ -590,7 +590,7 @@ class _BookAppointmentState extends State<BookAppointment> {
 
   Widget _buildBookButton() {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 200,
         height: 45,
         child: ElevatedButton(

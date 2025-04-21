@@ -1,5 +1,4 @@
 import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
-import 'package:CuraDocs/features/doctor/chat/entities/_message.dart';
 
 final List<ChatData> requestData = [
   RequestData(

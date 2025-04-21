@@ -55,8 +55,8 @@ class HistorySection extends StatelessWidget {
   const HistorySection({
     required this.title,
     required this.items,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +83,8 @@ class HistoryItem extends StatelessWidget {
 
   const HistoryItem({
     required this.text,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +160,7 @@ class ChatHistoryManager {
 
 // A version that integrates with the history manager
 class BotHistoryWithData extends StatefulWidget {
-  const BotHistoryWithData({Key? key}) : super(key: key);
+  const BotHistoryWithData({super.key});
 
   @override
   State<BotHistoryWithData> createState() => _BotHistoryWithDataState();

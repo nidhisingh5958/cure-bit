@@ -2,7 +2,6 @@ import 'package:CuraDocs/features/patient/curabot/entities/message_group.dart';
 import 'package:CuraDocs/features/patient/curabot/widgets/bot_search_bar.dart';
 import 'package:CuraDocs/features/patient/curabot/widgets/chat_message_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 // import 'package:CuraDocs/components/routes/route_constants.dart';
 import 'package:CuraDocs/features/patient/curabot/data/messages_bot.dart';
 import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';

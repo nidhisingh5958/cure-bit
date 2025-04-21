@@ -7,7 +7,7 @@ final Color color2 = Colors.black.withOpacity(0.8);
 final Color color3 = Colors.grey.shade600;
 
 class ForgotPasswordScreen extends StatelessWidget {
-  ForgotPasswordScreen({super.key});
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

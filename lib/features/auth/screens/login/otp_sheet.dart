@@ -13,12 +13,12 @@ class OtpEntrySheet extends StatefulWidget {
   final String role;
 
   const OtpEntrySheet({
-    Key? key,
+    super.key,
     required this.identifier,
     required this.onVerificationComplete,
     this.countryCode,
     required this.role,
-  }) : super(key: key);
+  });
 
   @override
   State<OtpEntrySheet> createState() => _OtpEntrySheetState();

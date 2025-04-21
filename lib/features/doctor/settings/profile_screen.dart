@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
+  const DoctorProfileScreen({super.key});
+
   @override
   State<DoctorProfileScreen> createState() => _ProfileScreenState();
 }

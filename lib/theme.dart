@@ -103,7 +103,7 @@ AppBarTheme appBarTheme() {
       fontWeight: FontWeight.w600,
       letterSpacing: -0.3,
     ),
-    systemOverlayStyle: const SystemUiOverlayStyle(
+    systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,

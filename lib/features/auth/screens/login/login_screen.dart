@@ -5,7 +5,7 @@ import 'package:CuraDocs/features/auth/screens/login/login_form.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

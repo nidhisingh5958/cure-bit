@@ -81,8 +81,8 @@ class SettingsRepository {
 
   // Method to get contact us
   Future<String> getContactUs(
-    String first_name,
-    String last_name,
+    String firstName,
+    String lastName,
     String email,
     String topic,
     String assist,
@@ -91,15 +91,15 @@ class SettingsRepository {
     final String apiEndpoint = contact_us;
 
     print('Submitting form:');
-    print('Name: $first_name $last_name');
+    print('Name: $firstName $lastName');
     print('Email: $email');
     print('Topic: $topic');
     print('Assistance type: $assist');
     print('Message: $message');
 
     Map<String, dynamic> data = {
-      'first_name': first_name,
-      'last_name': last_name,
+      'first_name': firstName,
+      'last_name': lastName,
       'email': email,
       'topic': topic,
       'assist': assist,

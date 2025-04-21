@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DoctorProfile extends StatelessWidget {
+  const DoctorProfile({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,7 +254,7 @@ class DoctorProfile extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16),
-        Container(
+        SizedBox(
           height: 110,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -376,7 +378,7 @@ class DoctorProfile extends StatelessWidget {
   }
 
   Widget _buildBookButton() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 60,
       child: ElevatedButton(

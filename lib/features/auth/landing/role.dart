@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RoleScreen extends StatefulWidget {
+  const RoleScreen({super.key});
+
   @override
   State<RoleScreen> createState() => _RoleScreenState();
 }
