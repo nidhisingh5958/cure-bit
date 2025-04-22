@@ -208,7 +208,7 @@ class _LoginFormState extends State<LoginForm> {
                       child: Text(
                         _countryCodeController.text,
                         style: TextStyle(
-                            color: color1, fontWeight: FontWeight.w500),
+                            color: black, fontWeight: FontWeight.w500),
                       ),
                     ),
                   )
@@ -219,7 +219,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
           style: TextStyle(
             fontSize: 14,
-            color: color1,
+            color: black,
           ),
         ),
 
@@ -262,7 +262,7 @@ class _LoginFormState extends State<LoginForm> {
       ),
       style: TextStyle(
         fontSize: 14,
-        color: color1,
+        color: black,
       ),
     );
   }
@@ -276,7 +276,7 @@ class _LoginFormState extends State<LoginForm> {
           child: Text(
             'Forgot Password?',
             style: TextStyle(
-              color: color1,
+              color: black,
               fontSize: 14,
             ),
           ),

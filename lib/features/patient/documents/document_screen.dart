@@ -84,13 +84,13 @@ class _DocumentScreenState extends State<DocumentScreen>
           ],
           indicator: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: color6, width: 2),
+              bottom: BorderSide(color: grey400, width: 2),
             ),
           ),
           splashBorderRadius: BorderRadius.circular(38),
-          unselectedLabelColor: color3,
-          indicatorColor: color3,
-          dividerColor: color5,
+          unselectedLabelColor: grey600,
+          indicatorColor: grey800,
+          dividerColor: transparent,
         ),
       ),
       drawer: SideMenu(),
@@ -111,7 +111,7 @@ class _DocumentScreenState extends State<DocumentScreen>
   Widget _buildAddFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.addDocument),
-      backgroundColor: color4,
+      backgroundColor: white,
       child: Icon(Icons.add),
     );
   }

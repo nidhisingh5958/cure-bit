@@ -32,7 +32,7 @@ class DoctorSideMenu extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
       child: Container(
         height: 1,
-        color: color1,
+        color: black,
       ),
     );
   }
@@ -44,7 +44,7 @@ class DoctorSideMenu extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundColor: color3,
+            backgroundColor: grey600,
             backgroundImage: AssetImage('assets/images/profile_pic.jpeg'),
           ),
           const SizedBox(width: 15),
@@ -63,7 +63,7 @@ class DoctorSideMenu extends StatelessWidget {
                 "user@gmail.com",
                 style: TextStyle(
                   fontSize: 14,
-                  color: color3,
+                  color: grey600,
                 ),
               ),
             ],
@@ -121,7 +121,7 @@ class DoctorSideMenu extends StatelessWidget {
             "Language",
             style: TextStyle(
               fontSize: 14,
-              color: color1,
+              color: black,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -130,7 +130,7 @@ class DoctorSideMenu extends StatelessWidget {
             "Help",
             style: TextStyle(
               fontSize: 14,
-              color: color1,
+              color: black,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -155,7 +155,7 @@ class DoctorSideMenu extends StatelessWidget {
           "About Cura Docs",
           style: TextStyle(
             fontSize: 14,
-            color: color1,
+            color: black,
             fontWeight: FontWeight.normal,
           ),
         ),
@@ -173,7 +173,7 @@ class DoctorSideMenu extends StatelessWidget {
             "Switch accounts",
             style: TextStyle(
               fontSize: 14,
-              color: color1,
+              color: black,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -182,7 +182,7 @@ class DoctorSideMenu extends StatelessWidget {
             "Log Out",
             style: TextStyle(
               fontSize: 14,
-              color: color1,
+              color: black,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -199,13 +199,13 @@ class DoctorSideMenu extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: color1,
+        color: black,
         size: 22,
       ),
       title: Text(
         label,
         style: TextStyle(
-          color: color1,
+          color: black,
           fontSize: 14,
           fontWeight: FontWeight.normal,
         ),

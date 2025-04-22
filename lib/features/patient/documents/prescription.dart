@@ -36,7 +36,7 @@ class PrescriptionScreen extends StatelessWidget {
                   'Date',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color1,
+                    color: black,
                   ),
                 ),
               ),
@@ -46,7 +46,7 @@ class PrescriptionScreen extends StatelessWidget {
                   'Diagnosis',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color1,
+                    color: black,
                   ),
                 ),
               ),
@@ -56,7 +56,7 @@ class PrescriptionScreen extends StatelessWidget {
                   'Doctor',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color1,
+                    color: black,
                   ),
                 ),
               ),
@@ -80,7 +80,7 @@ class PrescriptionScreen extends StatelessWidget {
                       child: Text(
                         record.date,
                         style: const TextStyle(
-                          color: color1,
+                          color: black,
                           fontSize: 14,
                         ),
                       ),
@@ -90,7 +90,7 @@ class PrescriptionScreen extends StatelessWidget {
                       child: Text(
                         record.diagnosis,
                         style: const TextStyle(
-                          color: color1,
+                          color: black,
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),
@@ -101,7 +101,7 @@ class PrescriptionScreen extends StatelessWidget {
                       child: Text(
                         record.doctor,
                         style: const TextStyle(
-                          color: color1,
+                          color: black,
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),

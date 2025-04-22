@@ -102,7 +102,7 @@ class BotSearchBarState extends State<BotSearchBar>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             border: Border.all(color: Colors.grey.shade300),
-            color: color4,
+            color: white,
             boxShadow: isExpanded
                 ? [
                     BoxShadow(
@@ -125,7 +125,7 @@ class BotSearchBarState extends State<BotSearchBar>
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   prefixIcon: Icon(
                     Icons.add,
-                    color: color1,
+                    color: black,
                     size: 20,
                   ),
                   suffixIcon: Row(
@@ -135,7 +135,7 @@ class BotSearchBarState extends State<BotSearchBar>
                         IconButton(
                           icon: Icon(
                             Icons.close,
-                            color: color1,
+                            color: black,
                             size: 20,
                           ),
                           onPressed: _collapseSearchBar,
@@ -143,7 +143,7 @@ class BotSearchBarState extends State<BotSearchBar>
                       else
                         Icon(
                           Icons.mic,
-                          color: color1,
+                          color: black,
                           size: 20,
                         ),
                     ],

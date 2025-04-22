@@ -8,7 +8,7 @@ class ProfileSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: color3,
+        backgroundColor: grey600,
         title: const Text(
           'Profile Details',
           style: TextStyle(

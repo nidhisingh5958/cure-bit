@@ -36,7 +36,7 @@ class _SignupPageState extends State<SignUpScreen> {
                     "Create Account",
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: color1,
+                          color: black,
                         ),
                     textAlign: TextAlign.center,
                   ),
@@ -45,7 +45,7 @@ class _SignupPageState extends State<SignUpScreen> {
                     "Fill your information below or register with a social account.",
                     style: TextStyle(
                       fontSize: 14,
-                      color: color3,
+                      color: grey600,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -61,14 +61,14 @@ class _SignupPageState extends State<SignUpScreen> {
                           child: Container(
                             height: 1.0,
                             width: 90.0,
-                            color: color1,
+                            color: black,
                           ),
                         ),
                         Text(
                           "Or continue with",
                           style: TextStyle(
                             fontSize: 14,
-                            color: color3,
+                            color: grey600,
                           ),
                         ),
                         Padding(
@@ -76,7 +76,7 @@ class _SignupPageState extends State<SignUpScreen> {
                           child: Container(
                             height: 1.0,
                             width: 90.0,
-                            color: color1,
+                            color: black,
                           ),
                         ),
                       ],
@@ -108,7 +108,7 @@ class _SignupPageState extends State<SignUpScreen> {
                         "Have an account? ",
                         style: TextStyle(
                           fontSize: 14,
-                          color: color3,
+                          color: grey600,
                         ),
                       ),
                       SizedBox(

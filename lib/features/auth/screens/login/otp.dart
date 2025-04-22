@@ -163,7 +163,7 @@ class _OtpScreenState extends State<OtpScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: color1),
+          icon: Icon(Icons.arrow_back_ios, color: black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -195,7 +195,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         "To sign in using OTP, please enter your phone number or email.",
                         style: TextStyle(
                           fontSize: 14,
-                          color: color3,
+                          color: grey600,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -291,7 +291,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       child: Text(
                         _countryCodeController.text,
                         style: TextStyle(
-                            color: color1, fontWeight: FontWeight.w500),
+                            color: black, fontWeight: FontWeight.w500),
                       ),
                     ),
                   )
@@ -302,7 +302,7 @@ class _OtpScreenState extends State<OtpScreen> {
           ),
           style: TextStyle(
             fontSize: 14,
-            color: color1,
+            color: black,
           ),
         ),
 

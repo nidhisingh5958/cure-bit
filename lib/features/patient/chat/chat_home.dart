@@ -60,12 +60,12 @@ class _ChatListScreenState extends State<ChatListScreen>
           // labelColor: Theme.of(context).colorScheme.primary,
           indicator: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: color6, width: 2),
+              bottom: BorderSide(color: grey400, width: 2),
             ),
           ),
           splashBorderRadius: BorderRadius.circular(38),
-          unselectedLabelColor: color3,
-          indicatorColor: color3,
+          unselectedLabelColor: grey600,
+          indicatorColor: grey600,
           dividerColor: Colors.transparent, //tab bar divider line
         ),
       ),
@@ -87,7 +87,7 @@ class _ChatListScreenState extends State<ChatListScreen>
   Widget _buildChatBotFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: color4,
+      backgroundColor: white,
       child: Icon(Icons.chat_bubble_outline),
     );
   }
@@ -168,7 +168,7 @@ class ChatListTile extends StatelessWidget {
         chat.name,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
-              color: color1,
+              color: black,
             ),
       ),
       subtitle: Padding(
@@ -176,7 +176,7 @@ class ChatListTile extends StatelessWidget {
         child: Text(
           chat.lastMessage,
           style: TextStyle(
-            color: color3,
+            color: grey600,
             fontSize: 14,
             height: 1.3,
           ),
@@ -199,7 +199,7 @@ class ChatListTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: color3,
+              color: grey600,
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Text(
@@ -269,7 +269,7 @@ class RequestListTile extends StatelessWidget {
         chat.name,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 16,
-              color: color1,
+              color: black,
             ),
       ),
       subtitle: Padding(
@@ -277,7 +277,7 @@ class RequestListTile extends StatelessWidget {
         child: Text(
           chat.lastMessage,
           style: TextStyle(
-            color: color3,
+            color: grey600,
             fontSize: 14,
             height: 1.3,
           ),
@@ -300,7 +300,7 @@ class RequestListTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: color3,
+              color: grey600,
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Text(

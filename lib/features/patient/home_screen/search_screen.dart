@@ -59,7 +59,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: color5,
+        backgroundColor: transparent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_outlined),
           onPressed: () {
@@ -98,7 +98,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           prefixIcon: Icon(
             Icons.search,
-            color: color1,
+            color: black,
             size: 20,
           ),
           suffixIcon: Row(
@@ -108,7 +108,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: color1,
+                    color: black,
                     size: 20,
                   ),
                   onPressed: _deleteItems,
@@ -116,7 +116,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
               else
                 Icon(
                   Icons.mic,
-                  color: color1,
+                  color: black,
                   size: 20,
                 ),
             ],

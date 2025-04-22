@@ -339,7 +339,7 @@ class _DoctorProfileState extends State<DoctorProfile>
       padding: const EdgeInsets.all(20.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Color3,
+          color: grey600,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(

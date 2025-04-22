@@ -89,7 +89,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             'Contact Us',
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
-          backgroundColor: color5,
+          backgroundColor: transparent,
           elevation: 2,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_outlined),
@@ -239,14 +239,14 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: color5, width: 2),
+                    borderSide: BorderSide(color: transparent, width: 2),
                   ),
                   filled: true,
                   fillColor: Colors.grey.shade50,
                 ),
                 style: TextStyle(
                   fontSize: 14,
-                  color: color1,
+                  color: black,
                 ),
                 keyboardType: TextInputType.name,
                 validator: (value) {
@@ -279,14 +279,14 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: color5, width: 2),
+                    borderSide: BorderSide(color: transparent, width: 2),
                   ),
                   filled: true,
                   fillColor: Colors.grey.shade50,
                 ),
                 style: TextStyle(
                   fontSize: 14,
-                  color: color1,
+                  color: black,
                 ),
                 keyboardType: TextInputType.name,
                 validator: (value) {
@@ -337,7 +337,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: color5, width: 2),
+              borderSide: BorderSide(color: transparent, width: 2),
             ),
             filled: true,
             fillColor: Colors.grey.shade50,
@@ -346,7 +346,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           ),
           style: TextStyle(
             fontSize: 14,
-            color: color1,
+            color: black,
           ),
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
@@ -394,7 +394,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: color5, width: 2),
+              borderSide: BorderSide(color: transparent, width: 2),
             ),
             filled: true,
             fillColor: Colors.grey.shade50,
@@ -402,7 +402,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           maxLines: 5,
           style: TextStyle(
             fontSize: 14,
-            color: color1,
+            color: black,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -445,14 +445,14 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: color5, width: 2),
+              borderSide: BorderSide(color: transparent, width: 2),
             ),
             filled: true,
             fillColor: Colors.grey.shade50,
           ),
           style: TextStyle(
             fontSize: 14,
-            color: color1,
+            color: black,
           ),
           icon: Icon(Icons.arrow_drop_down, color: color2),
           isExpanded: true,
@@ -547,7 +547,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               height: 20,
               margin: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                color: isSelected ? color5 : Colors.transparent,
+                color: isSelected ? transparent : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: isSelected ? color2 : Colors.grey.shade400,

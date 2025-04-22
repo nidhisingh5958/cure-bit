@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: color5,
+        backgroundColor: transparent,
         actions: [
           _buildActionButtons(context),
         ],
@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildChatBotFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: color4,
+      backgroundColor: white,
       child: Icon(Icons.chat_bubble_outline),
     );
   }
@@ -90,10 +90,10 @@ class HomeScreen extends StatelessWidget {
       child: Stack(
         children: [
           IconButton(
-            icon: Icon(icon, color: color1),
+            icon: Icon(icon, color: black),
             onPressed: () => context.goNamed(route),
             style: IconButton.styleFrom(
-              backgroundColor: color5,
+              backgroundColor: transparent,
               padding: const EdgeInsets.all(12),
             ),
           ),
@@ -108,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.error,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: color5,
+                    color: transparent,
                     width: 2,
                   ),
                 ),
@@ -131,7 +131,7 @@ class HomeScreen extends StatelessWidget {
               Text(
                 'Hello, ',
                 style: TextStyle(
-                  color: color1,
+                  color: black,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   height: 1.2,
@@ -141,7 +141,7 @@ class HomeScreen extends StatelessWidget {
                 name,
                 style: TextStyle(
                   fontSize: 30,
-                  color: color1,
+                  color: black,
                   height: 1.2,
                 ),
               ),
@@ -162,6 +162,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildFeaturesSection(BuildContext context) {
+    // List of features
     final features = [
       {
         'icon': Icons.description_outlined,
@@ -191,7 +192,7 @@ class HomeScreen extends StatelessWidget {
         Text(
           'Quick Access',
           style: TextStyle(
-            color: color1,
+            color: black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -219,6 +220,7 @@ class HomeScreen extends StatelessWidget {
     BuildContext context,
     IconData icon,
     String label, {
+    bool isSelected = false,
     VoidCallback? onTap,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -233,24 +235,24 @@ class HomeScreen extends StatelessWidget {
         width: itemWidth,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          // color: Colors.blue.withOpacity(0.1),
+          color: isSelected ? CarouselPink.withOpacity(0.1) : white,
           borderRadius: BorderRadius.circular(16),
-          // border: Border.all(
-          //   color: Colors.blue.withOpacity(0.2),
-          //   width: 1,
-          // ),
+          border: Border.all(
+            color: isSelected ? CarouselPink : grey200,
+            width: isSelected ? 1.5 : 1,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color2, size: 30),
-            const SizedBox(height: 18),
+            Icon(icon, color: color2, size: 24),
+            const SizedBox(height: 10),
             Text(
               label,
               style: TextStyle(
-                color: color2,
                 fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? CarouselPink : grey800,
               ),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
@@ -297,7 +299,7 @@ class HomeScreen extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: color1,
+            color: black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -340,7 +342,7 @@ class HomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               // border: Border.all(
-              //   color: color1,
+              //   color: black,
               //   width: 1,
               // ),
               boxShadow: [
@@ -385,7 +387,7 @@ class HomeScreen extends StatelessWidget {
                           Text(
                             title,
                             style: TextStyle(
-                              color: color1,
+                              color: black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -414,7 +416,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         specialty,
                         style: TextStyle(
-                          color: color3,
+                          color: grey600,
                           fontSize: 14,
                         ),
                       ),
@@ -446,7 +448,7 @@ class HomeScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 12),
                   child: Icon(
                     Icons.arrow_forward_ios,
-                    color: color3,
+                    color: grey600,
                     size: 16,
                   ),
                 ),
@@ -494,7 +496,7 @@ class HomeScreen extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: color1,
+            color: black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -537,7 +539,7 @@ class HomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               // border: Border.all(
-              //   color: color1,
+              //   color: black,
               //   width: 1,
               // ),
               boxShadow: [
@@ -582,7 +584,7 @@ class HomeScreen extends StatelessWidget {
                           Text(
                             title,
                             style: TextStyle(
-                              color: color1,
+                              color: black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -611,7 +613,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         specialty,
                         style: TextStyle(
-                          color: color3,
+                          color: grey600,
                           fontSize: 14,
                         ),
                       ),
@@ -643,7 +645,7 @@ class HomeScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 12),
                   child: Icon(
                     Icons.arrow_forward_ios,
-                    color: color3,
+                    color: grey600,
                     size: 16,
                   ),
                 ),

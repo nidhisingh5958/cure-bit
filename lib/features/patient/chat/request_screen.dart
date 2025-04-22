@@ -78,7 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: color4,
+              color: white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -125,7 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 1,
-      backgroundColor: color4,
+      backgroundColor: white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
         onPressed: () => context.pop(),
@@ -308,7 +308,7 @@ class _ChatScreenState extends State<ChatScreen> {
         12 + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        color: color4,
+        color: white,
         boxShadow: [
           BoxShadow(
             offset: const Offset(0, -1),

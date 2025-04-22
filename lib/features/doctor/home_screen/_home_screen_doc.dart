@@ -11,7 +11,7 @@ class DoctorHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: color5,
+        backgroundColor: transparent,
         actions: [
           _buildActionButtons(context),
         ],
@@ -88,10 +88,10 @@ class DoctorHomeScreen extends StatelessWidget {
       child: Stack(
         children: [
           IconButton(
-            icon: Icon(icon, color: color1),
+            icon: Icon(icon, color: black),
             onPressed: () => context.goNamed(route),
             style: IconButton.styleFrom(
-              backgroundColor: color5,
+              backgroundColor: transparent,
               padding: const EdgeInsets.all(12),
             ),
           ),
@@ -106,7 +106,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.error,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: color5,
+                    color: transparent,
                     width: 2,
                   ),
                 ),
@@ -129,7 +129,7 @@ class DoctorHomeScreen extends StatelessWidget {
               Text(
                 'Hello, ',
                 style: TextStyle(
-                  color: color1,
+                  color: black,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   height: 1.2,
@@ -139,7 +139,7 @@ class DoctorHomeScreen extends StatelessWidget {
                 name,
                 style: TextStyle(
                   fontSize: 30,
-                  color: color1,
+                  color: black,
                   height: 1.2,
                 ),
               ),
@@ -288,7 +288,7 @@ class DoctorHomeScreen extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: color1,
+            color: black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -331,7 +331,7 @@ class DoctorHomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: color1,
+                color: black,
                 width: 1,
               ),
               boxShadow: [
@@ -376,7 +376,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           Text(
                             title,
                             style: TextStyle(
-                              color: color1,
+                              color: black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -405,7 +405,7 @@ class DoctorHomeScreen extends StatelessWidget {
                       Text(
                         specialty,
                         style: TextStyle(
-                          color: color3,
+                          color: grey600,
                           fontSize: 14,
                         ),
                       ),
@@ -437,7 +437,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 12),
                   child: Icon(
                     Icons.arrow_forward_ios,
-                    color: color3,
+                    color: grey600,
                     size: 16,
                   ),
                 ),

@@ -215,7 +215,7 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
             "We have sent an OTP to your registered mobile number and email, please enter any one of them.",
             style: TextStyle(
               fontSize: 14,
-              color: color3,
+              color: grey600,
             ),
             textAlign: TextAlign.center,
           ),
@@ -270,12 +270,12 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: color3,
+                  color: grey600,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: color1),
+                borderSide: BorderSide(color: black),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -307,11 +307,11 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
               }
             },
             style: TextStyle(
-                fontSize: 16, color: color1, fontWeight: FontWeight.bold),
+                fontSize: 16, color: black, fontWeight: FontWeight.bold),
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             showCursor: true, // Show cursor for better visibility
-            cursorColor: color3,
+            cursorColor: grey600,
             inputFormatters: [
               LengthLimitingTextInputFormatter(1),
               FilteringTextInputFormatter.digitsOnly,

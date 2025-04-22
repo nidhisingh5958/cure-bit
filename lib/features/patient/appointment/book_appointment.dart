@@ -121,7 +121,7 @@ class _BookAppointmentState extends State<BookAppointment> {
             },
           ),
           elevation: 0,
-          backgroundColor: color5,
+          backgroundColor: transparent,
         ),
         body: showSuccessScreen ? _buildSuccessScreen() : _buildBookingForm(),
       ),
@@ -523,7 +523,7 @@ class _BookAppointmentState extends State<BookAppointment> {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: color1,
+                    color: black,
                     size: 20,
                   ),
                   onPressed: _deleteItems,
@@ -531,7 +531,7 @@ class _BookAppointmentState extends State<BookAppointment> {
               else
                 Icon(
                   Icons.mic,
-                  color: color1,
+                  color: black,
                   size: 20,
                 ),
             ],

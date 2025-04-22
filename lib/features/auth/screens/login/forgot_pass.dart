@@ -2,9 +2,9 @@ import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final Color color1 = Colors.black;
+final Color black = Colors.black;
 final Color color2 = Colors.black.withOpacity(0.8);
-final Color color3 = Colors.grey.shade600;
+final Color grey600 = Colors.grey.shade600;
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
@@ -43,7 +43,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                     "Don't worry! It happens. Please enter the email address associated with your account where we can send you the confirmation link.",
                     style: TextStyle(
                       fontSize: 14,
-                      color: color3,
+                      color: grey600,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -128,7 +128,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
             ),
             style: TextStyle(
               fontSize: 14,
-              color: color1,
+              color: black,
             ),
           ),
           const SizedBox(height: 24),
@@ -153,7 +153,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
                 "Remember your password? ",
                 style: TextStyle(
                   fontSize: 14,
-                  color: color3,
+                  color: grey600,
                 ),
               ),
               GestureDetector(

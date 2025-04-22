@@ -11,7 +11,7 @@ class DoctorNotificationScreen extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: color4,
+        backgroundColor: white,
         centerTitle: true,
         title: Column(
           children: [

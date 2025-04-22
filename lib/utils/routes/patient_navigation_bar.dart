@@ -26,7 +26,7 @@ class BottomNavigation extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: color4,
+          color: white,
           // boxShadow: [
           //   BoxShadow(
           //     color: Colors.black.withOpacity(0.05),
@@ -39,8 +39,8 @@ class BottomNavigation extends StatelessWidget {
           child: NavigationBar(
             height: 65,
             elevation: 0,
-            backgroundColor: color4,
-            indicatorColor: color5,
+            backgroundColor: white,
+            indicatorColor: transparent,
             selectedIndex: navigationShell.currentIndex,
             onDestinationSelected: (index) => _onTap(context, index),
             destinations: destinations.map((destination) {
@@ -82,7 +82,7 @@ class BottomNavigation extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Icon(
           defaultIcon.icon,
-          color: isSelected ? color4 : Colors.grey.shade400,
+          color: isSelected ? white : Colors.grey.shade400,
           size: 24,
         ),
       ),

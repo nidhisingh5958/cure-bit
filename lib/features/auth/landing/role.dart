@@ -32,7 +32,7 @@ class _RoleScreenState extends State<RoleScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: color1,
+                        color: black,
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -40,7 +40,7 @@ class _RoleScreenState extends State<RoleScreen> {
                       "Choose your role to continue",
                       style: TextStyle(
                         fontSize: 16,
-                        color: color3,
+                        color: grey600,
                       ),
                     ),
                   ],
@@ -93,7 +93,7 @@ class _RoleScreenState extends State<RoleScreen> {
               Text(
                 role,
                 style: TextStyle(
-                  color: color1,
+                  color: black,
                   fontWeight: FontWeight.bold,
                 ),
               ),

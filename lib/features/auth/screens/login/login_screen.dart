@@ -37,7 +37,7 @@ class LoginScreen extends StatelessWidget {
                           "Sign In to continue to your health journey",
                           style: TextStyle(
                             fontSize: 14,
-                            color: color3,
+                            color: grey600,
                           ),
                         ),
                       ],
@@ -55,14 +55,14 @@ class LoginScreen extends StatelessWidget {
                           child: Container(
                             height: 1.0,
                             width: 90.0,
-                            color: color1,
+                            color: black,
                           ),
                         ),
                         Text(
                           "Or continue with",
                           style: TextStyle(
                             fontSize: 14,
-                            color: color3,
+                            color: grey600,
                           ),
                         ),
                         Padding(
@@ -70,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                           child: Container(
                             height: 1.0,
                             width: 90.0,
-                            color: color1,
+                            color: black,
                           ),
                         ),
                       ],
@@ -102,7 +102,7 @@ class LoginScreen extends StatelessWidget {
                         "Don't have an account? ",
                         style: TextStyle(
                           fontSize: 14,
-                          color: color3,
+                          color: grey600,
                         ),
                       ),
                       SizedBox(
@@ -158,7 +158,7 @@ class SocialCard extends StatelessWidget {
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: color4,
+          color: white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: Colors.grey.shade200,

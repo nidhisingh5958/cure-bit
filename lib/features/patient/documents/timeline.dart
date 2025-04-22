@@ -78,7 +78,7 @@ class TimelineScreen extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: color1,
+              color: black,
             ),
           ),
         ),
@@ -123,7 +123,7 @@ class TimelineScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: Colors.white,
                     border: Border.all(
-                      color: color6,
+                      color: grey400,
                       width: 2,
                     ),
                   ),
@@ -131,11 +131,11 @@ class TimelineScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(6),
               ),
               beforeLineStyle: LineStyle(
-                color: color4,
+                color: white,
                 thickness: 2,
               ),
               afterLineStyle: LineStyle(
-                color: color4,
+                color: white,
                 thickness: 2,
               ),
               startChild: record.diagnosis.isNotEmpty
@@ -165,7 +165,7 @@ class TimelineScreen extends StatelessWidget {
                                 record.doctor,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: color6,
+                                  color: grey400,
                                 ),
                               ),
                             ),

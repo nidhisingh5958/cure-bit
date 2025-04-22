@@ -459,7 +459,7 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             style: TextStyle(
               fontSize: 14,
-              color: color1,
+              color: black,
             ),
             keyboardType: TextInputType.name,
             validator: (value) {
@@ -483,7 +483,7 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             style: TextStyle(
               fontSize: 14,
-              color: color1,
+              color: black,
             ),
             keyboardType: TextInputType.name,
             validator: (value) {
@@ -521,13 +521,13 @@ class _SignUpFormState extends State<SignUpForm> {
                               onPressed: _requestEmailOtp,
                               child: Text('Verify',
                                   style:
-                                      TextStyle(color: color3, fontSize: 14)),
+                                      TextStyle(color: grey600, fontSize: 14)),
                             )
                           : null),
                 ),
                 style: TextStyle(
                   fontSize: 14,
-                  color: color1,
+                  color: black,
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
@@ -584,7 +584,7 @@ class _SignUpFormState extends State<SignUpForm> {
                           hintText: 'Enter OTP',
                           hintStyle: TextStyle(
                             fontSize: 14,
-                            color: color3,
+                            color: grey600,
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
@@ -594,7 +594,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         ),
                         style: TextStyle(
                           fontSize: 16,
-                          color: color1,
+                          color: black,
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 6,
@@ -617,12 +617,12 @@ class _SignUpFormState extends State<SignUpForm> {
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: color4),
+                                  strokeWidth: 2, color: white),
                             )
                           : const Text(
                               'Verify OTP',
                               style: TextStyle(
-                                color: color4,
+                                color: white,
                                 fontSize: 14,
                               ),
                             ),
@@ -650,7 +650,7 @@ class _SignUpFormState extends State<SignUpForm> {
                                 'Resend OTP',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: color3,
+                                  color: grey600,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -659,7 +659,7 @@ class _SignUpFormState extends State<SignUpForm> {
                               'Resend in $_emailResendSeconds s',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: color3,
+                                color: grey600,
                               ),
                             ),
                     ],
@@ -685,14 +685,14 @@ class _SignUpFormState extends State<SignUpForm> {
                 : (!_showPhoneOtpField && _phoneController.text.isNotEmpty
                     ? TextButton(
                         onPressed: _requestPhoneOtp,
-                        child: Text('Verify', style: TextStyle(color: color3)),
+                        child: Text('Verify', style: TextStyle(color: grey600)),
                       )
                     : null),
           ),
           initialCountryCode: 'IN', // Default to India
           style: TextStyle(
             fontSize: 14,
-            color: color1,
+            color: black,
           ),
           onChanged: (phone) {
             // If phone is changed after verification, reset verification
@@ -747,7 +747,7 @@ class _SignUpFormState extends State<SignUpForm> {
                           hintText: 'Enter Phone OTP',
                           hintStyle: TextStyle(
                             fontSize: 14,
-                            color: color3,
+                            color: grey600,
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
@@ -757,7 +757,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         ),
                         style: TextStyle(
                           fontSize: 16,
-                          color: color1,
+                          color: black,
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 6,
@@ -780,11 +780,11 @@ class _SignUpFormState extends State<SignUpForm> {
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: color4),
+                                  strokeWidth: 2, color: white),
                             )
                           : const Text(
                               'Verify OTP',
-                              style: TextStyle(color: color4, fontSize: 14),
+                              style: TextStyle(color: white, fontSize: 14),
                             ),
                     ),
                   ],
@@ -810,7 +810,7 @@ class _SignUpFormState extends State<SignUpForm> {
                                 'Resend OTP',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: color3,
+                                  color: grey600,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -819,7 +819,7 @@ class _SignUpFormState extends State<SignUpForm> {
                               'Resend in $_phoneResendSeconds s',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: color3,
+                                color: grey600,
                               ),
                             ),
                     ],
@@ -855,7 +855,7 @@ class _SignUpFormState extends State<SignUpForm> {
       ),
       style: TextStyle(
         fontSize: 14,
-        color: color1,
+        color: black,
       ),
       validator: validator ??
           (value) {
@@ -883,8 +883,8 @@ class _SignUpFormState extends State<SignUpForm> {
         Checkbox(
           value: _isChecked,
           onChanged: (value) => setState(() => _isChecked = value!),
-          activeColor: color3,
-          focusColor: color3,
+          activeColor: grey600,
+          focusColor: grey600,
         ),
         Expanded(
           child: GestureDetector(
@@ -897,7 +897,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   TextSpan(
                     text: 'Terms and Conditions',
                     style: TextStyle(
-                      color: color1,
+                      color: black,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -924,7 +924,7 @@ class _SignUpFormState extends State<SignUpForm> {
       child: ElevatedButton(
         onPressed: _isLoading ? null : _submitForm,
         child: _isLoading
-            ? const CircularProgressIndicator(color: color4)
+            ? const CircularProgressIndicator(color: white)
             : const Text(
                 'Sign Up',
               ),

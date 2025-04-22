@@ -101,7 +101,7 @@ class DoctorBotSearchBarState extends State<DoctorBotSearchBar>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             border: Border.all(color: Colors.grey.shade300),
-            color: color4,
+            color: white,
             boxShadow: isExpanded
                 ? [
                     BoxShadow(
@@ -124,7 +124,7 @@ class DoctorBotSearchBarState extends State<DoctorBotSearchBar>
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   prefixIcon: Icon(
                     Icons.add,
-                    color: color1,
+                    color: black,
                     size: 20,
                   ),
                   suffixIcon: Row(
@@ -134,7 +134,7 @@ class DoctorBotSearchBarState extends State<DoctorBotSearchBar>
                         IconButton(
                           icon: Icon(
                             Icons.close,
-                            color: color1,
+                            color: black,
                             size: 20,
                           ),
                           onPressed: _collapseSearchBar,
@@ -142,7 +142,7 @@ class DoctorBotSearchBarState extends State<DoctorBotSearchBar>
                       else
                         Icon(
                           Icons.mic,
-                          color: color1,
+                          color: black,
                           size: 20,
                         ),
                     ],

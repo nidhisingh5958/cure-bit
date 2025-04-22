@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<DoctorProfileScreen> {
                   topRight: Radius.circular(32),
                 ),
                 child: Container(
-                  color: color4,
+                  color: white,
                   height: MediaQuery.of(context).size.height - 250,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -145,8 +145,8 @@ class _ProfileScreenState extends State<DoctorProfileScreen> {
             bottom: -5,
             child: CircleAvatar(
               radius: 15,
-              backgroundColor: color4,
-              child: Icon(Icons.edit, size: 16, color: color1),
+              backgroundColor: white,
+              child: Icon(Icons.edit, size: 16, color: black),
             ),
           ),
         ],
@@ -192,7 +192,7 @@ class _ProfileScreenState extends State<DoctorProfileScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: color1,
+              color: black,
             ),
           ),
         ),

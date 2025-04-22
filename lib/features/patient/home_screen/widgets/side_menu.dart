@@ -36,7 +36,7 @@ class SideMenu extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
       child: Container(
         height: 1,
-        color: color1,
+        color: black,
       ),
     );
   }
@@ -48,7 +48,7 @@ class SideMenu extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundColor: color3,
+            backgroundColor: grey600,
             backgroundImage: AssetImage('assets/images/profile_pic.jpeg'),
           ),
           const SizedBox(width: 15),
@@ -67,7 +67,7 @@ class SideMenu extends StatelessWidget {
                 "user@gmail.com",
                 style: TextStyle(
                   fontSize: 14,
-                  color: color3,
+                  color: grey600,
                 ),
               ),
             ],
@@ -128,7 +128,7 @@ class SideMenu extends StatelessWidget {
             "Language",
             style: TextStyle(
               fontSize: 16,
-              color: color1,
+              color: black,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -141,7 +141,7 @@ class SideMenu extends StatelessWidget {
               "Help & Support",
               style: TextStyle(
                 fontSize: 16,
-                color: color1,
+                color: black,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -170,7 +170,7 @@ class SideMenu extends StatelessWidget {
               "About Cura Docs",
               style: TextStyle(
                 fontSize: 16,
-                color: color1,
+                color: black,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -184,7 +184,7 @@ class SideMenu extends StatelessWidget {
               "Contact Us",
               style: TextStyle(
                 fontSize: 16,
-                color: color1,
+                color: black,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -204,7 +204,7 @@ class SideMenu extends StatelessWidget {
             "Switch accounts",
             style: TextStyle(
               fontSize: 16,
-              color: color1,
+              color: black,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -213,7 +213,7 @@ class SideMenu extends StatelessWidget {
             "Log Out",
             style: TextStyle(
               fontSize: 16,
-              color: color1,
+              color: black,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -230,13 +230,13 @@ class SideMenu extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: color1,
+        color: black,
         size: 22,
       ),
       title: Text(
         label,
         style: TextStyle(
-          color: color1,
+          color: black,
           fontSize: 16,
           fontWeight: FontWeight.normal,
         ),
