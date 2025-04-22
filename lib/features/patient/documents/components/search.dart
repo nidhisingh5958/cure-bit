@@ -25,12 +25,12 @@ class SearchFilter extends StatelessWidget {
                     child: Row(
                       children: [
                         const SizedBox(width: 12),
-                        Icon(Icons.search, color: color2),
+                        Icon(Icons.search, color: black.withValues(alpha: .8)),
                         const SizedBox(width: 8),
                         Text(
                           "Search Medical Records",
                           style: TextStyle(
-                            color: color2,
+                            color: black.withValues(alpha: .8),
                             fontSize: 14,
                           ),
                         ),
@@ -54,7 +54,7 @@ class SearchFilter extends StatelessWidget {
                       Text(
                         "Filters",
                         style: TextStyle(
-                          color: color2,
+                          color: black.withValues(alpha: .8),
                           fontSize: 14,
                         ),
                       ),
@@ -62,7 +62,7 @@ class SearchFilter extends StatelessWidget {
                       Icon(
                         Icons.arrow_drop_down,
                         size: 20,
-                        color: color2,
+                        color: black.withValues(alpha: .8),
                       ),
                     ],
                   ),

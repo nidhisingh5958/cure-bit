@@ -77,7 +77,7 @@ class ChatMessageWidget extends StatelessWidget {
         borderRadius: message.getBorderRadius(isFirst: isFirst, isLast: isLast),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 5,
             offset: Offset(0, 1),
           ),

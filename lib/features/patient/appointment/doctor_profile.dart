@@ -107,7 +107,7 @@ class _DoctorProfileState extends State<DoctorProfile>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            Theme.of(context).colorScheme.primary.withValues(alpha: .1),
             Colors.transparent,
           ],
         ),
@@ -120,7 +120,7 @@ class _DoctorProfileState extends State<DoctorProfile>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: .1),
                   blurRadius: 10,
                   spreadRadius: 2,
                   offset: Offset(0, 4),
@@ -166,7 +166,7 @@ class _DoctorProfileState extends State<DoctorProfile>
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(0.15),
+              color: Colors.amber.withValues(alpha: .15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -214,8 +214,10 @@ class _DoctorProfileState extends State<DoctorProfile>
                   label: Text('Message'),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    backgroundColor: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: .1),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -249,7 +251,7 @@ class _DoctorProfileState extends State<DoctorProfile>
                         : Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.1),
+                            .withValues(alpha: .1),
                     elevation: isConnected ? 2 : 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -314,8 +316,9 @@ class _DoctorProfileState extends State<DoctorProfile>
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(0.2),
+                          color: Theme.of(context)
+                              .primaryColor
+                              .withValues(alpha: .2),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -339,11 +342,11 @@ class _DoctorProfileState extends State<DoctorProfile>
       padding: const EdgeInsets.all(20.0),
       child: Container(
         decoration: BoxDecoration(
-          color: grey600,
+          color: cream,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: .05),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
@@ -393,7 +396,10 @@ class _DoctorProfileState extends State<DoctorProfile>
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(

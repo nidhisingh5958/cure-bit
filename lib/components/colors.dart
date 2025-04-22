@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 const Color black = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
 final Color grey600 = Colors.grey.shade600; //color3 --600
 final Color grey200 = Colors.grey.shade200;
 final Color grey800 = Colors.grey.shade800;
@@ -14,7 +13,7 @@ const Color error = Color(0xFFE3342F); // red
 
 const Color1 = Color(0xFFCBE5E0); // greenish
 const Color2 = Color(0xFFDCCFF0); // purplish
-const Color3 = Color.fromARGB(255, 251, 236, 226); // orangeish
+const cream = Color.fromARGB(255, 251, 236, 226); // orangeish
 const blueish = Color(0xFFC7DFF2); // blueish
 const CarouselPink = Color(0xFFE8C0D9); // pinkish
 const Color6 = Color(0xFFFAEECD); // yellowish or peach

@@ -53,7 +53,7 @@ class DoctorHomeScreen extends StatelessWidget {
   Widget _buildChatBotFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
-      backgroundColor: color2,
+      backgroundColor: black.withValues(alpha: .8),
       child: Icon(Icons.chat_bubble_outline),
     );
   }
@@ -150,7 +150,7 @@ class DoctorHomeScreen extends StatelessWidget {
             'Welcome to your health dashboard',
             style: TextStyle(
               fontSize: 16,
-              color: color2,
+              color: black.withValues(alpha: .8),
               height: 1.5,
             ),
           ),
@@ -224,22 +224,22 @@ class DoctorHomeScreen extends StatelessWidget {
         width: itemWidth,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          // color: Colors.blue.withOpacity(0.1),
+          // color: Colors.blue.withValues(0.1),
           borderRadius: BorderRadius.circular(16),
           // border: Border.all(
-          //   color: Colors.blue.withOpacity(0.2),
+          //   color: Colors.blue.withValues(0.2),
           //   width: 1,
           // ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color2, size: 24),
+            Icon(icon, color: black.withValues(alpha: .8), size: 24),
             const SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(
-                color: color2,
+                color: black.withValues(alpha: .8),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -336,7 +336,7 @@ class DoctorHomeScreen extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.05),
+                  color: Colors.grey.withValues(alpha: .05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -349,8 +349,10 @@ class DoctorHomeScreen extends StatelessWidget {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: .1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Stack(
@@ -387,7 +389,7 @@ class DoctorHomeScreen extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
+                              color: Colors.green.withValues(alpha: .1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -458,7 +460,7 @@ class DoctorHomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: .1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

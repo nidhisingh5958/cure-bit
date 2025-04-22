@@ -46,7 +46,7 @@ class _ChatListScreenState extends State<ChatListScreen>
             icon: Icon(
               Icons.search,
               size: 24,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
             onPressed: () {},
           ),

@@ -77,7 +77,7 @@ class DoctorProfile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
@@ -104,7 +104,7 @@ class DoctorProfile extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF4A80F0).withOpacity(0.3),
+            color: Color(0xFF4A80F0).withValues(alpha: .3),
             blurRadius: 20,
             offset: Offset(0, 10),
           ),
@@ -117,8 +117,8 @@ class DoctorProfile extends StatelessWidget {
             height: 90,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              border:
-                  Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+              border: Border.all(
+                  color: Colors.white.withValues(alpha: .2), width: 2),
               image: DecorationImage(
                 image: NetworkImage('https://example.com/placeholder.jpg'),
                 fit: BoxFit.cover,
@@ -143,7 +143,7 @@ class DoctorProfile extends StatelessWidget {
                 Text(
                   'MBBS, MD',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: .8),
                     fontSize: 16,
                     letterSpacing: -0.2,
                   ),
@@ -152,7 +152,7 @@ class DoctorProfile extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: .2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -186,7 +186,7 @@ class DoctorProfile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
@@ -209,7 +209,7 @@ class DoctorProfile extends StatelessWidget {
     return Container(
       height: 40,
       width: 1,
-      color: Colors.grey.withOpacity(0.2),
+      color: Colors.grey.withValues(alpha: .2),
     );
   }
 
@@ -277,8 +277,8 @@ class DoctorProfile extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: isSelected
-                          ? Color(0xFF4A80F0).withOpacity(0.3)
-                          : Colors.black.withOpacity(0.05),
+                          ? Color(0xFF4A80F0).withValues(alpha: .3)
+                          : Colors.black.withValues(alpha: .05),
                       blurRadius: 10,
                       offset: Offset(0, 4),
                     ),
@@ -353,8 +353,8 @@ class DoctorProfile extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: isSelected
-                        ? Color(0xFF4A80F0).withOpacity(0.3)
-                        : Colors.black.withOpacity(0.05),
+                        ? Color(0xFF4A80F0).withValues(alpha: .3)
+                        : Colors.black.withValues(alpha: .05),
                     blurRadius: 10,
                     offset: Offset(0, 4),
                   ),
@@ -389,7 +389,7 @@ class DoctorProfile extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           elevation: 10,
-          shadowColor: Color(0xFF4A80F0).withOpacity(0.5),
+          shadowColor: Color(0xFF4A80F0).withValues(alpha: .5),
         ),
         child: Text(
           'Book Session',

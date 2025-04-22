@@ -162,7 +162,7 @@ class _NotificationCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: notification.type.color.withOpacity(0.1),
+                    color: notification.type.color.withValues(alpha: .1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(

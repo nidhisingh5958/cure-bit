@@ -29,7 +29,7 @@ class LoginScreen extends StatelessWidget {
                               .headlineMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: color2,
+                                color: black.withValues(alpha: .8),
                               ),
                         ),
                         const SizedBox(height: 16),
@@ -122,7 +122,7 @@ class LoginScreen extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: color2),
+                              color: black.withValues(alpha: .8)),
                         ),
                       ),
                     ],
@@ -166,7 +166,7 @@ class SocialCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: .05),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

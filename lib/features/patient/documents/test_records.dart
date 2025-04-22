@@ -34,7 +34,7 @@ class TestRecordsScreen extends StatelessWidget {
                   'Date',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color2,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
               ),
@@ -44,7 +44,7 @@ class TestRecordsScreen extends StatelessWidget {
                   'Test',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color2,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
               ),

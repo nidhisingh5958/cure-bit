@@ -123,7 +123,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha: .1),
                             spreadRadius: 1,
                             blurRadius: 4,
                             offset: Offset(0, 2)),
@@ -133,7 +133,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       '"Have questions about your medical history or CuraDocs services? We\'re here to help with prompt and accurate support."',
                       style: TextStyle(
                         fontSize: 16,
-                        color: color2,
+                        color: black.withValues(alpha: .8),
                         fontWeight: FontWeight.w400,
                         height: 1.5,
                       ),
@@ -148,7 +148,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.15),
+                          color: Colors.grey.withValues(alpha: .15),
                           spreadRadius: 1,
                           blurRadius: 6,
                           offset: Offset(0, 3),
@@ -198,7 +198,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: color2,
+          color: black.withValues(alpha: .8),
         ),
       ),
     );
@@ -215,7 +215,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -318,7 +318,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -342,7 +342,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             filled: true,
             fillColor: Colors.grey.shade50,
             prefixIcon: Icon(Icons.email_outlined,
-                color: color2.withOpacity(0.7), size: 20),
+                color: black.withValues(alpha: .8), size: 20),
           ),
           style: TextStyle(
             fontSize: 14,
@@ -375,7 +375,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -427,7 +427,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -454,7 +454,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             fontSize: 14,
             color: black,
           ),
-          icon: Icon(Icons.arrow_drop_down, color: color2),
+          icon: Icon(Icons.arrow_drop_down, color: black.withValues(alpha: .8)),
           isExpanded: true,
           items: [
             DropdownMenuItem(
@@ -506,7 +506,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -550,7 +550,9 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 color: isSelected ? transparent : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isSelected ? color2 : Colors.grey.shade400,
+                  color: isSelected
+                      ? black.withValues(alpha: .8)
+                      : Colors.grey.shade400,
                   width: 2,
                 ),
               ),
@@ -567,7 +569,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 option,
                 style: TextStyle(
                   fontSize: 14,
-                  color: color2,
+                  color: black.withValues(alpha: .8),
                   fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
                 ),
               ),

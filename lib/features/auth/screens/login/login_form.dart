@@ -212,10 +212,11 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     ),
                   )
-                : Icon(Icons.alternate_email, color: color2),
+                : Icon(Icons.alternate_email,
+                    color: black.withValues(alpha: .8)),
             suffixIcon: _loginMethod == LoginMethod.email
-                ? Icon(Icons.email_outlined, color: color2)
-                : Icon(Icons.phone_android, color: color2),
+                ? Icon(Icons.email_outlined, color: black.withValues(alpha: .8))
+                : Icon(Icons.phone_android, color: black.withValues(alpha: .8)),
           ),
           style: TextStyle(
             fontSize: 14,
@@ -232,7 +233,7 @@ class _LoginFormState extends State<LoginForm> {
                 ? 'Using email address'
                 : 'Using phone number',
             style: TextStyle(
-              color: color2,
+              color: black.withValues(alpha: .8),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -253,7 +254,7 @@ class _LoginFormState extends State<LoginForm> {
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-            color: color2,
+            color: black.withValues(alpha: .8),
           ),
           onPressed: () {
             setState(() => _isPasswordVisible = !_isPasswordVisible);
@@ -309,7 +310,7 @@ class _LoginFormState extends State<LoginForm> {
         },
         child: Text(
           'Sign In with OTP',
-          style: TextStyle(fontSize: 16, color: color2),
+          style: TextStyle(fontSize: 16, color: black.withValues(alpha: .8)),
         ),
       ),
     );

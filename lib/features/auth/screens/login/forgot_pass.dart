@@ -1,10 +1,7 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-final Color black = Colors.black;
-final Color color2 = Colors.black.withOpacity(0.8);
-final Color grey600 = Colors.grey.shade600;
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
@@ -16,7 +13,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: color2),
+          icon: Icon(Icons.arrow_back_ios, color: black.withValues(alpha: .8)),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -163,7 +160,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: color2,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
               ),

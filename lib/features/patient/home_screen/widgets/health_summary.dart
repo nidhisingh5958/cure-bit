@@ -7,7 +7,7 @@ Widget _buildHealthSummaryCard(BuildContext context) {
       gradient: LinearGradient(
         colors: [
           Theme.of(context).colorScheme.primary,
-          Theme.of(context).colorScheme.primary.withOpacity(0.8),
+          Theme.of(context).colorScheme.primary.withValues(alpha: .8),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -15,7 +15,7 @@ Widget _buildHealthSummaryCard(BuildContext context) {
       borderRadius: BorderRadius.circular(24),
       boxShadow: [
         BoxShadow(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: .2),
           blurRadius: 20,
           offset: const Offset(0, 10),
         ),
@@ -80,7 +80,7 @@ Widget _buildHealthMetric({
       Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: .2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(icon, color: Colors.white, size: 24),
@@ -99,7 +99,7 @@ Widget _buildHealthMetric({
         '$label\n($unit)',
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: .8),
           fontSize: 12,
           height: 1.2,
         ),

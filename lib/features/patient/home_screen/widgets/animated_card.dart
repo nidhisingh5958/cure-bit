@@ -38,7 +38,7 @@ class __TopDoctorSectionState extends State<_TopDoctorSection> {
         gradient: LinearGradient(
           colors: [
             Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            Theme.of(context).colorScheme.primary.withValues(alpha: .8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -46,7 +46,7 @@ class __TopDoctorSectionState extends State<_TopDoctorSection> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: .3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -93,7 +93,7 @@ class __TopDoctorSectionState extends State<_TopDoctorSection> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: .2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -101,7 +101,7 @@ class __TopDoctorSectionState extends State<_TopDoctorSection> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: .3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -128,7 +128,7 @@ class __TopDoctorSectionState extends State<_TopDoctorSection> {
                   Text(
                     doctor['specialisation'],
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: .8),
                       fontSize: 14,
                     ),
                   ),
@@ -138,7 +138,7 @@ class __TopDoctorSectionState extends State<_TopDoctorSection> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: .3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

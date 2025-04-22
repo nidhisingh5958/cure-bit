@@ -6,10 +6,10 @@ Widget _buildSearchBar(BuildContext context) {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       height: 46,
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.1),
+        color: Colors.grey.withValues(alpha: .1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.2),
+          color: Colors.grey.withValues(alpha: .2),
         ),
       ),
       child: Row(

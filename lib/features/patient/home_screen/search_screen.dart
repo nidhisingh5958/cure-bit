@@ -182,7 +182,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: color2,
+                        color: black.withValues(alpha: .8),
                       ),
                     ),
                     subtitle: Column(children: [
@@ -194,7 +194,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.normal,
-                            color: color2,
+                            color: black.withValues(alpha: .8),
                           ),
                         ),
                       ),

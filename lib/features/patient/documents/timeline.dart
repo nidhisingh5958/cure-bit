@@ -96,7 +96,7 @@ class TimelineScreen extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
-                color: color2,
+                color: black.withValues(alpha: .8),
               ),
             ),
           ),
@@ -155,7 +155,7 @@ class TimelineScreen extends StatelessWidget {
                             record.diagnosis,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: color2,
+                              color: black.withValues(alpha: .8),
                             ),
                           ),
                           if (record.doctor.isNotEmpty)
@@ -192,7 +192,7 @@ class TimelineScreen extends StatelessWidget {
                   'Date',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color2,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
               ),
@@ -201,7 +201,7 @@ class TimelineScreen extends StatelessWidget {
                   'Diagnosis',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color2,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
               ),
@@ -210,7 +210,7 @@ class TimelineScreen extends StatelessWidget {
                   'Doctor',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: color2,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
               ),

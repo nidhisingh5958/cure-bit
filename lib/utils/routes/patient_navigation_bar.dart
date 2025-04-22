@@ -29,7 +29,7 @@ class BottomNavigation extends StatelessWidget {
           color: white,
           // boxShadow: [
           //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.05),
+          //     color: Colors.black.withValues(0.05),
           //     blurRadius: 10,
           //     offset: const Offset(0, -5),
           //   ),
@@ -72,7 +72,7 @@ class BottomNavigation extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: .1),
                     blurRadius: 8,
                     offset: const Offset(0, -2),
                   ),

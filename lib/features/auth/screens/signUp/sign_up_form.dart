@@ -639,7 +639,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         'Didn\'t receive OTP?',
                         style: TextStyle(
                           fontSize: 12,
-                          color: color2,
+                          color: black.withValues(alpha: .8),
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -799,7 +799,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         'Didn\'t receive OTP?',
                         style: TextStyle(
                           fontSize: 12,
-                          color: color2,
+                          color: black.withValues(alpha: .8),
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -848,7 +848,7 @@ class _SignUpFormState extends State<SignUpForm> {
         suffixIcon: IconButton(
           icon: Icon(
             isVisible ? Icons.visibility : Icons.visibility_off,
-            color: color2,
+            color: black.withValues(alpha: .8),
           ),
           onPressed: onVisibilityToggle,
         ),
@@ -891,7 +891,8 @@ class _SignUpFormState extends State<SignUpForm> {
             onTap: () => setState(() => _isChecked = !_isChecked),
             child: RichText(
               text: TextSpan(
-                style: TextStyle(color: color2, fontSize: 14),
+                style:
+                    TextStyle(color: black.withValues(alpha: .8), fontSize: 14),
                 children: [
                   const TextSpan(text: 'Accept '),
                   TextSpan(

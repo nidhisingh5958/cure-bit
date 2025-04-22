@@ -43,7 +43,7 @@ class ChatMessageWidget extends StatelessWidget {
                       'Cura Bot',
                       style: TextStyle(
                         fontSize: 12,
-                        color: color2,
+                        color: black.withValues(alpha: .8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -80,7 +80,7 @@ class ChatMessageWidget extends StatelessWidget {
         // chat bubble shadow
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 5,
             offset: Offset(0, 1),
           ),

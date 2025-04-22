@@ -295,10 +295,11 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                     ),
                   )
-                : Icon(Icons.alternate_email, color: color2),
+                : Icon(Icons.alternate_email,
+                    color: black.withValues(alpha: .8)),
             suffixIcon: _loginMethod == LoginMethod.email
-                ? Icon(Icons.email_outlined, color: color2)
-                : Icon(Icons.phone_android, color: color2),
+                ? Icon(Icons.email_outlined, color: black.withValues(alpha: .8))
+                : Icon(Icons.phone_android, color: black.withValues(alpha: .8)),
           ),
           style: TextStyle(
             fontSize: 14,
@@ -315,7 +316,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 ? 'Using email address'
                 : 'Using phone number',
             style: TextStyle(
-              color: color2,
+              color: black.withValues(alpha: .8),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),

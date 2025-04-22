@@ -152,7 +152,7 @@ class HomeScreen extends StatelessWidget {
             'Welcome to your health dashboard',
             style: TextStyle(
               fontSize: 16,
-              color: color2,
+              color: black.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -235,7 +235,7 @@ class HomeScreen extends StatelessWidget {
         width: itemWidth,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected ? CarouselPink.withOpacity(0.1) : white,
+          color: isSelected ? CarouselPink.withValues(alpha: 0.1) : white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? CarouselPink : grey200,
@@ -245,7 +245,9 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color2, size: 24),
+            Icon(icon,
+                color: isSelected ? CarouselPink : black.withValues(alpha: 0.5),
+                size: 24),
             const SizedBox(height: 10),
             Text(
               label,
@@ -347,7 +349,7 @@ class HomeScreen extends StatelessWidget {
               // ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.05),
+                  color: Colors.grey.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -360,8 +362,10 @@ class HomeScreen extends StatelessWidget {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Stack(
@@ -398,7 +402,7 @@ class HomeScreen extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
+                              color: Colors.green.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -544,7 +548,7 @@ class HomeScreen extends StatelessWidget {
               // ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.05),
+                  color: Colors.grey.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -557,8 +561,10 @@ class HomeScreen extends StatelessWidget {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Stack(
@@ -595,7 +601,7 @@ class HomeScreen extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
+                              color: Colors.green.withValues(alpha: .1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -666,7 +672,7 @@ class HomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: .1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

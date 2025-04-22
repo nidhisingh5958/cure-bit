@@ -214,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       title: Text(
         title,
-        style: TextStyle(fontSize: 16, color: color2),
+        style: TextStyle(fontSize: 16, color: black.withValues(alpha: .8)),
       ),
       trailing: Icon(Icons.chevron_right),
       onTap: onTap,
@@ -233,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       value: value,
       onChanged: onChanged,
-      activeColor: color2,
+      activeColor: black.withValues(alpha: .8),
     );
   }
 }

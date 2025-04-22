@@ -28,7 +28,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               icon: Icon(MdiIcons.heart),
               style: IconButton.styleFrom(
                 backgroundColor: transparent,
-                foregroundColor: color2,
+                foregroundColor: black.withValues(alpha: .8),
                 padding: const EdgeInsets.all(8),
               ),
               onPressed: () {},
@@ -73,7 +73,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Theme.of(context).colorScheme.primary.withOpacity(0.05),
+            Theme.of(context).colorScheme.primary.withValues(alpha: .05),
             Colors.transparent,
           ],
         ),
@@ -86,7 +86,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: .1),
                   blurRadius: 10,
                   spreadRadius: 1,
                   offset: Offset(0, 2),
@@ -175,7 +175,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               height: 36,
               width: 36,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color:
+                    Theme.of(context).colorScheme.primary.withValues(alpha: .1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
@@ -499,7 +500,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         width: 80,
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected ? primaryColor.withOpacity(0.1) : Colors.white,
+          color: isSelected ? primaryColor.withValues(alpha: .1) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? primaryColor : grey200,
@@ -507,7 +508,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: .03),
               blurRadius: 8,
               spreadRadius: 0,
               offset: Offset(0, 2),
@@ -521,7 +522,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? primaryColor.withOpacity(0.2)
+                    ? primaryColor.withValues(alpha: .2)
                     : Colors.grey.shade50,
                 shape: BoxShape.circle,
               ),
@@ -657,7 +658,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: .05),
               blurRadius: 10,
               spreadRadius: 0,
               offset: Offset(0, 2),
@@ -681,7 +682,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: .1),
                         blurRadius: 8,
                         spreadRadius: 0,
                         offset: Offset(0, 2),
@@ -712,7 +713,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .primary
-                                .withOpacity(0.1),
+                                .withValues(alpha: .1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -765,7 +766,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: .1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

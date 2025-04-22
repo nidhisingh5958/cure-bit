@@ -23,7 +23,7 @@ CardTheme cardTheme() {
     ),
     color: Colors.white,
     surfaceTintColor: Colors.white,
-    shadowColor: Colors.black.withOpacity(0.1),
+    shadowColor: black.withValues(alpha: 0.1),
   );
 }
 

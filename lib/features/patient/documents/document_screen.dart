@@ -70,7 +70,7 @@ class _DocumentScreenState extends State<DocumentScreen>
             icon: Icon(
               Icons.search,
               size: 24,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
             onPressed: () {},
           ),

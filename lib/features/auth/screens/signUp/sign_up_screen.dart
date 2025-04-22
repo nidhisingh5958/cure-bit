@@ -128,7 +128,7 @@ class _SignupPageState extends State<SignUpScreen> {
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: color2),
+                              color: black.withValues(alpha: .8)),
                         ),
                       ),
                     ],
@@ -172,7 +172,7 @@ class SocialCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: .05),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

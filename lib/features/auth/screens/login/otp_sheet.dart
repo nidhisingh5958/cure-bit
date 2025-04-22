@@ -180,7 +180,7 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: .1),
             blurRadius: 10,
             offset: Offset(0, -5),
           ),
@@ -240,7 +240,7 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
               child: Text(
                 'Resend Code',
                 style: TextStyle(
-                  color: color2,
+                  color: black.withValues(alpha: .8),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -280,7 +280,7 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: color2,
+                  color: black.withValues(alpha: .8),
                   width: 2,
                 ),
               ),

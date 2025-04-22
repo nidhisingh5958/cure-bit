@@ -46,7 +46,7 @@ class _ChatListScreenState extends State<ChatListScreen>
             icon: Icon(
               Icons.search,
               size: 24,
-              color: color2,
+              color: black.withValues(alpha: .8),
             ),
             onPressed: () {},
           ),
@@ -87,7 +87,7 @@ class _ChatListScreenState extends State<ChatListScreen>
   Widget _buildChatBotFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: color2,
+      backgroundColor: black.withValues(alpha: .8),
       child: Icon(Icons.chat_bubble_outline),
     );
   }
