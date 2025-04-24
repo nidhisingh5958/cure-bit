@@ -1,5 +1,6 @@
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
 import 'package:CuraDocs/features/auth/landing/splash_screen.dart';
+
 import 'package:CuraDocs/features/patient/settings/support/contact_us.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,8 @@ import 'package:CuraDocs/features/auth/screens/login/otp.dart';
 import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
 import 'package:CuraDocs/features/patient/appointment/doctor_profile.dart';
 import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
+import 'package:CuraDocs/features/patient/appointment/booked_appointments.dart';
+import 'package:CuraDocs/features/patient/appointment/favourite_doc.dart';
 // chatbot
 import 'package:CuraDocs/features/patient/curabot/chat_bot_home.dart';
 import 'package:CuraDocs/features/patient/curabot/chat_with_ai.dart';
@@ -179,8 +182,8 @@ class AppRouter {
 
         GoRoute(
           path: '/appointments',
-          name: RouteConstants.appointments,
-          builder: (context, state) => const AppointmentScreen(),
+          name: RouteConstants.appointmentHome,
+          builder: (context, state) => const AppointmentHome(),
           routes: [
             GoRoute(
               // doctor public profile screen
@@ -195,6 +198,18 @@ class AppRouter {
               parentNavigatorKey: _rootNavigatorKey,
               name: RouteConstants.bookAppointment,
               builder: (context, state) => BookAppointment(),
+            ),
+            GoRoute(
+              path: 'booked-appointments',
+              parentNavigatorKey: _rootNavigatorKey,
+              name: RouteConstants.bookedAppointments,
+              builder: (context, state) => const BookedAppointments(),
+            ),
+            GoRoute(
+              path: 'favourites',
+              parentNavigatorKey: _rootNavigatorKey,
+              name: RouteConstants.favoriteDoctors,
+              builder: (context, state) => const FavouritesPage(),
             ),
           ],
         ),

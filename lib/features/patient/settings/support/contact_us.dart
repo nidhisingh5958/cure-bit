@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/patient/api_repository/repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
@@ -84,19 +85,13 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Contact Us',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
+        appBar: AppHeader(
+          title: 'Contact Us',
           backgroundColor: transparent,
           elevation: 2,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_outlined),
-            onPressed: () {
-              context.goNamed(RouteConstants.home);
-            },
-          ),
+          onBackPressed: () {
+            context.goNamed(RouteConstants.home);
+          },
         ),
         body: Center(
           child: Container(

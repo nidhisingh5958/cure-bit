@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
@@ -19,8 +20,8 @@ class _ProfileScreenState extends State<DoctorProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white70,
-      appBar: AppBar(
-        title: Text('Profile'),
+      appBar: AppHeader(
+        title: 'Profile',
         actions: [
           IconButton(
             icon: Icon(Icons.search),

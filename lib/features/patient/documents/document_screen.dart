@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
@@ -63,8 +64,8 @@ class _DocumentScreenState extends State<DocumentScreen>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Records'),
+      appBar: AppHeader(
+        title: 'Records',
         actions: [
           IconButton(
             icon: Icon(

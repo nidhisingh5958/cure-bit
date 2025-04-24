@@ -11,10 +11,10 @@ const Color transparent = Colors.transparent;
 
 const Color error = Color(0xFFE3342F); // red
 
-const Color1 = Color(0xFFCBE5E0); // greenish
-const Color2 = Color(0xFFDCCFF0); // purplish
+const color1 = Color(0xFFCBE5E0); // greenish
+const color2 = Color(0xFFDCCFF0); // purplish
 const cream = Color.fromARGB(255, 251, 236, 226); // orangeish
 const blueish = Color(0xFFC7DFF2); // blueish
 const CarouselPink = Color(0xFFE8C0D9); // pinkish
-const Color6 = Color(0xFFFAEECD); // yellowish or peach
-const Color7 = Color(0xFFFAF8F6); // off white
+const color6 = Color(0xFFFAEECD); // yellowish or peach
+const color7 = Color(0xFFFAF8F6); // off white

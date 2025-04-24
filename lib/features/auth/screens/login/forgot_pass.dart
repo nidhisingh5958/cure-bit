@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +10,9 @@ class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppHeader(
         elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: black.withValues(alpha: .8)),
-          onPressed: () => Navigator.pop(context),
-        ),
+        onBackPressed: () => Navigator.pop(context),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

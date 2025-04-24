@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:flutter/material.dart';
 
 class AddDocument extends StatelessWidget {
@@ -6,8 +7,8 @@ class AddDocument extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Document'),
+      appBar: AppHeader(
+        title: 'Add Document',
       ),
       body: Text('Add Document'),
     );

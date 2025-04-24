@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/status_bar_color.dart';
 import 'package:CuraDocs/features/patient/medicine.dart/widgets/hero_dialog_route.dart';
 import 'package:CuraDocs/features/patient/medicine.dart/reminder_details.dart';
@@ -15,13 +16,10 @@ class ReminderScreen extends StatelessWidget {
     setStatusBarColor(_backgroundColor);
     return Scaffold(
       backgroundColor: _backgroundColor,
-      appBar: AppBar(
+      appBar: AppHeader(
         backgroundColor: _backgroundColor,
-        title: Text('Reminder', style: TextStyle(fontSize: 18)),
-        leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: Colors.black),
-          onPressed: () => GoRouter.of(context).go('/home'),
-        ),
+        title: 'Reminder',
+        onBackPressed: () => GoRouter.of(context).go('/home'),
         actions: [
           Icon(Icons.notifications_none, color: Colors.black),
         ],

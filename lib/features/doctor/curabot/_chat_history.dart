@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -8,12 +9,9 @@ class DoctorBotHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cura Bot'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () => context.pop(),
-        ),
+      appBar: AppHeader(
+        title: 'Cura Bot',
+        onBackPressed: () => context.pop(),
       ),
       body: SafeArea(
         child: ListView(
@@ -177,12 +175,9 @@ class _BotHistoryWithDataState extends State<BotHistoryWithData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cura Bot'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: AppHeader(
+        title: 'Cura Bot',
+        onBackPressed: () => Navigator.of(context).pop(),
       ),
       body: ListView(
         children: _organizedHistory.entries.map((entry) {

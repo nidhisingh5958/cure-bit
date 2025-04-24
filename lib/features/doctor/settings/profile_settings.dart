@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:flutter/material.dart';
 
 class DoctorProfileSettings extends StatelessWidget {
@@ -6,15 +7,12 @@ class DoctorProfileSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppHeader(
         backgroundColor: Colors.blue,
-        title: const Text(
-          'Profile Details',
-          style: TextStyle(
-            fontSize: 28,
-            color: Colors.white,
-          ),
-        ),
+        title: 'Profile Details',
+        onBackPressed: () {
+          Navigator.pop(context);
+        },
       ),
       backgroundColor: const Color.fromRGBO(244, 246, 245, 1),
       body: SingleChildScrollView(

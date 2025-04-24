@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/features/doctor/curabot/widgets/_bot_search_bar.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
@@ -16,14 +17,11 @@ class _ChatBotAssistantHomeState extends State<ChatBotAssistantHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cura Bot"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () {
-            context.pop();
-          },
-        ),
+      appBar: AppHeader(
+        title: "Cura Bot",
+        onBackPressed: () {
+          context.pop();
+        },
         actions: [
           IconButton(
             icon: const Icon(Icons.chat_rounded),

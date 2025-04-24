@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/doctor/chat/widgets/_build_message.dart';
 import 'data/chat_sample_data.dart';
@@ -130,6 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
         onPressed: () => context.pop(),
       ),
+      centerTitle: false,
       titleSpacing: 0,
       title: Row(
         children: [

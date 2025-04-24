@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -14,20 +15,9 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: Text('Appointments'),
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Theme.of(context).colorScheme.primary,
-              size: 20,
-            ),
-            onPressed: () {
-              context.goNamed('home');
-            },
-          ),
+        appBar: AppHeader(
+          title: 'Appointments',
+          onBackPressed: () => context.goNamed('home'),
         ),
         body: SingleChildScrollView(
           child: Column(

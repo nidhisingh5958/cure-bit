@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
@@ -10,7 +11,7 @@ class DoctorHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppHeader(
         backgroundColor: transparent,
         actions: [
           _buildActionButtons(context),

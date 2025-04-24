@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
@@ -10,8 +11,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppHeader(
+        title: '',
+        onBackPressed: () {
+          context.pop();
+        },
+        centerTitle: true,
         backgroundColor: transparent,
+        foregroundColor: black,
+        elevation: 0,
         actions: [
           _buildActionButtons(context),
         ],
@@ -233,7 +241,7 @@ class HomeScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Container(
         width: itemWidth,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
         decoration: BoxDecoration(
           color: isSelected ? CarouselPink.withValues(alpha: 0.1) : white,
           borderRadius: BorderRadius.circular(16),
@@ -252,11 +260,12 @@ class HomeScreen extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected ? CarouselPink : grey800,
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ],

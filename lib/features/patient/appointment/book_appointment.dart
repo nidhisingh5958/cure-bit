@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
@@ -112,14 +113,11 @@ class _BookAppointmentState extends State<BookAppointment> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Book Appointment'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+        appBar: AppHeader(
+          title: 'Book Appointment',
+          onBackPressed: () {
+            Navigator.pop(context);
+          },
           elevation: 0,
           backgroundColor: transparent,
         ),

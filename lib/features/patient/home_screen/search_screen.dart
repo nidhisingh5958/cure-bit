@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/size_config.dart';
@@ -58,14 +59,11 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppHeader(
         backgroundColor: transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined),
-          onPressed: () {
-            context.goNamed(RouteConstants.home);
-          },
-        ),
+        onBackPressed: () {
+          context.goNamed(RouteConstants.home);
+        },
         actions: [
           IconButton(
             icon: Icon(Icons.filter_list),

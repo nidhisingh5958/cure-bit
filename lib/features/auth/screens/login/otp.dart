@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/screens/login/otp_sheet.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
@@ -159,13 +160,8 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: black),
-          onPressed: () => Navigator.pop(context),
-        ),
+      appBar: AppHeader(
+        onBackPressed: () => Navigator.pop(context),
       ),
       body: SafeArea(
         child: Form(

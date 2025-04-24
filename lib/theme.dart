@@ -1,10 +1,8 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 ThemeData theme() {
   return ThemeData(
-    appBarTheme: appBarTheme(),
     fontFamily: 'Inter',
     useMaterial3: true,
     scaffoldBackgroundColor: const Color(0xFFF8FAFC),
@@ -87,26 +85,6 @@ ElevatedButtonThemeData elevatedButtonsTheme() {
         fontWeight: FontWeight.w600,
         letterSpacing: -0.2,
       ),
-    ),
-  );
-}
-
-AppBarTheme appBarTheme() {
-  return const AppBarTheme(
-    elevation: 0,
-    centerTitle: true,
-    backgroundColor: transparent,
-    iconTheme: IconThemeData(color: black),
-    titleTextStyle: TextStyle(
-      color: Color(0xFF1A1A1A),
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      letterSpacing: -0.3,
-    ),
-    systemOverlayStyle: SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
     ),
   );
 }

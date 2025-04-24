@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
@@ -33,14 +34,11 @@ class _ChatListScreenState extends State<ChatListScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat'),
-        leading: IconButton(
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-          icon: const Icon(Icons.menu),
-        ),
+      appBar: AppHeader(
+        title: 'Chat',
+        onBackPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
         actions: [
           IconButton(
             icon: Icon(

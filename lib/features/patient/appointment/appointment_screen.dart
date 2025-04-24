@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class AppointmentScreen extends StatefulWidget {
-  const AppointmentScreen({super.key});
+class AppointmentHome extends StatefulWidget {
+  const AppointmentHome({super.key});
 
   @override
-  State<AppointmentScreen> createState() => _AppointmentScreenState();
+  State<AppointmentHome> createState() => _AppointmentHomeState();
 }
 
-class _AppointmentScreenState extends State<AppointmentScreen> {
+class _AppointmentHomeState extends State<AppointmentHome> {
   int _selectedRating = 0;
   int _selectedCategoryIndex = 0;
 
@@ -31,7 +31,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 foregroundColor: black.withValues(alpha: .8),
                 padding: const EdgeInsets.all(8),
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.goNamed('favouriteDoctors');
+              },
             ),
             SizedBox(width: 8),
             IconButton(
@@ -41,7 +43,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 foregroundColor: black,
                 padding: const EdgeInsets.all(8),
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.goNamed('appointmentHistory');
+              },
             ),
             SizedBox(width: 16),
           ],

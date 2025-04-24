@@ -29,10 +29,11 @@ class RouteConstants {
   static String medicineReminder = "medicineReminder";
 
   // appointments routes
-  static String appointments = "appointments";
-  static String appointmentHistory = "appointmentHistory";
+  static String appointmentHome = "appointmentHome";
+  static String bookedAppointments = "bookedAppointments";
   static String bookAppointment = "bookAppointment";
   static String appointmentDetails = "appointmentDetails";
+  static String favoriteDoctors = "favoriteDoctors";
 
   // chat bot routes
   static String chatBot = "chatBot";

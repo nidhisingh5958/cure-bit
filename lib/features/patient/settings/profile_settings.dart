@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -7,15 +8,9 @@ class ProfileSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppHeader(
         backgroundColor: grey600,
-        title: const Text(
-          'Profile Details',
-          style: TextStyle(
-            fontSize: 28,
-            color: Colors.white,
-          ),
-        ),
+        title: 'Profile Details',
       ),
       backgroundColor: const Color.fromRGBO(244, 246, 245, 1),
       body: SingleChildScrollView(

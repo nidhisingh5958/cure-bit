@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/features/patient/curabot/entities/message_group.dart';
 import 'package:CuraDocs/features/patient/curabot/widgets/bot_search_bar.dart';
 import 'package:CuraDocs/features/patient/curabot/widgets/chat_message_widget.dart';
@@ -55,25 +56,9 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Color(0xFFF8FAFC),
-      appBar: AppBar(
-        centerTitle: true,
-        title: Column(
-          children: [
-            Text(
-              "Cura Bot",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
+      appBar: AppHeader(
+        title: "Cura Bot",
+        onBackPressed: () => Navigator.pop(context),
       ),
       body: SafeArea(
         child: Column(

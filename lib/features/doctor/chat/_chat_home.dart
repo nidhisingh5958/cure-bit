@@ -1,3 +1,4 @@
+import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
@@ -33,14 +34,9 @@ class _ChatListScreenState extends State<ChatListScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat'),
-        leading: IconButton(
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-          icon: const Icon(Icons.menu),
-        ),
+      appBar: AppHeader(
+        title: 'Chat',
+        onMenuPressed: () => Scaffold.of(context).openDrawer(),
         actions: [
           IconButton(
             icon: Icon(
@@ -57,7 +53,6 @@ class _ChatListScreenState extends State<ChatListScreen>
             Tab(text: 'Messages'),
             Tab(text: 'Requests'),
           ],
-          // labelColor: Theme.of(context).colorScheme.primary,
           indicator: BoxDecoration(
             border: Border(
               bottom: BorderSide(color: grey400, width: 2),
@@ -66,35 +61,27 @@ class _ChatListScreenState extends State<ChatListScreen>
           splashBorderRadius: BorderRadius.circular(38),
           unselectedLabelColor: grey600,
           indicatorColor: grey600,
-          dividerColor: Colors.transparent, //tab bar divider line
+          dividerColor: Colors.transparent,
         ),
       ),
-      drawer: Drawer(
-        child: SideMenu(),
+      drawer: const SideMenu(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.goNamed(RouteConstants.chatBot),
+        backgroundColor: black.withValues(alpha: .8),
+        child: const Icon(Icons.chat_bubble_outline),
       ),
-      floatingActionButton: _buildChatBotFloatingButton(context),
       body: TabBarView(
         controller: _tabController,
         children: [
           _buildChatList(chatData),
-          _buildRequestList(
-              chatData), // Replace with request data when available
+          _buildRequestList(chatData),
         ],
       ),
     );
   }
 
-  Widget _buildChatBotFloatingButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: black.withValues(alpha: .8),
-      child: Icon(Icons.chat_bubble_outline),
-    );
-  }
-
   Widget _buildChatList(List<ChatData> data) {
     return ListView.builder(
-      // Changed from ListView.separated to ListView.builder
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: data.length,
       itemBuilder: (context, index) {
