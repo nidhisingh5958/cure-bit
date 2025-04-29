@@ -1,4 +1,3 @@
-import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/doctor/chat/widgets/_build_message.dart';
 import 'data/chat_sample_data.dart';

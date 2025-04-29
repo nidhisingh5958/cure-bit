@@ -55,6 +55,8 @@ class RouteConstants {
 
   // settings routes
   static String profile = "profile";
+  static String personalProfile = "personalProfile";
+  static String editProfile = "editProfile";
   static String notifications = "notifications";
   static String settings = "settings";
   static String profileSettings = "profileSettings";

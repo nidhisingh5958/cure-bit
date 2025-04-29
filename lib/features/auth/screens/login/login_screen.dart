@@ -166,7 +166,7 @@ class SocialCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: .05),
+              color: black.withValues(alpha: .05),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

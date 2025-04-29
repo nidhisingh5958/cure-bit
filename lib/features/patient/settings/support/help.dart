@@ -27,7 +27,7 @@ class HelpScreen extends StatelessWidget {
           SizedBox(height: 30),
           Center(
             child: Text(
-              'Help ScreenHelpScreen',
+              'Help Screen',
               style: TextStyle(
                 fontSize: 20,
                 color: Color.fromRGBO(117, 117, 117, 1),

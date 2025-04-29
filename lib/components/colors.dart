@@ -18,3 +18,4 @@ const blueish = Color(0xFFC7DFF2); // blueish
 const CarouselPink = Color(0xFFE8C0D9); // pinkish
 const color6 = Color(0xFFFAEECD); // yellowish or peach
 const color7 = Color(0xFFFAF8F6); // off white
+const greyWithGreenTint = Color.fromRGBO(244, 246, 245, 1);

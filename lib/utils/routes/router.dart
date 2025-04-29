@@ -38,6 +38,8 @@ import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
 import 'package:CuraDocs/utils/routes/patient_navigation_bar.dart';
 import 'package:CuraDocs/features/patient/settings/profile_screen.dart';
 import 'package:CuraDocs/features/patient/settings/profile_settings.dart';
+import 'package:CuraDocs/features/patient/settings/edit_profile.dart';
+import 'package:CuraDocs/features/patient/settings/personal_profile.dart';
 
 // DOCTOR
 // chatbot
@@ -297,6 +299,18 @@ class AppRouter {
                       parentNavigatorKey: _rootNavigatorKey,
                       name: RouteConstants.profileSettings,
                       builder: (context, state) => const ProfileSettings(),
+                    ),
+                    GoRoute(
+                      path: 'edit-profile',
+                      parentNavigatorKey: _rootNavigatorKey,
+                      name: RouteConstants.editProfile,
+                      builder: (context, state) => const EditProfile(),
+                    ),
+                    GoRoute(
+                      path: 'personal-profile',
+                      parentNavigatorKey: _rootNavigatorKey,
+                      name: RouteConstants.personalProfile,
+                      builder: (context, state) => const PersonalProfile(),
                     ),
                   ],
                 ),

@@ -12,9 +12,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppHeader(
-        title: '',
-        onBackPressed: () {
-          context.pop();
+        onMenuPressed: () {
+          Scaffold.of(context).openDrawer();
         },
         centerTitle: true,
         backgroundColor: transparent,
@@ -101,7 +100,7 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(icon, color: black),
             onPressed: () => context.goNamed(route),
             style: IconButton.styleFrom(
-              backgroundColor: transparent,
+              backgroundColor: grey200,
               padding: const EdgeInsets.all(12),
             ),
           ),
@@ -180,7 +179,7 @@ class HomeScreen extends StatelessWidget {
       {
         'icon': Icons.calendar_today_outlined,
         'label': 'Booking',
-        'route': 'appointments',
+        'route': 'appointmentHome',
       },
       {
         'icon': Icons.science_outlined,

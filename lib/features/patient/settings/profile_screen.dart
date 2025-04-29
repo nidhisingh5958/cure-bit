@@ -1,7 +1,9 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -77,7 +79,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             items: [
                               _buildProfileItem(
                                 title: 'Personal Information',
-                                onTap: () {},
+                                onTap: () {
+                                  context
+                                      .goNamed(RouteConstants.personalProfile);
+                                },
                               ),
                               _buildProfileItem(
                                 title: 'Country',
@@ -147,7 +152,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: CircleAvatar(
               radius: 15,
               backgroundColor: white,
-              child: Icon(Icons.edit, size: 16, color: black),
+              child: IconButton(
+                icon: Icon(Icons.edit),
+                iconSize: 16,
+                color: black,
+                onPressed: () {
+                  context.goNamed(RouteConstants.editProfile);
+                },
+              ),
             ),
           ),
         ],
