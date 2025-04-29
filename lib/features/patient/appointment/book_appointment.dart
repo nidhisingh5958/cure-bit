@@ -1,4 +1,5 @@
 import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/features/patient/appointment/sucess_screen.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
@@ -121,56 +122,7 @@ class _BookAppointmentState extends State<BookAppointment> {
           elevation: 0,
           backgroundColor: transparent,
         ),
-        body: showSuccessScreen ? _buildSuccessScreen() : _buildBookingForm(),
-      ),
-    );
-  }
-
-  Widget _buildSuccessScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.calendar_month_outlined,
-            size: 80,
-            color: Colors.black,
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Your appointment has been',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Text(
-            'booked successfully',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 40),
-          SizedBox(
-            width: 200,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: Text(
-                'Return Home',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ),
-        ],
+        body: showSuccessScreen ? SucessScreen() : _buildBookingForm(),
       ),
     );
   }
