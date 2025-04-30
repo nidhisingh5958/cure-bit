@@ -15,14 +15,14 @@ class _PersonalProfileState extends State<PersonalProfile> {
     // Get screen size information
     final Size screenSize = MediaQuery.of(context).size;
     final double profileImageSize =
-        screenSize.width * 0.3; // 30% of screen width
+        screenSize.width * 0.25; // 25% of screen width
 
     return Scaffold(
       appBar: AppHeader(
         onBackPressed: () {
           Navigator.pop(context);
         },
-        title: 'Edit Profile',
+        title: 'Profile',
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -35,225 +35,278 @@ class _PersonalProfileState extends State<PersonalProfile> {
       backgroundColor: greyWithGreenTint,
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
-            // Profile Image Section
-            _buildProfileImageSection(profileImageSize),
+            // Profile Header with Image
+            _buildProfileHeader(profileImageSize),
 
-            // Profile Details Container
-            Container(
-              width: screenSize.width * 0.9, // 90% of screen width
-              decoration: const BoxDecoration(
-                shape: BoxShape.rectangle,
-                color: white,
-                borderRadius: BorderRadius.all(Radius.circular(25)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              margin: const EdgeInsets.all(20),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20),
-                  _ProfileInfoItem(
-                    icon: Icons.mail,
-                    title: 'Email',
-                    subtitle: 'example@gmail.com',
-                  ),
-                  _ProfileDivider(),
-                  _ProfileInfoItem(
-                    icon: Icons.phone,
-                    title: 'Phone Number',
-                    subtitle: '+91 70426 94112',
-                    description: 'Mobile',
-                  ),
-                  _ProfileDivider(),
-                  _ProfileInfoItemWithValue(
-                    icon: Icons.bloodtype_rounded,
-                    title: 'Blood Group',
-                    value: 'O+',
-                  ),
-                  _ProfileDivider(),
-                  _ProfileInfoItemWithValue(
-                    icon: Icons.height_rounded,
-                    title: 'Height',
-                    value: '157.3 cm',
-                  ),
-                  _ProfileDivider(),
-                  _ProfileInfoItemWithValue(
-                    icon: Icons.monitor_weight_rounded,
-                    title: 'Weight',
-                    value: '78.5 Kg',
-                  ),
-                  _ProfileDivider(),
-                  _ProfileInfoItemWithCheckbox(
-                    icon: Icons.medical_services_rounded,
-                    title: 'Diabetic',
-                    isChecked: true,
-                  ),
-                  _ProfileDivider(),
-                  _ProfileInfoItemWithCheckbox(
-                    icon: Icons.error_rounded,
-                    title: 'Allergies',
-                    isChecked: true,
-                  ),
-                  _ProfileDivider(),
-                  _ProfileInfoItemWithCheckbox(
-                    icon: Icons.sentiment_neutral_sharp,
-                    title: 'Psychological Disorders',
-                    isChecked: true,
-                    isSmallerFont: true,
-                  ),
-                  _ProfileDivider(),
-                  _EmergencyContactItem(
-                    name: 'John doe',
-                    phone: '1234567890',
-                    email: 'johndoe@gmail.com',
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            _buildEditButton(),
-            const SizedBox(height: 70),
+            // Information Section
+            _buildInformationSection(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileImageSection(double size) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Profile Image
-        Container(
-          height: size,
-          width: size,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 2,
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+  Widget _buildProfileHeader(double imageSize) {
+    return Container(
+      width: double.infinity,
+      color: white,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 25),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Profile Image
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: imageSize,
+                width: imageSize,
+                decoration: BoxDecoration(
+                  color: white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0), // Border padding
+                  child: CircleAvatar(
+                    backgroundImage:
+                        const AssetImage('assets/images/PersonalProfile.png'),
+                    backgroundColor: grey200,
+                    radius: imageSize / 2,
+                  ),
+                ),
+              ),
+              // Edit Icon
+              Positioned(
+                bottom: 0,
+                right: imageSize * 0.3,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: grey600,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: white, width: 2),
+                  ),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    color: white,
+                    size: 14,
+                  ),
+                ),
               ),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(3.0), // Border padding
-            child: CircleAvatar(
-              backgroundImage: const AssetImage('assets/images/user.png'),
-              backgroundColor: grey200,
-              radius: size / 2,
+
+          const SizedBox(height: 8),
+
+          // PersonalProfilename handle
+          const Text(
+            '@livysheleina',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
             ),
           ),
-        ),
-        // Edit Icon
-        Positioned(
-          bottom: 0,
-          right: size * 0.3,
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: grey600,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-            child: const Icon(
-              Icons.camera_alt,
-              color: Colors.white,
-              size: 18,
+
+          const SizedBox(height: 4),
+
+          // Name
+          const Text(
+            'Livy Sheleina',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ),
-        // Edit Text Label
-        Positioned(
-          top: size + 10,
-          child: Text(
-            'Edit Picture',
+
+          const SizedBox(height: 8),
+
+          // Location and Join date
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'New York',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.blue,
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 6),
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: grey400,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Text(
+                'Joined August 2023',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: grey600,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // Action buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildActionButton('Follow', Icons.person_add_outlined),
+              const SizedBox(width: 15),
+              _buildActionButton('Message', Icons.message_outlined),
+              const SizedBox(width: 15),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: grey200,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '...',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: grey600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 15),
+
+          // Bio/Description
+          const Text(
+            'CEO of sh.agency,\nUI Designer, Young Entrepreneur',
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: grey600,
+              height: 1.4,
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEditButton() {
-    return ElevatedButton(
-      onPressed: () {
-        debugPrint('Edit Profile');
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.edit, size: 20),
-          SizedBox(width: 8),
-          Text(
-            'Edit Profile',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
         ],
       ),
     );
   }
-}
 
-// Extracted widgets for better organization and reuse
-
-class _ProfileDivider extends StatelessWidget {
-  const _ProfileDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Divider(
-      color: Colors.black12,
-      thickness: 1,
-      indent: 20,
-      endIndent: 20,
+  Widget _buildActionButton(String text, IconData icon) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        side: BorderSide(color: grey200),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        minimumSize: const Size(110, 36),
+      ),
+      onPressed: () {},
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16),
+          const SizedBox(width: 6),
+          Text(text),
+        ],
+      ),
     );
   }
-}
 
-class _ProfileInfoItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String? description;
+  Widget _buildInformationSection() {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: white,
+        borderRadius: const BorderRadius.all(Radius.circular(25)),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Information',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 20),
 
-  const _ProfileInfoItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    this.description,
-  });
+          // Website
+          _buildInfoItem(
+            icon: Icons.language,
+            label: 'Website',
+            value: 'www.sh.agency',
+          ),
 
-  @override
-  Widget build(BuildContext context) {
+          const _ProfileDivider(),
+
+          // Email
+          _buildInfoItem(
+            icon: Icons.mail,
+            label: 'Email',
+            value: 'sh.agency@gmail.com',
+          ),
+
+          const _ProfileDivider(),
+
+          // Phone
+          _buildInfoItem(
+            icon: Icons.phone,
+            label: 'Phone',
+            value: '+62 878 XXX XXX',
+            description: 'Mobile',
+          ),
+
+          const _ProfileDivider(),
+
+          // Joined
+          _buildInfoItem(
+            icon: Icons.calendar_today,
+            label: 'Joined',
+            value: 'August 2023',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem({
+    required IconData icon,
+    required String label,
+    required String value,
+    String? description,
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -263,7 +316,7 @@ class _ProfileInfoItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                label,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -273,14 +326,14 @@ class _ProfileInfoItem extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    description!,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    description,
+                    style: TextStyle(fontSize: 14, color: grey600),
                   ),
                 ),
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  subtitle,
+                  value,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[700],
@@ -293,150 +346,102 @@ class _ProfileInfoItem extends StatelessWidget {
       ),
     );
   }
-}
 
-class _ProfileInfoItemWithValue extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-
-  const _ProfileInfoItemWithValue({
-    required this.icon,
-    required this.title,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-      child: Row(
-        children: [
-          Icon(icon, size: 28, color: grey600),
-          const SizedBox(width: 15),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w500,
-            ),
+  Widget _buildSkillsSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: white,
+        borderRadius: const BorderRadius.all(Radius.circular(25)),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _ProfileInfoItemWithCheckbox extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final bool isChecked;
-  final bool isSmallerFont;
-
-  const _ProfileInfoItemWithCheckbox({
-    required this.icon,
-    required this.title,
-    required this.isChecked,
-    this.isSmallerFont = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-      child: Row(
-        children: [
-          Icon(icon, size: 28, color: grey600),
-          const SizedBox(width: 15),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: isSmallerFont ? 16 : 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const Spacer(),
-          Icon(
-            isChecked ? Icons.check_box : Icons.check_box_outline_blank,
-            size: 28,
-            color: isChecked ? Colors.green[700] : Colors.grey[400],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmergencyContactItem extends StatelessWidget {
-  final String name;
-  final String phone;
-  final String email;
-
-  const _EmergencyContactItem({
-    required this.name,
-    required this.phone,
-    required this.email,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.contact_emergency_rounded, size: 28, color: grey600),
-          const SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // Skills grid
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
             children: [
-              const Text(
-                'Emergency Contact',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              _buildContactRow('Name', name),
-              const SizedBox(height: 4),
-              _buildContactRow('Phone', phone),
-              const SizedBox(height: 4),
-              _buildContactRow('Email', email),
+              _buildSkillChip('Design System'),
+              _buildSkillChip('UI Designer'),
+              _buildSkillChip('UX Researcher'),
+              _buildSkillChip('Product Manager'),
             ],
           ),
+
+          const SizedBox(height: 20),
+
+          _buildEditButton(),
         ],
       ),
     );
   }
 
-  Widget _buildContactRow(String label, String value) {
-    return Row(
-      children: [
-        Text(
-          '$label: ',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+  Widget _buildSkillChip(String label) {
+    return Chip(
+      label: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 14,
+        ),
+      ),
+      backgroundColor: grey200,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+  }
+
+  Widget _buildEditButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          debugPrint('Edit Profile');
+        },
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+          backgroundColor: white,
+          foregroundColor: Colors.black87,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.edit, size: 20),
+            SizedBox(width: 8),
+            Text(
+              'Edit Profile',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+}
+
+class _ProfileDivider extends StatelessWidget {
+  const _ProfileDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(
+      color: Colors.black12,
+      thickness: 1,
+      indent: 20,
+      endIndent: 20,
     );
   }
 }

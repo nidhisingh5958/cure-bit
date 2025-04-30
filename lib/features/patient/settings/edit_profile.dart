@@ -93,6 +93,13 @@ class _EditProfileState extends State<EditProfile> {
   String? _imagePath;
 
   @override
+  void initState() {
+    super.initState();
+    // Set a default DOB format for display (empty)
+    _dobController.text = '';
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
@@ -216,6 +223,12 @@ class _EditProfileState extends State<EditProfile> {
                   ),
 
                   const SizedBox(height: 5),
+
+                  buildDateField(
+                    title: 'Date of Birth',
+                    controller: _dobController,
+                    context: context,
+                  ),
 
                   // Height and Weight in a Row
                   Row(
@@ -445,6 +458,80 @@ class _EditProfileState extends State<EditProfile> {
           ),
         ),
       ],
+    );
+  }
+
+  // Date of Birth field with date picker
+  Widget buildDateField({
+    required String title,
+    required TextEditingController controller,
+    required BuildContext context,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 5, bottom: 8),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: grey600,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () async {
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: controller.text.isNotEmpty
+                    ? DateTime.parse(controller.text)
+                    : DateTime.now().subtract(const Duration(
+                        days: 365 * 18)), // Default to 18 years ago
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: ColorScheme.light(
+                        primary: grey400,
+                        onPrimary: white,
+                        onSurface: grey800,
+                      ),
+                      textButtonTheme: TextButtonThemeData(
+                        style: TextButton.styleFrom(
+                          foregroundColor: grey400,
+                        ),
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+
+              if (picked != null) {
+                setState(() {
+                  // Format the date as YYYY-MM-DD
+                  controller.text =
+                      "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                });
+              }
+            },
+            child: AbsorbPointer(
+              child: createTextField(
+                controller: controller,
+                label: title,
+                hintText: 'YYYY-MM-DD',
+                prefixIcon:
+                    const Icon(Icons.calendar_today, color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

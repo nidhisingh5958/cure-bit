@@ -46,8 +46,9 @@ class NotificationScreen extends StatelessWidget {
           PopupMenuHelper.buildPopupMenu(
             context,
             onSelected: (value) {
-              if (value == RouteConstants.settings) {
-                Navigator.pushNamed(context, RouteConstants.settings);
+              // modify this to handle the selected value
+              if (value == RouteConstants.profileSettings) {
+                Navigator.pushNamed(context, RouteConstants.profileSettings);
               } else if (value == RouteConstants.help) {
                 Navigator.pushNamed(context, RouteConstants.help);
               }

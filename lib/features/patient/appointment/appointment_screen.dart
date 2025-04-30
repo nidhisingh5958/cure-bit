@@ -51,7 +51,6 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           ],
         ),
         body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -252,7 +251,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                   ),
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: grey600,
                   ),
                 ),
                 SizedBox(height: 16),
@@ -270,7 +269,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                         EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     border: InputBorder.none,
                     hintText: 'E.g. Delhi',
-                    hintStyle: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                    hintStyle: TextStyle(fontSize: 14, color: grey400),
                   ),
                   style: TextStyle(
                     fontSize: 14,

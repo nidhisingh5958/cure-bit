@@ -1,5 +1,7 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/components/app_header.dart'; // Import the header component
+import 'package:CuraDocs/components/pop_up.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -61,36 +63,21 @@ class _DoctorProfileState extends State<DoctorProfile>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: blueish,
         // Using the consistent header component
         appBar: AppHeader(
           title: 'Doctor Profile',
           onBackPressed: () => context.goNamed('home'),
-          actions: [
-            // PopupMenuHelper.buildPopupButton(
-            //   context,
-            //     onSelected: (value) {
-            //       if (value == 'book') {
-            //         context.goNamed(RouteConstants.bookAppointment);
-            //       } else if (value == 'doctorQR') {
-            //         context.goNamed(RouteConstants.help);
-            //       }
-            //     },
-            //     optionsList: [
-            //       {'book': 'Book an appointment'},
-            //       {'doctorQR': 'Doctor\'s QR'},
-            //     ],
-            //   ),
-          ],
         ),
         body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          // physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildProfileHeader(context),
-              _buildActionButtons(),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               _buildInfoCard(context),
+              SizedBox(height: 5),
             ],
           ),
         ),
@@ -99,254 +86,231 @@ class _DoctorProfileState extends State<DoctorProfile>
   }
 
   Widget _buildProfileHeader(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20, 24, 20, 16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: .1),
-            Colors.transparent,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: black.withOpacity(0.05),
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: Offset(0, 4),
+            ),
           ],
         ),
-      ),
-      child: Column(
-        children: [
-          // Profile image with shadow and border
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: .1),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.white,
+        child: Column(
+          children: [
+            // Profile image with shadow and border
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: black.withValues(alpha: .1),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
               child: CircleAvatar(
-                radius: 48,
-                backgroundColor: Colors.grey[200],
-                child: Icon(
-                  Icons.person,
-                  size: 55,
-                  color: Colors.grey[400],
+                radius: 50,
+                backgroundColor: white,
+                child: CircleAvatar(
+                  radius: 48,
+                  backgroundColor: grey200,
+                  child: Icon(
+                    Icons.person,
+                    size: 55,
+                    color: grey400,
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 16),
-          // Doctor name and details
-          Text(
-            'Dr. Sarah Johnson',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+            SizedBox(height: 16),
+            // Doctor name and details
+            Text(
+              'Dr. Sarah Johnson',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              softWrap: true,
+              overflow: TextOverflow.visible,
             ),
-            softWrap: true,
-            overflow: TextOverflow.visible,
-          ),
-          SizedBox(height: 6),
-          Text(
-            'Cardiologist',
-            style: TextStyle(
-              color: Colors.grey[700],
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
+            SizedBox(height: 6),
+            Text(
+              'Cardiologist',
+              style: TextStyle(
+                color: Colors.grey[700],
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          // Rating display with improved styling
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.amber.withValues(alpha: .15),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.star, color: Colors.amber, size: 20),
-                SizedBox(width: 5),
-                Text(
-                  '5.0',
-                  style: TextStyle(
-                    color: Colors.amber[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+            SizedBox(height: 8),
+            // Rating display with improved styling
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: .15),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  SizedBox(width: 5),
+                  Text(
+                    '5.0',
+                    style: TextStyle(
+                      color: Colors.amber[800],
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  ' (124 reviews)',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
+                  Text(
+                    ' (124 reviews)',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 16),
+            _buildActionButtons(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildActionButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: Icon(Icons.message_outlined),
-                  label: Text('Message'),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: .1),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                  ),
-                ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () {},
+            icon: Icon(Icons.message_outlined),
+            label: Text('Message'),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: .1),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (!isConnected) {
-                      setState(() {
-                        showConnectionAnimation = true;
-                        isConnected = true;
-                      });
-                      _animationController.forward();
-                    } else {
-                      setState(() {
-                        isConnected = false;
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: isConnected
-                        ? Colors.white
-                        : Theme.of(context).colorScheme.primary,
-                    backgroundColor: isConnected
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: .1),
-                    elevation: isConnected ? 2 : 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          return ScaleTransition(
-                            scale: animation,
-                            child: child,
-                          );
-                        },
-                        child: Icon(
-                          isConnected ? Icons.check : MdiIcons.vectorLink,
-                          key: ValueKey<bool>(isConnected),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                        child: Text(
-                          isConnected ? 'Connected' : 'Connect',
-                          key: ValueKey<bool>(isConnected),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Celebration animation overlay
-          if (showConnectionAnimation)
-            AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return Positioned(
-                  top: 0,
-                  bottom: 0,
-                  left: MediaQuery.of(context).size.width / 2 - 50,
-                  child: Opacity(
-                    opacity: _scaleAnimation.value > 0.1 ? 1.0 : 0.0,
-                    child: Transform.scale(
-                      scale: _scaleAnimation.value,
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .primaryColor
-                              .withValues(alpha: .2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Theme.of(context).primaryColor,
-                          size: 50,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
+              padding: EdgeInsets.symmetric(vertical: 14),
             ),
-        ],
-      ),
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {
+              if (!isConnected) {
+                setState(() {
+                  showConnectionAnimation = true;
+                  isConnected = true;
+                });
+                _animationController.forward();
+              } else {
+                setState(() {
+                  isConnected = false;
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: isConnected
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.primary,
+              backgroundColor: isConnected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.primary.withValues(alpha: .1),
+              elevation: isConnected ? 2 : 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 14),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: child,
+                    );
+                  },
+                  child: Icon(
+                    isConnected ? Icons.check : MdiIcons.vectorLink,
+                    key: ValueKey<bool>(isConnected),
+                  ),
+                ),
+                SizedBox(width: 8),
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                  child: Text(
+                    isConnected ? 'Connected' : 'Connect',
+                    key: ValueKey<bool>(isConnected),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        PopupMenuHelper.buildPopupMenu(
+          context,
+          onSelected: (value) {
+            if (value == 'book') {
+              context.goNamed(RouteConstants.bookAppointment);
+            } else if (value == 'doctorQR') {
+              context.goNamed(RouteConstants.help);
+            }
+          },
+          optionsList: [
+            {'book': 'Book an appointment'},
+            {'doctorQR': 'Doctor\'s QR'},
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildInfoCard(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: cream,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
+          color: white,
+          borderRadius: const BorderRadius.all(Radius.circular(25)),
+          boxShadow: const [
             BoxShadow(
-              color: Colors.black.withValues(alpha: .05),
+              color: Colors.black12,
               blurRadius: 10,
               offset: Offset(0, 4),
             ),

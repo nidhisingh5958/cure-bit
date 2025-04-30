@@ -98,7 +98,7 @@ class SideMenu extends StatelessWidget {
         _buildOptionItem(
           icon: Icons.settings_outlined,
           label: 'Settings & Privacy',
-          onTap: () => context.goNamed(RouteConstants.settings),
+          onTap: () => context.goNamed(RouteConstants.profileSettings),
         ),
         _buildOptionItem(
           icon: Icons.insights_outlined,
