@@ -1,6 +1,8 @@
 import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/features/patient/appointment/sucess_screen.dart';
+import 'package:CuraDocs/features/patient/appointment/components/problem_selection_widget.dart';
+import 'package:CuraDocs/features/patient/appointment/success_screen.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CuraDocs/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:go_router/go_router.dart';
@@ -21,8 +23,7 @@ class _BookAppointmentState extends State<BookAppointment> {
   int? selectedAddressIndex;
   List<String> selectedProblems = [];
   bool showSuccessScreen = false;
-  final AudioPlayer audioPlayer =
-      AudioPlayer(); // Audio player for sound effects
+  final AudioPlayer audioPlayer = AudioPlayer();
 
   final FocusNode _focusNode = FocusNode();
   bool isExpanded = false;
@@ -106,12 +107,14 @@ class _BookAppointmentState extends State<BookAppointment> {
   }
 
   void _playSoundEffect() async {
-    // You'll need to add your sound file to the assets and configure pubspec.yaml
     await audioPlayer.play(AssetSource('sounds/success.mp3'));
   }
 
   @override
   Widget build(BuildContext context) {
+    // Initialize SizeConfig
+    SizeConfig().init(context);
+
     return SafeArea(
       child: Scaffold(
         appBar: AppHeader(
@@ -129,22 +132,22 @@ class _BookAppointmentState extends State<BookAppointment> {
 
   Widget _buildBookingForm() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(getProportionateScreenWidth(16)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _buildDoctorProfile(context),
-          SizedBox(height: 24),
+          SizedBox(height: getProportionateScreenHeight(24)),
           Text(
             'Choose a date',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: getProportionateScreenWidth(16),
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 12),
+          SizedBox(height: getProportionateScreenHeight(12)),
           _buildCalendar(),
-          SizedBox(height: 24),
+          SizedBox(height: getProportionateScreenHeight(24)),
           Row(
             children: [
               Expanded(
@@ -154,16 +157,16 @@ class _BookAppointmentState extends State<BookAppointment> {
                     Text(
                       'Time',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: getProportionateScreenWidth(16),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: getProportionateScreenHeight(8)),
                     _buildTimeSelection(),
                   ],
                 ),
               ),
-              SizedBox(width: 16),
+              SizedBox(width: getProportionateScreenWidth(16)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,28 +174,28 @@ class _BookAppointmentState extends State<BookAppointment> {
                     Text(
                       'Address',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: getProportionateScreenWidth(16),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: getProportionateScreenHeight(8)),
                     _buildAddressDisplay(),
                   ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 24),
+          SizedBox(height: getProportionateScreenHeight(24)),
           Text(
             'Problem',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: getProportionateScreenWidth(16),
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: getProportionateScreenHeight(8)),
           _buildProblemSelection(),
-          SizedBox(height: 32),
+          SizedBox(height: getProportionateScreenHeight(32)),
           _buildBookButton(),
         ],
       ),
@@ -262,138 +265,16 @@ class _BookAppointmentState extends State<BookAppointment> {
     );
   }
 
+  // Updated calendar method that uses the responsive sizing
   Widget _buildCalendar() {
-    // Get current month and year
-    final currentMonth = DateTime.now().month;
-    final currentYear = DateTime.now().year;
-    final currentDay = DateTime.now().day;
-
-    // First day of the month
-    final firstDay = DateTime(currentYear, currentMonth, 1);
-
-    // Last day of the month
-    final lastDay = DateTime(currentYear, currentMonth + 1, 0);
-
-    // Number of days in the month
-    final daysInMonth = lastDay.day;
-
-    // Get day of week for first day (0 = Sunday, 1 = Monday, ...)
-    final firstDayOfWeek = firstDay.weekday % 7;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: Icon(Icons.chevron_left),
-              onPressed: () {
-                // Previous month
-              },
-            ),
-            Text(
-              DateFormat('MMMM').format(DateTime(currentYear, currentMonth)),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.chevron_right),
-              onPressed: () {
-                // Next month
-              },
-            ),
-          ],
-        ),
-        SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children:
-              ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day) {
-            return SizedBox(
-              width: 30,
-              child: Text(
-                day,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            );
-          }).toList(),
-        ),
-        SizedBox(height: 8),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7,
-            childAspectRatio: 1,
-          ),
-          itemCount: firstDayOfWeek + daysInMonth,
-          itemBuilder: (context, index) {
-            if (index < firstDayOfWeek) {
-              return Container(); // Empty cells before the first day
-            }
-
-            final day = index - firstDayOfWeek + 1;
-            final date = DateTime(currentYear, currentMonth, day);
-            final isToday = currentDay == day;
-            final isPastDate =
-                date.isBefore(DateTime.now().subtract(Duration(days: 1)));
-            final isSelected = selectedDate.day == day &&
-                selectedDate.month == currentMonth &&
-                selectedDate.year == currentYear;
-
-            return GestureDetector(
-              onTap: isPastDate
-                  ? null // Disable past dates
-                  : () {
-                      setState(() {
-                        selectedDate = date;
-                      });
-                    },
-              child: Container(
-                margin: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? Theme.of(context).primaryColor
-                      : isPastDate
-                          ? Colors.grey[200]
-                          : null,
-                  border: isToday && !isSelected
-                      ? Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 1,
-                        )
-                      : null,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    day.toString(),
-                    style: TextStyle(
-                      color: isSelected
-                          ? Colors.white
-                          : isPastDate
-                              ? Colors.grey[400]
-                              : isToday
-                                  ? Theme.of(context).primaryColor
-                                  : null,
-                      fontWeight:
-                          isSelected || isToday ? FontWeight.bold : null,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ],
+    return buildResponsiveCalendar(
+      context,
+      selectedDate: selectedDate,
+      onDateSelected: (date) {
+        setState(() {
+          selectedDate = date;
+        });
+      },
     );
   }
 
@@ -401,32 +282,48 @@ class _BookAppointmentState extends State<BookAppointment> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(20)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<int>(
           value: selectedTimeIndex,
           hint: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Text('Select time'),
+            padding: EdgeInsets.symmetric(
+              horizontal: getProportionateScreenWidth(12),
+            ),
+            child: Text(
+              'Select time',
+              style: TextStyle(
+                fontSize: getProportionateScreenWidth(14),
+              ),
+            ),
           ),
           isExpanded: true,
           icon: Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: Icon(Icons.arrow_drop_down),
+            padding: EdgeInsets.only(right: getProportionateScreenWidth(12)),
+            child: Icon(
+              Icons.arrow_drop_down,
+              size: getProportionateScreenWidth(24),
+            ),
           ),
           onChanged: (value) {
             setState(() {
               selectedTimeIndex = value;
-              // Synchronize with address
             });
           },
           items: List.generate(timeSlots.length, (index) {
             return DropdownMenuItem<int>(
               value: index,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text(timeSlots[index]['time']),
+                padding: EdgeInsets.symmetric(
+                  horizontal: getProportionateScreenWidth(12),
+                ),
+                child: Text(
+                  timeSlots[index]['time'],
+                  style: TextStyle(
+                    fontSize: getProportionateScreenWidth(14),
+                  ),
+                ),
               ),
             );
           }),
@@ -437,10 +334,13 @@ class _BookAppointmentState extends State<BookAppointment> {
 
   Widget _buildAddressDisplay() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(
+        horizontal: getProportionateScreenWidth(16),
+        vertical: getProportionateScreenHeight(14),
+      ),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(20)),
         color: Colors.grey[100],
       ),
       child: Text(
@@ -448,7 +348,7 @@ class _BookAppointmentState extends State<BookAppointment> {
             ? timeSlots[selectedTimeIndex!]['address']
             : 'Address will be shown here',
         style: TextStyle(
-          fontSize: 14,
+          fontSize: getProportionateScreenWidth(14),
           color: selectedTimeIndex != null ? Colors.black : Colors.grey,
         ),
         maxLines: 2,
@@ -458,91 +358,23 @@ class _BookAppointmentState extends State<BookAppointment> {
   }
 
   Widget _buildProblemSelection() {
-    return SizedBox(
-      width: double.infinity,
-      child: TextField(
-        focusNode: _focusNode,
-        controller: _textController, // Use the controller
-        onChanged: onQueryChanged,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (isExpanded)
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: black,
-                    size: 20,
-                  ),
-                  onPressed: _deleteItems,
-                )
-              else
-                Icon(
-                  Icons.mic,
-                  color: black,
-                  size: 20,
-                ),
-            ],
-          ),
-          hintText: "Search for doctors",
-          hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey,
-              ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-        ),
-        style: TextStyle(fontSize: 14),
-        minLines: 1,
-        maxLines: 1,
-        onSubmitted: (value) {
-          if (value.isNotEmpty) {
-            context.pushNamed(
-              RouteConstants.chatBotScreen,
-              extra: value,
-            );
-          }
-        },
-      ),
+    return ProblemSelectionWidget(
+      availableProblems: problems,
+      selectedProblems: selectedProblems,
+      onProblemsChanged: (updatedProblems) {
+        setState(() {
+          selectedProblems = updatedProblems;
+        });
+      },
+      maxProblems: 5,
     );
   }
-
-  // child: Wrap(
-  //   spacing: 8.0,
-  //   runSpacing: 8.0,
-  //   children: problems.map((problem) {
-  //     final isSelected = selectedProblems.contains(problem);
-  //     return FilterChip(
-  //       label: Text(problem),
-  //       selected: isSelected,
-  //       onSelected: (selected) {
-  //         setState(() {
-  //           if (selected) {
-  //             selectedProblems.add(problem);
-  //           } else {
-  //             selectedProblems.remove(problem);
-  //           }
-  //         });
-  //       },
-  //       backgroundColor: Colors.white,
-  //       selectedColor: Theme.of(context).primaryColor.withValues(0.2),
-  //       checkmarkColor: Theme.of(context).primaryColor,
-  //       labelStyle: TextStyle(
-  //         color: isSelected ? Theme.of(context).primaryColor : Colors.black,
-  //       ),
-  //       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-  //     );
-  //   }).toList(),
-  // ),
 
   Widget _buildBookButton() {
     return Center(
       child: SizedBox(
-        width: 200,
-        height: 45,
+        width: getProportionateScreenWidth(200),
+        height: getProportionateScreenHeight(45),
         child: ElevatedButton(
           onPressed: isFormValid
               ? () {
@@ -554,10 +386,11 @@ class _BookAppointmentState extends State<BookAppointment> {
                     showSuccessScreen = true;
                   });
                 }
-              : null, // Button is disabled if form is not valid
+              : null,
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius:
+                  BorderRadius.circular(getProportionateScreenWidth(20)),
             ),
             elevation: 2,
             backgroundColor:
@@ -566,7 +399,7 @@ class _BookAppointmentState extends State<BookAppointment> {
           child: Text(
             'Book',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: getProportionateScreenWidth(16),
               fontWeight: FontWeight.bold,
               color: isFormValid ? Colors.white : Colors.grey[600],
             ),
@@ -575,4 +408,156 @@ class _BookAppointmentState extends State<BookAppointment> {
       ),
     );
   }
+}
+
+// Import the responsive calendar widget method
+Widget buildResponsiveCalendar(
+  BuildContext context, {
+  required DateTime selectedDate,
+  required Function(DateTime) onDateSelected,
+}) {
+  // Get current month and year
+  final currentMonth = DateTime.now().month;
+  final currentYear = DateTime.now().year;
+  final currentDay = DateTime.now().day;
+
+  // First day of the month
+  final firstDay = DateTime(currentYear, currentMonth, 1);
+
+  // Last day of the month
+  final lastDay = DateTime(currentYear, currentMonth + 1, 0);
+
+  // Number of days in the month
+  final daysInMonth = lastDay.day;
+
+  // Get day of week for first day (0 = Sunday, 1 = Monday, ...)
+  final firstDayOfWeek = firstDay.weekday % 7;
+
+  // Calculate responsive sizes
+  final daySize = getProportionateScreenWidth(30); // Base size for day cells
+  final dayTextSize = getProportionateScreenWidth(12); // Text size for days
+  final headerTextSize = getProportionateScreenWidth(14); // Size for month name
+  final weekdayTextSize =
+      getProportionateScreenWidth(10); // Size for weekday labels
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: Icon(
+              Icons.chevron_left,
+              size: getProportionateScreenWidth(24),
+            ),
+            onPressed: () {
+              // Previous month
+            },
+          ),
+          Text(
+            DateFormat('MMMM').format(DateTime(currentYear, currentMonth)),
+            style: TextStyle(
+              fontSize: headerTextSize,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.chevron_right,
+              size: getProportionateScreenWidth(24),
+            ),
+            onPressed: () {
+              // Next month
+            },
+          ),
+        ],
+      ),
+      SizedBox(height: getProportionateScreenHeight(8)),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day) {
+          return SizedBox(
+            width: daySize,
+            child: Text(
+              day,
+              style: TextStyle(
+                fontSize: weekdayTextSize,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          );
+        }).toList(),
+      ),
+      SizedBox(height: getProportionateScreenHeight(8)),
+      GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7,
+          childAspectRatio: 1,
+          mainAxisSpacing: getProportionateScreenHeight(2),
+          crossAxisSpacing: getProportionateScreenWidth(2),
+        ),
+        itemCount: firstDayOfWeek + daysInMonth,
+        itemBuilder: (context, index) {
+          if (index < firstDayOfWeek) {
+            return Container(); // Empty cells before the first day
+          }
+
+          final day = index - firstDayOfWeek + 1;
+          final date = DateTime(currentYear, currentMonth, day);
+          final isToday = currentDay == day;
+          final isPastDate =
+              date.isBefore(DateTime.now().subtract(Duration(days: 1)));
+          final isSelected = selectedDate.day == day &&
+              selectedDate.month == currentMonth &&
+              selectedDate.year == currentYear;
+
+          return GestureDetector(
+            onTap: isPastDate
+                ? null // Disable past dates
+                : () {
+                    onDateSelected(date);
+                  },
+            child: Container(
+              margin: EdgeInsets.all(getProportionateScreenWidth(2)),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Theme.of(context).primaryColor
+                    : isPastDate
+                        ? Colors.grey[200]
+                        : null,
+                border: isToday && !isSelected
+                    ? Border.all(
+                        color: Theme.of(context).primaryColor,
+                        width: 1,
+                      )
+                    : null,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  day.toString(),
+                  style: TextStyle(
+                    fontSize: dayTextSize,
+                    color: isSelected
+                        ? Colors.white
+                        : isPastDate
+                            ? Colors.grey[400]
+                            : isToday
+                                ? Theme.of(context).primaryColor
+                                : null,
+                    fontWeight: isSelected || isToday ? FontWeight.bold : null,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    ],
+  );
 }

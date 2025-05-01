@@ -96,6 +96,7 @@ class _DocumentScreenState extends State<DocumentScreen>
       ),
       drawer: SideMenu(),
       floatingActionButton: _buildAddFloatingButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: TabBarView(
         controller: _tabController,
         children: [

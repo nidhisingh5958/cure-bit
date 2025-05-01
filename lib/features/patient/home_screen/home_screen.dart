@@ -11,22 +11,26 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppHeader(
-        onMenuPressed: () {
-          Scaffold.of(context).openDrawer();
-        },
-        centerTitle: true,
-        backgroundColor: transparent,
-        foregroundColor: black,
-        elevation: 0,
-        actions: [
-          _buildActionButtons(context),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Builder(
+          builder: (context) => AppHeader(
+            onMenuPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+            centerTitle: true,
+            backgroundColor: transparent,
+            foregroundColor: black,
+            elevation: 0,
+            actions: [
+              _buildActionButtons(context),
+            ],
+          ),
+        ),
       ),
-      drawer: Drawer(
+      drawer: const Drawer(
         child: SideMenu(),
       ),
-      // floatingActionButton property - chatbot
       floatingActionButton: _buildChatBotFloatingButton(context),
       body: SafeArea(
         child: SingleChildScrollView(

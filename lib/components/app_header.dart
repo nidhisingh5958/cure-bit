@@ -34,26 +34,32 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    Widget? leadingWidget;
+    if (onBackPressed != null) {
+      leadingWidget = IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios,
+          size: 20,
+          color: foregroundColor ?? black.withValues(alpha: .8),
+        ),
+        onPressed: onBackPressed,
+      );
+    } else if (onMenuPressed != null) {
+      leadingWidget = IconButton(
+        icon: Icon(
+          Icons.menu,
+          color: foregroundColor ?? black.withValues(alpha: .8),
+        ),
+        onPressed: onMenuPressed,
+      );
+    }
+
     return AppBar(
       elevation: elevation,
       centerTitle: true,
       backgroundColor: backgroundColor ?? transparent,
       foregroundColor: foregroundColor ?? theme.colorScheme.primary,
-      leading: onBackPressed != null
-          ? IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios,
-                size: 20,
-                color: foregroundColor ?? black.withValues(alpha: .8),
-              ),
-              onPressed: onBackPressed,
-            )
-          : onMenuPressed != null
-              ? IconButton(
-                  onPressed: onMenuPressed,
-                  icon: const Icon(Icons.menu),
-                )
-              : null,
+      leading: leadingWidget,
       title: titleWidget ??
           Text(
             title,
@@ -65,7 +71,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           ),
       actions: actions,
       toolbarHeight: height,
-      automaticallyImplyLeading: onBackPressed != null,
+      automaticallyImplyLeading:
+          false, // We're manually handling the leading widget
       shape: elevation > 0
           ? const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(

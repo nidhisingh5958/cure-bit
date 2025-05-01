@@ -1,5 +1,6 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/components/app_header.dart'; // Import the header component
+import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -19,7 +20,6 @@ class _AppointmentHomeState extends State<AppointmentHome> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // Using the consistent header component
         appBar: AppHeader(
           title: 'Find Doctors',
           onBackPressed: () => context.goNamed('home'),
@@ -32,7 +32,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                 padding: const EdgeInsets.all(8),
               ),
               onPressed: () {
-                context.goNamed('favouriteDoctors');
+                context.goNamed(RouteConstants.favouriteDoctors);
               },
             ),
             SizedBox(width: 8),
@@ -44,7 +44,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                 padding: const EdgeInsets.all(8),
               ),
               onPressed: () {
-                context.goNamed('appointmentHistory');
+                context.goNamed(RouteConstants.bookedAppointments);
               },
             ),
             SizedBox(width: 16),

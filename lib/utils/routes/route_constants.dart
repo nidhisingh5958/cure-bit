@@ -33,7 +33,7 @@ class RouteConstants {
   static String bookedAppointments = "bookedAppointments";
   static String bookAppointment = "bookAppointment";
   static String appointmentDetails = "appointmentDetails";
-  static String favoriteDoctors = "favoriteDoctors";
+  static String favouriteDoctors = "favouriteDoctors";
 
   // chat bot routes
   static String chatBot = "chatBot";

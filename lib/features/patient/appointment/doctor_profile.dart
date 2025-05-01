@@ -63,7 +63,7 @@ class _DoctorProfileState extends State<DoctorProfile>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: blueish,
+        backgroundColor: const Color.fromARGB(255, 207, 221, 233),
         // Using the consistent header component
         appBar: AppHeader(
           title: 'Doctor Profile',
@@ -87,16 +87,16 @@ class _DoctorProfileState extends State<DoctorProfile>
 
   Widget _buildProfileHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(16),
+        // margin: EdgeInsets.fromLTRB(20, 24, 20, 10),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: black.withOpacity(0.05),
+              color: black.withValues(alpha: .05),
               blurRadius: 10,
               spreadRadius: 1,
               offset: Offset(0, 4),
@@ -105,86 +105,128 @@ class _DoctorProfileState extends State<DoctorProfile>
         ),
         child: Column(
           children: [
-            // Profile image with shadow and border
+            // Background header with gradient or image
             Container(
+              height: 120,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: black.withValues(alpha: .1),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: white,
-                child: CircleAvatar(
-                  radius: 48,
-                  backgroundColor: grey200,
-                  child: Icon(
-                    Icons.person,
-                    size: 55,
-                    color: grey400,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
+                // gradient: LinearGradient(
+                //   begin: Alignment.topLeft,
+                //   end: Alignment.bottomRight,
+                //   colors: [
+                //     blueish.withValues(alpha: .7),
+                //     blueish.withValues(alpha: .3),
+                //   ],
+                // ),
+                image: DecorationImage(
+                  image: AssetImage('assets/images/header_bg.jpg'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).primaryColor.withValues(alpha: .3),
+                    BlendMode.darken,
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            // Doctor name and details
-            Text(
-              'Dr. Sarah Johnson',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-              softWrap: true,
-              overflow: TextOverflow.visible,
-            ),
-            SizedBox(height: 6),
-            Text(
-              'Cardiologist',
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 8),
-            // Rating display with improved styling
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: .15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.star, color: Colors.amber, size: 20),
-                  SizedBox(width: 5),
-                  Text(
-                    '5.0',
-                    style: TextStyle(
-                      color: Colors.amber[800],
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+
+            // Profile image with overlap and shadow
+            Transform.translate(
+              offset: Offset(0, -50),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: black.withValues(alpha: .1),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                      offset: Offset(0, 4),
                     ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: white,
+                  child: CircleAvatar(
+                    radius: 48,
+                    backgroundColor: grey200,
+                    backgroundImage: AssetImage('assets/images/girl.jpeg'),
+                    // child: Icon(
+                    //   Icons.person,
+                    //   size: 55,
+                    //   color: grey400,
+                    // ),
                   ),
-                  Text(
-                    ' (124 reviews)',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-            SizedBox(height: 16),
-            _buildActionButtons(),
+
+            // Negative margin to compensate for the transform
+            Transform.translate(
+              offset: Offset(0, -35),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    // Doctor name and details
+                    Text(
+                      'Dr. Sarah Johnson',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      softWrap: true,
+                      overflow: TextOverflow.visible,
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      'Cardiologist',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    // Rating display with improved styling
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: .15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 20),
+                          SizedBox(width: 5),
+                          Text(
+                            '5.0',
+                            style: TextStyle(
+                              color: Colors.amber[800],
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            ' (124 reviews)',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    _buildActionButtons(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -198,7 +240,9 @@ class _DoctorProfileState extends State<DoctorProfile>
       children: [
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              context.goNamed(RouteConstants.chat);
+            },
             icon: Icon(Icons.message_outlined),
             label: Text('Message'),
             style: ElevatedButton.styleFrom(

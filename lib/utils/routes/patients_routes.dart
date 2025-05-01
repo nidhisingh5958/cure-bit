@@ -92,7 +92,7 @@ List<RouteBase> get patientRoutes {
         GoRoute(
           path: 'favourites',
           parentNavigatorKey: rootNavigatorKey,
-          name: RouteConstants.favoriteDoctors,
+          name: RouteConstants.favouriteDoctors,
           builder: (context, state) => const FavouritesPage(),
         ),
       ],
