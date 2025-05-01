@@ -1,6 +1,8 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PersonalProfile extends StatefulWidget {
   const PersonalProfile({super.key});
@@ -25,9 +27,9 @@ class _PersonalProfileState extends State<PersonalProfile> {
         title: 'Profile',
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.edit_note_outlined),
             onPressed: () {
-              // Implement search functionality
+              context.pushNamed(RouteConstants.editProfile);
             },
           ),
         ],
@@ -159,75 +161,6 @@ class _PersonalProfileState extends State<PersonalProfile> {
               ),
             ],
           ),
-
-          const SizedBox(height: 20),
-
-          // Action buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildActionButton('Follow', Icons.person_add_outlined),
-              const SizedBox(width: 15),
-              _buildActionButton('Message', Icons.message_outlined),
-              const SizedBox(width: 15),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: grey200,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  '...',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: grey600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 15),
-
-          // Bio/Description
-          const Text(
-            'CEO of sh.agency,\nUI Designer, Young Entrepreneur',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(String text, IconData icon) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: white,
-        foregroundColor: Colors.black87,
-        elevation: 0,
-        side: BorderSide(color: grey200),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        minimumSize: const Size(110, 36),
-      ),
-      onPressed: () {},
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16),
-          const SizedBox(width: 6),
-          Text(text),
         ],
       ),
     );
@@ -254,7 +187,7 @@ class _PersonalProfileState extends State<PersonalProfile> {
           const Text(
             'Information',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -263,8 +196,9 @@ class _PersonalProfileState extends State<PersonalProfile> {
           // Website
           _buildInfoItem(
             icon: Icons.language,
-            label: 'Website',
-            value: 'www.sh.agency',
+            label: 'Date of Birth',
+            value: 'January 1, 1990',
+            description: 'Age: 35 yrs 4 months',
           ),
 
           const _ProfileDivider(),

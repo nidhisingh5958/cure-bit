@@ -1,6 +1,8 @@
 import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:CuraDocs/components/pop_up.dart';
 
 class FavouritesPage extends StatefulWidget {
   const FavouritesPage({super.key});
@@ -15,30 +17,48 @@ class _FavouritesPageState extends State<FavouritesPage> {
     return Scaffold(
       appBar: AppHeader(
         title: 'Favourites',
+        onBackPressed: () => context.pop(),
+        actions: [
+          PopupMenuHelper.buildPopupMenu(
+            context,
+            onSelected: (value) {
+              if (value == 'add') {
+                // context.goNamed(RouteConstants.bookAppointment);
+              } else if (value == 'help') {
+                context.goNamed(RouteConstants.help);
+              }
+            },
+            optionsList: [
+              {'add': 'Add a Doctor'},
+              {'help': 'Help'},
+            ],
+          ),
+        ],
       ),
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: const CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://via.placeholder.com/150'), // Placeholder image
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Your Favourite Doctors',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            title: const Text('Doctor Name'),
-            subtitle: const Text('Specialization'),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                // Handle delete action
-              },
-            ),
-          );
-        },
+            const SizedBox(height: 16),
+            _buildLikedDoctorCategory(context),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTopDoctorCategory(BuildContext context) {
+  Widget _buildLikedDoctorCategory(BuildContext context) {
     final items = [
       {
         'image': 'images/doctor.jpg',
@@ -76,41 +96,6 @@ class _FavouritesPageState extends State<FavouritesPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Top Doctors',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.primary,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'See All',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios, size: 12),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
         ListView.builder(
           padding: EdgeInsets.symmetric(horizontal: 20),
           physics: NeverScrollableScrollPhysics(),

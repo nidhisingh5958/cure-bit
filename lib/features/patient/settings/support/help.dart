@@ -1,4 +1,9 @@
+import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
@@ -6,40 +11,53 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        backgroundColor: Colors.cyan,
-        centerTitle: true,
-        title: const Padding(
-          padding: EdgeInsets.all(50.0),
-          child: Text(
-            'Project X',
-            style: TextStyle(
-              fontSize: 30,
-            ),
+      appBar: AppHeader(
+        onBackPressed: () => context.goNamed(RouteConstants.profileSettings),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              // Implement search functionality
+            },
           ),
-        ),
+        ],
+        backgroundColor: greyWithGreenTint,
+        centerTitle: true,
+        title: 'Help',
       ),
-      backgroundColor: const Color.fromRGBO(244, 246, 245, 1),
-      body: const Column(
+      backgroundColor: const Color.fromARGB(255, 235, 240, 237),
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 30),
-          Center(
-            child: Text(
-              'Help Screen',
-              style: TextStyle(
-                fontSize: 20,
-                color: Color.fromRGBO(117, 117, 117, 1),
-              ),
-            ),
+          _buildSettingsItem(
+            title: 'Report a problem',
+            onTap: () {},
           ),
-          SizedBox(height: 30),
+          _buildSettingsItem(
+            title: 'Account Status',
+            onTap: () {},
+          ),
+          _buildSettingsItem(
+            title: 'Help Center',
+            onTap: () {},
+          ),
+          _buildSettingsItem(
+            title: 'Privacy and security help',
+            onTap: () {},
+          ),
+          _buildSettingsItem(
+            title: 'Support request',
+            onTap: () {},
+          ),
+
+          Spacer(),
+
+          // attention needed should be chnaged in future --------
           Center(
             child: Text(
               'Feel Free to contact our Customer support',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 14,
                 color: Colors.grey,
               ),
             ),
@@ -48,24 +66,63 @@ class HelpScreen extends StatelessWidget {
             child: Text(
               'team for any queries or issues at',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 14,
                 color: Colors.grey,
               ),
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 10,
           ),
           Center(
             child: Text(
-              'Email: support@projectx.com',
+              'Email: support@curadocs.in',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 14,
                 color: Colors.grey,
               ),
             ),
           ),
+          SizedBox(
+            height: 26,
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsItem({
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: ListTile(
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: black,
+            ),
+          ),
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: grey600,
+                    fontSize: 14,
+                  ),
+                )
+              : null,
+          trailing: Icon(
+            Icons.chevron_right,
+            color: grey400,
+          ),
+        ),
       ),
     );
   }

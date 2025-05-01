@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               icon: Icons.lock,
               title: 'Security and login',
               onTap: () {
-                context.goNamed(RouteConstants.personalProfile);
+                context.goNamed(RouteConstants.securitySettings);
               },
             ),
             _buildSettingsItem(

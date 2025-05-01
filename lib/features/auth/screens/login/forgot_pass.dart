@@ -151,7 +151,7 @@ class _EnhancedForgotPassFormState extends State<EnhancedForgotPassForm> {
                 ),
               ),
               GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: () => context.goNamed(RouteConstants.profileSettings),
                 child: Text(
                   "Login",
                   style: TextStyle(

@@ -1,3 +1,4 @@
+import 'package:CuraDocs/features/patient/settings/support/help.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
@@ -55,6 +56,13 @@ List<RouteBase> get patientRoutes {
       ],
     ),
 
+    GoRoute(
+      path: '/help',
+      parentNavigatorKey: rootNavigatorKey,
+      name: RouteConstants.help,
+      builder: (context, state) => HelpScreen(),
+    ),
+
     // Doctor search
     GoRoute(
       path: '/doctor-search',
@@ -93,7 +101,7 @@ List<RouteBase> get patientRoutes {
           path: 'favourites',
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.favouriteDoctors,
-          builder: (context, state) => const FavouritesPage(),
+          builder: (context, state) => FavouritesPage(),
         ),
       ],
     ),
