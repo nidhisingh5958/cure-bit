@@ -11,22 +11,18 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Builder(
-          builder: (context) => AppHeader(
-            onMenuPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            centerTitle: true,
-            backgroundColor: transparent,
-            foregroundColor: black,
-            elevation: 0,
-            actions: [
-              _buildActionButtons(context),
-            ],
-          ),
-        ),
+      backgroundColor: Colors.white,
+      appBar: AppHeader(
+        onMenuPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0.5,
+        actions: [
+          _buildActionButtons(context),
+        ],
       ),
       drawer: const Drawer(
         child: SideMenu(),
@@ -34,6 +30,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: _buildChatBotFloatingButton(context),
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -47,16 +44,16 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildGreeting(),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
           _buildFeaturesSection(context),
-          const SizedBox(height: 28),
+          const SizedBox(height: 40),
           _buildUpcomingSection(context),
-          const SizedBox(height: 18),
+          const SizedBox(height: 32),
           _buildMedicalRecordsSection(context),
         ],
       ),
@@ -66,8 +63,9 @@ class HomeScreen extends StatelessWidget {
   Widget _buildChatBotFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: white,
-      child: Icon(Icons.chat_bubble_outline),
+      backgroundColor: Colors.black,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
     );
   }
 
@@ -101,11 +99,14 @@ class HomeScreen extends StatelessWidget {
       child: Stack(
         children: [
           IconButton(
-            icon: Icon(icon, color: black),
+            icon: Icon(icon, color: Colors.black),
             onPressed: () => context.goNamed(route),
             style: IconButton.styleFrom(
-              backgroundColor: grey200,
+              backgroundColor: Colors.grey.shade100,
               padding: const EdgeInsets.all(12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
           if (hasNotification)
@@ -116,12 +117,8 @@ class HomeScreen extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.error,
+                  color: Colors.black,
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: transparent,
-                    width: 2,
-                  ),
                 ),
               ),
             ),
@@ -138,32 +135,34 @@ class HomeScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: [
+            children: const [
               Text(
                 'Hello, ',
                 style: TextStyle(
-                  color: black,
-                  fontSize: 30,
+                  color: Colors.black,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                   height: 1.2,
+                  letterSpacing: -0.5,
                 ),
               ),
               Text(
-                name,
+                'Random',
                 style: TextStyle(
-                  fontSize: 30,
-                  color: black,
+                  fontSize: 32,
+                  color: Colors.black,
                   height: 1.2,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 12),
+          const Text(
             'Welcome to your health dashboard',
             style: TextStyle(
               fontSize: 16,
-              color: black.withValues(alpha: 0.8),
+              color: Colors.black54,
               height: 1.5,
             ),
           ),
@@ -200,15 +199,16 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Quick Access',
           style: TextStyle(
-            color: black,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
+            letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         SizedBox(
           width: double.infinity,
           child: Row(
@@ -236,8 +236,8 @@ class HomeScreen extends StatelessWidget {
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
     // Calculate item width based on screen width
-    // Subtracting total horizontal padding (40) and spacing between items (3 * 12 = 36)
-    final itemWidth = (screenWidth - 76) / 4;
+    // Subtracting total horizontal padding (48) and spacing between items (3 * 12 = 36)
+    final itemWidth = (screenWidth - 84) / 4;
 
     return InkWell(
       onTap: onTap,
@@ -246,26 +246,36 @@ class HomeScreen extends StatelessWidget {
         width: itemWidth,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected ? CarouselPink.withValues(alpha: 0.1) : white,
+          color: isSelected ? Colors.black.withOpacity(0.05) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? CarouselPink : grey200,
+            color: isSelected ? Colors.black : Colors.grey.shade300,
             width: isSelected ? 1.5 : 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              offset: const Offset(0, 2),
+              blurRadius: 5,
+              spreadRadius: 0,
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon,
-                color: isSelected ? CarouselPink : black.withValues(alpha: 0.5),
-                size: 24),
-            const SizedBox(height: 10),
+            Icon(
+              icon,
+              color: isSelected ? Colors.black : Colors.black54,
+              size: 26,
+            ),
+            const SizedBox(height: 12),
             Text(
               label,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? CarouselPink : grey800,
+                color: isSelected ? Colors.black : Colors.black87,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,
@@ -281,8 +291,8 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(context, 'Upcoming ', onSeeAll: () {}),
-        const SizedBox(height: 16),
+        _buildSectionHeader(context, 'Upcoming', onSeeAll: () {}),
+        const SizedBox(height: 20),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -312,20 +322,28 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(
-            color: black,
+          style: const TextStyle(
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
+            letterSpacing: -0.3,
           ),
         ),
         TextButton(
           onPressed: onSeeAll,
           style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           child: Row(
             children: const [
-              Text('See All'),
+              Text(
+                'See All',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               SizedBox(width: 4),
               Icon(Icons.arrow_forward, size: 16),
             ],
@@ -348,6 +366,7 @@ class HomeScreen extends StatelessWidget {
       child: Material(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
+        elevation: 0,
         child: InkWell(
           onTap: () {},
           borderRadius: BorderRadius.circular(20),
@@ -355,13 +374,13 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              // border: Border.all(
-              //   color: black,
-              //   width: 1,
-              // ),
+              border: Border.all(
+                color: Colors.grey.shade200,
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.03),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -374,18 +393,15 @@ class HomeScreen extends StatelessWidget {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.1),
+                    color: Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Stack(
+                  child: const Stack(
                     alignment: Alignment.center,
                     children: [
                       Icon(
                         Icons.person_outline,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Colors.black87,
                         size: 32,
                       ),
                     ],
@@ -402,25 +418,25 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: TextStyle(
-                              color: black,
+                            style: const TextStyle(
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
+                              horizontal: 10,
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.withValues(alpha: 0.1),
+                              color: Colors.black.withOpacity(0.06),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(
+                            child: const Text(
                               'Confirmed',
                               style: TextStyle(
-                                color: Colors.green.shade700,
+                                color: Colors.black,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -432,7 +448,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         specialty,
                         style: TextStyle(
-                          color: grey600,
+                          color: Colors.grey.shade700,
                           fontSize: 14,
                         ),
                       ),
@@ -443,7 +459,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             Icons.access_time,
                             time,
-                            Colors.blue,
+                            Colors.black,
                           ),
                           if (rating != null) ...[
                             const SizedBox(width: 12),
@@ -451,7 +467,7 @@ class HomeScreen extends StatelessWidget {
                               context,
                               Icons.star,
                               rating,
-                              Colors.amber,
+                              Colors.black,
                             ),
                           ],
                         ],
@@ -462,9 +478,9 @@ class HomeScreen extends StatelessWidget {
                 // Arrow indicator
                 Container(
                   margin: const EdgeInsets.only(left: 12),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_forward_ios,
-                    color: grey600,
+                    color: Colors.black54,
                     size: 16,
                   ),
                 ),
@@ -480,8 +496,8 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildMedSectionHeader(context, 'Medical Records ', onSeeAll: () {}),
-        const SizedBox(height: 16),
+        _buildSectionHeader(context, 'Medical Records', onSeeAll: () {}),
+        const SizedBox(height: 20),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -489,10 +505,10 @@ class HomeScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             return _buildMedicalRecordsCard(
               context,
-              title: index == 0 ? 'Dr. Jean Grey' : 'Regular Checkup',
-              specialty: index == 0 ? 'Cardiologist' : 'General Practitioner',
-              rating: index == 0 ? '4.8' : null,
-              time: 'Today, ${index == 0 ? '15:00' : '14:00'} PM',
+              title: index == 0 ? 'Blood Test Results' : 'ECG Report',
+              facility: index == 0 ? 'City Medical Lab' : 'Heart Institute',
+              date: 'April ${index == 0 ? '28' : '15'}, 2025',
+              type: index == 0 ? 'Lab Result' : 'Diagnostic',
               index: index,
             );
           },
@@ -501,45 +517,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMedSectionHeader(
-    BuildContext context,
-    String title, {
-    VoidCallback? onSeeAll,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        TextButton(
-          onPressed: onSeeAll,
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.primary,
-          ),
-          child: Row(
-            children: const [
-              Text('See All'),
-              SizedBox(width: 4),
-              Icon(Icons.arrow_forward, size: 16),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildMedicalRecordsCard(
     BuildContext context, {
     required String title,
-    required String specialty,
-    String? rating,
-    required String time,
+    required String facility,
+    required String date,
+    required String type,
     required int index,
   }) {
     return Container(
@@ -547,6 +530,7 @@ class HomeScreen extends StatelessWidget {
       child: Material(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
+        elevation: 0,
         child: InkWell(
           onTap: () {},
           borderRadius: BorderRadius.circular(20),
@@ -554,13 +538,13 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              // border: Border.all(
-              //   color: black,
-              //   width: 1,
-              // ),
+              border: Border.all(
+                color: Colors.grey.shade200,
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.03),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -568,30 +552,29 @@ class HomeScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Doctor/Appointment Avatar
+                // File/Record Icon
                 Container(
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.1),
+                    color: Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       Icon(
-                        Icons.person_outline,
-                        color: Theme.of(context).colorScheme.primary,
+                        index == 0
+                            ? Icons.description_outlined
+                            : Icons.monitor_heart_outlined,
+                        color: Colors.black87,
                         size: 32,
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Appointment Details
+                // Record Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -601,25 +584,25 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: TextStyle(
-                              color: black,
+                            style: const TextStyle(
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
+                              horizontal: 10,
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.withValues(alpha: .1),
+                              color: Colors.black.withOpacity(0.06),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              'Confirmed',
-                              style: TextStyle(
-                                color: Colors.green.shade700,
+                              type,
+                              style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -629,9 +612,9 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        specialty,
+                        facility,
                         style: TextStyle(
-                          color: grey600,
+                          color: Colors.grey.shade700,
                           fontSize: 14,
                         ),
                       ),
@@ -640,19 +623,10 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           _buildInfoChip(
                             context,
-                            Icons.access_time,
-                            time,
-                            Colors.blue,
+                            Icons.calendar_today_outlined,
+                            date,
+                            Colors.black,
                           ),
-                          if (rating != null) ...[
-                            const SizedBox(width: 12),
-                            _buildInfoChip(
-                              context,
-                              Icons.star,
-                              rating,
-                              Colors.amber,
-                            ),
-                          ],
                         ],
                       ),
                     ],
@@ -661,9 +635,9 @@ class HomeScreen extends StatelessWidget {
                 // Arrow indicator
                 Container(
                   margin: const EdgeInsets.only(left: 12),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_forward_ios,
-                    color: grey600,
+                    color: Colors.black54,
                     size: 16,
                   ),
                 ),
@@ -682,9 +656,9 @@ class HomeScreen extends StatelessWidget {
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .1),
+        color: Colors.black.withOpacity(0.06),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -695,7 +669,7 @@ class HomeScreen extends StatelessWidget {
             size: 14,
             color: color,
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(

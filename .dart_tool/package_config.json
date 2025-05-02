@@ -392,6 +392,18 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "qr",
+      "rootUri": "file:///Users/nidhisingh/.pub-cache/hosted/pub.dev/qr-3.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "qr_flutter",
+      "rootUri": "file:///Users/nidhisingh/.pub-cache/hosted/pub.dev/qr_flutter-4.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "riverpod",
       "rootUri": "file:///Users/nidhisingh/.pub-cache/hosted/pub.dev/riverpod-2.6.1",
       "packageUri": "lib/",
@@ -614,7 +626,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-04-20T16:08:52.550870Z",
+  "generated": "2025-05-02T10:01:40.321464Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/nidhisingh/Developer/flutter",

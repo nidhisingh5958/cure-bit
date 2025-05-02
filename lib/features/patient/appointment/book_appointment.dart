@@ -1,11 +1,9 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/features/patient/appointment/components/problem_selection_widget.dart';
 import 'package:CuraDocs/features/patient/appointment/success_screen.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -54,15 +52,6 @@ class _BookAppointmentState extends State<BookAppointment> {
   void onQueryChanged(String newQuery) {
     setState(() {
       query = newQuery;
-    });
-  }
-
-  // delete items function to clear the text
-  void _deleteItems() {
-    setState(() {
-      _textController.clear();
-      query = '';
-      isExpanded = false;
     });
   }
 
@@ -138,63 +127,117 @@ class _BookAppointmentState extends State<BookAppointment> {
         children: <Widget>[
           _buildDoctorProfile(context),
           SizedBox(height: getProportionateScreenHeight(24)),
-          Text(
-            'Choose a date',
-            style: TextStyle(
-              fontSize: getProportionateScreenWidth(16),
-              fontWeight: FontWeight.w500,
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: const BorderRadius.all(Radius.circular(25)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Choose a date',
+                  style: TextStyle(
+                    fontSize: getProportionateScreenWidth(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: getProportionateScreenHeight(12)),
+                _buildCalendar(),
+              ],
             ),
           ),
-          SizedBox(height: getProportionateScreenHeight(12)),
-          _buildCalendar(),
           SizedBox(height: getProportionateScreenHeight(24)),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Time',
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(16),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(8)),
-                    _buildTimeSelection(),
-                  ],
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: const BorderRadius.all(Radius.circular(25)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
                 ),
-              ),
-              SizedBox(width: getProportionateScreenWidth(16)),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Address',
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(16),
-                        fontWeight: FontWeight.w500,
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Time',
+                        style: TextStyle(
+                          fontSize: getProportionateScreenWidth(16),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(8)),
-                    _buildAddressDisplay(),
-                  ],
+                      SizedBox(height: getProportionateScreenHeight(8)),
+                      _buildTimeSelection(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: getProportionateScreenHeight(24)),
-          Text(
-            'Problem',
-            style: TextStyle(
-              fontSize: getProportionateScreenWidth(16),
-              fontWeight: FontWeight.w500,
+                SizedBox(width: getProportionateScreenWidth(16)),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Address',
+                        style: TextStyle(
+                          fontSize: getProportionateScreenWidth(16),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: getProportionateScreenHeight(8)),
+                      _buildAddressDisplay(),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: getProportionateScreenHeight(8)),
-          _buildProblemSelection(),
+          SizedBox(height: getProportionateScreenHeight(24)),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: const BorderRadius.all(Radius.circular(25)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Problem',
+                  style: TextStyle(
+                    fontSize: getProportionateScreenWidth(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: getProportionateScreenHeight(8)),
+                _buildProblemSelection(),
+              ],
+            ),
+          ),
           SizedBox(height: getProportionateScreenHeight(32)),
           _buildBookButton(),
         ],
@@ -265,7 +308,6 @@ class _BookAppointmentState extends State<BookAppointment> {
     );
   }
 
-  // Updated calendar method that uses the responsive sizing
   Widget _buildCalendar() {
     return buildResponsiveCalendar(
       context,
@@ -436,7 +478,7 @@ Widget buildResponsiveCalendar(
   // Calculate responsive sizes
   final daySize = getProportionateScreenWidth(30); // Base size for day cells
   final dayTextSize = getProportionateScreenWidth(12); // Text size for days
-  final headerTextSize = getProportionateScreenWidth(14); // Size for month name
+  final headerTextSize = getProportionateScreenWidth(16); // Size for month name
   final weekdayTextSize =
       getProportionateScreenWidth(10); // Size for weekday labels
 

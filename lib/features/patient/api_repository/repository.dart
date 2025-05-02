@@ -88,7 +88,7 @@ class SettingsRepository {
     String assist,
     String message,
   ) async {
-    final String apiEndpoint = contact_us;
+    final String apiEndpoint = contactUs;
 
     print('Submitting form:');
     print('Name: $firstName $lastName');

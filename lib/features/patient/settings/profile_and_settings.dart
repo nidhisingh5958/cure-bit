@@ -21,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white70,
+      backgroundColor: grey200,
       appBar: AppHeader(
         title: 'Profile and settings',
         actions: [
@@ -51,132 +51,149 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
 
-            // about account
-            _buildSectionHeader('Your account'),
-            _buildSettingsItem(
-              icon: Icons.account_circle,
-              title: 'Account information',
-              onTap: () {
-                context.goNamed(RouteConstants.personalProfile);
-              },
-            ),
-            _buildSettingsItem(
-              icon: Icons.lock,
-              title: 'Security and login',
-              onTap: () {
-                context.goNamed(RouteConstants.securitySettings);
-              },
-            ),
-            _buildSettingsItem(
-              icon: Icons.notifications,
-              title: 'Notifications',
-              onTap: () {
-                context.goNamed(RouteConstants.notifications);
-              },
-            ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: white,
+                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  _buildSectionHeader('Your account'),
+                  _buildSettingsItem(
+                    icon: Icons.account_circle,
+                    title: 'Account information',
+                    onTap: () {
+                      context.goNamed(RouteConstants.personalProfile);
+                    },
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.lock,
+                    title: 'Security and login',
+                    onTap: () {
+                      context.goNamed(RouteConstants.securitySettings);
+                    },
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.notifications,
+                    title: 'Notifications',
+                    onTap: () {
+                      context.goNamed(RouteConstants.notifications);
+                    },
+                  ),
 
-            // account activity
-            _buildSectionHeader('Your activity'),
-            _buildSettingsItem(
-              icon: Icons.history,
-              title: 'Activity log',
-              onTap: () {
-                context.goNamed(RouteConstants.notifications);
-              },
-            ),
-            _buildSettingsItem(
-              icon: Icons.favorite,
-              title: 'Favorites',
-              onTap: () {
-                context.goNamed(RouteConstants.notifications);
-              },
-            ),
-            _buildSettingsItem(
-              icon: Icons.reviews,
-              title: 'Your reviews',
-              onTap: () {
-                context.goNamed(RouteConstants.notifications);
-              },
-            ),
-            _buildSettingsItem(
-              icon: Icons.medication_liquid,
-              title: 'Medicine Remainder',
-              onTap: () {
-                _buildSwitchItem(
-                  title: 'Medicine Reminder',
-                  value: _medicineModeReminder,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _medicineModeReminder = value;
-                    });
-                  },
-                );
-                _buildSwitchItem(
-                  title: 'Manually add reminders',
-                  value: _manuallyAddReminders,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _manuallyAddReminders = value;
-                    });
-                  },
-                );
-              },
-            ),
+                  // account activity
+                  _buildSectionHeader('Your activity'),
+                  _buildSettingsItem(
+                    icon: Icons.history,
+                    title: 'Activity log',
+                    onTap: () {
+                      context.goNamed(RouteConstants.notifications);
+                    },
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.favorite,
+                    title: 'Favorites',
+                    onTap: () {
+                      context.goNamed(RouteConstants.notifications);
+                    },
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.reviews,
+                    title: 'Your reviews',
+                    onTap: () {
+                      context.goNamed(RouteConstants.notifications);
+                    },
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.medication_liquid,
+                    title: 'Medicine Remainder',
+                    onTap: () {
+                      _buildSwitchItem(
+                        title: 'Medicine Reminder',
+                        value: _medicineModeReminder,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _medicineModeReminder = value;
+                          });
+                        },
+                      );
+                      _buildSwitchItem(
+                        title: 'Manually add reminders',
+                        value: _manuallyAddReminders,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _manuallyAddReminders = value;
+                          });
+                        },
+                      );
+                    },
+                  ),
 
-            // app settings
-            _buildSectionHeader('Your app and media'),
-            _buildSettingsItem(
-              icon: Icons.smartphone,
-              title: 'Device permissions',
-              onTap: () {},
-            ),
-            _buildSettingsItem(
-              icon: Icons.download,
-              title: 'Archiving and downloading',
-              onTap: () {},
-            ),
-            _buildSettingsItem(
-              icon: Icons.accessibility,
-              title: 'Accessibility and translations',
-              onTap: () {},
-            ),
-            _buildSettingsItem(
-              icon: Icons.language,
-              title: 'Language',
-              onTap: () {},
-            ),
-            _buildSettingsItem(
-              icon: Icons.data_usage,
-              title: 'Data usage and media quality',
-              onTap: () {},
-            ),
-            _buildSettingsItem(
-              icon: Icons.web,
-              title: 'App website permissions',
-              onTap: () {},
-            ),
-            _buildSettingsItem(
-              icon: Icons.science,
-              title: 'Early access to features',
-              onTap: () {},
-            ),
+                  // app settings
+                  _buildSectionHeader('Your app and media'),
+                  _buildSettingsItem(
+                    icon: Icons.smartphone,
+                    title: 'Device permissions',
+                    onTap: () {},
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.download,
+                    title: 'Archiving and downloading',
+                    onTap: () {},
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.accessibility,
+                    title: 'Accessibility and translations',
+                    onTap: () {},
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.language,
+                    title: 'Language',
+                    onTap: () {},
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.data_usage,
+                    title: 'Data usage and media quality',
+                    onTap: () {},
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.web,
+                    title: 'App website permissions',
+                    onTap: () {},
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.science,
+                    title: 'Early access to features',
+                    onTap: () {},
+                  ),
 
-            // family settings
-            _buildSectionHeader('For families'),
-            _buildSettingsItem(
-              icon: Icons.home,
-              title: 'Family Center',
-              onTap: () {},
+                  // family settings
+                  _buildSectionHeader('For families'),
+                  _buildSettingsItem(
+                    icon: Icons.home,
+                    title: 'Family Center',
+                    onTap: () {},
+                  ),
+
+                  // login settings
+                  _buildSectionHeader('Login'),
+                  _buildAdditionalSettings('Add account', Colors.blue),
+                  _buildAdditionalSettings('Log out', error),
+                  SizedBox(height: 70),
+                ],
+              ),
             ),
-
-            // login settings
-            _buildSectionHeader('Login'),
-            _buildAdditionalSettings('Add account', Colors.blue),
-            _buildAdditionalSettings('Log out', error),
-
-            SizedBox(height: 70), // Space for bottom navigation
           ],
         ),
       ),
