@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:CuraDocs/features/patient/api_repository/api_constant.dart';
+import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 // import 'package:CuraDocs/models/settings_model.dart';
 
@@ -24,11 +26,71 @@ class AppointmentRepository {
     return ['Appointment 1', 'Appointment 2', 'Appointment 3'];
   }
 
-  // Method to book an appointment
-  Future<void> bookAppointment(String appointment) async {
-    // Simulate a network call or database booking
-    await Future.delayed(Duration(seconds: 1));
-    print('Appointment booked: $appointment');
+  // Book Appointment method
+  Future<bool> bookAppointment(
+    BuildContext context,
+    String docName,
+    String docCIN,
+    String patientName,
+    String patientEmail,
+    String appointmentDate,
+    String appointmentTime,
+  ) async {
+    final String apiEndpoint = patientBookAppointment;
+
+    print('Booking appointment:');
+    print('Doctor Name: $docName');
+    print('Doctor CIN: $docCIN');
+    print('Patient Name: $patientName');
+    print('Patient Email: $patientEmail');
+    print('Appointment Date: $appointmentDate');
+    print('Appointment Time: $appointmentTime');
+
+    Map<String, dynamic> data = {
+      'doctor_name': docName,
+      'doctor_cin': docCIN,
+      'patient_name': patientName,
+      'patient_email': patientEmail,
+      'appointment_date': appointmentDate,
+      'appointment_time': appointmentTime,
+    };
+
+    try {
+      Response response = await post(
+        Uri.parse(apiEndpoint),
+        body: jsonEncode(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Handle success
+        print('Appointment booked successfully');
+        return true; // Return success status
+      } else if (response.statusCode == 400) {
+        // Handle error
+        print('Error: ${response.statusCode}, ${response.body}');
+        showSnackBar(
+            context: context,
+            message:
+                'Failed to book appointment: ${jsonDecode(response.body)['message'] ?? 'Unknown error'}');
+        return false;
+      } else if (response.statusCode >= 500) {
+        showSnackBar(
+            context: context, message: 'Server error. Please try again later');
+        return false;
+      } else {
+        showSnackBar(
+            context: context, message: 'Booking failed. Please try again.');
+        return false;
+      }
+    } catch (e) {
+      print("Appointment booking error: ${e.toString()}");
+      showSnackBar(
+          context: context, message: 'Booking failed. Please try again.');
+      return false;
+    }
   }
 }
 

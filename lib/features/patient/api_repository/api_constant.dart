@@ -1,5 +1,5 @@
 //  appointment
-final appointment =
+final patientBookAppointment =
     'https://a7r3s7iyx1.execute-api.us-east-1.amazonaws.com/Dev/appointment';
 
 //  contact us

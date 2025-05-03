@@ -1,14 +1,14 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:flutter/material.dart';
 
-class BookedAppointments extends StatefulWidget {
-  const BookedAppointments({super.key});
+class MyAppointments extends StatefulWidget {
+  const MyAppointments({super.key});
 
   @override
-  State<BookedAppointments> createState() => _BookedAppointmentsState();
+  State<MyAppointments> createState() => _MyAppointmentsState();
 }
 
-class _BookedAppointmentsState extends State<BookedAppointments> {
+class _MyAppointmentsState extends State<MyAppointments> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

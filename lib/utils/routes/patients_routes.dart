@@ -8,7 +8,7 @@ import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
 import 'package:CuraDocs/features/patient/appointment/doctor_profile.dart';
 import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
-import 'package:CuraDocs/features/patient/appointment/booked_appointments.dart';
+import 'package:CuraDocs/features/patient/appointment/my_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/favourite_doc.dart';
 // chatbot
 import 'package:CuraDocs/features/patient/curabot/chat_bot_home.dart';
@@ -95,7 +95,7 @@ List<RouteBase> get patientRoutes {
           path: 'booked-appointments',
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.bookedAppointments,
-          builder: (context, state) => const BookedAppointments(),
+          builder: (context, state) => const MyAppointments(),
         ),
         GoRoute(
           path: 'favourites',

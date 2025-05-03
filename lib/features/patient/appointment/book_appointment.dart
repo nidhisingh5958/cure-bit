@@ -1,11 +1,18 @@
 import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/features/patient/api_repository/repository.dart';
 import 'package:CuraDocs/features/patient/appointment/components/problem_selection_widget.dart';
 import 'package:CuraDocs/features/patient/appointment/success_screen.dart';
 import 'package:CuraDocs/utils/size_config.dart';
+import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:audioplayers/audioplayers.dart';
+
+final String docCIN = 'dbfshd#455nchs';
+final String docName = 'Dr. Sarah Johnson';
+final String patientName = 'John Doe';
+final String patientEmail = 'johndoe@gmail.com';
 
 class BookAppointment extends StatefulWidget {
   const BookAppointment({super.key});
@@ -21,6 +28,7 @@ class _BookAppointmentState extends State<BookAppointment> {
   int? selectedAddressIndex;
   List<String> selectedProblems = [];
   bool showSuccessScreen = false;
+
   final AudioPlayer audioPlayer = AudioPlayer();
 
   final FocusNode _focusNode = FocusNode();
@@ -53,6 +61,94 @@ class _BookAppointmentState extends State<BookAppointment> {
     setState(() {
       query = newQuery;
     });
+  }
+
+  Future<void> _bookButtomPressed() async {
+    if (isFormValid) {
+      try {
+        // Show loading indicator
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        );
+
+        final appoRepository = AppointmentRepository();
+
+        // Convert selected date to string format expected by API
+        final String formattedDate =
+            DateFormat('yyyy-MM-dd').format(selectedDate);
+
+        // Get the selected time string properly
+        final String selectedTime = timeSlots[selectedTimeIndex!]['time'];
+
+        // Assuming repository.bookAppointment has been modified to return boolean success status
+        // If you can't modify the repository class, use the Completer approach from the previous version
+        bool bookingSuccessful = await appoRepository.bookAppointment(
+          context,
+          docName,
+          docCIN,
+          patientName,
+          patientEmail,
+          formattedDate,
+          selectedTime,
+        );
+
+        // Close loading dialog
+        Navigator.pop(context);
+
+        if (bookingSuccessful) {
+          // Only show success screen after successful API call
+          setState(() {
+            showSuccessScreen = true;
+          });
+
+          // Play sound effect only after successful booking
+          _playSoundEffect();
+
+          // Show success message
+          showSnackBar(
+            context: context,
+            message: 'Appointment booked successfully!',
+          );
+
+          // Reset the form
+          setState(() {
+            selectedDate = DateTime.now();
+            selectedTimeIndex = null;
+            selectedProblems = [];
+          });
+
+          // Hide the success screen after a delay
+          await Future.delayed(Duration(seconds: 3));
+          setState(() {
+            showSuccessScreen = false;
+          });
+        }
+      } catch (e) {
+        // Close loading dialog if still open
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // Show error message to the user
+        showSnackBar(
+          context: context,
+          message: 'Error booking appointment: ${e.toString()}',
+        );
+        print('Appointment booking error: $e');
+      }
+    } else {
+      // Inform user about incomplete form
+      showSnackBar(
+        context: context,
+        message: 'Please complete all required fields',
+      );
+    }
   }
 
   // Time slots with associated addresses
@@ -418,17 +514,7 @@ class _BookAppointmentState extends State<BookAppointment> {
         width: getProportionateScreenWidth(200),
         height: getProportionateScreenHeight(45),
         child: ElevatedButton(
-          onPressed: isFormValid
-              ? () {
-                  // Play success sound
-                  _playSoundEffect();
-
-                  // Show success screen
-                  setState(() {
-                    showSuccessScreen = true;
-                  });
-                }
-              : null,
+          onPressed: isFormValid ? _bookButtomPressed : null,
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius:
