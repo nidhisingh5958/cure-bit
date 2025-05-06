@@ -10,10 +10,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool centerTitle;
   final double elevation;
   final Widget? titleWidget;
+  final Widget? searchBar;
   final Color? backgroundColor;
   final Color? foregroundColor;
   final double height;
   final PreferredSizeWidget? bottom;
+  final bool isTransparent;
+  final EdgeInsetsGeometry? titlePadding;
 
   const AppHeader({
     super.key,
@@ -24,10 +27,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle = true,
     this.elevation = 0,
     this.titleWidget,
+    this.searchBar,
     this.backgroundColor,
     this.foregroundColor,
     this.height = kToolbarHeight,
     this.bottom,
+    this.isTransparent = false,
+    this.titlePadding,
   });
 
   @override
@@ -54,21 +60,33 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       );
     }
 
+    Widget titleContent;
+    if (searchBar != null) {
+      titleContent = Padding(
+        padding: titlePadding ?? const EdgeInsets.symmetric(horizontal: 8.0),
+        child: searchBar!,
+      );
+    } else if (titleWidget != null) {
+      titleContent = titleWidget!;
+    } else {
+      titleContent = Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: foregroundColor ?? theme.colorScheme.onSurface,
+        ),
+      );
+    }
+
     return AppBar(
       elevation: elevation,
-      centerTitle: true,
+      centerTitle: searchBar != null ? false : centerTitle,
       backgroundColor: backgroundColor ?? transparent,
       foregroundColor: foregroundColor ?? theme.colorScheme.primary,
-      leading: leadingWidget,
-      title: titleWidget ??
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: foregroundColor ?? theme.colorScheme.onSurface,
-            ),
-          ),
+      leadingWidth: leadingWidget != null ? 48 : 16,
+      leading: leadingWidget ?? const SizedBox(width: 16),
+      title: titleContent,
       actions: actions,
       toolbarHeight: height,
       automaticallyImplyLeading:
@@ -80,16 +98,18 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
               ),
             )
           : null,
-      titleTextStyle: const TextStyle(
-        color: Color(0xFF1A1A1A),
+      titleSpacing: 0.0,
+      titleTextStyle: TextStyle(
+        color: foregroundColor ?? const Color(0xFF1A1A1A),
         fontSize: 18,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.3,
       ),
-      systemOverlayStyle: const SystemUiOverlayStyle(
+      systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness:
+            isTransparent ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isTransparent ? Brightness.dark : Brightness.light,
       ),
       bottom: bottom,
     );

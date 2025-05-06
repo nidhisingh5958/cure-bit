@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 const Color black = Colors.black;
 final Color grey600 = Colors.grey.shade600; //color3 --600
+final Color grey100 = Colors.grey.shade100;
 final Color grey200 = Colors.grey.shade200;
 final Color grey800 = Colors.grey.shade800;
 final Color grey400 = Colors.grey.shade400;

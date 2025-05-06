@@ -439,9 +439,9 @@ class _DoctorProfileState extends State<DoctorProfile>
         SizedBox(height: 12),
         _buildInfoRow('Qualification', 'MBBS, MD'),
         SizedBox(height: 12),
-        _buildInfoRow('Location', 'Chandni Chowk, Delhi'),
+        _buildInfoRow('Rating', '4.8'),
         SizedBox(height: 12),
-        _buildInfoRow('Years of experience', '8'),
+        _buildInfoRow('Years of experience', '8 +'),
         SizedBox(height: 12),
         _buildInfoRow('Patients attended', '2.4K +'),
       ],
@@ -456,15 +456,26 @@ class _DoctorProfileState extends State<DoctorProfile>
           label,
           style: TextStyle(
             fontSize: 16,
-            color: Colors.grey[600],
+            color: grey600,
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (label == 'Rating')
+              Icon(
+                Icons.star,
+                color: Colors.amber,
+                size: 16,
+              ),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ],
     );

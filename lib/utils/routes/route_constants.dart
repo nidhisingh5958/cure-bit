@@ -50,7 +50,7 @@ class RouteConstants {
   static String testRecords = "testRecords";
   static String addDocument = "addDocument";
   static String doctorProfile = "doctorProfile";
-  static String doctorSearch = "doctorSearch";
+  static String doctorSearch = "doctorSearch"; // doctor search screen
   static String myDoctors = "myDoctors";
 
   // settings routes
