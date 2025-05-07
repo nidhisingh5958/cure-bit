@@ -4,6 +4,7 @@ import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -46,13 +47,12 @@ class HomeScreen extends StatelessWidget {
             end: Alignment.bottomCenter,
             colors: [
               grey200.withValues(alpha: .8),
-              grey200.withValues(alpha: 0.6),
+              grey200.withValues(alpha: .6),
             ],
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 SizedBox(height: 16),
@@ -90,7 +90,6 @@ class HomeScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const Divider(height: 1),
                       _buildShoppingSection(context),
                     ],
                   ),
@@ -429,7 +428,7 @@ class HomeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: grey100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -449,17 +448,65 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildFeaturesGrid(BuildContext context) {
     final categories = [
-      {'icon': Icons.calendar_today, 'label': 'Booking'},
-      {'icon': Icons.health_and_safety, 'label': 'Health Records'},
+      {
+        'icon': Icons.calendar_today,
+        'label': 'Booking',
+        'onTap': () {
+          context.goNamed(RouteConstants.appointmentHome);
+        }
+      },
+
+      {
+        'icon': MdiIcons.prescription,
+        'label': 'Health Records',
+        'onTap': () {
+          context.goNamed(RouteConstants.prescription);
+        }
+      },
+      {
+        'icon': MdiIcons.heartPulse,
+        'label': 'Health Monitoring',
+        'onTap': () {
+          context.goNamed(RouteConstants.healthMonitoring);
+        }
+      },
+      {
+        'icon': MdiIcons.testTube,
+        'label': 'Test Records',
+        'onTap': () {
+          context.goNamed(RouteConstants.testRecords);
+        }
+      },
+      {
+        'icon': MdiIcons.pill,
+        'label': 'Medicines',
+        'onTap': () {
+          context.goNamed(RouteConstants.medicineReminder);
+        }
+      },
+      {
+        'icon': MdiIcons.stethoscope,
+        'label': 'My Doctors',
+        'onTap': () {
+          context.goNamed(RouteConstants.myDoctors);
+        }
+      },
+
+      {
+        'icon': MdiIcons.doctor,
+        'label': 'My Appointments',
+        'onTap': () {
+          context.goNamed(RouteConstants.bookedAppointments);
+        }
+      },
+      {
+        'icon': Icons.app_registration_outlined,
+        'label': 'More..',
+        'onTap': () {}
+      },
       // {'icon': Icons.medical_services, 'label': 'Medical History'},
       // {'icon': Icons.local_hospital, 'label': 'Hospitals'},
       // {'icon': Icons.local_pharmacy, 'label': 'Pharmacies'},
-      {'icon': Icons.health_and_safety_outlined, 'label': 'Health Tips'},
-      {'icon': Icons.science, 'label': 'Test Records'},
-      {'icon': Icons.medication, 'label': 'Medicines'},
-      {'icon': Icons.medical_services, 'label': 'My Doctors'},
-      {'icon': Icons.app_registration_outlined, 'label': 'My Appointments'},
-      {'icon': Icons.toys, 'label': 'Toys'},
     ];
 
     return GridView.builder(
@@ -484,7 +531,16 @@ class HomeScreen extends StatelessWidget {
                 color: grey200,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(category['icon'] as IconData, color: grey800),
+              child: IconButton(
+                icon: Icon(category['icon'] as IconData, color: grey800),
+                onPressed: () {
+                  if (category['onTap'] != null) {
+                    (category['onTap'] as Function)();
+                  } else {
+                    context.goNamed(RouteConstants.doctorSearch);
+                  }
+                },
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -505,7 +561,6 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildPromotionBanner() {
     return Container(
-      width: double.infinity,
       height: 150,
       decoration: BoxDecoration(
         gradient: LinearGradient(

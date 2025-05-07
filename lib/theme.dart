@@ -10,6 +10,8 @@ ThemeData theme() {
     inputDecorationTheme: inputDecorationTheme(),
     textTheme: textTheme(),
     elevatedButtonTheme: elevatedButtonsTheme(),
+    primaryColor: Colors.black,
+    primarySwatch: Colors.grey,
   );
 }
 
@@ -85,24 +87,6 @@ ElevatedButtonThemeData elevatedButtonsTheme() {
         fontWeight: FontWeight.w600,
         letterSpacing: -0.2,
       ),
-    ),
-  );
-}
-
-Container containerThemeData() {
-  return Container(
-    width: double.infinity,
-    padding: EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: white,
-      borderRadius: const BorderRadius.all(Radius.circular(25)),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black12,
-          blurRadius: 10,
-          offset: Offset(0, 4),
-        ),
-      ],
     ),
   );
 }

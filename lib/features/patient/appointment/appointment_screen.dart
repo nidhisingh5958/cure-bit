@@ -77,7 +77,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           end: Alignment.bottomCenter,
           colors: [
             Theme.of(context).colorScheme.primary.withValues(alpha: .05),
-            Colors.transparent,
+            transparent,
           ],
         ),
       ),
@@ -89,7 +89,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: .1),
+                  color: black.withValues(alpha: .1),
                   blurRadius: 10,
                   spreadRadius: 1,
                   offset: Offset(0, 2),
@@ -110,7 +110,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                   'Hello, Akshay',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: grey600,
                   ),
                 ),
                 SizedBox(height: 5),
@@ -126,8 +126,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                 SizedBox(height: 5),
                 Row(
                   children: [
-                    Icon(Icons.location_on,
-                        color: Theme.of(context).colorScheme.primary, size: 16),
+                    Icon(Icons.location_on, color: grey600, size: 16),
                     SizedBox(width: 5),
                     Text(
                       'Delhi, India',
@@ -161,12 +160,12 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                   hintText: 'Search doctors, specialties...',
                   prefixIcon: Icon(
                     Icons.search,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: black.withValues(alpha: .5),
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(vertical: 12),
                   hintStyle: TextStyle(
-                    color: Colors.grey[400],
+                    color: grey400,
                     fontSize: 14,
                   ),
                 ),
@@ -178,8 +177,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
               height: 36,
               width: 36,
               decoration: BoxDecoration(
-                color:
-                    Theme.of(context).colorScheme.primary.withValues(alpha: .1),
+                color: grey600.withValues(alpha: .1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(

@@ -27,6 +27,7 @@ class RouteConstants {
   // inner routes
   static String home = "home";
   static String medicineReminder = "medicineReminder";
+  static String healthMonitoring = "healthMonitoring";
 
   // appointments routes
   static String appointmentHome = "appointmentHome";
