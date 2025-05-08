@@ -12,7 +12,7 @@ void main() async {
   // Initialize router (which loads SharedPreferences)
   final router = await routerFuture;
 
-  runApp(MyApp(router: router));
+  runApp(ProviderScope(child: MyApp(router: router)));
 }
 
 class MyApp extends StatelessWidget {

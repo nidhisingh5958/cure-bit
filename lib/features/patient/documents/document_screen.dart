@@ -1,5 +1,7 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/features/patient/documents/data/sample.dart'
+    show patientData;
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +105,7 @@ class _DocumentScreenState extends State<DocumentScreen>
           TimelineScreen(
             timelineData: timelineData,
           ),
-          PrescriptionScreen(prescriptionData: prescriptionData),
+          PatientManagementScreen(patientData: patientData),
           TestRecordsScreen(testRecordData: testRecordData),
         ],
       ),

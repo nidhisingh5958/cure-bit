@@ -42,7 +42,6 @@ dependencies:
   country_picker: ^2.0.27
   url_launcher: ^6.0.9
   shared_preferences: ^2.2.0
-  riverpod: ^2.6.1
   flutter_lints: ^5.0.0
   qr_flutter: ^4.1.0
 
