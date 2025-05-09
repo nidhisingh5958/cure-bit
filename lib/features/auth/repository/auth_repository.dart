@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:CuraDocs/features/auth/repository/api_const.dart';
 import 'package:CuraDocs/models/user_model.dart';
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -11,6 +12,7 @@ import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Helper method to validate email
 bool _isValidEmail(String email) {
@@ -30,10 +32,11 @@ Future<bool> verify(String hashedPassword, String plainPassword) async {
   return BCrypt.checkpw(plainPassword, hashedPassword);
 }
 
-class AuthRepository {
+abstract class AuthRepository {
   // sign in with password
   Future<void> signInWithPass(
     BuildContext context,
+    WidgetRef ref,
     String input,
     String password,
     String role, {
@@ -93,7 +96,8 @@ class AuthRepository {
           }
 
           // Set user as authenticated with the specific role
-          await AppRouter.setAuthenticated(true, role);
+          ref.read(authStateProvider.notifier).setAuthenticated(true, role);
+
           showSnackBar(context: context, message: 'Login successful');
 
           // Router will redirect to appropriate home screen based on role
@@ -203,6 +207,7 @@ class AuthRepository {
   // sign in with OTP
   Future<void> verifyOtp(
     BuildContext context,
+    WidgetRef ref,
     String identifier,
     String otp,
     String role,
@@ -264,7 +269,8 @@ class AuthRepository {
           }
 
           // Set user as authenticated with the specific role
-          await AppRouter.setAuthenticated(true, role);
+          ref.read(authStateProvider.notifier).setAuthenticated(true, role);
+
           showSnackBar(context: context, message: 'Login successful');
 
           // Router will redirect to appropriate home screen based on role
@@ -303,6 +309,7 @@ class AuthRepository {
   // normal sign up
   Future<UserModel> signUp(
     BuildContext context,
+    WidgetRef ref,
     String firstName,
     String lastName,
     String email,
@@ -350,7 +357,8 @@ class AuthRepository {
       }
 
       // Set user as authenticated with the specific role
-      await AppRouter.setAuthenticated(true, role);
+      ref.read(authStateProvider.notifier).setAuthenticated(true, role);
+
       showSnackBar(context: context, message: 'Sign up successful');
 
       // Router will redirect to appropriate home screen based on role
@@ -501,15 +509,19 @@ class AuthRepository {
     }
   }
 
-// sign out method
-  Future<void> signOut(BuildContext context) async {
+  // log out method
+  Future<void> logOut(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     try {
       // Clear authentication state
-      await AppRouter.setAuthenticated(false, '');
-      showSnackBar(context: context, message: 'Signed out successfully');
+      ref.read(authStateProvider.notifier).signOut();
+
+      showSnackBar(context: context, message: 'Logged out successfully');
     } catch (e) {
       showSnackBar(
-          context: context, message: 'Sign out failed. Please try again.');
+          context: context, message: 'Log out failed. Please try again.');
     }
   }
 }

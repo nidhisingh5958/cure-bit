@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
 import 'package:CuraDocs/features/auth/landing/splash_screen.dart';
 
 import 'package:CuraDocs/features/patient/settings/support/contact_us.dart';
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:CuraDocs/utils/routes/doctor_routes.dart';
 import 'package:CuraDocs/utils/routes/patients_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,50 +23,12 @@ import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 const bool isDev = true; // Set to false before release
 
 class AppRouter {
-  // SharedPreferences keys
-  static const String _isFirstLaunchKey = 'isFirstLaunch';
-  static const String _isAuthenticatedKey = 'isAuthenticated';
-  static const String _userRoleKey = 'userRole';
-
-  static late bool _isFirstLaunch;
-  static late bool _isAuthenticated;
-  static late String _userRole;
-
-  // Initialize the router with necessary checks
-  static Future<GoRouter> initRouter() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (isDev) {
-      _isFirstLaunch = false;
-      _isAuthenticated = true;
-      _userRole = 'Patient'; // or 'Doctor'
-    } else {
-      _isFirstLaunch = prefs.getBool(_isFirstLaunchKey) ?? true;
-      _isAuthenticated = prefs.getBool(_isAuthenticatedKey) ?? false;
-      _userRole = prefs.getString(_userRoleKey) ?? 'Patient';
-
-      if (_isFirstLaunch) {
-        await prefs.setBool(_isFirstLaunchKey, false);
-      }
-    }
-
-    // // Load preferences
-    // final prefs = await SharedPreferences.getInstance();
-    // _isFirstLaunch = prefs.getBool(_isFirstLaunchKey) ?? true;
-    // _isAuthenticated = prefs.getBool(_isAuthenticatedKey) ?? false;
-    // _userRole = prefs.getString(_userRoleKey) ?? 'Patient';
-
-    // // If this is the first launch, set the flag for future
-    // if (_isFirstLaunch) {
-    //   await prefs.setBool(_isFirstLaunchKey, false);
-    // }
-
+  static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
     return GoRouter(
       navigatorKey: rootNavigatorKey,
       initialLocation: isDev ? '/home' : '/',
       debugLogDiagnostics: true,
       routes: [
-        // Auth and onboarding routes (outside shell)
         GoRoute(
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.splash,
@@ -105,94 +71,57 @@ class AppRouter {
             ),
           ],
         ),
-
         GoRoute(
             path: '/contactUs',
             name: RouteConstants.contactUs,
             builder: (context, state) {
               return const ContactUsScreen();
             }),
-
-        // Add all patient routes
         ...patientRoutes,
-
-        // Add all doctor routes
         ...doctorRoutes,
       ],
-      // Redirect logic
-      redirect: (BuildContext context, GoRouterState state) {
-        // Always allow access to splash screen
-        if (state.matchedLocation == '/') {
-          return null;
+      redirect: (context, state) {
+        final auth = ref.read(authStateProvider);
+
+        final isGoingToAuthRoute = state.matchedLocation.startsWith('/login') ||
+            state.matchedLocation.startsWith('/sign-up') ||
+            state.matchedLocation.startsWith('/onboarding') ||
+            state.matchedLocation.startsWith('/role');
+
+        if (auth.isAuthenticated && isGoingToAuthRoute) {
+          return auth.role == 'Doctor' ? '/doctor/home' : '/home';
         }
 
-        // Check if user is trying to access auth routes
-        final isGoingToAuthRoute = state.matchedLocation == '/login' ||
-            state.matchedLocation.startsWith('/login/') ||
-            state.matchedLocation == '/sign-up' ||
-            state.matchedLocation == '/onboarding' ||
-            state.matchedLocation == '/role';
-
-        // If authenticated, prevent going to auth routes
-        if (_isAuthenticated && isGoingToAuthRoute) {
-          // Redirect to the appropriate dashboard based on role
-          return _userRole == 'Doctor' ? '/doctor/home' : '/home';
-        }
-
-        // If not authenticated, prevent access to protected routes
-        if (!_isAuthenticated && !isGoingToAuthRoute) {
-          // First-time users should see onboarding
-          if (_isFirstLaunch) {
-            return '/onboarding';
-          }
-          // Send to role selection first
+        if (!auth.isAuthenticated && !isGoingToAuthRoute) {
           return '/role';
         }
 
-        // No redirects needed
         return null;
       },
-      refreshListenable: AuthStateNotifier(),
+      refreshListenable: GoRouterRefreshStream(
+        ref.watch(authStateProvider.notifier).stream,
+      ),
     );
   }
-
-  // Method to set user as authenticated
-  static Future<void> setAuthenticated(bool value, [String? role]) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_isAuthenticatedKey, value);
-    _isAuthenticated = value;
-
-    // If role is provided, save it
-    if (role != null) {
-      await prefs.setString(_userRoleKey, role);
-      _userRole = role;
-    }
-
-    // Notify listeners to refresh the router
-    AuthStateNotifier().notifyListeners();
-  }
-
-  // Method to get the current user role
-  static Future<String> getUserRole() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_userRoleKey) ?? 'Patient';
-  }
 }
 
-// Class to notify the router when auth state changes
-class AuthStateNotifier extends ChangeNotifier {
-  static final AuthStateNotifier _instance = AuthStateNotifier._internal();
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+          (_) => notifyListeners(),
+        );
+  }
 
-  factory AuthStateNotifier() => _instance;
+  late final StreamSubscription<dynamic> _subscription;
 
-  AuthStateNotifier._internal();
-
-  // Override to prevent potential memory issues
   @override
   void dispose() {
-    // Don't call super.dispose() as this is a singleton
+    _subscription.cancel();
+    super.dispose();
   }
 }
 
-// Initialize the router
-final routerFuture = AppRouter.initRouter();
+final routerFutureProvider = FutureProvider<GoRouter>((ref) async {
+  return await AppRouter.initRouter(ref);
+});

@@ -2,6 +2,7 @@ import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/screens/login/otp_sheet.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
@@ -132,7 +133,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             Navigator.of(context).pop();
 
             // Then set the authentication state
-            await AppRouter.setAuthenticated(true, _role);
+            ref.read(authStateProvider.notifier).setAuthenticated(true, _role);
 
             // Show success message
             if (mounted) {
