@@ -1,12 +1,14 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
+import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // OTP entry bottom sheet
-class OtpEntrySheet extends StatefulWidget {
+class OtpEntrySheet extends ConsumerStatefulWidget {
   final String identifier;
   final VoidCallback onVerificationComplete;
   final String? countryCode;
@@ -21,10 +23,10 @@ class OtpEntrySheet extends StatefulWidget {
   });
 
   @override
-  State<OtpEntrySheet> createState() => _OtpEntrySheetState();
+  ConsumerState<OtpEntrySheet> createState() => _OtpEntrySheetState();
 }
 
-class _OtpEntrySheetState extends State<OtpEntrySheet> {
+class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
   final List<TextEditingController> _controllers =
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
@@ -88,13 +90,11 @@ class _OtpEntrySheetState extends State<OtpEntrySheet> {
     });
 
     try {
-      final authRepository = AuthRepository();
-
-      // Use the identifier passed from the parent
-      await authRepository.sendOtp(
-        context,
-        widget.identifier,
-        widget.role,
+      final otpController = ref.read(loginWithOtpControllerProvider);
+      await otpController.sendOtp(
+        context: context,
+        identifier: widget.identifier,
+        role: widget.role,
         countryCode: widget.countryCode,
       );
 

@@ -1,24 +1,25 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/screens/login/otp_sheet.dart';
+import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class OtpScreen extends StatefulWidget {
+class OtpScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic>? extra;
   const OtpScreen({this.extra, super.key});
 
   @override
-  State<OtpScreen> createState() => _OtpScreenState();
+  ConsumerState<OtpScreen> createState() => _OtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpScreenState extends ConsumerState<OtpScreen> {
   final _countryCodeController = TextEditingController(text: '+91');
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
@@ -85,14 +86,13 @@ class _OtpScreenState extends State<OtpScreen> {
 
     try {
       if (_formKey.currentState!.validate()) {
-        final authRepository = AuthRepository();
-
-        await authRepository.sendOtp(
-          context,
-          _loginMethod == LoginMethod.email
+        final otpController = ref.read(loginWithOtpControllerProvider);
+        await otpController.sendOtp(
+          context: context,
+          identifier: _loginMethod == LoginMethod.email
               ? _emailController.text
               : _phoneController.text,
-          _role,
+          role: _role,
           countryCode: _loginMethod == LoginMethod.phone
               ? _countryCodeController.text
               : null,

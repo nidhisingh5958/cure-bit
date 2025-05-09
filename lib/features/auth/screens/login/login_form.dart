@@ -1,22 +1,24 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
+import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:country_picker/country_picker.dart';
 
-class LoginForm extends StatefulWidget {
+class LoginForm extends ConsumerStatefulWidget {
   final Map<String, dynamic>? extra;
 
   const LoginForm({super.key, this.extra});
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  ConsumerState<LoginForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _countryCodeController = TextEditingController(text: '+91');
@@ -75,21 +77,20 @@ class _LoginFormState extends State<LoginForm> {
       if (_formKey.currentState!.validate()) {
         setState(() => _isLoading = true);
 
-        final authRepository = AuthRepository();
+        final loginController = ref.read(loginControllerProvider);
 
         // Pass the login method to the sign-up function
-        await authRepository.signInWithPass(
-          context,
-          _loginMethod == LoginMethod.email
+        await loginController.signIn(
+          context: context,
+          input: _loginMethod == LoginMethod.email
               ? _emailController.text
               : _phoneController.text,
-          _passwordController.text,
-          _role,
+          password: _passwordController.text,
+          role: _role,
           countryCode: _loginMethod == LoginMethod.phone
               ? _countryCodeController.text
               : null,
         );
-        await AppRouter.setAuthenticated(true, _role);
         setState(() => _isLoading = false);
       }
     } catch (e) {

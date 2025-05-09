@@ -21,7 +21,7 @@ class TestRecordsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SearchFilter(),
+        SearchWithFilter(),
 
         // Header
         Padding(

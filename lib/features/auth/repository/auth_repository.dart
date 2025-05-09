@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:CuraDocs/features/auth/repository/api_const.dart';
+import 'package:CuraDocs/models/user_model.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -300,7 +301,7 @@ class AuthRepository {
   }
 
   // normal sign up
-  Future<void> signUp(
+  Future<UserModel> signUp(
     BuildContext context,
     String firstName,
     String lastName,
@@ -344,68 +345,39 @@ class AuthRepository {
       print('Response Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
-      // Parse response
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        try {
-          // Parse the response body to check for any error messages
-          Map<String, dynamic> responseData = jsonDecode(response.body);
-
-          // Check if response contains an error field or success status
-          if (responseData.containsKey('error')) {
-            showSnackBar(context: context, message: responseData['error']);
-            return;
-          }
-
-          // Set user as authenticated with the specific role
-          await AppRouter.setAuthenticated(true, role);
-          showSnackBar(context: context, message: 'Sign up successful');
-
-          // Router will redirect to appropriate home screen based on role
-          if (role == 'Doctor') {
-            context.goNamed(RouteConstants.doctorHome);
-          } else {
-            context.goNamed(RouteConstants.home);
-          }
-        } catch (e) {
-          // Handle JSON parse error
-          showSnackBar(
-              context: context, message: 'Invalid response from server');
-        }
-      } else if (response.statusCode == 400) {
-        // Try to parse validation errors
-        try {
-          Map<String, dynamic> responseData = jsonDecode(response.body);
-          String errorMessage = responseData.containsKey('error')
-              ? responseData['error']
-              : 'Sign up failed. Please check your information.';
-          showSnackBar(context: context, message: errorMessage);
-        } catch (e) {
-          showSnackBar(context: context, message: 'Invalid input data');
-        }
-      } else if (response.statusCode == 409) {
-        showSnackBar(
-            context: context, message: 'User with this email already exists');
-      } else if (response.statusCode >= 500) {
-        showSnackBar(
-            context: context, message: 'Server error. Please try again later');
-      } else {
-        showSnackBar(
-            context: context, message: 'Sign up failed. Please try again.');
+      if (response.statusCode != 201) {
+        throw jsonDecode(response.body)['error'] ?? 'Unknown error';
       }
+
+      // Set user as authenticated with the specific role
+      await AppRouter.setAuthenticated(true, role);
+      showSnackBar(context: context, message: 'Sign up successful');
+
+      // Router will redirect to appropriate home screen based on role
+      if (role == 'Doctor') {
+        context.goNamed(RouteConstants.doctorHome);
+      } else {
+        context.goNamed(RouteConstants.home);
+      }
+
+      return UserModel.fromJson(response.body);
     } on FormatException {
       print(email);
       showSnackBar(
         context: context,
         message: 'Invalid response format',
       );
+      throw Exception('Invalid response format');
     } on TimeoutException {
       showSnackBar(
           context: context,
           message: 'Connection timeout. Please check your internet');
+      throw Exception('Connection timeout');
     } catch (e) {
       print("Signup error: ${e.toString()}");
       showSnackBar(
           context: context, message: 'Sign up failed. Please try again. $e');
+      throw Exception('Sign up failed');
     }
   }
 

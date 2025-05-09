@@ -27,7 +27,7 @@ final List<Patient> patientData = [
   Patient(
     name: 'Alex Allan',
     patientId: 'PT-10542',
-    location: 'São Paulo',
+    location: 'New York',
     country: 'BR',
     status: 'Active',
     condition: 'Stable',

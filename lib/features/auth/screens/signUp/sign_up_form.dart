@@ -1,21 +1,22 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
+import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
-class SignUpForm extends StatefulWidget {
+class SignUpForm extends ConsumerStatefulWidget {
   final Map<String, dynamic>? extra;
 
   const SignUpForm({super.key, this.extra});
 
   @override
-  State<SignUpForm> createState() => _SignUpFormState();
+  ConsumerState<SignUpForm> createState() => _SignUpFormState();
 }
 
-class _SignUpFormState extends State<SignUpForm> {
+class _SignUpFormState extends ConsumerState<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   final _firstnameController = TextEditingController();
   final _lastnameController = TextEditingController();
@@ -132,16 +133,16 @@ class _SignUpFormState extends State<SignUpForm> {
     try {
       setState(() => _isLoading = true);
 
-      final authRepository = AuthRepository();
-      await authRepository.signUp(
-        context,
-        _firstnameController.text.toLowerCase(),
-        _lastnameController.text.toLowerCase(),
-        _emailController.text,
-        '+${country!.phoneCode}',
-        _phoneController.text,
-        _passwordController.text,
-        _role,
+      final signUpController = ref.read(signUpControllerProvider);
+      await signUpController.signUp(
+        context: context,
+        firstName: _firstnameController.text.toLowerCase(),
+        lastName: _lastnameController.text.toLowerCase(),
+        email: _emailController.text,
+        countryCode: '+${country!.phoneCode}',
+        phoneNumber: _phoneController.text,
+        password: _passwordController.text,
+        role: _role,
       );
     } catch (e) {
       showSnackBar(
@@ -222,11 +223,10 @@ class _SignUpFormState extends State<SignUpForm> {
 
       startEmailResendTimer();
 
-      final authRepository = AuthRepository();
-      bool sent = await authRepository.signupOtp(
-        context,
-        emailValue,
-        null, // No country code for email
+      final signUpController = ref.read(signUpControllerProvider);
+      bool sent = await signUpController.sendSignupOtp(
+        context: context,
+        identifier: _emailController.text,
       );
 
       if (sent) {
@@ -265,12 +265,11 @@ class _SignUpFormState extends State<SignUpForm> {
         return;
       }
 
-      final authRepository = AuthRepository();
-      bool verified = await authRepository.verifySignupOtp(
-        context,
-        _emailController.text,
-        plainOtp,
-        null, // No country code for email
+      final signUpController = ref.read(signUpControllerProvider);
+      bool verified = await signUpController.verifySignupOtp(
+        context: context,
+        identifier: _emailController.text,
+        plainOtp: _otpController.text,
       );
 
       if (verified) {
@@ -326,11 +325,11 @@ class _SignUpFormState extends State<SignUpForm> {
       // Start the resend timer
       startPhoneResendTimer();
 
-      final authRepository = AuthRepository();
-      bool sent = await authRepository.signupOtp(
-        context,
-        phoneValue,
-        '+${country!.phoneCode}',
+      final signUpController = ref.read(signUpControllerProvider);
+      bool sent = await signUpController.sendSignupOtp(
+        context: context,
+        identifier: _phoneController.text,
+        countryCode: '+${country!.phoneCode}',
       );
 
       if (sent) {
@@ -369,12 +368,12 @@ class _SignUpFormState extends State<SignUpForm> {
         return;
       }
 
-      final authRepository = AuthRepository();
-      bool verified = await authRepository.verifySignupOtp(
-        context,
-        _phoneController.text,
-        plainOtp,
-        '+${country!.phoneCode}',
+      final signUpController = ref.read(signUpControllerProvider);
+      bool verified = await signUpController.verifySignupOtp(
+        context: context,
+        identifier: _phoneController.text,
+        plainOtp: _phoneOtpController.text,
+        countryCode: '+${country!.phoneCode}',
       );
 
       if (verified) {

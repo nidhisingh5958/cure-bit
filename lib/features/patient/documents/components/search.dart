@@ -1,8 +1,8 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 
-class SearchFilter extends StatelessWidget {
-  const SearchFilter({super.key});
+class SearchWithFilter extends StatelessWidget {
+  const SearchWithFilter({super.key});
 
   @override
   Widget build(BuildContext context) {
