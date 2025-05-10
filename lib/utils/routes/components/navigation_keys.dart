@@ -8,6 +8,7 @@ final doctorHomeNavigatorKey = GlobalKey<NavigatorState>();
 final doctorChatNavigatorKey = GlobalKey<NavigatorState>();
 final doctorProfileNavigatorKey = GlobalKey<NavigatorState>();
 final doctorPatientsNavigatorKey = GlobalKey<NavigatorState>();
+final doctorBookingsNavigatorKey = GlobalKey<NavigatorState>();
 
 // Patient keys
 

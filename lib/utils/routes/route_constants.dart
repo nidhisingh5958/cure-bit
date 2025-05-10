@@ -85,8 +85,12 @@ class RouteConstants {
   static String doctorChatScreen = "doctorChatScreen";
 
   // profile routes
-  static String doctorPersonalProfile = "doctortorpersonalProfile";
+  static String doctorPersonalProfile = "doctortorPersonalProfile";
+  static String doctorEditProfile = "doctorEditProfile";
   static String doctorDocuments = "doctorDocuments";
+  static String doctorQRCode = "doctorQrCode";
+
+  // my patients routes
   static String doctorPrescription = "doctorPrescription";
   static String doctorTestRecords = "doctorTestRecords";
   static String doctorAddDocument = "doctorAddDocument";

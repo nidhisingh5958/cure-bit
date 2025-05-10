@@ -110,6 +110,10 @@ var destinations = <Destination>[
     label: 'My Patients',
   ),
   Destination(
+    icon: Icon(LucideIcons.calendarCheck),
+    label: 'Bookings',
+  ),
+  Destination(
     icon: Icon(LucideIcons.messageCircle),
     label: 'Chat',
   ),

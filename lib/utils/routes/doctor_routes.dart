@@ -1,3 +1,7 @@
+import 'package:CuraDocs/features/doctor/settings/_edit_profile.dart';
+import 'package:CuraDocs/features/doctor/settings/_profile_and_settings.dart';
+import 'package:CuraDocs/features/doctor/settings/_qr_screen.dart';
+import 'package:CuraDocs/features/doctor/settings/_security_and_login.dart';
 import 'package:CuraDocs/features/patient/chat/chat_home.dart';
 import 'package:CuraDocs/features/patient/chat/chat_screen.dart';
 import 'package:CuraDocs/features/patient/chat/entities/chat_data.dart';
@@ -21,7 +25,7 @@ import 'package:CuraDocs/features/doctor/appointment/appointment_screen.dart';
 import 'package:CuraDocs/features/doctor/my_patients.dart/patients_screen.dart';
 // settings
 import 'package:CuraDocs/utils/routes/components/doctor_navigation_bar.dart';
-import 'package:CuraDocs/features/doctor/settings/profile_screen.dart';
+import 'package:CuraDocs/features/doctor/settings/_personal_profile.dart';
 
 List<RouteBase> get doctorRoutes {
   return [
@@ -47,12 +51,6 @@ List<RouteBase> get doctorRoutes {
               ),
         ),
       ],
-    ),
-
-    GoRoute(
-      path: '/doctor/schedule',
-      name: RouteConstants.doctorSchedule,
-      builder: (context, state) => const DoctorScheduleScreen(),
     ),
 
     // Main app shell with bottom navigation
@@ -104,6 +102,18 @@ List<RouteBase> get doctorRoutes {
           ],
         ),
 
+        // Bookings Branch
+        StatefulShellBranch(
+          navigatorKey: doctorBookingsNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/doctor/schedule',
+              name: RouteConstants.doctorSchedule,
+              builder: (context, state) => const DoctorScheduleScreen(),
+            ),
+          ],
+        ),
+
         // Chat Branch
         StatefulShellBranch(
           navigatorKey: doctorChatNavigatorKey,
@@ -133,19 +143,36 @@ List<RouteBase> get doctorRoutes {
           navigatorKey: doctorProfileNavigatorKey,
           routes: [
             GoRoute(
-              path: '/doctor/profile',
-              name: RouteConstants.doctorPersonalProfile,
-              builder: (context, state) => DoctorProfileScreen(),
+              path: '/doctor/profile-and-settings',
+              name: RouteConstants.doctorProfileSettings,
+              builder: (context, state) => DoctorProfileSettings(),
               routes: [
-                // GoRoute(
-                //   path: '/doctor/my-patients',
-                //   parentNavigatorKey: rootNavigatorKey,
-                //   name: RouteConstants.doctorMyPatients,
-                //   builder: (context, state) {
-                //     final chat = state.extra as ChatData;
-                //     return ChatScreen(chat: chat);
-                //   },
-                // ),
+                GoRoute(
+                  // Settings Screen
+                  path: 'security-settings',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorSecuritySettings, // under review
+                  builder: (context, state) =>
+                      const DoctorSecurityAndLoginSettings(),
+                ),
+                GoRoute(
+                  path: 'edit-profile',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorEditProfile,
+                  builder: (context, state) => const DoctorEditProfile(),
+                ),
+                GoRoute(
+                  path: 'personal-profile',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorPersonalProfile,
+                  builder: (context, state) => const DoctorPersonalProfile(),
+                ),
+                GoRoute(
+                  path: 'profileQR',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorQRCode,
+                  builder: (context, state) => const DoctorQR(),
+                ),
               ],
             ),
           ],
