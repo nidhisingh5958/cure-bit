@@ -11,13 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
-
 import 'package:CuraDocs/features/auth/landing/role.dart';
 import 'package:CuraDocs/features/auth/screens/login/forgot_pass.dart';
 import 'package:CuraDocs/features/auth/screens/login/login_screen.dart';
 import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
 import 'package:CuraDocs/features/auth/screens/login/otp.dart';
-
 import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 
 const bool isDev = true; // Set to false before release
@@ -26,7 +24,7 @@ class AppRouter {
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
     return GoRouter(
       navigatorKey: rootNavigatorKey,
-      initialLocation: isDev ? '/home' : '/',
+      initialLocation: isDev ? '/doctor/home' : '/',
       debugLogDiagnostics: true,
       routes: [
         GoRoute(

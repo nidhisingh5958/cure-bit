@@ -81,6 +81,29 @@ List<RouteBase> get doctorRoutes {
           ],
         ),
 
+        // My patients of doctor side
+        StatefulShellBranch(
+          navigatorKey: doctorPatientsNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/doctor/my-patients',
+              name: RouteConstants.doctorMyPatients,
+              builder: (context, state) => const PatientsListScreen(),
+              routes: [
+                // GoRoute(
+                //   path: '/doctor/my-patients',
+                //   parentNavigatorKey: rootNavigatorKey,
+                //   name: RouteConstants.doctorMyPatients,
+                //   builder: (context, state) {
+                //     final chat = state.extra as ChatData;
+                //     return ChatScreen(chat: chat);
+                //   },
+                // ),
+              ],
+            ),
+          ],
+        ),
+
         // Chat Branch
         StatefulShellBranch(
           navigatorKey: doctorChatNavigatorKey,
@@ -100,29 +123,6 @@ List<RouteBase> get doctorRoutes {
                     return ChatScreen(chat: chat);
                   },
                 ),
-              ],
-            ),
-          ],
-        ),
-
-        // My patients of doctor side
-        StatefulShellBranch(
-          navigatorKey: doctorPatientsNavigatorKey,
-          routes: [
-            GoRoute(
-              path: '/doctor/my-patients',
-              name: RouteConstants.doctorMyPatients,
-              builder: (context, state) => const PatientsListScreen(),
-              routes: [
-                // GoRoute(
-                //   path: '/doctor/my-patients',
-                //   parentNavigatorKey: rootNavigatorKey,
-                //   name: RouteConstants.doctorMyPatients,
-                //   builder: (context, state) {
-                //     final chat = state.extra as ChatData;
-                //     return ChatScreen(chat: chat);
-                //   },
-                // ),
               ],
             ),
           ],

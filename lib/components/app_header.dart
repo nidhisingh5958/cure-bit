@@ -1,6 +1,7 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -53,7 +54,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     } else if (onMenuPressed != null) {
       leadingWidget = IconButton(
         icon: Icon(
-          Icons.menu,
+          LucideIcons.menu,
           color: foregroundColor ?? black.withValues(alpha: .8),
         ),
         onPressed: onMenuPressed,

@@ -13,6 +13,8 @@ class DoctorHomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppHeader(
         backgroundColor: transparent,
+        foregroundColor: black,
+        onMenuPressed: () => Scaffold.of(context).openDrawer(),
         actions: [
           _buildActionButtons(context),
         ],
