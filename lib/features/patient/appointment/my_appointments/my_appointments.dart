@@ -1,5 +1,8 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/features/patient/appointment/my_appointments/active_appointments.dart';
+import 'package:CuraDocs/features/patient/appointment/my_appointments/completed_appointments.dart';
+import 'package:CuraDocs/features/patient/appointment/my_appointments/upcoming_appointments.dart';
 import 'package:flutter/material.dart';
 
 class MyAppointments extends StatefulWidget {
@@ -60,6 +63,14 @@ class _MyAppointmentsState extends State<MyAppointments>
           indicatorColor: grey800,
           dividerColor: transparent,
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          ActiveAppointments(),
+          UpcomingAppointments(),
+          CompletedAppointments(),
+        ],
       ),
     );
   }
