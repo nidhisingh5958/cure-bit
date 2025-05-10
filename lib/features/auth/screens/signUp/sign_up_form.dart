@@ -1,5 +1,6 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -143,6 +144,7 @@ class _SignUpFormState extends ConsumerState<SignUpForm> {
         phoneNumber: _phoneController.text,
         password: _passwordController.text,
         role: _role,
+        notifier: ref.read(authStateProvider.notifier),
       );
     } catch (e) {
       showSnackBar(

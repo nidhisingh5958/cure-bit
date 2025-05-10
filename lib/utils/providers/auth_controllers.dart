@@ -1,3 +1,4 @@
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
@@ -19,6 +20,7 @@ class LoginController {
     required String input,
     required String password,
     required String role,
+    required AuthStateNotifier notifier,
     String? countryCode,
   }) async {
     await _authRepository.signInWithPass(
@@ -26,6 +28,7 @@ class LoginController {
       input,
       password,
       role,
+      notifier: notifier,
       countryCode: countryCode,
     );
   }
@@ -51,6 +54,7 @@ class SignUpController {
     required String phoneNumber,
     required String password,
     required String role,
+    required AuthStateNotifier notifier,
   }) async {
     await _authRepository.signUp(
       context,
@@ -61,6 +65,7 @@ class SignUpController {
       phoneNumber,
       password,
       role,
+      notifier,
     );
   }
 
@@ -108,7 +113,14 @@ class OtpController {
     required String identifier,
     required String otp,
     required String role,
+    required AuthStateNotifier notifier,
   }) async {
-    await _authRepo.verifyOtp(context, identifier, otp, role);
+    await _authRepo.verifyOtp(
+      context,
+      identifier,
+      otp,
+      role,
+      notifier,
+    );
   }
 }

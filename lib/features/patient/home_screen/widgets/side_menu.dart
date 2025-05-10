@@ -17,7 +17,7 @@ class SideMenu extends StatelessWidget {
           const SizedBox(height: 30),
           _buildHeader(),
           _line(),
-          _buildProfileOptions(),
+          _buildProfileOptions(context),
           _line(),
           _buildSettingsSection(context),
           _line(),
@@ -77,16 +77,24 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileOptions() {
+  Widget _buildProfileOptions(BuildContext context) {
     return Column(
       children: [
         _buildOptionItem(
           icon: Icons.person_outline,
           label: 'Share your profile',
+          onTap: () {
+            Navigator.pop(context); // Close drawer first
+            context.goNamed(RouteConstants.qrCode);
+          },
         ),
         _buildOptionItem(
           icon: Icons.qr_code_scanner_outlined,
           label: 'Scan QR',
+          onTap: () {
+            Navigator.pop(context); // Close drawer first
+            context.goNamed(RouteConstants.qrScan);
+          },
         ),
       ],
     );
@@ -98,21 +106,39 @@ class SideMenu extends StatelessWidget {
         _buildOptionItem(
           icon: Icons.settings_outlined,
           label: 'Settings & Privacy',
-          onTap: () => context.goNamed(RouteConstants.profileSettings),
+          onTap: () {
+            Navigator.pop(context); // Close drawer first
+            context.goNamed(RouteConstants.profileSettings);
+          },
         ),
         _buildOptionItem(
           icon: Icons.insights_outlined,
           label: 'Your Activity',
-          onTap: () => context.goNamed(RouteConstants.profile),
+          onTap: () {
+            Navigator.pop(context); // Close drawer first
+            if (context.canPop()) {
+              context
+                  .goNamed(RouteConstants.profile, extra: {'fromDrawer': true});
+            }
+          },
         ),
         _buildOptionItem(
           icon: Icons.brightness_6_outlined,
           label: 'Switch Appearance',
+          onTap: () {
+            Navigator.pop(context); // Close drawer first
+            // Handle theme switching
+          },
         ),
         _buildOptionItem(
           icon: Icons.report_problem_outlined,
           label: 'Report a problem',
-          onTap: () => context.goNamed(RouteConstants.feedback),
+          onTap: () {
+            Navigator.pop(context); // Close drawer first
+            if (context.canPop()) {
+              context.goNamed(RouteConstants.feedback);
+            }
+          },
         ),
       ],
     );
@@ -135,6 +161,7 @@ class SideMenu extends StatelessWidget {
           SizedBox(height: 16),
           GestureDetector(
             onTap: () {
+              Navigator.pop(context); // Close drawer first
               context.goNamed(RouteConstants.help);
             },
             child: Text(
@@ -159,6 +186,7 @@ class SideMenu extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () async {
+              Navigator.pop(context); // Close drawer first
               final Uri url = Uri.parse('https://www.curadocs.in/about');
               if (await canLaunchUrl(url)) {
                 await launchUrl(url);
@@ -178,6 +206,7 @@ class SideMenu extends StatelessWidget {
           SizedBox(height: 16),
           GestureDetector(
             onTap: () {
+              Navigator.pop(context); // Close drawer first
               context.goNamed(RouteConstants.contactUs);
             },
             child: Text(
@@ -200,21 +229,35 @@ class SideMenu extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Switch accounts",
-            style: TextStyle(
-              fontSize: 16,
-              color: black,
-              fontWeight: FontWeight.normal,
+          InkWell(
+            onTap: () {
+              Navigator.pop(context); // Close drawer first
+              // Implement switch account feature
+            },
+            child: Text(
+              "Switch accounts",
+              style: TextStyle(
+                fontSize: 16,
+                color: black,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ),
           SizedBox(height: 16),
-          Text(
-            "Log Out",
-            style: TextStyle(
-              fontSize: 16,
-              color: black,
-              fontWeight: FontWeight.normal,
+          InkWell(
+            onTap: () {
+              Navigator.pop(context); // Close drawer first
+              // Implement logout feature
+              // context.read(authStateProvider.notifier).signOut(); // Something like this
+              context.go('/role'); // Navigate to role screen after logout
+            },
+            child: Text(
+              "Log Out",
+              style: TextStyle(
+                fontSize: 16,
+                color: black,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ),
         ],

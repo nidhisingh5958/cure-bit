@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.cure_bit.app-mergeDebugResources-40:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.example.cure_bit.app-mergeDebugResources-48:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "/Users/nidhisingh/Developer/cure-bit/android/app/src/main/res/values-night/styles.xml",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nidhisingh/.gradle/caches/8.9/transforms/6ac6f0171c329bf0ca0287bd70650cb9/transformed/appcompat-1.1.0/res/values-night-v8/values-night-v8.xml",
+                    "source": "/Users/nidhisingh/.gradle/caches/8.9/transforms/50836893e9e6d33f0d912cac9af55a0a/transformed/appcompat-1.6.1/res/values-night-v8/values-night-v8.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

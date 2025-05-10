@@ -1,6 +1,6 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -119,13 +119,13 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
       try {
         // Call your verification API
-        final authRepository = AuthRepository();
-
-        await authRepository.verifyOtp(
-          context,
-          widget.identifier,
-          otp,
-          _role,
+        final otpController = ref.read(loginWithOtpControllerProvider);
+        await otpController.verifyOtp(
+          context: context,
+          identifier: widget.identifier,
+          otp: otp,
+          role: _role,
+          notifier: ref.read(authStateProvider.notifier),
         );
 
         // Call the callback to notify parent

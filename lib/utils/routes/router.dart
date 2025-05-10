@@ -81,6 +81,11 @@ class AppRouter {
         ...doctorRoutes,
       ],
       redirect: (context, state) {
+        // Skip all authentication checks in dev mode
+        if (isDev) {
+          return null; // Allow direct access to all routes in dev mode
+        }
+
         final auth = ref.read(authStateProvider);
 
         final isGoingToAuthRoute = state.matchedLocation.startsWith('/login') ||

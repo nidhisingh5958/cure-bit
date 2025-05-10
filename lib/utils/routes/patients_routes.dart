@@ -1,3 +1,5 @@
+import 'package:CuraDocs/features/patient/home_screen/qr_screen.dart';
+import 'package:CuraDocs/features/patient/home_screen/scan_qr.dart';
 import 'package:CuraDocs/features/patient/settings/support/help.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +10,7 @@ import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
 import 'package:CuraDocs/features/patient/appointment/doctor_profile.dart';
 import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
-import 'package:CuraDocs/features/patient/appointment/my_appointments.dart';
+import 'package:CuraDocs/features/patient/appointment/my_appointments/my_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/favourite_doc.dart';
 // chatbot
 import 'package:CuraDocs/features/patient/curabot/chat_bot_home.dart';
@@ -61,6 +63,13 @@ List<RouteBase> get patientRoutes {
       parentNavigatorKey: rootNavigatorKey,
       name: RouteConstants.help,
       builder: (context, state) => HelpScreen(),
+    ),
+
+    GoRoute(
+      path: '/scan-qr',
+      parentNavigatorKey: rootNavigatorKey,
+      name: RouteConstants.qrScan,
+      builder: (context, state) => ScanQR(),
     ),
 
     // Doctor search
@@ -201,6 +210,12 @@ List<RouteBase> get patientRoutes {
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.personalProfile,
                   builder: (context, state) => const PersonalProfile(),
+                ),
+                GoRoute(
+                  path: 'profileQR',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.qrCode,
+                  builder: (context, state) => const QrScreen(),
                 ),
               ],
             ),

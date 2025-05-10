@@ -8,11 +8,9 @@ import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Helper method to validate email
 bool _isValidEmail(String email) {
@@ -32,15 +30,15 @@ Future<bool> verify(String hashedPassword, String plainPassword) async {
   return BCrypt.checkpw(plainPassword, hashedPassword);
 }
 
-abstract class AuthRepository {
+class AuthRepository {
   // sign in with password
   Future<void> signInWithPass(
     BuildContext context,
-    WidgetRef ref,
     String input,
     String password,
     String role, {
     String? countryCode,
+    required AuthStateNotifier notifier,
   }) async {
     try {
       // Select the appropriate API endpoint based on role
@@ -96,7 +94,7 @@ abstract class AuthRepository {
           }
 
           // Set user as authenticated with the specific role
-          ref.read(authStateProvider.notifier).setAuthenticated(true, role);
+          notifier.setAuthenticated(true, role);
 
           showSnackBar(context: context, message: 'Login successful');
 
@@ -207,10 +205,10 @@ abstract class AuthRepository {
   // sign in with OTP
   Future<void> verifyOtp(
     BuildContext context,
-    WidgetRef ref,
     String identifier,
     String otp,
     String role,
+    AuthStateNotifier notifier,
   ) async {
     try {
       final String apiEndpoint = role == 'Doctor'
@@ -269,7 +267,7 @@ abstract class AuthRepository {
           }
 
           // Set user as authenticated with the specific role
-          ref.read(authStateProvider.notifier).setAuthenticated(true, role);
+          notifier.setAuthenticated(true, role);
 
           showSnackBar(context: context, message: 'Login successful');
 
@@ -309,7 +307,6 @@ abstract class AuthRepository {
   // normal sign up
   Future<UserModel> signUp(
     BuildContext context,
-    WidgetRef ref,
     String firstName,
     String lastName,
     String email,
@@ -317,6 +314,7 @@ abstract class AuthRepository {
     String phonenumber,
     String password,
     String role,
+    AuthStateNotifier notifier,
   ) async {
     print('Signup Data:');
     print('First Name: $firstName');
@@ -357,7 +355,7 @@ abstract class AuthRepository {
       }
 
       // Set user as authenticated with the specific role
-      ref.read(authStateProvider.notifier).setAuthenticated(true, role);
+      notifier.setAuthenticated(true, role);
 
       showSnackBar(context: context, message: 'Sign up successful');
 
@@ -512,11 +510,11 @@ abstract class AuthRepository {
   // log out method
   Future<void> logOut(
     BuildContext context,
-    WidgetRef ref,
+    AuthStateNotifier notifier,
   ) async {
     try {
       // Clear authentication state
-      ref.read(authStateProvider.notifier).signOut();
+      notifier.signOut();
 
       showSnackBar(context: context, message: 'Logged out successfully');
     } catch (e) {

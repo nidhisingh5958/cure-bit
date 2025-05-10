@@ -1,8 +1,7 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -90,6 +89,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           countryCode: _loginMethod == LoginMethod.phone
               ? _countryCodeController.text
               : null,
+          notifier: ref.read(authStateProvider.notifier),
         );
         setState(() => _isLoading = false);
       }

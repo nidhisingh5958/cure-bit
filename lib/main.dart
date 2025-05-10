@@ -1,3 +1,4 @@
+import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/theme.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,13 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncRouter = ref.watch(routerFutureProvider);
+    final authState = ref.watch(authStateProvider);
+
+    if (authState == null) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
 
     return asyncRouter.when(
       loading: () => const MaterialApp(
