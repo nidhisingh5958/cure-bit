@@ -102,7 +102,7 @@ class _DocumentScreenState extends State<DocumentScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          Timeline(data: exampleData),
+          TimelinePage(),
           // TimelineItem(
           //   title: "2024",
           //   content: TimelineContent(

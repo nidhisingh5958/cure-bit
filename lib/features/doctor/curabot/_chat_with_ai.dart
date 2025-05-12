@@ -1,7 +1,8 @@
 import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/doctor/curabot/entities/message_group.dart';
 import 'package:CuraDocs/features/doctor/curabot/widgets/_bot_search_bar.dart';
-import 'package:CuraDocs/features/doctor/curabot/widgets/chat_message_widget.dart';
+import 'package:CuraDocs/features/doctor/curabot/widgets/_chat_message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/features/doctor/curabot/data/messages_bot.dart';
@@ -56,10 +57,10 @@ class _DoctorBotScreenState extends State<DoctorBotScreen> {
       backgroundColor: Color(0xFFF8FAFC),
       appBar: AppHeader(
         elevation: 1,
-        backgroundColor: Colors.white,
+        backgroundColor: white,
         title: "Cura Bot",
         centerTitle: true,
-        foregroundColor: Colors.black,
+        foregroundColor: black,
         onBackPressed: () => context.pop(),
       ),
       body: SafeArea(

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 enum MessageSender { user, bot }
 
-class Message {
+class DocMessage {
   final String? text;
   final String? imageUrl;
   final MessageSender sender;
 
-  Message({
+  DocMessage({
     this.text,
     this.imageUrl,
     required this.sender,

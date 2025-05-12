@@ -4,6 +4,8 @@ import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+final name = 'Sumit';
+
 class ChatBotAssistantHome extends StatefulWidget {
   const ChatBotAssistantHome({super.key});
 
@@ -20,13 +22,13 @@ class _ChatBotAssistantHomeState extends State<ChatBotAssistantHome> {
       appBar: AppHeader(
         title: "Cura Bot",
         onBackPressed: () {
-          context.pop();
+          context.goNamed(RouteConstants.doctorHome);
         },
         actions: [
           IconButton(
             icon: const Icon(Icons.chat_rounded),
             onPressed: () {
-              context.pushNamed(RouteConstants.chatBotHistory);
+              context.pushNamed(RouteConstants.doctorChatBotHistory);
             },
           ),
         ],
@@ -45,7 +47,7 @@ class _ChatBotAssistantHomeState extends State<ChatBotAssistantHome> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Hello, Yuvraj",
+                            "Hello, Dr. $name",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge

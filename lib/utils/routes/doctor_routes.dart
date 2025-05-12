@@ -20,9 +20,9 @@ import 'package:CuraDocs/features/doctor/curabot/_chat_with_ai.dart';
 import 'package:CuraDocs/features/doctor/home_screen/_home_screen_doc.dart';
 import 'package:CuraDocs/features/doctor/home_screen/_notification.dart';
 // appointment
-import 'package:CuraDocs/features/doctor/appointment/appointment_screen.dart';
+import 'package:CuraDocs/features/doctor/appointment/_schedule_screen.dart';
 // my patients
-import 'package:CuraDocs/features/doctor/my_patients.dart/patients_screen.dart';
+import 'package:CuraDocs/features/doctor/my_patients/_patients_screen.dart';
 // settings
 import 'package:CuraDocs/utils/routes/components/doctor_navigation_bar.dart';
 import 'package:CuraDocs/features/doctor/settings/_personal_profile.dart';

@@ -1,1 +1,0 @@
- /home/nid/desktop/cure_bit/cure-bit/.dart_tool/flutter_build/57da1f0c7ea781cc4b1c013a9ef9d563/native_assets.yaml: 

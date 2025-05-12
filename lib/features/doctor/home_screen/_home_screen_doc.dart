@@ -56,8 +56,9 @@ class DoctorHomeScreen extends StatelessWidget {
   Widget _buildChatBotFloatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
-      backgroundColor: black.withValues(alpha: .8),
-      child: Icon(Icons.chat_bubble_outline),
+      backgroundColor: white,
+      child: Icon(Icons.chat_bubble_outline, color: black),
+      tooltip: 'Chat with Bot',
     );
   }
 

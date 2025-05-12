@@ -6,16 +6,16 @@ import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
 import 'package:CuraDocs/features/doctor/chat/entities/_message.dart';
 
-class ChatScreen extends StatefulWidget {
-  final ChatData chat;
+class DoctorChatScreen extends StatefulWidget {
+  final DocChatData chat;
 
-  const ChatScreen({super.key, required this.chat});
+  const DoctorChatScreen({super.key, required this.chat});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<DoctorChatScreen> createState() => _DoctorChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _DoctorChatScreenState extends State<DoctorChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _showSendButton = false;
@@ -139,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: CircleAvatar(
               radius: 20,
               backgroundImage: NetworkImage(widget.chat.avatarUrl),
-              backgroundColor: Colors.grey[200],
+              backgroundColor: grey200,
             ),
           ),
           const SizedBox(width: 12),
@@ -271,7 +271,8 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  bool _shouldShowTimeStamp(Message previousMessage, Message currentMessage) {
+  bool _shouldShowTimeStamp(
+      DocMessage previousMessage, DocMessage currentMessage) {
     // In a real app, compare actual message timestamps
     // This is a placeholder implementation
     return false;
@@ -314,7 +315,7 @@ class _ChatScreenState extends State<ChatScreen> {
           BoxShadow(
             offset: const Offset(0, -1),
             blurRadius: 8,
-            color: black.withOpacity(0.8),
+            color: black.withValues(alpha: .8),
           ),
         ],
       ),
@@ -329,7 +330,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: grey100,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: TextField(
@@ -352,7 +353,7 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: const Icon(Icons.attach_file),
             onPressed: () {},
-            color: Colors.grey[600],
+            color: grey600,
           ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
@@ -368,7 +369,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 : IconButton(
                     icon: const Icon(Icons.mic_outlined),
                     onPressed: () {},
-                    color: Colors.grey[600],
+                    color: grey600,
                   ),
           ),
         ],

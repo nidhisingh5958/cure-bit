@@ -19,12 +19,6 @@ class MyApp extends ConsumerWidget {
     final asyncRouter = ref.watch(routerFutureProvider);
     final authState = ref.watch(authStateProvider);
 
-    if (authState == null) {
-      return const MaterialApp(
-        home: Scaffold(body: Center(child: CircularProgressIndicator())),
-      );
-    }
-
     return asyncRouter.when(
       loading: () => const MaterialApp(
         home: Scaffold(
