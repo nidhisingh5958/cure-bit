@@ -4,7 +4,7 @@ class DocChatData {
   final String lastMessage;
   final String time;
   final bool isOnline;
-  final bool isRequestAccepted; // ADD THIS
+  final bool isRequestAccepted;
 
   DocChatData({
     required this.name,
@@ -12,8 +12,27 @@ class DocChatData {
     required this.lastMessage,
     required this.time,
     this.isOnline = false,
-    this.isRequestAccepted = true, // default true for existing chats
+    this.isRequestAccepted = false, // Changed default to false
   });
+
+  // Add copyWith method for flexibility
+  DocChatData copyWith({
+    String? name,
+    String? avatarUrl,
+    String? lastMessage,
+    String? time,
+    bool? isOnline,
+    bool? isRequestAccepted,
+  }) {
+    return DocChatData(
+      name: name ?? this.name,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      lastMessage: lastMessage ?? this.lastMessage,
+      time: time ?? this.time,
+      isOnline: isOnline ?? this.isOnline,
+      isRequestAccepted: isRequestAccepted ?? this.isRequestAccepted,
+    );
+  }
 }
 
 class DocRequestData {
@@ -21,7 +40,6 @@ class DocRequestData {
   final String avatarUrl;
   final String firstMessage;
   final String time;
-
   final bool isRequestAccepted;
 
   const DocRequestData({

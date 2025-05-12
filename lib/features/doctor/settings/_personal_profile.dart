@@ -70,7 +70,7 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: black.withValues(alpha: .2),
                       spreadRadius: 2,
                       blurRadius: 8,
                       offset: const Offset(0, 2),

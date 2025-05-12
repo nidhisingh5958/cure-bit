@@ -1,19 +1,12 @@
+import 'package:CuraDocs/features/doctor/chat/data/request_sample_data.dart';
 import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RequestNotifier extends Notifier<List<DocRequestData>> {
   @override
   List<DocRequestData> build() {
-    // Load from backend or mock data
-    return [
-      DocRequestData(
-        name: "John",
-        avatarUrl: "https://...",
-        firstMessage: "Hey, can we talk?",
-        time: "12:00 PM",
-      ),
-      // more requests
-    ];
+    // Initialize with sample request data
+    return docRequestData;
   }
 
   void acceptRequest(int index) {
@@ -24,6 +17,15 @@ class RequestNotifier extends Notifier<List<DocRequestData>> {
         else
           state[i],
     ];
+  }
+
+  void acceptRequestFromUser(String name) {
+    state = state.map((request) {
+      if (request.name == name) {
+        return request.copyWith(isRequestAccepted: true);
+      }
+      return request;
+    }).toList();
   }
 }
 

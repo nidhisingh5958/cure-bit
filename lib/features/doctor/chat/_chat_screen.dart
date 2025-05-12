@@ -1,5 +1,7 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/components/pop_up.dart';
 import 'package:CuraDocs/features/doctor/chat/widgets/_build_message.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'data/chat_sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -304,41 +306,40 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
   Widget _buildMessageInput() {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        16,
+        8,
         12,
-        16,
+        8,
         12 + MediaQuery.of(context).padding.bottom,
-      ),
-      decoration: BoxDecoration(
-        color: white,
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, -1),
-            blurRadius: 8,
-            color: black.withValues(alpha: .8),
-          ),
-        ],
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.emoji_emotions_outlined),
-            onPressed: () {},
-            color: Colors.grey[600],
-          ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: grey100,
-                borderRadius: BorderRadius.circular(24),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: TextField(
                 controller: _messageController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Type a message...',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
+                  prefixIcon: PopUp.buildPopupMenu(
+                    context,
+                    // icon: Icon(Icons.attach_file),
+                    onSelected: (value) {
+                      if (value == 'book') {
+                        // Handle book appointment action
+                        // context.goNamed(RouteConstants.bookAppointment);
+                      } else if (value == 'doctorQR') {
+                        // Handle help action
+                        // context.goNamed(RouteConstants.help);
+                      }
+                    },
+                    optionsList: [
+                      {'book': 'Schedule Appointment'},
+                      {'attach': 'Attach'},
+                      {'doctorQR': 'Doctor\'s QR'},
+                    ],
+                  ),
                 ),
                 style: const TextStyle(
                   fontSize: 14,
@@ -348,12 +349,6 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
                 textCapitalization: TextCapitalization.sentences,
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.attach_file),
-            onPressed: () {},
-            color: grey600,
           ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
@@ -369,7 +364,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
                 : IconButton(
                     icon: const Icon(Icons.mic_outlined),
                     onPressed: () {},
-                    color: grey600,
+                    color: Colors.grey[600],
                   ),
           ),
         ],

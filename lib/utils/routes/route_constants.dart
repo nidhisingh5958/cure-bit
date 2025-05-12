@@ -74,6 +74,7 @@ class RouteConstants {
   // bookings routes
   static String doctorSchedule = "doctorSchedule";
   static String doctorBookAppointment = "doctorBookAppointment";
+  static String doctorScheduleCalendar = "doctorScheduleCalendar";
 
   // chat bot routes
   static String doctorChatBot = "doctorChatBot";
@@ -97,6 +98,7 @@ class RouteConstants {
   static String doctorPatientProfile = "doctorPatientProfile";
   static String doctorPatientSearch = "doctorPatientSearch";
   static String doctorMyPatients = "doctorMyPatients";
+  static String favouritePatients = "favouritePatients";
 
   // settings routes
   static String doctorNotifications = "doctorNotifications";

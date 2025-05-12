@@ -9,17 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:CuraDocs/features/doctor/chat/data/chat_sample_data.dart';
 import 'package:CuraDocs/features/doctor/chat/_chat_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:go_router/go_router.dart';
 
-class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({super.key});
+class DoctorChatListScreen extends StatefulWidget {
+  const DoctorChatListScreen({super.key});
 
   @override
-  State<ChatListScreen> createState() => _ChatListScreenState();
+  State<DoctorChatListScreen> createState() => _ChatListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen>
+class _ChatListScreenState extends State<DoctorChatListScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
 
@@ -139,14 +138,15 @@ class ChatListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DoctorChatScreen(chat: chat),
-          ),
-        );
-      },
+      onTap: onTap ??
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DoctorChatScreen(chat: chat),
+              ),
+            );
+          },
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       leading: Stack(
         children: [
@@ -244,31 +244,64 @@ class RequestListTile extends ConsumerWidget {
 
     return ListTile(
       onTap: () {
-        if (!chat.isRequestAccepted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Accept the request to start chatting')),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RequestScreen(chat: chat),
-            ),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RequestScreen(chat: chat),
+          ),
+        );
       },
-      leading: CircleAvatar(backgroundImage: NetworkImage(chat.avatarUrl)),
-      title: Text(chat.name),
-      subtitle: Text(chat.firstMessage),
-      trailing: chat.isRequestAccepted
-          ? const Text("Accepted", style: TextStyle(color: Colors.green))
-          : ElevatedButton(
-              onPressed: () {
-                notifier.acceptRequest(index);
-              },
-              child: const Text("Accept"),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      leading: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey.shade100,
+                width: 2,
+              ),
             ),
+            child: CircleAvatar(
+              radius: 24,
+              backgroundImage: NetworkImage(chat.avatarUrl),
+            ),
+          ),
+        ],
+      ),
+      title: Text(
+        chat.name,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: 16,
+              color: black,
+            ),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          chat.firstMessage,
+          style: TextStyle(
+            color: grey600,
+            fontSize: 14,
+            height: 1.3,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            chat.time,
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
