@@ -102,7 +102,7 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  '$specialization',
+                  specialization,
                   style: TextStyle(
                     fontSize: 14,
                     color: grey600,
@@ -306,6 +306,7 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
       {
         'image': 'images/doctor.jpg',
         'patientName': 'Mathur Saab',
+        'symptoms': 'Fever',
         'onPressed': () {
           context.goNamed('patientProfile');
         }
@@ -313,6 +314,7 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
       {
         'image': 'images/doctor.jpg',
         'patientName': 'Hema Kumari',
+        'symptoms': 'Headache',
         'onPressed': () {
           context.goNamed('patientProfile');
         }
@@ -320,6 +322,7 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
       {
         'image': 'images/doctor.jpg',
         'patientName': 'Retarded Kumar',
+        'symptoms': 'Cold',
         'onPressed': () {
           context.goNamed('patientProfile');
         }
@@ -336,7 +339,7 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'My Patients',
+                'Patients',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -374,10 +377,11 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
             final item = items[index];
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: _buildTopDoctorItem(
+              child: _buildPatientListItem(
                 context,
                 item['image'] as String,
                 item['patientName'] as String,
+                item['symptoms'] as String,
                 onPressed: item['onPressed'] as void Function()?,
               ),
             );
@@ -388,9 +392,9 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
     );
   }
 
-  // build the doctor item
-  Widget _buildTopDoctorItem(
-      BuildContext context, String image, String patientName,
+  // build the patient item
+  Widget _buildPatientListItem(
+      BuildContext context, String image, String patientName, String symptoms,
       {void Function()? onPressed}) {
     return GestureDetector(
       onTap: onPressed,
@@ -457,6 +461,13 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                                 .primary
                                 .withValues(alpha: .1),
                             borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            symptoms,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ),
                       ],

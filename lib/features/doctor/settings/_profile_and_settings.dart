@@ -204,7 +204,8 @@ class _ProfileScreenState extends State<DoctorProfileSettings> {
                           ),
 
                           // login settings
-                          _buildSectionHeader('Login'),
+                          _buildAdditionalSettings(
+                              'Login', Colors.black.withValues(alpha: .8)),
                           _buildAdditionalSettings('Add account', Colors.blue),
                           _buildAdditionalSettings('Log out', error),
                           SizedBox(height: 70),

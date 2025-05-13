@@ -71,7 +71,7 @@ class _ChatListScreenState extends State<DoctorChatListScreen>
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
         backgroundColor: black.withValues(alpha: .8),
-        child: const Icon(Icons.chat_bubble_outline),
+        child: const Icon(Icons.chat_bubble_outline, color: white),
       ),
       body: TabBarView(
         controller: _tabController,

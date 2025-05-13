@@ -71,10 +71,12 @@ class RouteConstants {
   // inner routes
   static String doctorHome = "doctorHome";
 
-  // bookings routes
+  // schedule routes
   static String doctorSchedule = "doctorSchedule";
-  static String doctorBookAppointment = "doctorBookAppointment";
+  static String doctorRescheduleAppointment = "doctorRescheduleAppointment";
   static String doctorScheduleCalendar = "doctorScheduleCalendar";
+  static String doctorSchedulingAppointmentDetails =
+      "doctorSchedulingAppointmentDetails";
 
   // chat bot routes
   static String doctorChatBot = "doctorChatBot";

@@ -1,5 +1,8 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/components/pop_up.dart';
+import 'package:CuraDocs/features/doctor/appointment/components/animated_fab.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -70,63 +73,48 @@ class DoctorScheduleScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(LucideIcons.circleEllipsis),
             onPressed: () {
-              // Navigate to notifications screen
+              PopUp.buildPopupMenu(
+                context,
+                // icon: Icon(Icons.attach_file),
+                onSelected: (value) {
+                  if (value == 'assign') {
+                    // Handle book appointment action
+                    context.goNamed(
+                        RouteConstants.doctorSchedulingAppointmentDetails);
+                  } else if (value == 'info') {
+                    // Handle help action
+                    // context.goNamed(RouteConstants.help);
+                  }
+                },
+                optionsList: [
+                  {'assign': 'Scheduling Details'},
+                  {'info': 'Help'},
+                ],
+              );
             },
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to book appointment screen
+      floatingActionButton: AnimatedFloatingActionButton(
+        onNewAppointment: () {
+          // Handle new appointment action
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Creating new appointment...')),
+          );
         },
-        backgroundColor: black,
-        child: const Icon(LucideIcons.plus, color: Colors.white),
+        onReschedule: () {
+          // Handle reschedule action
+          context.goNamed(RouteConstants.doctorRescheduleAppointment);
+        },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome section
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 24),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: .1),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Welcome Back!',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Dr. Christian Olson',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               // Date section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,7 +124,7 @@ class DoctorScheduleScreen extends StatelessWidget {
                       Text(
                         'Today, Wed 10 Oct',
                         style: TextStyle(
-                          color: Colors.teal,
+                          color: black,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -144,14 +132,14 @@ class DoctorScheduleScreen extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.only(right: 2),
                     decoration: BoxDecoration(
                       color: transparent,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: transparent, width: 1),
                     ),
                     child: IconButton(
-                      icon: Icon(LucideIcons.calendar, color: Colors.teal),
+                      icon: Icon(LucideIcons.calendar, color: black),
                       onPressed: () {
                         context.goNamed('doctorScheduleCalendar');
                       },
@@ -168,7 +156,7 @@ class DoctorScheduleScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               // Patients list
               Expanded(
@@ -214,7 +202,7 @@ class DoctorScheduleScreen extends StatelessWidget {
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.red,
+                                      color: black,
                                     ),
                                   ),
                                 ],
@@ -259,13 +247,13 @@ class DoctorScheduleScreen extends StatelessWidget {
                                             Icon(
                                               Icons.videocam,
                                               size: 20,
-                                              color: Colors.blue,
+                                              color: black,
                                             ),
                                             const SizedBox(width: 8),
                                             Text(
                                               patient.consultationType,
                                               style: TextStyle(
-                                                color: Colors.grey[600],
+                                                color: grey600,
                                               ),
                                             ),
                                           ],
@@ -276,13 +264,21 @@ class DoctorScheduleScreen extends StatelessWidget {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: Colors.teal[50],
+                                      color: white,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Icon(
-                                      Icons.chat_bubble_outline,
-                                      color: Colors.teal,
-                                      size: 20,
+                                    child: IconButton(
+                                      icon: Icon(
+                                        LucideIcons.messageCircle,
+                                        color: black,
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        context.goNamed(
+                                          RouteConstants.doctorChat,
+                                          extra: patient,
+                                        );
+                                      },
                                     ),
                                   ),
                                 ],
@@ -298,13 +294,12 @@ class DoctorScheduleScreen extends StatelessWidget {
                                       onPressed: () {},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white,
-                                        foregroundColor: Colors.teal,
+                                        foregroundColor: grey600,
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(12),
-                                          side: BorderSide(
-                                              color: Colors.teal.shade200),
+                                          side: BorderSide(color: grey600),
                                         ),
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 12),
@@ -317,7 +312,7 @@ class DoctorScheduleScreen extends StatelessWidget {
                                     child: ElevatedButton(
                                       onPressed: () {},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.teal,
+                                        backgroundColor: grey800,
                                         foregroundColor: Colors.white,
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
@@ -367,11 +362,12 @@ class DoctorScheduleScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.blue[900],
+                                  color: patient.isNext ? black : grey600,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
+                            const SizedBox(width: 16),
                             CircleAvatar(
                               radius: 24,
                               backgroundImage: AssetImage(patient.imagePath),
@@ -409,14 +405,14 @@ class DoctorScheduleScreen extends StatelessWidget {
                                         size: 18,
                                         color: patient.consultationType
                                                 .contains('Video')
-                                            ? Colors.blue
-                                            : Colors.orange,
+                                            ? grey600
+                                            : grey400,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
                                         patient.consultationType,
                                         style: TextStyle(
-                                          color: Colors.grey[600],
+                                          color: grey600,
                                           fontSize: 14,
                                         ),
                                       ),

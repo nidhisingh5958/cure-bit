@@ -1,4 +1,7 @@
+import 'package:CuraDocs/features/doctor/appointment/patient_profile.dart';
+import 'package:CuraDocs/features/doctor/appointment/reschedule_screen.dart';
 import 'package:CuraDocs/features/doctor/appointment/schedule_screen.dart';
+import 'package:CuraDocs/features/doctor/appointment/scheduling_details.dart';
 import 'package:CuraDocs/features/doctor/settings/_edit_profile.dart';
 import 'package:CuraDocs/features/doctor/settings/_profile_and_settings.dart';
 import 'package:CuraDocs/features/doctor/settings/_qr_screen.dart';
@@ -117,6 +120,43 @@ List<RouteBase> get doctorRoutes {
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorScheduleCalendar,
                   builder: (context, state) => const DoctorCalendarSchedule(),
+                ),
+                GoRoute(
+                  path: 'doctor-reschedule-appointment',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorRescheduleAppointment,
+                  builder: (context, state) =>
+                      const DoctorRescheduleAppointment(),
+                  //  {
+
+                  // final appointment = state.extra as AppointmentData;
+                  // return DoctorRescheduleAppointment(
+                  //   appointment: appointment,
+                  // );
+                  // },
+                ),
+                GoRoute(
+                  path: 'patient-profile',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorPatientProfile,
+                  builder: (context, state) => const DoctorPatientProfile(),
+                  // {
+                  // final patient = state.extra as PatientData;
+                  // return DoctorPatientProfile(patient: patient);
+                  // },
+                ),
+                GoRoute(
+                  path: 'scheduling-appointment-details',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorSchedulingAppointmentDetails,
+                  builder: (context, state) =>
+                      const AppointmentSchedulingDetails(),
+                  // {
+                  //   final appointment = state.extra as AppointmentData;
+                  //   return DoctorSchedulingAppointmentDetails(
+                  //     appointment: appointment,
+                  //   );
+                  // },
                 ),
               ],
             ),

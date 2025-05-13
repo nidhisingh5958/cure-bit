@@ -13,12 +13,14 @@ class Timeline {
 }
 
 class TimelinePage extends StatefulWidget {
+  const TimelinePage({super.key});
+
   @override
   _TimelinePageState createState() => _TimelinePageState();
 }
 
 class _TimelinePageState extends State<TimelinePage> {
-  List<Timeline> _patients = [
+  final List<Timeline> _patients = [
     Timeline(
         name: 'John Doe', patientId: '12345', nextAppointment: '2023-10-01'),
     Timeline(

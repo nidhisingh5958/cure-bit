@@ -133,6 +133,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: white,
         appBar: AppHeader(
           title: 'Schedule',
           onBackPressed: () => context.goNamed('doctorSchedule'),
@@ -211,7 +212,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               decoration: BoxDecoration(
-                color: Colors.indigo.shade50,
+                color: black.withValues(alpha: .8),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -219,14 +220,14 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                   Text(
                     selectedMonthName,
                     style: TextStyle(
-                      color: Colors.indigo.shade400,
+                      color: white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: 4),
                   Icon(
                     Icons.keyboard_arrow_down,
-                    color: Colors.indigo.shade400,
+                    color: white,
                     size: 16,
                   ),
                 ],
@@ -548,9 +549,9 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
               child: IntrinsicHeight(
                 child: Row(
                   children: [
-                    // Timeline
+                    // Timeline - New design
                     SizedBox(
-                      width: 24,
+                      width: 30,
                       child: Column(
                         children: [
                           // Line before the dot
@@ -558,29 +559,55 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                             Container(
                               width: 2,
                               height: 20,
-                              color: Colors.grey.shade300,
+                              // Change line color to a gradient
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.grey.shade300,
+                                    black.withValues(alpha: .8),
+                                    appointment['color'].withOpacity(0.6),
+                                  ],
+                                ),
+                              ),
                             ),
-                          // Dot - Make it tappable to toggle status
+                          // Dot - Make it tappable to toggle status with new design
                           GestureDetector(
                             onTap: () =>
                                 toggleAppointmentStatus(appointment['id']),
                             child: Container(
-                              width: 24,
-                              height: 24,
+                              width: 26,
+                              height: 26,
                               decoration: BoxDecoration(
                                 color: appointment['isDone']
                                     ? Colors.white
-                                    : appointment['color'],
+                                    : grey200,
                                 shape: BoxShape.circle,
-                                border: appointment['isDone']
-                                    ? Border.all(
-                                        color: appointment['color'], width: 2)
-                                    : null,
+                                border: Border.all(
+                                  color: grey800,
+                                  width: 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: grey200.withOpacity(0.3),
+                                    spreadRadius: 1,
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
                               ),
                               child: appointment['isDone']
                                   ? Icon(Icons.check,
-                                      size: 16, color: appointment['color'])
-                                  : null,
+                                      size: 16,
+                                      color: black.withValues(alpha: .8))
+                                  : Container(
+                                      margin: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: appointment['color'],
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
                             ),
                           ),
                           // Line after the dot
@@ -588,64 +615,115 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                             Expanded(
                               child: Container(
                                 width: 2,
-                                color: Colors.grey.shade300,
+                                // Change line color to a gradient
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      appointment['color'].withOpacity(0.6),
+                                      isLastItem
+                                          ? Colors.grey.shade300
+                                          : black.withValues(alpha: .8),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Appointment details
+                    // Appointment details with new design
                     Expanded(
                       child: GestureDetector(
-                        onTap: () =>
-                            _showEditAppointmentDialog(context, appointment),
+                        onTap: () => context.pushNamed('appointmentDetails',
+                            extra: appointment),
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
-                            color: appointment['color'].withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            // White background if inactive, black if active
+                            color: appointment['isDone']
+                                ? black.withValues(alpha: .8)
+                                : white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: white,
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                appointment['title'],
-                                style: TextStyle(
-                                  color: appointment['color'],
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              _buildInfoRow(
-                                  Icons.location_on, appointment['location']),
-                              const SizedBox(height: 4),
-                              _buildInfoRow(
-                                  Icons.calendar_today, appointment['date']),
-                              const SizedBox(height: 4),
-                              _buildInfoRow(
-                                Icons.access_time,
-                                '${appointment['startTime']} - ${appointment['endTime']}',
-                              ),
-                              const SizedBox(height: 8),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    appointment['isDone']
-                                        ? 'Completed'
-                                        : 'Pending',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: appointment['isDone']
-                                          ? Colors.green
-                                          : Colors.orange,
+                                  Expanded(
+                                    child: Text(
+                                      appointment['title'],
+                                      style: TextStyle(
+                                        // Text color based on background - white for black background, dark for white background
+                                        color: appointment['isDone']
+                                            ? white
+                                            : grey800,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          appointment['isDone'] ? white : black,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: appointment['color']
+                                            .withOpacity(0.3),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      appointment['isDone']
+                                          ? 'Completed'
+                                          : 'Pending',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: appointment['isDone']
+                                            ? black.withValues(alpha: .8)
+                                            : white,
+                                      ),
                                     ),
                                   ),
                                 ],
+                              ),
+                              const SizedBox(height: 12),
+                              _buildInfoRow(
+                                LucideIcons.mapPin,
+                                appointment['location'],
+                                appointment['isDone'],
+                              ),
+                              const SizedBox(height: 6),
+                              _buildInfoRow(
+                                LucideIcons.calendar,
+                                appointment['date'],
+                                appointment['isDone'],
+                              ),
+                              const SizedBox(height: 6),
+                              _buildInfoRow(
+                                LucideIcons.clock,
+                                '${appointment['startTime']} - ${appointment['endTime']}',
+                                appointment['isDone'],
                               ),
                             ],
                           ),
@@ -662,16 +740,21 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text) {
+// Updated info row with improved styling
+  Widget _buildInfoRow(IconData icon, String text, bool isDone) {
     return Row(
       children: [
-        Icon(icon, size: 14, color: Colors.grey),
-        const SizedBox(width: 4),
+        Icon(
+          icon,
+          size: 14,
+          color: isDone ? white : grey800,
+        ),
+        const SizedBox(width: 6),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              color: Colors.grey.shade700,
+              color: isDone ? white : grey800,
               fontSize: 12,
             ),
             overflow: TextOverflow.ellipsis,
@@ -894,26 +977,6 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _colorOption(Colors.blue, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.green, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.orange, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.purple, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.pink, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -997,233 +1060,6 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
               },
             ),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _colorOption(
-      Color color, Color selectedColor, Function(Color) onSelect) {
-    final isSelected = color == selectedColor;
-    return GestureDetector(
-      onTap: () => onSelect(color),
-      child: Container(
-        width: 30,
-        height: 30,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: isSelected ? Border.all(color: Colors.black, width: 2) : null,
-        ),
-      ),
-    );
-  }
-
-  void _showEditAppointmentDialog(
-      BuildContext context, Map<String, dynamic> appointment) {
-    final titleController = TextEditingController(text: appointment['title']);
-    final locationController =
-        TextEditingController(text: appointment['location']);
-    final startTimeController =
-        TextEditingController(text: appointment['startTime']);
-    final endTimeController =
-        TextEditingController(text: appointment['endTime']);
-    Color selectedColor = appointment['color'];
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Edit Appointment'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Title',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: locationController,
-                      decoration: const InputDecoration(
-                        labelText: 'Location',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: startTimeController,
-                            decoration: const InputDecoration(
-                              labelText: 'Start Time',
-                              border: OutlineInputBorder(),
-                            ),
-                            readOnly: true,
-                            onTap: () {
-                              _showTimePicker(context, startTimeController);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: endTimeController,
-                            decoration: const InputDecoration(
-                              labelText: 'End Time',
-                              border: OutlineInputBorder(),
-                            ),
-                            readOnly: true,
-                            onTap: () {
-                              _showTimePicker(context, endTimeController);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _colorOption(Colors.blue, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.green, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.orange, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.purple, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                        _colorOption(Colors.pink, selectedColor, (color) {
-                          setState(() => selectedColor = color);
-                        }),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Date selection option
-                    GestureDetector(
-                      onTap: () async {
-                        final DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.parse(DateFormat('yyyy-MM-dd')
-                              .format(DateFormat('MMMM d, yyyy')
-                                  .parse(appointment['date']))),
-                          firstDate: DateTime(2020),
-                          lastDate: DateTime(2030),
-                        );
-                        if (picked != null) {
-                          // Update the appointment date directly
-                          appointment['date'] =
-                              DateFormat('MMMM d, yyyy').format(picked);
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              appointment['date'],
-                              style: TextStyle(
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            Icon(Icons.calendar_month,
-                                color: Colors.grey.shade700),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (titleController.text.isNotEmpty &&
-                        locationController.text.isNotEmpty) {
-                      // Update appointment
-                      setState(() {
-                        final index = appointments
-                            .indexWhere((a) => a['id'] == appointment['id']);
-                        if (index != -1) {
-                          appointments[index] = {
-                            ...appointment,
-                            'title': titleController.text,
-                            'location': locationController.text,
-                            'startTime': startTimeController.text,
-                            'endTime': endTimeController.text,
-                            'color': selectedColor,
-                          };
-                          // Sort appointments by time
-                          appointments.sort((a, b) =>
-                              a['startTime'].compareTo(b['startTime']));
-                        }
-                      });
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: const Text('Update'),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
-                  onPressed: () {
-                    // Show delete confirmation
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Delete Appointment'),
-                          content: const Text(
-                              'Are you sure you want to delete this appointment?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                  foregroundColor: Colors.red),
-                              onPressed: () {
-                                setState(() {
-                                  appointments.removeWhere(
-                                      (a) => a['id'] == appointment['id']);
-                                });
-                                Navigator.of(context)
-                                    .pop(); // Close confirmation dialog
-                                Navigator.of(context)
-                                    .pop(); // Close edit dialog
-                              },
-                              child: const Text('Delete'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: const Text('Delete'),
-                ),
-              ],
-            );
-          },
         );
       },
     );
