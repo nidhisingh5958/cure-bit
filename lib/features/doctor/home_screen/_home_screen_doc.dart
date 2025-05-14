@@ -23,7 +23,7 @@ class DoctorHomeScreen extends StatelessWidget {
         child: DoctorSideMenu(),
       ),
       // floatingActionButton property
-      floatingActionButton: _buildChatBotFloatingButton(context),
+      // floatingActionButton: _buildChatBotFloatingButton(context),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -53,14 +53,14 @@ class DoctorHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChatBotFloatingButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
-      backgroundColor: white,
-      tooltip: 'Chat with Bot',
-      child: Icon(Icons.chat_bubble_outline, color: black),
-    );
-  }
+  // Widget _buildChatBotFloatingButton(BuildContext context) {
+  //   return FloatingActionButton(
+  //     onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
+  //     backgroundColor: white,
+  //     tooltip: 'Chat with Bot',
+  //     child: Icon(Icons.chat_bubble_outline, color: black),
+  //   );
+  // }
 
   Widget _buildActionButtons(BuildContext context) {
     return Row(

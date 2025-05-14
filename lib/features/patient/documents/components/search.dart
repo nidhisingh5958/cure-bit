@@ -2,7 +2,10 @@ import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 
 class SearchWithFilter extends StatelessWidget {
-  const SearchWithFilter({super.key});
+  const SearchWithFilter(
+      {super.key,
+      required void Function(String query) onChanged,
+      required TextEditingController controller});
 
   @override
   Widget build(BuildContext context) {

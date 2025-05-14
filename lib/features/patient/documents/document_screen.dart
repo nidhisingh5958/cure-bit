@@ -102,7 +102,61 @@ class _DocumentScreenState extends State<DocumentScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          TimelinePage(),
+          TimelinePage(
+            data: [
+              TimelineEntry(
+                title: "Fever",
+                date: '20 JAN 2024',
+                content: TimelineItemContent(
+                  text:
+                      "Built and launched Aceternity UI and Aceternity UI Pro from scratch",
+                  images: [
+                    "assets/startup-1.webp",
+                    "assets/startup-2.webp",
+                    "assets/startup-3.webp",
+                    "assets/startup-4.webp",
+                  ],
+                ),
+              ),
+              TimelineEntry(
+                title: "Leg Sprain",
+                date: '1 FEB 2024',
+                content: TimelineItemContent(
+                  text:
+                      "I usually run out of copy, but when I see content this big, I try to "
+                      "integrate lorem ipsum.\n"
+                      "Lorem ipsum is for people who are too lazy to write copy. But we are "
+                      "not. Here are some more example of beautiful designs I built.",
+                  images: [
+                    "assets/hero-sections.png",
+                    "assets/features-section.png",
+                    "assets/bento-grids.png",
+                    "assets/cards.png",
+                  ],
+                ),
+              ),
+              TimelineEntry(
+                title: "Changelog",
+                date: '7 MAR 2025',
+                content: TimelineItemContent(
+                  text: "Deployed 5 new components on Aceternity today",
+                  checklistItems: [
+                    "Card grid component",
+                    "Startup template Aceternity",
+                    "Random file upload lol",
+                    "Himesh Reshammiya Music CD",
+                    "Salman Bhai Fan Club registrations open",
+                  ],
+                  images: [
+                    "assets/hero-sections.png",
+                    "assets/features-section.png",
+                    "assets/bento-grids.png",
+                    "assets/cards.png",
+                  ],
+                ),
+              ),
+            ],
+          ),
           // TimelineItem(
           //   title: "2024",
           //   content: TimelineContent(

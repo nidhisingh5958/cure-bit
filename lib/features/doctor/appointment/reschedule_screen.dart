@@ -7,9 +7,9 @@ class DoctorRescheduleAppointment extends StatefulWidget {
   final Map<String, dynamic>? appointment;
 
   const DoctorRescheduleAppointment({
-    Key? key,
+    super.key,
     this.appointment,
-  }) : super(key: key);
+  });
 
   @override
   State<DoctorRescheduleAppointment> createState() =>

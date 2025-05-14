@@ -80,7 +80,10 @@ class _PatientManagementScreenState extends State<PatientManagementScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SearchWithFilter(),
+            SearchWithFilter(
+              onChanged: _filterPatients,
+              controller: _searchController,
+            ),
 
             // Horizontal scrollable section for the table
             Expanded(

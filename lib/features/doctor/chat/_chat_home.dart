@@ -68,11 +68,11 @@ class _ChatListScreenState extends State<DoctorChatListScreen>
         ),
       ),
       drawer: const DoctorSideMenu(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
-        backgroundColor: black.withValues(alpha: .8),
-        child: const Icon(Icons.chat_bubble_outline, color: white),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
+      //   backgroundColor: black.withValues(alpha: .8),
+      //   child: const Icon(Icons.chat_bubble_outline, color: white),
+      // ),
       body: TabBarView(
         controller: _tabController,
         children: [

@@ -30,6 +30,7 @@ class RouteConstants {
   static String healthMonitoring = "healthMonitoring";
   static String qrScan = "qrScan";
   static String qrCode = "qrCode";
+  static String doctorDetails = "doctorDetails";
 
   // appointments routes
   static String appointmentHome = "appointmentHome";

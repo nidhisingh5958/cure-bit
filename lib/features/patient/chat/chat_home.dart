@@ -57,7 +57,7 @@ class _ChatListScreenState extends State<ChatListScreen>
       drawer: Drawer(
         child: SideMenu(),
       ),
-      floatingActionButton: _buildChatBotFloatingButton(context),
+      // floatingActionButton: _buildChatBotFloatingButton(context),
       body: Column(
         children: [
           Container(
@@ -94,13 +94,13 @@ class _ChatListScreenState extends State<ChatListScreen>
     );
   }
 
-  Widget _buildChatBotFloatingButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: white,
-      child: Icon(Icons.chat_bubble_outline),
-    );
-  }
+  // Widget _buildChatBotFloatingButton(BuildContext context) {
+  //   return FloatingActionButton(
+  //     onPressed: () => context.goNamed(RouteConstants.chatBot),
+  //     backgroundColor: white,
+  //     child: Icon(Icons.chat_bubble_outline),
+  //   );
+  // }
 
   Widget _buildChatList(List<ChatData> data) {
     return ListView.builder(

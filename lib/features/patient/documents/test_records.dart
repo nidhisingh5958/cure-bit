@@ -21,7 +21,12 @@ class TestRecordsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SearchWithFilter(),
+        SearchWithFilter(
+          onChanged: (query) {
+            // Handle search query
+          },
+          controller: TextEditingController(),
+        ),
 
         // Header
         Padding(

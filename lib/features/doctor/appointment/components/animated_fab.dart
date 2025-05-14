@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/components/colors.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class AnimatedFloatingActionButton extends StatefulWidget {
@@ -9,11 +8,11 @@ class AnimatedFloatingActionButton extends StatefulWidget {
   final EdgeInsetsGeometry? margin;
 
   const AnimatedFloatingActionButton({
-    Key? key,
+    super.key,
     this.onNewAppointment,
     this.onReschedule,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedFloatingActionButton> createState() =>

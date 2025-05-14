@@ -11,12 +11,16 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen size for responsive adjustments
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 360;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Builder(
           builder: (context) => AppHeader(
-            backgroundColor: Colors.transparent,
+            backgroundColor: grey200,
             onMenuPressed: () {
               Scaffold.of(context).openDrawer();
             },
@@ -37,7 +41,6 @@ class HomeScreen extends StatelessWidget {
       drawer: const Drawer(
         child: SideMenu(),
       ),
-      floatingActionButton: _buildChatBotButton(context),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -76,21 +79,25 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(24),
+                      Padding(
+                        padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 16),
-                            _buildFeaturesGrid(context),
+                            const Text(
+                              'Quick access',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            _buildFeaturesGrid(context, isSmallScreen),
                             const SizedBox(height: 32),
-                            _buildUpcomingAppointments(context),
-                            const SizedBox(height: 32),
-                            _buildMedicalRecords(context),
+                            _buildBentoGrid(context, isSmallScreen),
                           ],
                         ),
                       ),
-                      _buildShoppingSection(context),
                     ],
                   ),
                 ),
@@ -102,176 +109,726 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.goNamed(RouteConstants.doctorSearch);
-      },
-      child: Container(
-        height: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: grey200,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: .1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.search, color: Colors.grey),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Search doctors...',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget _buildBentoGrid(BuildContext context, bool isSmallScreen) {
+    final horizontalSpacing = isSmallScreen ? 8.0 : 12.0;
 
-  Widget _buildNotificationButton(
-    BuildContext context,
-    IconData icon,
-    String route, {
-    bool hasNotification = false,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(left: 8),
-      child: Stack(
-        children: [
-          IconButton(
-            icon: Icon(icon, color: black),
-            onPressed: () => context.goNamed(route),
-          ),
-          if (hasNotification)
-            Positioned(
-              right: 8,
-              top: 8,
-              child: Container(
-                width: 10,
-                height: 10,
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChatBotButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => context.goNamed(RouteConstants.chatBot),
-      backgroundColor: grey200,
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: const Icon(Icons.chat_bubble_outline, color: black),
-    );
-  }
-
-  Widget _buildWelcomeSection() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            text: const TextSpan(
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: black,
-                height: 1.2,
-                letterSpacing: -0.5,
-              ),
-              children: [
-                TextSpan(text: 'Hello, '),
-                TextSpan(
-                  text: 'Random',
-                  style: TextStyle(fontWeight: FontWeight.normal, color: black),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Welcome to your health dashboard',
-            style: TextStyle(
-              fontSize: 16,
-              color: black,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShoppingSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      color: Colors.grey.shade50,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPromotionBanner(),
-          const SizedBox(height: 32),
-          _buildTodayDeals(context),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUpcomingAppointments(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSubSectionHeader(context, 'Upcoming Appointments'),
-        const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+        const Text(
+          'Your Health Overview',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
-          child: Column(
-            children: [
-              _buildAppointmentItem(
-                'Dr. Jean Grey',
-                'Cardiologist',
-                'Today, 3:00 PM',
-                isFirst: true,
+        ),
+        const SizedBox(height: 16),
+
+        // First row - health stats and medication card
+        // For small screens, stack vertically instead of horizontally
+        isSmallScreen
+            ? Column(
+                children: [
+                  _buildHealthStatsCard(isSmallScreen),
+                  SizedBox(height: horizontalSpacing),
+                  _buildMedicationCard(isSmallScreen),
+                ],
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Health stats card (1/3 width)
+                  Expanded(
+                    flex: 2, // Reduced width compared to medication card
+                    child: _buildHealthStatsCard(isSmallScreen),
+                  ),
+                  SizedBox(width: horizontalSpacing),
+                  // Medication card (2/3 width)
+                  Expanded(
+                    flex: 3, // Increased width compared to health stats card
+                    child: _buildMedicationCard(isSmallScreen),
+                  ),
+                ],
               ),
-              Divider(height: 1, color: grey200),
-              _buildAppointmentItem(
-                'Regular Checkup',
-                'General Practitioner',
-                'Today, 2:00 PM',
+
+        SizedBox(height: horizontalSpacing),
+
+        // Second row - latest medical record card (full width)
+        _buildLatestRecordCard(isSmallScreen),
+
+        SizedBox(height: horizontalSpacing),
+
+        // Third row - upcoming appointments from the overview grid (full width)
+        _buildUpcomingAppointmentsList(isSmallScreen),
+
+        SizedBox(height: horizontalSpacing),
+
+        // Fourth row - medical records grid
+        _buildMedicalRecordsGrid(isSmallScreen),
+      ],
+    );
+  }
+
+  Widget _buildHealthStatsCard(bool isSmallScreen) {
+    // Adjust height for small screens
+    final cardHeight = isSmallScreen ? 180.0 : 200.0;
+    final iconSize = isSmallScreen ? 14.0 : 16.0;
+    final padding = isSmallScreen ? 12.0 : 16.0;
+
+    return Container(
+      height: cardHeight,
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: grey100,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Health Stats',
+            style: TextStyle(
+              color: grey800,
+              fontSize: isSmallScreen ? 14 : 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Spacer(flex: 1),
+          _buildStatItem(Icons.favorite, 'Heart Rate', '78 bpm',
+              Colors.red.shade400, iconSize, isSmallScreen),
+          const Spacer(flex: 1),
+          _buildStatItem(Icons.local_fire_department, 'Blood Pressure',
+              '120/80', Colors.orange, iconSize, isSmallScreen),
+          const Spacer(flex: 1),
+          _buildStatItem(Icons.bedtime, 'Sleep', '7.5 hrs', Colors.indigo,
+              iconSize, isSmallScreen),
+          const Spacer(flex: 1),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(IconData icon, String label, String value, Color color,
+      double iconSize, bool isSmallScreen) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: color,
+            size: iconSize,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: grey600,
+                  fontSize: isSmallScreen ? 10 : 12,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  color: grey800,
+                  fontSize: isSmallScreen ? 12 : 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMedicationCard(bool isSmallScreen) {
+    // Adjust height for small screens
+    final cardHeight = isSmallScreen ? 180.0 : 200.0;
+    final iconSize = isSmallScreen ? 14.0 : 16.0;
+    final padding = isSmallScreen ? 12.0 : 16.0;
+    final fontSize = isSmallScreen ? 12.0 : 14.0;
+
+    return Container(
+      height: cardHeight,
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.purple.shade50,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Medication',
+                style: TextStyle(
+                  color: grey800,
+                  fontSize: isSmallScreen ? 14 : 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 4 : 6),
+                decoration: BoxDecoration(
+                  color: Colors.purple.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  MdiIcons.pill,
+                  color: Colors.purple.shade800,
+                  size: iconSize,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            flex: 2,
+            child: Container(
+              padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
+              decoration: BoxDecoration(
+                color: white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.shade100,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.access_time,
+                      color: Colors.purple.shade800,
+                      size: iconSize,
+                    ),
+                  ),
+                  SizedBox(width: isSmallScreen ? 8 : 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Next',
+                          style: TextStyle(
+                            color: grey600,
+                            fontSize: isSmallScreen ? 10 : 12,
+                          ),
+                        ),
+                        Text(
+                          'Lisinopril',
+                          style: TextStyle(
+                            color: grey800,
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '6:00 PM',
+                    style: TextStyle(
+                      color: Colors.purple.shade800,
+                      fontWeight: FontWeight.bold,
+                      fontSize: isSmallScreen ? 12 : 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Expanded(
+            flex: 2,
+            child: Container(
+              padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
+              decoration: BoxDecoration(
+                color: white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.shade100,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      MdiIcons.pill,
+                      color: Colors.purple.shade800,
+                      size: iconSize,
+                    ),
+                  ),
+                  SizedBox(width: isSmallScreen ? 8 : 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Morning',
+                          style: TextStyle(
+                            color: grey600,
+                            fontSize: isSmallScreen ? 10 : 12,
+                          ),
+                        ),
+                        Text(
+                          'Atorvastatin',
+                          style: TextStyle(
+                            color: grey800,
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLatestRecordCard(bool isSmallScreen) {
+    final padding = isSmallScreen ? 12.0 : 16.0;
+    final iconSize = isSmallScreen ? 14.0 : 16.0;
+    final contentPadding = isSmallScreen ? 8.0 : 12.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Latest Medical Record',
+                style: TextStyle(
+                  color: grey800,
+                  fontSize: isSmallScreen ? 14 : 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 4 : 6),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.description_outlined,
+                  color: Colors.green.shade800,
+                  size: iconSize,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: isSmallScreen ? 12 : 16),
+          Container(
+            padding: EdgeInsets.all(contentPadding),
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Blood Test Results',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: isSmallScreen ? 14 : 16,
+                        ),
+                      ),
+                      SizedBox(height: isSmallScreen ? 2 : 4),
+                      // For small screens, stack date and location vertically
+                      isSmallScreen
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.calendar_today,
+                                      size: 10,
+                                      color: grey600,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'April 28, 2025',
+                                      style: TextStyle(
+                                        color: grey600,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on,
+                                      size: 10,
+                                      color: grey600,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'City Medical Lab',
+                                      style: TextStyle(
+                                        color: grey600,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today,
+                                  size: 12,
+                                  color: grey600,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'April 28, 2025',
+                                  style: TextStyle(
+                                    color: grey600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Icon(
+                                  Icons.location_on,
+                                  size: 12,
+                                  color: grey600,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'City Medical Lab',
+                                  style: TextStyle(
+                                    color: grey600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    color: Colors.green.shade800,
+                    size: iconSize,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpcomingAppointmentsList(bool isSmallScreen) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: grey100,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Upcoming Appointments',
+                style: TextStyle(
+                  color: grey800,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(50, 30),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'See All',
+                      style: TextStyle(
+                        color: Colors.blue.shade700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12,
+                      color: Colors.blue.shade700,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                _buildAppointmentItem(
+                  'Dr. Jean Grey',
+                  'Cardiologist',
+                  'Today, 3:00 PM',
+                  isFirst: true,
+                ),
+                Divider(height: 1, color: grey200),
+                _buildAppointmentItem(
+                  'Regular Checkup',
+                  'General Practitioner',
+                  'Today, 2:00 PM',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMedicalRecordsGrid(bool isSmallScreen) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: grey100,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Medical Records',
+                style: TextStyle(
+                  color: grey800,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(50, 30),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'See All',
+                      style: TextStyle(
+                        color: Colors.blue.shade700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12,
+                      color: Colors.blue.shade700,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildRecordGridItem(
+                  'Blood Test',
+                  'April 28, 2025',
+                  Icons.description_outlined,
+                  Colors.blue.shade100,
+                  Colors.blue.shade700,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildRecordGridItem(
+                  'ECG Report',
+                  'April 15, 2025',
+                  Icons.monitor_heart_outlined,
+                  Colors.red.shade100,
+                  Colors.red.shade700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildRecordGridItem(
+                  'X-Ray',
+                  'March 22, 2025',
+                  Icons.image,
+                  Colors.amber.shade100,
+                  Colors.amber.shade700,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildRecordGridItem(
+                  'Vaccine',
+                  'Feb 10, 2025',
+                  MdiIcons.needle,
+                  Colors.green.shade100,
+                  Colors.green.shade700,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecordGridItem(String title, String date, IconData icon,
+      Color bgColor, Color iconColor) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today,
+                size: 12,
+                color: grey600,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                date,
+                style: TextStyle(
+                  color: grey600,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -339,104 +896,35 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMedicalRecords(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSubSectionHeader(context, 'Medical Records'),
-        const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: black.withValues(alpha: .05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _buildRecordItem(
-                'Blood Test Results',
-                'City Medical Lab',
-                'April 28, 2025',
-                Icons.description_outlined,
-                grey200,
-                grey800,
-                isFirst: true,
-              ),
-              Divider(height: 1, color: grey200),
-              _buildRecordItem(
-                'ECG Report',
-                'Heart Institute',
-                'April 15, 2025',
-                Icons.monitor_heart_outlined,
-                grey200,
-                grey800,
-              ),
-            ],
-          ),
+  Widget _buildSearchBar(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.goNamed(RouteConstants.doctorSearch);
+      },
+      child: Container(
+        height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildRecordItem(String title, String facility, String date,
-      IconData icon, Color bgColor, Color iconColor,
-      {bool isFirst = false}) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: iconColor),
-            ),
-            const SizedBox(width: 16),
+            const Icon(Icons.search, color: Colors.grey),
+            const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    facility,
-                    style: TextStyle(
-                      color: grey600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: grey100,
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: Text(
-                date,
+                'Search doctors...',
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: grey800,
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -446,35 +934,83 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturesGrid(BuildContext context) {
+  Widget _buildNotificationButton(
+    BuildContext context,
+    IconData icon,
+    String route, {
+    bool hasNotification = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(left: 8),
+      child: Stack(
+        children: [
+          IconButton(
+            icon: Icon(icon, color: black),
+            onPressed: () => context.goNamed(route),
+          ),
+          if (hasNotification)
+            Positioned(
+              right: 8,
+              top: 8,
+              child: Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeSection() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: const TextSpan(
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: black,
+                height: 1.2,
+                letterSpacing: -0.5,
+              ),
+              children: [
+                TextSpan(text: 'Hello, '),
+                TextSpan(
+                  text: 'Random',
+                  style: TextStyle(fontWeight: FontWeight.normal, color: black),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Welcome to your health dashboard',
+            style: TextStyle(
+              fontSize: 16,
+              color: black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturesGrid(BuildContext context, bool isSmallScreen) {
     final categories = [
       {
         'icon': Icons.calendar_today,
         'label': 'Booking',
         'onTap': () {
           context.goNamed(RouteConstants.appointmentHome);
-        }
-      },
-
-      {
-        'icon': MdiIcons.prescription,
-        'label': 'Health Records',
-        'onTap': () {
-          context.goNamed(RouteConstants.prescription);
-        }
-      },
-      {
-        'icon': MdiIcons.heartPulse,
-        'label': 'Health Monitoring',
-        'onTap': () {
-          context.goNamed(RouteConstants.healthMonitoring);
-        }
-      },
-      {
-        'icon': MdiIcons.testTube,
-        'label': 'Test Records',
-        'onTap': () {
-          context.goNamed(RouteConstants.testRecords);
         }
       },
       {
@@ -491,7 +1027,6 @@ class HomeScreen extends StatelessWidget {
           context.goNamed(RouteConstants.myDoctors);
         }
       },
-
       {
         'icon': MdiIcons.doctor,
         'label': 'My Appointments',
@@ -499,14 +1034,6 @@ class HomeScreen extends StatelessWidget {
           context.goNamed(RouteConstants.bookedAppointments);
         }
       },
-      {
-        'icon': Icons.app_registration_outlined,
-        'label': 'More..',
-        'onTap': () {}
-      },
-      // {'icon': Icons.medical_services, 'label': 'Medical History'},
-      // {'icon': Icons.local_hospital, 'label': 'Hospitals'},
-      // {'icon': Icons.local_pharmacy, 'label': 'Pharmacies'},
     ];
 
     return GridView.builder(
@@ -530,15 +1057,22 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: grey200,
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: IconButton(
-                icon: Icon(category['icon'] as IconData, color: grey800),
+                icon: Icon(
+                  category['icon'] as IconData,
+                  color: black,
+                  size: 24,
+                ),
                 onPressed: () {
-                  if (category['onTap'] != null) {
-                    (category['onTap'] as Function)();
-                  } else {
-                    context.goNamed(RouteConstants.doctorSearch);
-                  }
+                  (category['onTap'] as Function)();
                 },
               ),
             ),
@@ -546,7 +1080,8 @@ class HomeScreen extends StatelessWidget {
             Text(
               category['label'] as String,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 14,
+                color: black,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -556,266 +1091,6 @@ class HomeScreen extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-
-  Widget _buildPromotionBanner() {
-    return Container(
-      height: 150,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.blue.shade800,
-            Colors.purple.shade800,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.shade900.withValues(alpha: .3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomRight: Radius.circular(20),
-              ),
-              child: Opacity(
-                opacity: 0.2,
-                child: Icon(
-                  Icons.local_pharmacy_outlined,
-                  size: 120,
-                  color: white.withValues(alpha: 0.5),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Special Discount',
-                  style: TextStyle(
-                    color: white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  '20% off on all medications',
-                  style: TextStyle(
-                    color: white,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: white,
-                    foregroundColor: Colors.blue.shade800,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Shop Now',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTodayDeals(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSubSectionHeader(context, 'Today\'s Deals'),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 200,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              return Container(
-                width: 150,
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  color: white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: black.withValues(alpha: .05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: [
-                          Colors.blue.shade100,
-                          Colors.green.shade100,
-                          Colors.amber.shade100,
-                          Colors.purple.shade100,
-                        ][index],
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          [
-                            Icons.medication_outlined,
-                            Icons.fitness_center,
-                            Icons.sanitizer,
-                            Icons.monitor_heart_outlined,
-                          ][index],
-                          size: 40,
-                          color: [
-                            Colors.blue.shade700,
-                            Colors.green.shade700,
-                            Colors.amber.shade700,
-                            Colors.purple.shade700,
-                          ][index],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            [
-                              'Vitamin Complex',
-                              'Fitness Tracker',
-                              'Hand Sanitizer',
-                              'BP Monitor',
-                            ][index],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Text(
-                                '\$${(19.99 + index * 10).toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.blue.shade700,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                '\$${(24.99 + index * 10).toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: grey600,
-                                  decoration: TextDecoration.lineThrough,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade100,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              '20% OFF',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red.shade700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubSectionHeader(BuildContext context, String title) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        TextButton(
-          onPressed: () {},
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(50, 30),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: Row(
-            children: [
-              Text(
-                'See All',
-                style: TextStyle(
-                  color: grey800,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 12,
-                color: Colors.blue.shade700,
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
