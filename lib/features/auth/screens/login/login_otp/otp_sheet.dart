@@ -27,6 +27,7 @@ class OtpEntrySheet extends ConsumerStatefulWidget {
 }
 
 class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
+  late final authController;
   final List<TextEditingController> _controllers =
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
@@ -38,7 +39,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
   @override
   void initState() {
     super.initState();
-
+    authController = ref.read(authStateProvider.notifier);
     _loadRole();
     _startResendTimer();
 
@@ -126,7 +127,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
           identifier: widget.identifier,
           otp: otp,
           role: _role,
-          notifier: ref.read(authStateProvider.notifier),
+          notifier: authController.verifyOtp,
         );
 
         // Call the callback to notify parent
@@ -161,6 +162,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
   @override
   Widget build(BuildContext context) {
+    final authController = ref.read(authStateProvider.notifier);
     // Calculate bottom padding for keyboard
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 

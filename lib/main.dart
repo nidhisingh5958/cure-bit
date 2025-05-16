@@ -1,4 +1,4 @@
-import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
+import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/theme.dart';
 import 'package:flutter/material.dart';

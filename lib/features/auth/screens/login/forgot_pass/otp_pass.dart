@@ -1,4 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/features/auth/repository/api_const.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
@@ -30,6 +31,7 @@ class PasswordResetOtpSheet extends ConsumerStatefulWidget {
 }
 
 class _PasswordResetOtpSheetState extends ConsumerState<PasswordResetOtpSheet> {
+  late final authController;
   final List<TextEditingController> _controllers =
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
@@ -40,6 +42,7 @@ class _PasswordResetOtpSheetState extends ConsumerState<PasswordResetOtpSheet> {
   @override
   void initState() {
     super.initState();
+    authController = ref.read(loginWithOtpControllerProvider);
     _startResendTimer();
 
     // Set up focus listeners to prevent skipping fields
@@ -136,7 +139,7 @@ class _PasswordResetOtpSheetState extends ConsumerState<PasswordResetOtpSheet> {
           identifier: widget.identifier,
           otp: otp,
           role: widget.role,
-          notifier: ref.read(authStateProvider.notifier),
+          notifier: authController,
         );
 
         // Call the callback to notify parent of successful verification
