@@ -142,7 +142,7 @@ class _EditProfileState extends State<EditProfile> {
 
   void _updateProfile() {
     final profileData = collectProfileData();
-    print('Profile Data: $profileData');
+    debugPrint('Profile Data: $profileData');
     showSnackBar(context: context, message: 'Profile updated successfully!');
   }
 

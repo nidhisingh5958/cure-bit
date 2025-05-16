@@ -108,7 +108,6 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
           password: _passwordController.text,
           role: _role,
           notifier: ref.read(authController),
-          token: _resetToken!,
         );
 
         if (mounted) {

@@ -142,7 +142,7 @@ class _DoctorEditProfileState extends State<DoctorEditProfile> {
 
   void _updateProfile() {
     final profileData = collectProfileData();
-    print('Profile Data: $profileData');
+    debugPrint('Profile Data: $profileData');
     showSnackBar(context: context, message: 'Profile updated successfully!');
   }
 

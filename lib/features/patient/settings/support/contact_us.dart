@@ -74,7 +74,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           context: context,
           message: 'Error sending message: ${e.toString()}',
         );
-        print(e);
+        debugPrint('$e');
       } finally {
         setState(() => _isSubmitting = false);
       }

@@ -38,13 +38,13 @@ class AppointmentRepository {
   ) async {
     final String apiEndpoint = patientBookAppointment;
 
-    print('Booking appointment:');
-    print('Doctor Name: $docName');
-    print('Doctor CIN: $docCIN');
-    print('Patient Name: $patientName');
-    print('Patient Email: $patientEmail');
-    print('Appointment Date: $appointmentDate');
-    print('Appointment Time: $appointmentTime');
+    debugPrint('Booking appointment:');
+    debugPrint('Doctor Name: $docName');
+    debugPrint('Doctor CIN: $docCIN');
+    debugPrint('Patient Name: $patientName');
+    debugPrint('Patient Email: $patientEmail');
+    debugPrint('Appointment Date: $appointmentDate');
+    debugPrint('Appointment Time: $appointmentTime');
 
     Map<String, dynamic> data = {
       'doctor_name': docName,
@@ -66,11 +66,11 @@ class AppointmentRepository {
 
       if (response.statusCode == 200) {
         // Handle success
-        print('Appointment booked successfully');
+        debugPrint('Appointment booked successfully');
         return true; // Return success status
       } else if (response.statusCode == 400) {
         // Handle error
-        print('Error: ${response.statusCode}, ${response.body}');
+        debugPrint('Error: ${response.statusCode}, ${response.body}');
         showSnackBar(
             context: context,
             message:
@@ -86,7 +86,7 @@ class AppointmentRepository {
         return false;
       }
     } catch (e) {
-      print("Appointment booking error: ${e.toString()}");
+      debugPrint("Appointment booking error: ${e.toString()}");
       showSnackBar(
           context: context, message: 'Booking failed. Please try again.');
       return false;
@@ -117,7 +117,7 @@ class SettingsRepository {
   Future<void> updateSettings(Map<String, dynamic> settings) async {
     // Simulate a network call or database update
     await Future.delayed(Duration(seconds: 1));
-    print('Settings updated: $settings');
+    debugPrint('Settings updated: $settings');
   }
 
   // Method to get terms and conditions
@@ -152,12 +152,12 @@ class SettingsRepository {
   ) async {
     final String apiEndpoint = contactUs;
 
-    print('Submitting form:');
-    print('Name: $firstName $lastName');
-    print('Email: $email');
-    print('Topic: $topic');
-    print('Assistance type: $assist');
-    print('Message: $message');
+    debugPrint('Submitting form:');
+    debugPrint('Name: $firstName $lastName');
+    debugPrint('Email: $email');
+    debugPrint('Topic: $topic');
+    debugPrint('Assistance type: $assist');
+    debugPrint('Message: $message');
 
     Map<String, dynamic> data = {
       'first_name': firstName,
@@ -177,10 +177,10 @@ class SettingsRepository {
     );
     if (response.statusCode == 200) {
       // Handle success
-      print('Contact us request successful');
+      debugPrint('Contact us request successful');
     } else {
       // Handle error
-      print('Error: ${response.statusCode}, ${response.body}');
+      debugPrint('Error: ${response.statusCode}, ${response.body}');
       throw Exception('Failed to submit contact us form');
     }
     return 'Contact us content';

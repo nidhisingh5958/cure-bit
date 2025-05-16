@@ -90,3 +90,18 @@ ElevatedButtonThemeData elevatedButtonsTheme() {
     ),
   );
 }
+
+InputDecorationTheme dropdownButtonFormFieldTheme() {
+  return const InputDecorationTheme(
+    contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(26)),
+      borderSide: BorderSide(
+        color: Colors.grey,
+        width: 1.5,
+      ),
+    ),
+    filled: true,
+    fillColor: Colors.white,
+  );
+}

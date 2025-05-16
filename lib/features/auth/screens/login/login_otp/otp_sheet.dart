@@ -39,7 +39,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
   @override
   void initState() {
     super.initState();
-    authController = ref.read(authStateProvider.notifier);
+
     _loadRole();
     _startResendTimer();
 
@@ -66,7 +66,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
   Future<void> _loadRole() async {
     final prefs = await SharedPreferences.getInstance();
-    _role = prefs.getString('userRole') ?? 'Patient'; // Default to Patient
+    _role = prefs.getString('userRole') ?? 'Patient';
   }
 
   void _startResendTimer() {
@@ -113,24 +113,22 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
   }
 
   Future<void> _verifyOTP() async {
-    // Get the complete OTP
     final otp = _controllers.map((c) => c.text).join();
 
     if (otp.length == 6) {
       setState(() => _isLoading = true);
 
       try {
-        // Call your verification API
         final otpController = ref.read(loginWithOtpControllerProvider);
+        final notifier = ref.read(authStateProvider.notifier);
         await otpController.verifyOtp(
           context: context,
           identifier: widget.identifier,
           otp: otp,
-          role: _role,
-          notifier: authController.verifyOtp,
+          role: widget.role,
+          notifier: notifier,
         );
 
-        // Call the callback to notify parent
         widget.onVerificationComplete();
       } catch (e) {
         showSnackBar(
@@ -141,7 +139,6 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
         setState(() => _isLoading = false);
       }
     } else {
-      // Show error
       showSnackBar(
         context: context,
         message: 'Please enter the complete 6-digit OTP',

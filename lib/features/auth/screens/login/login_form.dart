@@ -1,4 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/features/auth/repository/api_const.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
@@ -18,7 +19,6 @@ class LoginForm extends ConsumerStatefulWidget {
 }
 
 class _LoginFormState extends ConsumerState<LoginForm> {
-  late final authController;
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _countryCodeController = TextEditingController(text: '+91');
@@ -36,7 +36,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   @override
   void initState() {
     super.initState();
-    authController = ref.read(authStateProvider.notifier);
     _loadRole();
     country = Country(
       phoneCode: '91',
@@ -91,12 +90,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           countryCode: _loginMethod == LoginMethod.phone
               ? _countryCodeController.text
               : null,
-          notifier: ref.read(authController),
+          notifier: ref.read(authStateProvider.notifier),
         );
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      print(e);
+      debugPrint('Error during login: $e');
       setState(() => _isLoading = false);
     }
   }

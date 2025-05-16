@@ -84,7 +84,7 @@ Widget _buildDateSection() {
           ],
         ),
         GestureDetector(
-          onTap: () => print('Add reminder'),
+          onTap: () => debugPrint('Add reminder'),
           child: Icon(
             LucideIcons.plus,
             color: Colors.black,

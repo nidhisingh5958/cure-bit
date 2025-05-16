@@ -32,11 +32,11 @@ class _ScanQRState extends State<ScanQR> {
             returnImage: true,
           ),
           onDetect: (capture) {
-            print("object detected");
+            debugPrint("object detected");
             final List<Barcode> barcodes = capture.barcodes;
             final Uint8List? image = capture.image;
             for (final barcode in barcodes) {
-              print('Barcode detected! ${barcode.rawValue}');
+              debugPrint('Barcode detected! ${barcode.rawValue}');
             }
 
             if (image != null) {

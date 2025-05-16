@@ -1,14 +1,14 @@
+import 'package:CuraDocs/utils/providers/auth_providers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
-import 'package:CuraDocs/features/auth/screens/login/forgot_pass/otp_pass.dart';
+import 'package:CuraDocs/features/auth/screens/login/login_otp/otp_sheet.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic>? extra;
@@ -110,6 +110,7 @@ class _EnhancedForgotPassFormState
   final _emailController = TextEditingController();
   bool _isLoading = false;
   String? _resetToken;
+  late String _role;
 
   @override
   void dispose() {
@@ -172,23 +173,31 @@ class _EnhancedForgotPassFormState
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return PasswordResetOtpSheet(
+        return OtpEntrySheet(
+          role: _role,
           identifier: _emailController.text,
-          role: widget.role,
-          resetToken: _resetToken!,
           onVerificationComplete: () async {
-            // First close the bottom sheet to prevent context issues
             Navigator.of(context).pop();
 
-            // Navigate to password reset screen
+            // Then set the authentication state
+            ref.read(authStateProvider.notifier).setAuthenticated(true, _role);
+
+            // Show success message
             if (mounted) {
-              // Navigate to password input screen with the identifier (email), role, and token
-              context.goNamed(RouteConstants.passReset, extra: {
-                'identifier': _emailController.text,
-                'role': widget.role,
-                'fromForgotPassword': true,
-                'resetToken': _resetToken,
-              });
+              showSnackBar(
+                context: context,
+                message: 'OTP verified successfully',
+              );
+            }
+
+            // Use the correct context for navigation
+            if (mounted) {
+              // Redirect based on user role
+              if (_role == 'Doctor') {
+                context.go(RouteConstants.doctorHome);
+              } else {
+                context.go(RouteConstants.home);
+              }
             }
           },
         );

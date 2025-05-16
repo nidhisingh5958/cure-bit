@@ -1,3 +1,4 @@
+import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -172,7 +173,6 @@ class ForgotPasswordController {
       password: newPassword,
       role: role,
       notifier: notifier,
-      token: _resetToken!,
     );
   }
 }

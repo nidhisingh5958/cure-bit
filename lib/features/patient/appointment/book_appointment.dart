@@ -140,7 +140,7 @@ class _BookAppointmentState extends State<BookAppointment> {
           context: context,
           message: 'Error booking appointment: ${e.toString()}',
         );
-        print('Appointment booking error: $e');
+        debugPrint('Appointment booking error: $e');
       }
     } else {
       // Inform user about incomplete form

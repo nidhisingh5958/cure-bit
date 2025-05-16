@@ -72,7 +72,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _sendOTP() async {
-    // Check the input based on the current login method
     if ((_loginMethod == LoginMethod.email && _emailController.text.isEmpty) ||
         (_loginMethod == LoginMethod.phone && _phoneController.text.isEmpty)) {
       showSnackBar(
@@ -98,10 +97,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               : null,
         );
 
-        // Show success message
         showSnackBar(context: context, message: 'OTP sent successfully');
-
-        // Show the OTP entry bottom sheet
         _showOtpBottomSheet();
       }
     } catch (e) {
