@@ -1,14 +1,15 @@
+import 'package:CuraDocs/components/colors.dart';
 import 'package:flutter/material.dart';
 
 class TimelineEntry {
   final String title;
   final TimelineItemContent content;
-  final String date; // Add date to identify the year
+  final String date;
 
   TimelineEntry({
     required this.title,
     required this.content,
-    required this.date, // Make date a required parameter
+    required this.date,
   });
 }
 
@@ -149,17 +150,17 @@ class _TimelineState extends State<TimelinePage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
-                  vertical: 20.0,
+                  vertical: 16.0, // Reduced vertical padding
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Changelog from my journey',
+                      'Health Timeline',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: textColor,
+                        color: black.withValues(alpha: .8),
                       ),
                     ),
                   ],
@@ -174,20 +175,21 @@ class _TimelineState extends State<TimelinePage> {
                   children: [
                     // Year header
                     Padding(
-                      padding:
-                          const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 12.0),
+                      padding: const EdgeInsets.fromLTRB(
+                          16.0, 8.0, 16.0, 4.0), // Reduced padding
                       child: Text(
                         year,
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 28, // Slightly reduced font size
                           fontWeight: FontWeight.bold,
-                          color: textColor,
+                          color: const Color.fromARGB(255, 20, 6, 29),
                         ),
                       ),
                     ),
                     // Timeline for this year
                     Container(
-                      margin: const EdgeInsets.only(bottom: 20.0),
+                      margin:
+                          const EdgeInsets.only(bottom: 12.0), // Reduced margin
                       height: widget.timelineHeight,
                       child: YearTimeline(
                         entries: _groupedEntries[year]!,
@@ -207,7 +209,7 @@ class _TimelineState extends State<TimelinePage> {
   }
 }
 
-// New widget to handle individual year timelines
+// Year timeline widget
 class YearTimeline extends StatefulWidget {
   final List<TimelineEntry> entries;
   final bool isDarkMode;
@@ -287,7 +289,7 @@ class _YearTimelineState extends State<YearTimeline> {
           children: [
             // Timeline line
             Positioned(
-              left: 24,
+              left: 20, // Adjusted position closer to the edge
               top: 0,
               bottom: 0,
               child: Container(
@@ -298,7 +300,7 @@ class _YearTimelineState extends State<YearTimeline> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.grey,
+                      grey800,
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.5, 1.0],
@@ -308,7 +310,7 @@ class _YearTimelineState extends State<YearTimeline> {
             ),
             // Animated progress line
             Positioned(
-              left: 24,
+              left: 20, // Matched with timeline line
               top: 0,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 100),
@@ -331,7 +333,7 @@ class _YearTimelineState extends State<YearTimeline> {
             // Timeline content
             Column(
               children: widget.entries.map((item) {
-                return TimelineItem(
+                return ExpandableTimelineItem(
                   title: item.title,
                   content: item.content,
                   date: item.date,
@@ -349,20 +351,21 @@ class _YearTimelineState extends State<YearTimeline> {
   }
 }
 
-class TimelineItem extends StatelessWidget {
+// Expandable Timeline Item
+class ExpandableTimelineItem extends StatefulWidget {
   final String title;
   final TimelineItemContent content;
-  final String date; // Added date parameter
+  final String date;
   final bool isDarkMode;
   final Color textColor;
   final Color subtextColor;
   final Color timelineTitleColor;
 
-  const TimelineItem({
+  const ExpandableTimelineItem({
     super.key,
     required this.title,
     required this.content,
-    required this.date, // Make date required
+    required this.date,
     required this.isDarkMode,
     required this.textColor,
     required this.subtextColor,
@@ -370,45 +373,54 @@ class TimelineItem extends StatelessWidget {
   });
 
   @override
+  State<ExpandableTimelineItem> createState() => _ExpandableTimelineItemState();
+}
+
+class _ExpandableTimelineItemState extends State<ExpandableTimelineItem> {
+  bool _isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 40.0),
+      padding: const EdgeInsets.only(bottom: 20.0), // Reduced bottom padding
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Timeline node centered on the line and title for larger screens
+          // Timeline node and month indicator
           SizedBox(
-            width: 80,
+            width: 60, // Reduced width for the timeline node area
             child: Stack(
               alignment: Alignment.centerLeft,
               children: [
                 // Centered node on the line
                 Positioned(
-                  left: 16, // Centered on the timeline line (24 + 1)
+                  left: 15, // Centered on the timeline line
                   child: Container(
-                    height: 16, // Further reduced size
-                    width: 16, // Further reduced size
+                    height: 12, // Smaller node
+                    width: 12, // Smaller node
                     decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.black : Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      color: widget.isDarkMode ? white : black,
+                      borderRadius: BorderRadius.circular(6),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: const Color.fromARGB(255, 182, 77, 232)
+                              .withOpacity(0.2),
                           spreadRadius: 1,
-                          blurRadius: 3,
+                          blurRadius: 2,
                         ),
                       ],
                     ),
                     child: Center(
                       child: Container(
-                        height: 6, // Smaller inner dot
-                        width: 6, // Smaller inner dot
+                        height: 4, // Smaller inner dot
+                        width: 4, // Smaller inner dot
                         decoration: BoxDecoration(
-                          color:
-                              isDarkMode ? Colors.grey[800] : Colors.grey[200],
-                          borderRadius: BorderRadius.circular(3),
+                          color: widget.isDarkMode
+                              ? Colors.grey[800]
+                              : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(2),
                           border: Border.all(
-                            color: isDarkMode
+                            color: widget.isDarkMode
                                 ? Colors.grey[700]!
                                 : Colors.grey[300]!,
                             width: 0.5,
@@ -418,19 +430,19 @@ class TimelineItem extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Month label
                 Column(
                   children: [
-                    const SizedBox(height: 16), // Space for the node
+                    const SizedBox(height: 18), // Reduced space for the node
                     if (MediaQuery.of(context).size.width > 600)
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0, left: 20.0),
+                        padding: const EdgeInsets.only(top: 4.0, left: 16.0),
                         child: Text(
-                          // Display month from date
-                          _extractMonth(date),
+                          _extractMonth(widget.date),
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 14, // Smaller font size
                             fontWeight: FontWeight.bold,
-                            color: timelineTitleColor,
+                            color: widget.timelineTitleColor,
                           ),
                         ),
                       ),
@@ -439,138 +451,183 @@ class TimelineItem extends StatelessWidget {
               ],
             ),
           ),
-          // Content
+          // Content area
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+              padding:
+                  const EdgeInsets.only(right: 12.0), // Reduced right padding
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title for mobile
+                  // Month indicator for mobile view
                   if (MediaQuery.of(context).size.width <= 600)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding:
+                          const EdgeInsets.only(bottom: 4.0), // Reduced padding
                       child: Text(
-                        // Show month for mobile view
-                        _extractMonth(date),
+                        _extractMonth(widget.date),
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 14, // Smaller font
                           fontWeight: FontWeight.bold,
-                          color: timelineTitleColor,
+                          color: widget.timelineTitleColor,
                         ),
                       ),
                     ),
 
-                  Container(
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.grey[900] : Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Diagnosis/Title
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Text(
-                              title,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                              ),
-                            ),
-                          ),
-                          // Content text
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: Text(
-                              content.text,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: subtextColor,
-                              ),
-                              maxLines: 2,
-                            ),
+                  // Clickable and expandable container
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      decoration: BoxDecoration(
+                        color: widget.isDarkMode ? Colors.grey[900] : white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: black.withOpacity(0.08),
+                            spreadRadius: 0.5,
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-
-                  // Checklist items if any
-                  if (content.checklistItems != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: content.checklistItems!.map((item) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 4.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0), // Reduced padding
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title row with expand indicator
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
                                   child: Text(
-                                    item,
+                                    widget.title,
                                     style: TextStyle(
-                                      fontSize: 14,
-                                      color: subtextColor,
+                                      fontSize: 16, // Smaller title font
+                                      fontWeight: FontWeight.bold,
+                                      color: widget.textColor,
                                     ),
                                   ),
                                 ),
+                                Icon(
+                                  _isExpanded
+                                      ? Icons.keyboard_arrow_up
+                                      : Icons.keyboard_arrow_down,
+                                  color: widget.subtextColor,
+                                  size: 18,
+                                ),
                               ],
                             ),
-                          );
-                        }).toList(),
+
+                            // Preview text (always visible)
+                            if (!_isExpanded)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Text(
+                                  widget.content.text,
+                                  style: TextStyle(
+                                    fontSize: 12, // Smaller content font
+                                    color: widget.subtextColor,
+                                  ),
+                                  maxLines:
+                                      1, // Limited to 1 line when collapsed
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+
+                            // Expanded content
+                            if (_isExpanded) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                widget.content.text,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: widget.subtextColor,
+                                ),
+                              ),
+
+                              // Checklist items if any
+                              if (widget.content.checklistItems != null) ...[
+                                const SizedBox(height: 12),
+                                ...widget.content.checklistItems!.map((item) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 4.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle_outline,
+                                          size: 16,
+                                          color: widget.isDarkMode
+                                              ? Colors.blue[300]
+                                              : Colors.blue[700],
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            item,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: widget.subtextColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ],
+
+                              // Image grid - commented out as in original code but structure kept for reference
+                              // if (widget.content.images.isNotEmpty) ...[
+                              //   const SizedBox(height: 12),
+                              //   GridView.builder(
+                              //     shrinkWrap: true,
+                              //     physics: const NeverScrollableScrollPhysics(),
+                              //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              //       crossAxisCount: 2,
+                              //       crossAxisSpacing: 8.0,
+                              //       mainAxisSpacing: 8.0,
+                              //       childAspectRatio: 1.5,
+                              //     ),
+                              //     itemCount: widget.content.images.length,
+                              //     itemBuilder: (context, index) {
+                              //       return ClipRRect(
+                              //         borderRadius: BorderRadius.circular(8.0),
+                              //         child: Container(
+                              //           decoration: BoxDecoration(
+                              //             boxShadow: [
+                              //               BoxShadow(
+                              //                 color: Colors.black.withOpacity(0.1),
+                              //                 spreadRadius: 1,
+                              //                 blurRadius: 3,
+                              //                 offset: const Offset(0, 2),
+                              //               ),
+                              //             ],
+                              //           ),
+                              //           child: Image.asset(
+                              //             widget.content.images[index],
+                              //             fit: BoxFit.cover,
+                              //           ),
+                              //         ),
+                              //       );
+                              //     },
+                              //   ),
+                              // ],
+                            ],
+                          ],
+                        ),
                       ),
                     ),
-
-                  // Image grid - commented out as in original code
-                  // GridView.builder(
-                  //   shrinkWrap: true,
-                  //   physics: const NeverScrollableScrollPhysics(),
-                  //   gridDelegate:
-                  //       const SliverGridDelegateWithFixedCrossAxisCount(
-                  //     crossAxisCount: 2,
-                  //     crossAxisSpacing: 8.0,
-                  //     mainAxisSpacing: 8.0,
-                  //     childAspectRatio: 1.5,
-                  //   ),
-                  //   itemCount: content.images.length,
-                  //   itemBuilder: (context, index) {
-                  //     return ClipRRect(
-                  //       borderRadius: BorderRadius.circular(8.0),
-                  //       child: Container(
-                  //         decoration: BoxDecoration(
-                  //           boxShadow: [
-                  //             BoxShadow(
-                  //               color: Colors.black.withOpacity(0.1),
-                  //               spreadRadius: 1,
-                  //               blurRadius: 3,
-                  //               offset: const Offset(0, 2),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //         child: Image.asset(
-                  //           content.images[index],
-                  //           fit: BoxFit.cover,
-                  //         ),
-                  //       ),
-                  //     );
-                  // },
-                  // ),
+                  ),
                 ],
               ),
             ),
@@ -583,7 +640,6 @@ class TimelineItem extends StatelessWidget {
   // Helper method to extract month from date string
   String _extractMonth(String date) {
     // This method should extract the month from your date format
-    // Adjust based on your actual date format
     if (date.contains("JAN")) return "JAN";
     if (date.contains("FEB")) return "FEB";
     if (date.contains("MAR")) return "MAR";

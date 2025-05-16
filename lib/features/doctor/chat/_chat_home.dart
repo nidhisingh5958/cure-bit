@@ -4,12 +4,10 @@ import 'package:CuraDocs/features/doctor/chat/_request_screen.dart';
 import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
 import 'package:CuraDocs/features/doctor/chat/entities/_request_provider.dart';
 import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/features/doctor/chat/data/chat_sample_data.dart';
 import 'package:CuraDocs/features/doctor/chat/_chat_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class DoctorChatListScreen extends StatefulWidget {
   const DoctorChatListScreen({super.key});

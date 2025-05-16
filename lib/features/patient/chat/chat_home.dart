@@ -1,12 +1,10 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/features/patient/chat/data/chat_sample_data.dart';
 import 'package:CuraDocs/features/patient/chat/chat_screen.dart';
 import 'package:CuraDocs/features/patient/chat/entities/chat_data.dart';
-import 'package:go_router/go_router.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});

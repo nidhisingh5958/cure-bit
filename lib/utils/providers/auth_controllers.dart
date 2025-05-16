@@ -1,8 +1,7 @@
-import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
+import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
-import 'auth_providers.dart';
 
 // login
 final loginControllerProvider = Provider((ref) {
@@ -20,8 +19,8 @@ class LoginController {
     required String input,
     required String password,
     required String role,
-    required AuthStateNotifier notifier,
     String? countryCode,
+    required AuthStateNotifier notifier,
   }) async {
     await _authRepository.signInWithPass(
       context,
@@ -121,6 +120,59 @@ class OtpController {
       otp,
       role,
       notifier,
+    );
+  }
+}
+
+// Forgot password controller
+final forgotPasswordControllerProvider = Provider((ref) {
+  final authRepo = ref.read(authRepositoryProvider);
+  return ForgotPasswordController(authRepo);
+});
+
+class ForgotPasswordController {
+  final AuthRepository _authRepository;
+  String? _resetToken;
+
+  ForgotPasswordController(this._authRepository);
+
+  // Getter for the reset token
+  String? get resetToken => _resetToken;
+
+  // Request password reset and get token
+  Future<bool> requestPasswordReset({
+    required BuildContext context,
+    required String email,
+    required String role,
+  }) async {
+    _resetToken =
+        await _authRepository.requestPasswordReset(context, email, role);
+    return _resetToken != null;
+  }
+
+  // Complete the password reset with the new password
+  Future<void> completePasswordReset({
+    required BuildContext context,
+    required String email,
+    required String newPassword,
+    required String role,
+    required AuthStateNotifier notifier,
+  }) async {
+    if (_resetToken == null) {
+      showSnackBar(
+          context: context,
+          message:
+              'Reset token is missing. Please request a new password reset.');
+      return;
+    }
+
+    await _authRepository.resetPassword(
+      context: context,
+      identifier: email,
+      password: newPassword,
+      role: role,
+      notifier: notifier,
+      token: _resetToken!,
     );
   }
 }

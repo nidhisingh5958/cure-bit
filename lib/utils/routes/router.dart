@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
 import 'package:CuraDocs/features/auth/landing/splash_screen.dart';
 
 import 'package:CuraDocs/features/patient/settings/support/contact_us.dart';
-import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
+import 'package:CuraDocs/utils/providers/auth_providers.dart';
+
 import 'package:CuraDocs/utils/routes/doctor_routes.dart';
 import 'package:CuraDocs/utils/routes/patients_routes.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +14,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/auth/landing/role.dart';
-import 'package:CuraDocs/features/auth/screens/login/forgot_pass.dart';
+import 'package:CuraDocs/features/auth/screens/login/forgot_pass/forgot_pass.dart';
 import 'package:CuraDocs/features/auth/screens/login/login_screen.dart';
 import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
-import 'package:CuraDocs/features/auth/screens/login/otp.dart';
+import 'package:CuraDocs/features/auth/screens/login/login_otp/otp.dart';
 import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 
-const bool isDev = true; // Set to false before release
+const bool isDev = false; // Set to false before release
+
+class AuthState {
+  final bool isAuthenticated;
+  final String? role;
+
+  AuthState({
+    required this.isAuthenticated,
+    this.role,
+  });
+}
 
 class AppRouter {
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
@@ -61,6 +73,13 @@ class AppRouter {
               name: RouteConstants.forgotPass,
               path: 'forgot-password',
               builder: (context, state) => ForgotPasswordScreen(),
+              routes: [
+                GoRoute(
+                  name: RouteConstants.passReset,
+                  path: 'password-reset',
+                  builder: (context, state) => PasswordInputScreen(),
+                ),
+              ],
             ),
             GoRoute(
               name: RouteConstants.otp,
@@ -92,7 +111,7 @@ class AppRouter {
             state.matchedLocation.startsWith('/role');
 
         if (auth.isAuthenticated && isGoingToAuthRoute) {
-          return auth.role == 'Doctor' ? '/doctor/home' : '/home';
+          return auth.userRole == 'Doctor' ? '/doctor/home' : '/home';
         }
 
         if (!auth.isAuthenticated && !isGoingToAuthRoute) {

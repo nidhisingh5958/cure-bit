@@ -1,9 +1,9 @@
+// File: auth_repository.dart
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
 import 'package:CuraDocs/features/auth/repository/api_const.dart';
 import 'package:CuraDocs/models/user_model.dart';
-import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -11,6 +11,9 @@ import 'dart:convert';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final authRepositoryProvider = Provider((ref) => AuthRepository());
 
 // Helper method to validate email
 bool _isValidEmail(String email) {
@@ -20,7 +23,7 @@ bool _isValidEmail(String email) {
 
 // Helper method to validate phone number
 bool _isValidPhoneNumber(String phoneNumber) {
-  final phoneRegex = RegExp(r'^\+?[0-9]{10,15}$');
+  final phoneRegex = RegExp(r'^\+?[0-9]{10,15}\$');
   return phoneRegex.hasMatch(phoneNumber);
 }
 
@@ -28,6 +31,25 @@ String hashedOtp = '';
 
 Future<bool> verify(String hashedPassword, String plainPassword) async {
   return BCrypt.checkpw(plainPassword, hashedPassword);
+}
+
+class AuthState {
+  final bool isAuthenticated;
+  final String? role;
+
+  AuthState({required this.isAuthenticated, this.role});
+}
+
+class AuthStateNotifier extends StateNotifier<AuthState> {
+  AuthStateNotifier() : super(AuthState(isAuthenticated: false, role: null));
+
+  void setAuthenticated(bool isAuthenticated, String? role) {
+    state = AuthState(isAuthenticated: isAuthenticated, role: role);
+  }
+
+  void signOut() {
+    state = AuthState(isAuthenticated: false, role: null);
+  }
 }
 
 class AuthRepository {
@@ -504,6 +526,138 @@ class AuthRepository {
       showSnackBar(
           context: context, message: 'Verification failed. Please try again.');
       return false;
+    }
+  }
+
+  // forgot password method
+  Future<void> resetPassword({
+    required BuildContext context,
+    required String identifier,
+    required String password,
+    required String role,
+    required AuthStateNotifier notifier,
+    required String token,
+  }) async {
+    try {
+      // Select the appropriate API endpoint based on role
+      final String apiEndpoint = role == 'Doctor'
+          ? '$auth/doctor/create_new_password/$token'
+          : '$auth/patient/create_new_password/$token';
+
+      print('Resetting password for $identifier with role $role');
+      print('API Endpoint: $apiEndpoint');
+
+      // Create the payload
+      final Map<String, dynamic> payload = {
+        'email': identifier,
+        'new_password': password,
+      };
+
+      // API request
+      Response response = await post(
+        Uri.parse(apiEndpoint),
+        body: jsonEncode(payload),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      // Parse response
+      if (response.statusCode == 200) {
+        showSnackBar(context: context, message: 'Password reset successfully');
+      } else if (response.statusCode == 400) {
+        showSnackBar(context: context, message: 'Invalid input data');
+      } else if (response.statusCode == 401) {
+        showSnackBar(context: context, message: 'Invalid or expired token');
+      } else if (response.statusCode >= 500) {
+        showSnackBar(
+            context: context, message: 'Server error. Please try again later');
+      } else {
+        showSnackBar(
+            context: context,
+            message: 'Failed to reset password. Please try again.');
+      }
+    } catch (e) {
+      print("Password reset error: ${e.toString()}");
+      showSnackBar(
+          context: context,
+          message: 'Failed to reset password. Please try again.');
+    }
+  }
+
+  Future<String?> requestPasswordReset(
+    BuildContext context,
+    String email,
+    String role,
+  ) async {
+    try {
+      // Select the appropriate API endpoint based on role
+      final String apiEndpoint =
+          role == 'Doctor' ? '$auth/doctor/reset_password' : resetPassword_api;
+
+      print('Requesting password reset for $email with role $role');
+      print('API Endpoint: $apiEndpoint');
+
+      // Create the payload
+      final Map<String, dynamic> payload = {
+        'email': email,
+      };
+
+      // API request
+      Response response = await post(
+        Uri.parse(apiEndpoint),
+        body: jsonEncode(payload),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      // Parse response
+      if (response.statusCode == 200) {
+        try {
+          // Parse the response body to get the token
+          Map<String, dynamic> responseData = jsonDecode(response.body);
+
+          // Check if response contains a token
+          if (responseData.containsKey('token')) {
+            showSnackBar(
+                context: context,
+                message: 'Password reset requested successfully');
+            return responseData['token'];
+          } else {
+            showSnackBar(
+                context: context, message: 'Token not received from server');
+            return null;
+          }
+        } catch (e) {
+          showSnackBar(
+              context: context, message: 'Invalid response from server');
+          return null;
+        }
+      } else {
+        String errorMsg = 'Failed to request password reset. Please try again.';
+
+        if (response.statusCode == 404) {
+          errorMsg = 'Email not found';
+        } else if (response.statusCode >= 500) {
+          errorMsg = 'Server error. Please try again later';
+        }
+
+        showSnackBar(context: context, message: errorMsg);
+        return null;
+      }
+    } catch (e) {
+      print("Password reset request error: ${e.toString()}");
+      showSnackBar(
+          context: context,
+          message: 'Failed to request password reset. Please try again.');
+      return null;
     }
   }
 

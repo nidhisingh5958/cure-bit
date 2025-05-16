@@ -1,6 +1,7 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
-import 'package:CuraDocs/utils/providers/auth_state_provider.dart';
+import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,6 +19,7 @@ class SignUpForm extends ConsumerStatefulWidget {
 }
 
 class _SignUpFormState extends ConsumerState<SignUpForm> {
+  late final authController;
   final _formKey = GlobalKey<FormState>();
   final _firstnameController = TextEditingController();
   final _lastnameController = TextEditingController();
@@ -58,6 +60,7 @@ class _SignUpFormState extends ConsumerState<SignUpForm> {
   @override
   void initState() {
     super.initState();
+    authController = ref.read(authStateProvider.notifier);
     _loadRole();
     country = Country(
       phoneCode: '91',
@@ -144,7 +147,7 @@ class _SignUpFormState extends ConsumerState<SignUpForm> {
         phoneNumber: _phoneController.text,
         password: _passwordController.text,
         role: _role,
-        notifier: ref.read(authStateProvider.notifier),
+        notifier: ref.read(authController),
       );
     } catch (e) {
       showSnackBar(

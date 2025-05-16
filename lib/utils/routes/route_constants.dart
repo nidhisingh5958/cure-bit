@@ -11,7 +11,7 @@ class RouteConstants {
   static String signUp = "signUp";
   static String signUpProfile = "signUpProfile";
   static String otp = "otp";
-  static String resetPass = "resetPassword";
+  static String passReset = "passwordReset";
 
   // error routes
   static String error = "error";
