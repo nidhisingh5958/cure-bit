@@ -136,10 +136,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 context: context,
                 message: 'OTP verified successfully',
               );
-            }
-
-            // Use the correct context for navigation
-            if (mounted) {
               // Redirect based on user role
               if (_role == 'Doctor') {
                 context.go(RouteConstants.doctorHome);

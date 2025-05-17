@@ -159,7 +159,6 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
   @override
   Widget build(BuildContext context) {
-    final authController = ref.read(authStateProvider.notifier);
     // Calculate bottom padding for keyboard
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 

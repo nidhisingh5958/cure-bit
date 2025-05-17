@@ -1,5 +1,4 @@
 import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/features/auth/repository/api_const.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';

@@ -16,23 +16,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final authRepositoryProvider = Provider((ref) => AuthRepository());
 
-// Helper method to validate email
 bool _isValidEmail(String email) {
   final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
   return emailRegex.hasMatch(email);
 }
 
-// Helper method to validate phone number - MODIFIED: Made this more permissive
 bool _isValidPhoneNumber(String phoneNumber) {
   // Allow any sequence of digits (no minimum length check)
   final phoneRegex = RegExp(r'^\d+$');
   return phoneRegex.hasMatch(phoneNumber);
 }
 
-// Store the hashed OTP received from the server
 String hashedOtp = '';
 
-// Verify function to check if the plain OTP matches the hashed OTP
+// Function to verify the hashed password
 Future<bool> verify(String hashedPassword, String plainPassword) async {
   return BCrypt.checkpw(plainPassword, hashedPassword);
 }
@@ -162,7 +159,6 @@ class AuthRepository {
           'email': identifier,
         };
       } else if (_isValidPhoneNumber(identifier)) {
-        // Phone number login - Format exactly as expected by the Pydantic model
         loginPayload = {
           'country_code': countryCode ?? '+91',
           'phone_number': identifier.trim(), // Remove any whitespace
@@ -172,7 +168,6 @@ class AuthRepository {
         return;
       }
 
-      // Ensure proper Content-Type header
       final headers = {
         'Content-Type': 'application/json',
       };
@@ -632,7 +627,11 @@ class AuthRepository {
 
       // Parse response
       if (response.statusCode == 200) {
-        showSnackBar(context: context, message: 'Password reset successfully');
+        showSnackBar(
+            context: context,
+            message:
+                'Password reset successfully. Please login with your new password.');
+        context.goNamed(RouteConstants.login);
       } else if (response.statusCode == 400) {
         showSnackBar(context: context, message: 'Invalid input data');
       } else if (response.statusCode == 401) {

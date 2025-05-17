@@ -1,7 +1,6 @@
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
-import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
@@ -72,15 +71,10 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
-      showSnackBar(
-        context: context,
-        message: 'Passwords do not match',
-      );
+      showSnackBar(context: context, message: 'Passwords do not match');
       return;
     }
 
@@ -88,69 +82,37 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
       setState(() => _isLoading = true);
 
       if (_fromForgotPassword) {
-        // Check if reset token is available
-        if (_resetToken == null) {
-          showSnackBar(
-            context: context,
-            message:
-                'Reset token not found. Please try the reset process again.',
-          );
-          return;
-        }
-
-        // Create instance of AuthRepository
         final authRepository = AuthRepository();
 
-        // Call reset password method with token
         await authRepository.resetPassword(
           context: context,
           identifier: _identifier,
           password: _passwordController.text,
           role: _role,
-          notifier: ref.read(authController),
+          notifier: authController,
         );
 
         if (mounted) {
-          // Clear the stored reset token
           final prefs = await SharedPreferences.getInstance();
           await prefs.remove('resetToken');
+          await prefs.remove('hashedOtp');
 
           showSnackBar(
             context: context,
             message:
                 'Password reset successfully. Please login with your new password.',
           );
-
-          // Navigate to login page
           context.go(RouteConstants.login);
         }
       } else {
-        // Use the signup controller for signup flow
-        final signUpController = ref.read(signUpControllerProvider);
-        // Note: You'll need to adapt this code based on your actual signup flow
-        // This is a placeholder for your existing signup logic
-        // await signUpController.signUp(...);
-
-        // Navigate to appropriate screen after signup
-        if (mounted) {
-          if (_role == 'Doctor') {
-            context.go(RouteConstants.doctorHome);
-          } else {
-            context.go(RouteConstants.home);
-          }
-        }
+        // Handle signup flow if needed
       }
     } catch (e) {
       if (mounted) {
-        showSnackBar(
-          context: context,
-          message: 'Error: ${e.toString()}',
-        );
+        showSnackBar(context: context, message: 'Error: ${e.toString()}');
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

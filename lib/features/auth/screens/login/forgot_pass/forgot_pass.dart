@@ -1,4 +1,3 @@
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -134,22 +133,21 @@ class _EnhancedForgotPassFormState
       setState(() => _isLoading = true);
 
       try {
-        // Create an instance of AuthRepository
         final authRepository = AuthRepository();
 
-        // Request password reset and get token
-        _resetToken = await authRepository.requestPasswordReset(
+        // Request password reset and get hashed OTP
+        final hashedOtp = await authRepository.requestPasswordReset(
           context,
           _emailController.text,
           widget.role,
         );
 
-        if (_resetToken != null && mounted) {
-          // Store the token for later use
+        if (hashedOtp != null && mounted) {
+          // Store hashed OTP in SharedPreferences for later verification
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('resetToken', _resetToken!);
+          await prefs.setString('hashedOtp', hashedOtp);
 
-          // Show the OTP entry bottom sheet to verify the email
+          // Show the OTP entry bottom sheet
           _showOtpBottomSheet();
         }
       } catch (e) {
@@ -160,9 +158,7 @@ class _EnhancedForgotPassFormState
                   'Failed to send password reset request. Please try again.');
         }
       } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
+        if (mounted) setState(() => _isLoading = false);
       }
     }
   }
@@ -174,30 +170,21 @@ class _EnhancedForgotPassFormState
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return OtpEntrySheet(
-          role: _role,
+          role: widget.role,
           identifier: _emailController.text,
           onVerificationComplete: () async {
             Navigator.of(context).pop();
 
-            // Then set the authentication state
-            ref.read(authStateProvider.notifier).setAuthenticated(true, _role);
-
-            // Show success message
+            // After OTP is verified, redirect to password reset screen
             if (mounted) {
-              showSnackBar(
-                context: context,
-                message: 'OTP verified successfully',
+              context.goNamed(
+                RouteConstants.passReset,
+                extra: {
+                  'identifier': _emailController.text,
+                  'role': widget.role,
+                  'fromForgotPassword': true,
+                },
               );
-            }
-
-            // Use the correct context for navigation
-            if (mounted) {
-              // Redirect based on user role
-              if (_role == 'Doctor') {
-                context.go(RouteConstants.doctorHome);
-              } else {
-                context.go(RouteConstants.home);
-              }
             }
           },
         );
