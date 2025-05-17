@@ -3,6 +3,10 @@
 //  auth
 final auth = 'https://5waijy29ki.execute-api.us-east-1.amazonaws.com/Dev/auth';
 
+// Refresh token endpoint
+final String refresh_token_doc = '$auth/doctor/refresh_token';
+final String refresh_token_patient = '$auth/patient/refresh_token';
+
 final signupOtp_api = '$auth/verify_otp_signup';
 
 // Patients

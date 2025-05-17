@@ -1,3 +1,4 @@
+import 'package:CuraDocs/features/auth/screens/login/login_otp/otp_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:CuraDocs/components/app_header.dart';
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
-import 'package:CuraDocs/features/auth/screens/login/login_otp/otp_sheet.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 
@@ -83,7 +83,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                EnhancedForgotPassForm(role: _role),
+                EnhancedForgotPassForm(role: _role, ref: ref),
               ],
             ),
           ),
@@ -95,8 +95,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
 class EnhancedForgotPassForm extends ConsumerStatefulWidget {
   final String role;
+  final WidgetRef ref;
 
-  const EnhancedForgotPassForm({super.key, required this.role});
+  const EnhancedForgotPassForm(
+      {super.key, required this.role, required this.ref});
 
   @override
   ConsumerState<EnhancedForgotPassForm> createState() =>
@@ -108,8 +110,6 @@ class _EnhancedForgotPassFormState
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   bool _isLoading = false;
-  String? _resetToken;
-  late String _role;
 
   @override
   void dispose() {
@@ -133,7 +133,8 @@ class _EnhancedForgotPassFormState
       setState(() => _isLoading = true);
 
       try {
-        final authRepository = AuthRepository();
+        // Use the Provider to get the AuthRepository instance
+        final authRepository = ref.read(authRepositoryProvider);
 
         // Request password reset and get hashed OTP
         final hashedOtp = await authRepository.requestPasswordReset(
@@ -143,15 +144,23 @@ class _EnhancedForgotPassFormState
         );
 
         if (hashedOtp != null && mounted) {
-          // Store hashed OTP in SharedPreferences for later verification
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('hashedOtp', hashedOtp);
+          // Store the hashed OTP globally for later verification
+          await _storeHashedOtp(hashedOtp);
+
+          debugPrint('Hashed OTP stored: $hashedOtp');
 
           // Show the OTP entry bottom sheet
           _showOtpBottomSheet();
+        } else {
+          if (mounted) {
+            showSnackBar(
+                context: context,
+                message: 'Failed to get reset token. Please try again.');
+          }
         }
       } catch (e) {
         if (mounted) {
+          debugPrint('Password reset request error: ${e.toString()}');
           showSnackBar(
               context: context,
               message:
@@ -163,7 +172,15 @@ class _EnhancedForgotPassFormState
     }
   }
 
+  // Store hashed OTP separately for verification
+  Future<void> _storeHashedOtp(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('hashedOtp', value);
+  }
+
   void _showOtpBottomSheet() {
+    if (!mounted) return;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -172,11 +189,12 @@ class _EnhancedForgotPassFormState
         return OtpEntrySheet(
           role: widget.role,
           identifier: _emailController.text,
+          isForgotPassword: true,
           onVerificationComplete: () async {
             Navigator.of(context).pop();
 
-            // After OTP is verified, redirect to password reset screen
             if (mounted) {
+              // After OTP is verified, redirect to password reset screen
               context.goNamed(
                 RouteConstants.passReset,
                 extra: {

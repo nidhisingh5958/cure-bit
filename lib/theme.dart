@@ -5,6 +5,7 @@ ThemeData theme() {
   return ThemeData(
     fontFamily: 'Inter',
     useMaterial3: true,
+    visualDensity: VisualDensity.adaptivePlatformDensity,
     scaffoldBackgroundColor: const Color(0xFFF8FAFC),
     cardTheme: cardTheme(),
     inputDecorationTheme: inputDecorationTheme(),

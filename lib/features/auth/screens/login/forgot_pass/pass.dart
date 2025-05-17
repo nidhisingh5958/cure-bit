@@ -82,7 +82,8 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
       setState(() => _isLoading = true);
 
       if (_fromForgotPassword) {
-        final authRepository = AuthRepository();
+        // Use the Provider to get the AuthRepository instance
+        final authRepository = ref.read(authRepositoryProvider);
 
         await authRepository.resetPassword(
           context: context,
@@ -93,8 +94,8 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
         );
 
         if (mounted) {
+          // Clear stored tokens after successful password reset
           final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('resetToken');
           await prefs.remove('hashedOtp');
 
           showSnackBar(
@@ -102,10 +103,8 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
             message:
                 'Password reset successfully. Please login with your new password.',
           );
-          context.go(RouteConstants.login);
+          context.goNamed(RouteConstants.login);
         }
-      } else {
-        // Handle signup flow if needed
       }
     } catch (e) {
       if (mounted) {

@@ -1,8 +1,9 @@
 import 'dart:async';
 
+import 'package:CuraDocs/features/auth/landing/splash/main_splash_screen.dart';
+import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
 import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
-import 'package:CuraDocs/features/auth/landing/splash_screen.dart';
 
 import 'package:CuraDocs/features/patient/settings/support/contact_us.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
@@ -43,7 +44,7 @@ class AppRouter {
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.splash,
           path: '/',
-          builder: (context, state) => SplashScreen(),
+          builder: (context, state) => const MainSplashScreen(),
         ),
         GoRoute(
           parentNavigatorKey: rootNavigatorKey,
@@ -61,46 +62,61 @@ class AppRouter {
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.signUp,
           path: '/sign-up',
-          builder: (context, state) => SignUpScreen(),
+          builder: (context, state) => AuthMiddleware(
+            child: SignUpScreen(),
+          ),
         ),
         GoRoute(
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.login,
           path: '/login',
-          builder: (context, state) => LoginScreen(),
+          builder: (context, state) => AuthMiddleware(
+            requiresAuth: false,
+            child: const LoginScreen(),
+          ),
           routes: [
             GoRoute(
               name: RouteConstants.forgotPass,
               path: 'forgot-password',
-              builder: (context, state) => ForgotPasswordScreen(),
+              builder: (context, state) => AuthMiddleware(
+                requiresAuth: false,
+                child: const ForgotPasswordScreen(),
+              ),
               routes: [
                 GoRoute(
                   name: RouteConstants.passReset,
                   path: 'password-reset',
-                  builder: (context, state) => PasswordInputScreen(),
+                  builder: (context, state) => AuthMiddleware(
+                    child: PasswordInputScreen(),
+                    requiresAuth: false,
+                  ),
                 ),
               ],
             ),
             GoRoute(
               name: RouteConstants.otp,
               path: 'otp',
-              builder: (context, state) => OtpScreen(),
+              builder: (context, state) => AuthMiddleware(
+                requiresAuth: false,
+                child: const OtpScreen(),
+              ),
             ),
           ],
         ),
         GoRoute(
-            path: '/contactUs',
-            name: RouteConstants.contactUs,
-            builder: (context, state) {
-              return const ContactUsScreen();
-            }),
+          path: '/contactUs',
+          name: RouteConstants.contactUs,
+          builder: (context, state) => AuthMiddleware(
+            requiresAuth: false,
+            child: const ContactUsScreen(),
+          ),
+        ),
         ...patientRoutes,
         ...doctorRoutes,
       ],
       redirect: (context, state) {
-        // Skip all authentication checks in dev mode
         if (isDev) {
-          return null; // Allow direct access to all routes in dev mode
+          return null;
         }
 
         final auth = ref.read(authStateProvider);
@@ -110,11 +126,18 @@ class AppRouter {
             state.matchedLocation.startsWith('/onboarding') ||
             state.matchedLocation.startsWith('/role');
 
+        // Skip authentication checks for splash screen
+        if (state.matchedLocation == '/') {
+          return null; // Always allow access to splash screen
+        }
+
         if (auth.isAuthenticated && isGoingToAuthRoute) {
           return auth.userRole == 'Doctor' ? '/doctor/home' : '/home';
         }
 
-        if (!auth.isAuthenticated && !isGoingToAuthRoute) {
+        if (!auth.isAuthenticated &&
+            !isGoingToAuthRoute &&
+            state.matchedLocation != '/') {
           return '/role';
         }
 

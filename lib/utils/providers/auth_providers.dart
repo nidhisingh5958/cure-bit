@@ -1,13 +1,114 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Auth state provider
+// Token state provider
+final tokenStateProvider =
+    StateNotifierProvider<TokenStateNotifier, TokenState>((ref) {
+  return TokenStateNotifier();
+});
+
+// Token state class
+class TokenState {
+  final String? accessToken;
+  final String? refreshToken;
+  final DateTime? accessTokenExpiryTime;
+  final bool isLoading;
+
+  TokenState({
+    this.accessToken,
+    this.refreshToken,
+    this.accessTokenExpiryTime,
+    this.isLoading = false,
+  });
+
+  TokenState copyWith({
+    String? accessToken,
+    String? refreshToken,
+    DateTime? accessTokenExpiryTime,
+    bool? isLoading,
+  }) {
+    return TokenState(
+      accessToken: accessToken ?? this.accessToken,
+      refreshToken: refreshToken ?? this.refreshToken,
+      accessTokenExpiryTime:
+          accessTokenExpiryTime ?? this.accessTokenExpiryTime,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+
+  bool get isAccessTokenExpired {
+    if (accessTokenExpiryTime == null) return true;
+    return DateTime.now()
+        .isAfter(accessTokenExpiryTime!.subtract(const Duration(minutes: 5)));
+  }
+}
+
+// Token state notifier
+class TokenStateNotifier extends StateNotifier<TokenState> {
+  TokenStateNotifier() : super(TokenState()) {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    state = state.copyWith(isLoading: true);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken');
+      final refreshToken = prefs.getString('refreshToken');
+      final expiryTimeStr = prefs.getString('accessTokenExpiryTime');
+
+      DateTime? expiryTime;
+      if (expiryTimeStr != null) {
+        expiryTime = DateTime.parse(expiryTimeStr);
+      }
+
+      state = state.copyWith(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        accessTokenExpiryTime: expiryTime,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
+  void setTokens({
+    required String accessToken,
+    required String refreshToken,
+    required DateTime expiryTime,
+  }) async {
+    state = state.copyWith(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      accessTokenExpiryTime: expiryTime,
+    );
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accessToken', accessToken);
+    await prefs.setString('refreshToken', refreshToken);
+    await prefs.setString(
+        'accessTokenExpiryTime', expiryTime.toIso8601String());
+  }
+
+  void clearTokens() async {
+    state = TokenState();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('accessToken');
+    await prefs.remove('refreshToken');
+    await prefs.remove('accessTokenExpiryTime');
+  }
+}
+
+// Existing auth state provider (keep this unchanged)
 final authStateProvider =
     StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
   return AuthStateNotifier();
 });
 
-// Auth state class
+// Auth state class (keep this unchanged)
 class AuthState {
   final bool isAuthenticated;
   final bool isLoading;
@@ -36,7 +137,7 @@ class AuthState {
   }
 }
 
-// Auth state notifier
+// Auth state notifier (update to include token management)
 class AuthStateNotifier extends StateNotifier<AuthState> {
   AuthStateNotifier() : super(AuthState()) {
     _initialize();
@@ -49,8 +150,11 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
       final role = prefs.getString('userRole');
+      final refreshToken = prefs.getString('refreshToken');
 
-      if (token != null) {
+      if (refreshToken != null) {
+        // We have a refresh token, which might mean the user is authenticated
+        // The actual token validation will happen when they access protected routes
         state = state.copyWith(
           isAuthenticated: true,
           authToken: token,
@@ -66,7 +170,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   }
 
   void setAuthenticated(bool isAuthenticated, String role) {
-    state = state.copyWith(isAuthenticated: isAuthenticated);
+    state = state.copyWith(isAuthenticated: isAuthenticated, userRole: role);
   }
 
   void setUserRole(String role) {
@@ -85,6 +189,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('authToken');
+      await prefs.remove('refreshToken');
+      await prefs.remove('accessTokenExpiryTime');
 
       state = AuthState();
     } catch (e) {

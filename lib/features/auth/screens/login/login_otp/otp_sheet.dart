@@ -1,4 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
@@ -13,6 +14,7 @@ class OtpEntrySheet extends ConsumerStatefulWidget {
   final VoidCallback onVerificationComplete;
   final String? countryCode;
   final String role;
+  final bool isForgotPassword; // Flag to identify which flow we're in
 
   const OtpEntrySheet({
     super.key,
@@ -20,6 +22,7 @@ class OtpEntrySheet extends ConsumerStatefulWidget {
     required this.onVerificationComplete,
     this.countryCode,
     required this.role,
+    this.isForgotPassword = false, // Default is regular OTP login
   });
 
   @override
@@ -27,7 +30,6 @@ class OtpEntrySheet extends ConsumerStatefulWidget {
 }
 
 class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
-  late final authController;
   final List<TextEditingController> _controllers =
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
@@ -39,7 +41,6 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
   @override
   void initState() {
     super.initState();
-
     _loadRole();
     _startResendTimer();
 
@@ -66,7 +67,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
   Future<void> _loadRole() async {
     final prefs = await SharedPreferences.getInstance();
-    _role = prefs.getString('userRole') ?? 'Patient';
+    _role = prefs.getString('userRole') ?? 'Patient'; // Default to Patient
   }
 
   void _startResendTimer() {
@@ -92,11 +93,13 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
     });
 
     try {
-      final otpController = ref.read(loginWithOtpControllerProvider);
-      await otpController.sendOtp(
-        context: context,
-        identifier: widget.identifier,
-        role: widget.role,
+      final authRepository = ref.read(authRepositoryProvider);
+
+      // Use the identifier passed from the parent
+      await authRepository.sendOtp(
+        context,
+        widget.identifier,
+        widget.role,
         countryCode: widget.countryCode,
       );
 
@@ -113,23 +116,49 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
   }
 
   Future<void> _verifyOTP() async {
+    // Get the complete OTP
     final otp = _controllers.map((c) => c.text).join();
 
     if (otp.length == 6) {
       setState(() => _isLoading = true);
 
       try {
-        final otpController = ref.read(loginWithOtpControllerProvider);
-        final notifier = ref.read(authStateProvider.notifier);
-        await otpController.verifyOtp(
-          context: context,
-          identifier: widget.identifier,
-          otp: otp,
-          role: widget.role,
-          notifier: notifier,
-        );
+        // Call verification API
+        final loginController = ref.read(loginControllerProvider);
+        final authRepository = ref.read(authRepositoryProvider);
 
-        widget.onVerificationComplete();
+        // For forgot password flow, we just need to verify the OTP is correct
+        // We don't need to authenticate the user yet
+        if (widget.isForgotPassword) {
+          // Just verify the OTP matches what we expect
+          bool isVerified = await authRepository.verifyResetOtp(
+            context,
+            widget.identifier,
+            otp,
+          );
+
+          if (isVerified) {
+            // OTP verification successful, call the callback to redirect to password reset screen
+            widget.onVerificationComplete();
+          } else {
+            showSnackBar(
+              context: context,
+              message: 'Invalid OTP. Please try again.',
+            );
+          }
+        } else {
+          // Regular login flow
+          await authRepository.verifyOtp(
+            context,
+            widget.identifier,
+            otp,
+            widget.role,
+            ref.read(authStateProvider.notifier),
+          );
+
+          // Call the callback to notify parent
+          widget.onVerificationComplete();
+        }
       } catch (e) {
         showSnackBar(
           context: context,
@@ -139,6 +168,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
         setState(() => _isLoading = false);
       }
     } else {
+      // Show error
       showSnackBar(
         context: context,
         message: 'Please enter the complete 6-digit OTP',
@@ -179,7 +209,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: Offset(0, -5),
           ),
@@ -239,7 +269,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               child: Text(
                 'Resend Code',
                 style: TextStyle(
-                  color: black.withValues(alpha: .8),
+                  color: grey600,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -274,12 +304,12 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: black),
+                borderSide: BorderSide(color: color1),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: black.withValues(alpha: .8),
+                  color: color2,
                   width: 2,
                 ),
               ),
@@ -306,7 +336,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               }
             },
             style: TextStyle(
-                fontSize: 16, color: black, fontWeight: FontWeight.bold),
+                fontSize: 16, color: color1, fontWeight: FontWeight.bold),
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             showCursor: true, // Show cursor for better visibility
@@ -325,7 +355,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
     return ElevatedButton(
       onPressed: _isLoading ? null : _verifyOTP,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12),
       ),
       child: _isLoading
           ? const SizedBox(
@@ -333,7 +363,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               width: 20,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text(
+          : const Text(
               'Verify',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),

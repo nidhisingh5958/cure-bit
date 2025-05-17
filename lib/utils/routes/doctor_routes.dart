@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
 import 'package:CuraDocs/features/doctor/appointment/patient_profile.dart';
 import 'package:CuraDocs/features/doctor/appointment/reschedule_screen.dart';
 import 'package:CuraDocs/features/doctor/appointment/schedule_screen.dart';
@@ -37,22 +39,29 @@ List<RouteBase> get doctorRoutes {
     GoRoute(
       path: '/doctor/cura-bot',
       name: RouteConstants.doctorChatBot,
-      builder: (context, state) => ChatBotAssistantHome(),
+      builder: (context, state) => AuthMiddleware(
+        child: ChatBotAssistantHome(),
+        requiresAuth: true,
+      ),
       routes: [
         // Chat with AI
         GoRoute(
           path: 'screen',
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.doctorChatBotScreen,
-          builder: (context, state) => DoctorBotScreen(),
+          builder: (context, state) => AuthMiddleware(
+            child: DoctorBotScreen(),
+            requiresAuth: true,
+          ),
         ),
         GoRoute(
           path: 'history',
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.doctorChatBotHistory,
-          builder: (context, state) => DoctorBotHistory(
-              // text: '',
-              ),
+          builder: (context, state) => AuthMiddleware(
+            child: DoctorBotHistory(),
+            requiresAuth: true,
+          ),
         ),
       ],
     ),
@@ -70,13 +79,19 @@ List<RouteBase> get doctorRoutes {
             GoRoute(
               path: '/doctor/home',
               name: RouteConstants.doctorHome,
-              builder: (context, state) => const DoctorHomeScreen(),
+              builder: (context, state) => AuthMiddleware(
+                child: DoctorHomeScreen(),
+                requiresAuth: true,
+              ),
               routes: [
                 GoRoute(
                   path: 'notifications',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorNotifications,
-                  builder: (context, state) => const DoctorNotificationScreen(),
+                  builder: (context, state) => AuthMiddleware(
+                    child: DoctorNotificationScreen(),
+                    requiresAuth: true,
+                  ),
                 ),
               ],
             ),
@@ -90,7 +105,10 @@ List<RouteBase> get doctorRoutes {
             GoRoute(
               path: '/doctor/my-patients',
               name: RouteConstants.doctorMyPatients,
-              builder: (context, state) => const MyPatientsScreen(),
+              builder: (context, state) => AuthMiddleware(
+                child: MyPatientsScreen(),
+                requiresAuth: true,
+              ),
               routes: [
                 // GoRoute(
                 //   path: '/doctor/my-patients',
@@ -113,20 +131,29 @@ List<RouteBase> get doctorRoutes {
             GoRoute(
               path: '/doctor/schedule',
               name: RouteConstants.doctorSchedule,
-              builder: (context, state) => const DoctorScheduleScreen(),
+              builder: (context, state) => AuthMiddleware(
+                child: const DoctorScheduleScreen(),
+                requiresAuth: true,
+              ),
               routes: [
                 GoRoute(
                   path: 'calendar',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorScheduleCalendar,
-                  builder: (context, state) => const DoctorCalendarSchedule(),
+                  builder: (context, state) => AuthMiddleware(
+                    child: DoctorCalendarSchedule(),
+                    requiresAuth: true,
+                  ),
                 ),
                 GoRoute(
                   path: 'doctor-reschedule-appointment',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorRescheduleAppointment,
-                  builder: (context, state) =>
-                      const DoctorRescheduleAppointment(),
+                  builder: (context, state) => AuthMiddleware(
+                    child: const DoctorRescheduleAppointment(),
+                    requiresAuth: true,
+                  ),
+
                   //  {
 
                   // final appointment = state.extra as AppointmentData;
@@ -139,25 +166,32 @@ List<RouteBase> get doctorRoutes {
                   path: 'patient-profile',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorPatientProfile,
-                  builder: (context, state) => const DoctorPatientProfile(),
+                  builder: (context, state) => AuthMiddleware(
+                    child: DoctorPatientProfile(),
+                    requiresAuth: true,
+                  ),
+
                   // {
                   // final patient = state.extra as PatientData;
                   // return DoctorPatientProfile(patient: patient);
                   // },
                 ),
                 GoRoute(
-                  path: 'scheduling-appointment-details',
-                  parentNavigatorKey: rootNavigatorKey,
-                  name: RouteConstants.doctorSchedulingAppointmentDetails,
-                  builder: (context, state) =>
-                      const AppointmentSchedulingDetails(),
-                  // {
-                  //   final appointment = state.extra as AppointmentData;
-                  //   return DoctorSchedulingAppointmentDetails(
-                  //     appointment: appointment,
-                  //   );
-                  // },
-                ),
+                    path: 'scheduling-appointment-details',
+                    parentNavigatorKey: rootNavigatorKey,
+                    name: RouteConstants.doctorSchedulingAppointmentDetails,
+                    builder: (context, state) => AuthMiddleware(
+                          child: const AppointmentSchedulingDetails(),
+                          requiresAuth: true,
+                        )
+
+                    // {
+                    //   final appointment = state.extra as AppointmentData;
+                    //   return DoctorSchedulingAppointmentDetails(
+                    //     appointment: appointment,
+                    //   );
+                    // },
+                    ),
               ],
             ),
           ],
@@ -170,17 +204,25 @@ List<RouteBase> get doctorRoutes {
             GoRoute(
               path: '/doctor/chat',
               name: RouteConstants.doctorChat,
-              builder: (context, state) => const DoctorChatListScreen(),
+              builder: (context, state) => AuthMiddleware(
+                child: const DoctorChatListScreen(),
+                requiresAuth: true,
+              ),
               routes: [
                 GoRoute(
                   // Individual Chat Screen
                   path: 'chat-screen',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorChatScreen,
-                  builder: (context, state) {
-                    final chat = state.extra as DocChatData;
-                    return DoctorChatScreen(chat: chat);
-                  },
+                  builder: (context, state) => AuthMiddleware(
+                    child: Builder(
+                      builder: (context) {
+                        final chat = state.extra as DocChatData;
+                        return DoctorChatScreen(chat: chat);
+                      },
+                    ),
+                    requiresAuth: true,
+                  ),
                 ),
               ],
             ),
@@ -194,33 +236,47 @@ List<RouteBase> get doctorRoutes {
             GoRoute(
               path: '/doctor/profile-and-settings',
               name: RouteConstants.doctorProfileSettings,
-              builder: (context, state) => DoctorProfileSettings(),
+              builder: (context, state) => AuthMiddleware(
+                requiresAuth: true,
+                child: const DoctorProfileSettings(),
+              ),
               routes: [
                 GoRoute(
                   // Settings Screen
                   path: 'security-settings',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorSecuritySettings, // under review
-                  builder: (context, state) =>
-                      const DoctorSecurityAndLoginSettings(),
+                  builder: (context, state) => AuthMiddleware(
+                    requiresAuth: true,
+                    child: const DoctorSecurityAndLoginSettings(),
+                  ),
                 ),
                 GoRoute(
                   path: 'edit-profile',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorEditProfile,
-                  builder: (context, state) => const DoctorEditProfile(),
+                  builder: (context, state) => AuthMiddleware(
+                    requiresAuth: true,
+                    child: const DoctorEditProfile(),
+                  ),
                 ),
                 GoRoute(
                   path: 'personal-profile',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorPersonalProfile,
-                  builder: (context, state) => const DoctorPersonalProfile(),
+                  builder: (context, state) => AuthMiddleware(
+                    requiresAuth: true,
+                    child: const DoctorPersonalProfile(),
+                  ),
                 ),
                 GoRoute(
                   path: 'profileQR',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.doctorQRCode,
-                  builder: (context, state) => const DoctorQR(),
+                  builder: (context, state) => AuthMiddleware(
+                    requiresAuth: true,
+                    child: const DoctorQR(),
+                  ),
                 ),
               ],
             ),
