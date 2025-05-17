@@ -1,6 +1,5 @@
 import 'package:CuraDocs/components/colors.dart';
 import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
-import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +123,6 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
       try {
         // Call verification API
-        final loginController = ref.read(loginControllerProvider);
         final authRepository = ref.read(authRepositoryProvider);
 
         // For forgot password flow, we just need to verify the OTP is correct

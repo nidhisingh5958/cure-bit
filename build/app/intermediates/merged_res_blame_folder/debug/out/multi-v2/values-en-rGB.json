@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.cure_bit.app-mergeDebugResources-48:/values-en-rGB/values-en-rGB.xml",
+            "outputFile": "com.example.cure_bit.app-mergeDebugResources-49:/values-en-rGB/values-en-rGB.xml",
             "map": [
                 {
                     "source": "/Users/nidhisingh/.gradle/caches/8.9/transforms/d5bbb9b76966aaa41c923cb7c21e77e4/transformed/browser-1.8.0/res/values-en-rGB/values-en-rGB.xml",

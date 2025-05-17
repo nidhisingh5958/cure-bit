@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.cure_bit.app-mergeDebugResources-48:/values-zu/values-zu.xml",
+            "outputFile": "com.example.cure_bit.app-mergeDebugResources-49:/values-zu/values-zu.xml",
             "map": [
                 {
                     "source": "/Users/nidhisingh/.gradle/caches/8.9/transforms/eb0a14ab1ec8059d31719a18ff24d8f1/transformed/jetified-play-services-basement-18.4.0/res/values-zu/values.xml",

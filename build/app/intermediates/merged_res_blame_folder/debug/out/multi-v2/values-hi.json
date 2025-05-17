@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.cure_bit.app-mergeDebugResources-48:/values-hi/values-hi.xml",
+            "outputFile": "com.example.cure_bit.app-mergeDebugResources-49:/values-hi/values-hi.xml",
             "map": [
                 {
                     "source": "/Users/nidhisingh/.gradle/caches/8.9/transforms/952e63fd78772fde22f1f772bc6a4468/transformed/core-1.13.1/res/values-hi/values-hi.xml",

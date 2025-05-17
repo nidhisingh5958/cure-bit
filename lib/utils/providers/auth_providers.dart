@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -196,5 +198,36 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       // Handle logout error
     }
+  }
+}
+
+// Extension methods for AuthStateNotifier to support GoRouter
+extension AuthStateNotifierExtension on AuthStateNotifier {
+  // Stream controller for GoRouter refresh stream
+  static final StreamController<AuthState> _controller =
+      StreamController<AuthState>.broadcast();
+
+  // Get the stream for GoRouter to listen to
+  Stream<AuthState> get stream => _controller.stream;
+
+  // Update auth state and notify listeners (used by GoRouter)
+  void updateAuthState({
+    required bool isAuthenticated,
+    String? userRole,
+  }) {
+    // Update state
+    state = state.copyWith(
+      isAuthenticated: isAuthenticated,
+      userRole: userRole,
+    );
+
+    // Notify GoRouter about the change
+    _controller.add(state);
+  }
+
+  // Clean up resources
+  @override
+  void dispose() {
+    _controller.close();
   }
 }

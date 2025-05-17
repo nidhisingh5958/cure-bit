@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.cure_bit.app-mergeDebugResources-48:/values-km/values-km.xml",
+            "outputFile": "com.example.cure_bit.app-mergeDebugResources-49:/values-km/values-km.xml",
             "map": [
                 {
                     "source": "/Users/nidhisingh/.gradle/caches/8.9/transforms/5453d7a446589957145227694339ade2/transformed/jetified-play-services-base-18.5.0/res/values-km/values.xml",

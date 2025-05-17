@@ -1,46 +1,46 @@
 [
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/drawable-v21_launch_background.xml.flat",
-        "source": "com.example.cure_bit.app-main-45:/drawable-v21/launch_background.xml"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-xxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-xhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-hdpi_launcher_icon.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-hdpi/launcher_icon.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/drawable-v21_launch_background.xml.flat",
+        "source": "com.example.cure_bit.app-main-46:/drawable-v21/launch_background.xml"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-xhdpi_launcher_icon.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-xhdpi/launcher_icon.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-xxxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-hdpi/ic_launcher.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-hdpi_launcher_icon.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-hdpi/launcher_icon.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-xhdpi_launcher_icon.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-xhdpi/launcher_icon.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-xxhdpi_launcher_icon.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-xxhdpi/launcher_icon.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-mdpi_launcher_icon.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-mdpi/launcher_icon.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-xxxhdpi_launcher_icon.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-xxxhdpi/launcher_icon.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-xxxhdpi_launcher_icon.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-xxxhdpi/launcher_icon.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-mdpi_launcher_icon.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-mdpi/launcher_icon.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-mdpi/ic_launcher.png"
     },
     {
-        "merged": "com.example.cure_bit.app-merged_res-50:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "com.example.cure_bit.app-main-45:/mipmap-mdpi/ic_launcher.png"
+        "merged": "com.example.cure_bit.app-merged_res-51:/mipmap-xxhdpi_launcher_icon.png.flat",
+        "source": "com.example.cure_bit.app-main-46:/mipmap-xxhdpi/launcher_icon.png"
     }
 ]

@@ -106,10 +106,15 @@ class TokenRepository {
   // Refresh the access token using the refresh token
   Future<bool> refreshAccessToken({BuildContext? context}) async {
     if (_isRefreshing) {
-      // Wait for ongoing refresh to complete
-      await Future.delayed(const Duration(milliseconds: 100));
+      // Wait for ongoing refresh to complete with timeout
+      int attempts = 0;
+      while (_isRefreshing && attempts < 10) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        attempts++;
+      }
       return _accessToken != null && !isAccessTokenExpired;
     }
+
     _isRefreshing = true;
     try {
       debugPrint('Attempting to refresh access token');
@@ -120,39 +125,59 @@ class TokenRepository {
         return false;
       }
 
-      final response = await http.post(
-        Uri.parse(refreshTokenUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $refreshToken',
-        },
-      );
+      try {
+        final response = await http.post(
+          Uri.parse(refreshTokenUrl),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $refreshToken',
+          },
+        ).timeout(const Duration(seconds: 10)); // Add timeout
 
-      debugPrint('Refresh token response: ${response.statusCode}');
+        debugPrint('Refresh token response: ${response.statusCode}');
+        debugPrint('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        // Parse the new tokens
-        final responseData = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          // Parse the new tokens
+          final responseData = jsonDecode(response.body);
 
-        // Save the new tokens
-        if (responseData['access_token'] != null) {
-          await saveTokens(
-            accessToken: responseData['access_token'],
-            refreshToken: responseData['refresh_token'] ?? refreshToken,
-            accessTokenDuration: const Duration(hours: 1),
-          );
-          debugPrint('Token refreshed successfully');
-          return true;
+          // Save the new tokens
+          if (responseData['access_token'] != null) {
+            await saveTokens(
+              accessToken: responseData['access_token'],
+              refreshToken: responseData['refresh_token'] ?? refreshToken,
+              accessTokenDuration: const Duration(hours: 1),
+            );
+            debugPrint('Token refreshed successfully');
+
+            // Force update of Role.userRole if appropriate
+            if (responseData['user_role'] != null) {
+              Role.userRole = responseData['user_role'];
+              debugPrint('Updated user role to: ${Role.userRole}');
+            }
+
+            return true;
+          }
+          debugPrint('Access token not found in response');
+          return false;
+        } else {
+          // Handle different error cases
+          _handleRefreshTokenError(response, context);
+          return false;
         }
-        return false;
-      } else {
-        // Handle different error cases
-        _handleRefreshTokenError(response, context);
+      } catch (e) {
+        debugPrint('Error during HTTP request for token refresh: $e');
+        if (context != null && context.mounted) {
+          showSnackBar(
+            context: context,
+            message: 'Connection error. Please check your network.',
+          );
+        }
         return false;
       }
     } catch (e) {
-      debugPrint('Error refreshing token: $e');
-      if (context != null) {
+      debugPrint('Unexpected error refreshing token: $e');
+      if (context != null && context.mounted) {
         showSnackBar(
           context: context,
           message: 'Authentication error. Please log in again.',
