@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/widgets/country_picker.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';

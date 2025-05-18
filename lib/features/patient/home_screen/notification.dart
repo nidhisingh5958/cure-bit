@@ -1,7 +1,7 @@
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:CuraDocs/components/pop_up.dart';
+import 'package:CuraDocs/common/components/pop_up.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -49,8 +49,8 @@ class NotificationScreen extends StatelessWidget {
               // modify this to handle the selected value
               if (value == RouteConstants.profileSettings) {
                 Navigator.pushNamed(context, RouteConstants.profileSettings);
-              } else if (value == RouteConstants.help) {
-                Navigator.pushNamed(context, RouteConstants.help);
+              } else if (value == RouteConstants.helpAndSupport) {
+                Navigator.pushNamed(context, RouteConstants.helpAndSupport);
               }
             },
             optionsList: [

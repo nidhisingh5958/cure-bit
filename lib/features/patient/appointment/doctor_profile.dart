@@ -1,6 +1,6 @@
-import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/components/app_header.dart'; // Import the header component
-import 'package:CuraDocs/components/pop_up.dart';
+import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/common/components/app_header.dart'; // Import the header component
+import 'package:CuraDocs/common/components/pop_up.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -331,7 +331,7 @@ class _DoctorProfileState extends State<DoctorProfile>
             if (value == 'book') {
               context.goNamed(RouteConstants.bookAppointment);
             } else if (value == 'doctorQR') {
-              context.goNamed(RouteConstants.help);
+              context.goNamed(RouteConstants.helpAndSupport);
             }
           },
           optionsList: [

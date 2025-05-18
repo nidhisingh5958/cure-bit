@@ -1,11 +1,11 @@
 import 'dart:async';
-
+import 'package:CuraDocs/common/contact_us.dart';
 import 'package:CuraDocs/features/auth/landing/splash/main_splash_screen.dart';
 import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
 import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
 
-import 'package:CuraDocs/features/patient/settings/support/contact_us.dart';
+import 'package:CuraDocs/common/report_a_problem.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 
 import 'package:CuraDocs/utils/routes/doctor_routes.dart';
@@ -21,7 +21,7 @@ import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
 import 'package:CuraDocs/features/auth/screens/login/login_otp/otp.dart';
 import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 
-const bool isDev = false; // Set to false before release
+const bool isDev = true; // Set to false before release
 
 class AuthState {
   final bool isAuthenticated;
@@ -63,7 +63,8 @@ class AppRouter {
           name: RouteConstants.signUp,
           path: '/sign-up',
           builder: (context, state) => AuthMiddleware(
-            child: SignUpScreen(),
+            requiresAuth: false,
+            child: const SignUpScreen(),
           ),
         ),
         GoRoute(
@@ -109,6 +110,14 @@ class AppRouter {
           builder: (context, state) => AuthMiddleware(
             requiresAuth: false,
             child: const ContactUsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/reportProblem',
+          name: RouteConstants.reportProblem,
+          builder: (context, state) => AuthMiddleware(
+            requiresAuth: false,
+            child: const ReportAProblemScreen(),
           ),
         ),
         ...patientRoutes,

@@ -1,5 +1,5 @@
-import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 

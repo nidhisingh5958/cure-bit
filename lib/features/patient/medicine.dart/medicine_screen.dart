@@ -1,5 +1,5 @@
-import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/components/status_bar_color.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/common/components/status_bar_color.dart';
 import 'package:CuraDocs/features/patient/medicine.dart/widgets/hero_dialog_route.dart';
 import 'package:CuraDocs/features/patient/medicine.dart/reminder_details.dart';
 import 'package:flutter/material.dart';

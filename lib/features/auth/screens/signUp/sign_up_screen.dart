@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_form.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

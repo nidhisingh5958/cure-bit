@@ -1,5 +1,5 @@
-import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +77,8 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
                         padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
@@ -93,7 +94,8 @@ class HomeScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 20),
                             _buildFeaturesGrid(context, isSmallScreen),
-                            const SizedBox(height: 32),
+                            // const SizedBox(height: 32),
+                            const SizedBox(height: 20),
                             _buildBentoGrid(context, isSmallScreen),
                           ],
                         ),
@@ -129,8 +131,8 @@ class HomeScreen extends StatelessWidget {
         isSmallScreen
             ? Column(
                 children: [
-                  _buildHealthStatsCard(isSmallScreen),
-                  SizedBox(height: horizontalSpacing),
+                  // _buildHealthStatsCard(isSmallScreen),
+                  // SizedBox(height: horizontalSpacing),
                   _buildMedicationCard(isSmallScreen),
                 ],
               )
@@ -138,11 +140,11 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Health stats card (1/3 width)
-                  Expanded(
-                    flex: 2, // Reduced width compared to medication card
-                    child: _buildHealthStatsCard(isSmallScreen),
-                  ),
-                  SizedBox(width: horizontalSpacing),
+                  // Expanded(
+                  //   flex: 2, // Reduced width compared to medication card
+                  //   child: _buildHealthStatsCard(isSmallScreen),
+                  // ),
+                  // SizedBox(width: horizontalSpacing),
                   // Medication card (2/3 width)
                   Expanded(
                     flex: 3, // Increased width compared to health stats card
@@ -1024,7 +1026,7 @@ class HomeScreen extends StatelessWidget {
         'icon': MdiIcons.stethoscope,
         'label': 'My Doctors',
         'onTap': () {
-          context.goNamed(RouteConstants.myDoctors);
+          context.goNamed(RouteConstants.favouriteDoctors);
         }
       },
       {
@@ -1049,46 +1051,48 @@ class HomeScreen extends StatelessWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
-        return Column(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: grey200,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: Icon(
-                  category['icon'] as IconData,
-                  color: black,
-                  size: 24,
+        return Center(
+          child: Column(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: grey200,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: .1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  (category['onTap'] as Function)();
-                },
+                child: IconButton(
+                  icon: Icon(
+                    category['icon'] as IconData,
+                    color: black,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    (category['onTap'] as Function)();
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              category['label'] as String,
-              style: const TextStyle(
-                fontSize: 14,
-                color: black,
-                fontWeight: FontWeight.w500,
+              const SizedBox(height: 8),
+              Text(
+                category['label'] as String,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: black,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

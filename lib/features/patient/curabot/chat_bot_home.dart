@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/features/patient/curabot/widgets/bot_search_bar.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
 import 'package:CuraDocs/features/doctor/appointment/patient_profile.dart';
-import 'package:CuraDocs/features/doctor/appointment/reschedule_screen.dart';
+import 'package:CuraDocs/features/doctor/appointment/_reschedule_screen.dart';
 import 'package:CuraDocs/features/doctor/appointment/schedule_screen.dart';
 import 'package:CuraDocs/features/doctor/appointment/scheduling_details.dart';
 import 'package:CuraDocs/features/doctor/settings/_edit_profile.dart';

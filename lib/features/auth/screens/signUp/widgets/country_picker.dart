@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 
 class CustomCountryPicker extends StatefulWidget {
   final Function(Country) onSelectCountry;

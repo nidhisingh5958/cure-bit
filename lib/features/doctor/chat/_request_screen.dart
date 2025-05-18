@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
 import 'package:CuraDocs/features/doctor/chat/entities/_request_provider.dart';
 import 'package:go_router/go_router.dart';

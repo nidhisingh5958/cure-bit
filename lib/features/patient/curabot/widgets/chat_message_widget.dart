@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';
 import 'package:CuraDocs/features/patient/curabot/entities/message_group.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/patient/documents/data/sample.dart'
     show patientData;
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';

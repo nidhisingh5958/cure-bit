@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/patient/chat/widgets/build_message.dart';
 import 'data/chat_sample_data.dart';
 import 'package:flutter/material.dart';

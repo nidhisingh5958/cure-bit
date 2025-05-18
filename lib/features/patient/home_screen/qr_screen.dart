@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:flutter/material.dart';
 
 class QrScreen extends StatefulWidget {

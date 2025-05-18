@@ -1,5 +1,5 @@
-import 'package:CuraDocs/components/colors.dart';
-import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -183,7 +183,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
               child: IconButton(
                 icon: Icon(
                   MdiIcons.filter,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: grey600,
                   size: 20,
                 ),
                 onPressed: () {
@@ -426,40 +426,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Categories',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.primary,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'See All',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios, size: 12),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildHeader('Categories'),
         const SizedBox(height: 12),
         SizedBox(
           height: 110,
@@ -493,7 +460,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
     bool isSelected = false,
     void Function()? onPressed,
   }) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final primaryColor = black.withValues(alpha: .8);
 
     return GestureDetector(
       onTap: onPressed,
@@ -504,7 +471,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           color: isSelected ? primaryColor.withValues(alpha: .1) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? primaryColor : grey200,
+            color: isSelected ? transparent : grey200,
             width: isSelected ? 1.5 : 1,
           ),
           boxShadow: [
@@ -586,40 +553,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Top Doctors',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.primary,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'See All',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios, size: 12),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildHeader('Top Doctors'),
         const SizedBox(height: 16),
         ListView.builder(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -711,10 +645,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: .1),
+                            color: grey400.withValues(alpha: .1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -722,7 +653,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: grey800,
                             ),
                           ),
                         ),
@@ -767,10 +698,7 @@ class _AppointmentHomeState extends State<AppointmentHome> {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: .1),
+                  color: black.withValues(alpha: .1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -782,6 +710,43 @@ class _AppointmentHomeState extends State<AppointmentHome> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextButton(
+            onPressed: () {},
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'See All',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: grey800),
+                ),
+                SizedBox(width: 4),
+                Icon(Icons.arrow_forward_ios, size: 12),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

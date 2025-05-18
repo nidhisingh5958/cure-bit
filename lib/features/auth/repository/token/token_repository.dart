@@ -1,4 +1,4 @@
-// token_repository.dart
+// TokenRepository: Handles all token storage, retrieval, and refresh logic.
 import 'dart:async';
 import 'dart:convert';
 import 'package:CuraDocs/features/auth/repository/api_const.dart';
@@ -28,11 +28,11 @@ class TokenRepository {
   // Add to TokenRepository class
   bool _isRefreshing = false;
 
-  // Check if access token is expired or about to expire (buffer of 5 minutes)
+  // Check if access token is expired or about to expire (buffer of 1 minutes)
   bool get isAccessTokenExpired {
     if (_accessTokenExpiryTime == null) return true;
     return DateTime.now()
-        .isAfter(_accessTokenExpiryTime!.subtract(const Duration(minutes: 5)));
+        .isAfter(_accessTokenExpiryTime!.subtract(const Duration(minutes: 1)));
   }
 
   // Get the stored access token

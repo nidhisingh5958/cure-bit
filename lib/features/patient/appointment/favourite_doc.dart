@@ -1,8 +1,8 @@
-import 'package:CuraDocs/components/app_header.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/components/pop_up.dart';
+import 'package:CuraDocs/common/components/pop_up.dart';
 
 class FavouritesPage extends StatefulWidget {
   const FavouritesPage({super.key});
@@ -25,7 +25,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
               if (value == 'add') {
                 // context.goNamed(RouteConstants.bookAppointment);
               } else if (value == 'help') {
-                context.goNamed(RouteConstants.help);
+                context.goNamed(RouteConstants.helpAndSupport);
               }
             },
             optionsList: [

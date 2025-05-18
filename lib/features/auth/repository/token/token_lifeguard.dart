@@ -1,3 +1,5 @@
+// TokenLifeguard: Optionally runs a periodic check to refresh tokens in the background.
+
 import 'dart:async';
 import 'package:CuraDocs/features/auth/repository/token/token_repository.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,4 @@
-// auth_middleware.dart
+// Auth Middleware: Checks if the user is authenticated and if the token is valid before allowing access to protected routes.
 import 'package:CuraDocs/features/auth/repository/token/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

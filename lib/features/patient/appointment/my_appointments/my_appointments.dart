@@ -1,5 +1,5 @@
-import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/active_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/completed_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/upcoming_appointments.dart';
@@ -15,6 +15,7 @@ class MyAppointments extends StatefulWidget {
 class _MyAppointmentsState extends State<MyAppointments>
     with TickerProviderStateMixin {
   late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
@@ -66,10 +67,11 @@ class _MyAppointmentsState extends State<MyAppointments>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          ActiveAppointments(),
-          UpcomingAppointments(),
-          CompletedAppointments(),
+        children: [
+          // Create instances of each widget type
+          const ActiveAppointments(),
+          const UpcomingAppointments(),
+          const CompletedAppointments(),
         ],
       ),
     );

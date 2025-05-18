@@ -104,7 +104,7 @@ class TokenStateNotifier extends StateNotifier<TokenState> {
   }
 }
 
-// Existing auth state provider (keep this unchanged)
+// authStateProvider: Holds the authentication state for the UI and routing.
 final authStateProvider =
     StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
   return AuthStateNotifier();

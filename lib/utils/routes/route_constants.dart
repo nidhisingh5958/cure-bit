@@ -22,6 +22,8 @@ class RouteConstants {
   static String termsAndConditions = "termsAndConditions";
   static String privacyPolicy = "privacyPolicy";
   static String feedback = "feedback";
+  static String reportProblem = "reportProblem";
+  static String helpAndSupport = "helpAndSupport";
 
 // Patients routes
   // inner routes
@@ -38,6 +40,7 @@ class RouteConstants {
   static String bookAppointment = "bookAppointment";
   static String appointmentDetails = "appointmentDetails";
   static String favouriteDoctors = "favouriteDoctors";
+  static String rescheduleAppointment = "rescheduleAppointment";
 
   // chat bot routes
   static String chatBot = "chatBot";
@@ -66,7 +69,6 @@ class RouteConstants {
   static String profileSettings = "profileSettings";
   static String securitySettings = "securitySettings";
   static String notificationsSettings = "notificationsSettings";
-  static String help = "help";
 
 // Doctor routes
   // inner routes
@@ -109,5 +111,4 @@ class RouteConstants {
   static String doctorProfileSettings = "doctorProfileSettings";
   static String doctorSecuritySettings = "doctorsecuritySettings";
   static String doctorNotificationsSettings = "doctorNotificationsSettings";
-  static String doctorHelp = "doctorHelp";
 }

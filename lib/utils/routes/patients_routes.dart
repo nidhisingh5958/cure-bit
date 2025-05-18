@@ -1,3 +1,4 @@
+import 'package:CuraDocs/features/patient/appointment/my_appointments/reschedule_appointment.dart';
 import 'package:CuraDocs/features/patient/home_screen/qr_screen.dart';
 import 'package:CuraDocs/features/patient/home_screen/scan_qr.dart';
 import 'package:CuraDocs/features/patient/settings/support/help.dart';
@@ -29,10 +30,10 @@ import 'package:CuraDocs/features/patient/medicine.dart/medicine_screen.dart';
 import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
 // settings
 import 'package:CuraDocs/utils/routes/components/patient_navigation_bar.dart';
-import 'package:CuraDocs/features/patient/settings/profile_and_settings.dart';
+import 'package:CuraDocs/features/patient/settings/account_and_settings.dart';
 import 'package:CuraDocs/features/patient/settings/security_and_login.dart';
-import 'package:CuraDocs/features/patient/settings/edit_profile.dart';
-import 'package:CuraDocs/features/patient/settings/personal_profile.dart';
+import 'package:CuraDocs/features/patient/settings/edit_account_details.dart';
+import 'package:CuraDocs/features/patient/settings/account.dart';
 
 List<RouteBase> get patientRoutes {
   return [
@@ -61,7 +62,7 @@ List<RouteBase> get patientRoutes {
     GoRoute(
       path: '/help',
       parentNavigatorKey: rootNavigatorKey,
-      name: RouteConstants.help,
+      name: RouteConstants.helpAndSupport,
       builder: (context, state) => HelpScreen(),
     ),
 
@@ -106,6 +107,14 @@ List<RouteBase> get patientRoutes {
           name: RouteConstants.bookedAppointments,
           builder: (context, state) => const MyAppointments(),
         ),
+        GoRoute(
+            path: 'schedule-appointment',
+            parentNavigatorKey: rootNavigatorKey,
+            name: RouteConstants.rescheduleAppointment,
+            builder: (context, state) {
+              // final appointment = state.extra as AppointmentData;
+              return PatientRescheduleAppointment();
+            }),
         GoRoute(
           path: 'favourites',
           parentNavigatorKey: rootNavigatorKey,

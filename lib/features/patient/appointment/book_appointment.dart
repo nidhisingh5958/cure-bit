@@ -1,11 +1,11 @@
-import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/features/patient/api_repository/repository.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/features/features_api_repository/repository.dart';
 import 'package:CuraDocs/features/patient/appointment/components/problem_selection_widget.dart';
 import 'package:CuraDocs/features/patient/appointment/success_screen.dart';
 import 'package:CuraDocs/utils/size_config.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:audioplayers/audioplayers.dart';
 

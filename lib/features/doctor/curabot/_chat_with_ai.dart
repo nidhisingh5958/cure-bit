@@ -1,5 +1,5 @@
-import 'package:CuraDocs/components/app_header.dart';
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/doctor/curabot/entities/message_group.dart';
 import 'package:CuraDocs/features/doctor/curabot/widgets/_bot_search_bar.dart';
 import 'package:CuraDocs/features/doctor/curabot/widgets/_chat_message_widget.dart';

@@ -1,4 +1,4 @@
-import 'package:CuraDocs/components/colors.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -111,35 +111,45 @@ class SideMenu extends StatelessWidget {
             context.goNamed(RouteConstants.profileSettings);
           },
         ),
-        _buildOptionItem(
-          icon: Icons.insights_outlined,
-          label: 'Your Activity',
-          onTap: () {
-            Navigator.pop(context); // Close drawer first
-            if (context.canPop()) {
-              context
-                  .goNamed(RouteConstants.profile, extra: {'fromDrawer': true});
-            }
-          },
-        ),
-        _buildOptionItem(
-          icon: Icons.brightness_6_outlined,
-          label: 'Switch Appearance',
-          onTap: () {
-            Navigator.pop(context); // Close drawer first
-            // Handle theme switching
-          },
-        ),
+        // _buildOptionItem(
+        //   icon: Icons.insights_outlined,
+        //   label: 'Your Activity',
+        //   onTap: () {
+        //     Navigator.pop(context); // Close drawer first
+        //     if (context.canPop()) {
+        //       context
+        //           .goNamed(RouteConstants.profile, extra: {'fromDrawer': true});
+        //     }
+        //   },
+        // ),
+        // _buildOptionItem(
+        //   icon: Icons.brightness_6_outlined,
+        //   label: 'Switch Appearance',
+        //   onTap: () {
+        //     Navigator.pop(context); // Close drawer first
+        //     // Handle theme switching
+        //   },
+        // ),
         _buildOptionItem(
           icon: Icons.report_problem_outlined,
           label: 'Report a problem',
           onTap: () {
             Navigator.pop(context); // Close drawer first
             if (context.canPop()) {
-              context.goNamed(RouteConstants.feedback);
+              context.goNamed(RouteConstants.reportProblem);
             }
           },
         ),
+        // _buildOptionItem(
+        //   icon: Icons.privacy_tip_outlined,
+        //   label: 'Feedback',
+        //   onTap: () {
+        //     Navigator.pop(context); // Close drawer first
+        //     if (context.canPop()) {
+        //       context.goNamed(RouteConstants.feedback);
+        //     }
+        //   },
+        // ),
       ],
     );
   }
@@ -150,19 +160,19 @@ class SideMenu extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Language",
-            style: TextStyle(
-              fontSize: 16,
-              color: black,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          SizedBox(height: 16),
+          // Text(
+          //   "Language",
+          //   style: TextStyle(
+          //     fontSize: 16,
+          //     color: black,
+          //     fontWeight: FontWeight.normal,
+          //   ),
+          // ),
+          // SizedBox(height: 16),
           GestureDetector(
             onTap: () {
               Navigator.pop(context); // Close drawer first
-              context.goNamed(RouteConstants.help);
+              context.goNamed(RouteConstants.helpAndSupport);
             },
             child: Text(
               "Help & Support",
@@ -229,21 +239,21 @@ class SideMenu extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InkWell(
-            onTap: () {
-              Navigator.pop(context); // Close drawer first
-              // Implement switch account feature
-            },
-            child: Text(
-              "Switch accounts",
-              style: TextStyle(
-                fontSize: 16,
-                color: black,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
+          // InkWell(
+          //   onTap: () {
+          //     Navigator.pop(context); // Close drawer first
+          //     // Implement switch account feature
+          //   },
+          //   child: Text(
+          //     "Switch accounts",
+          //     style: TextStyle(
+          //       fontSize: 16,
+          //       color: black,
+          //       fontWeight: FontWeight.normal,
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(height: 16),
           InkWell(
             onTap: () {
               Navigator.pop(context); // Close drawer first
