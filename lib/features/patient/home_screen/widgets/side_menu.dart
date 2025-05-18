@@ -135,9 +135,7 @@ class SideMenu extends StatelessWidget {
           label: 'Report a problem',
           onTap: () {
             Navigator.pop(context); // Close drawer first
-            if (context.canPop()) {
-              context.goNamed(RouteConstants.reportProblem);
-            }
+            context.goNamed(RouteConstants.reportProblem);
           },
         ),
         // _buildOptionItem(
