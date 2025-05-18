@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class UserModel {
@@ -6,13 +5,16 @@ class UserModel {
   final String name;
   final String email;
   final String token;
+  final String role;
   final DateTime createdAt;
   final DateTime updatedAt;
+
   UserModel({
     required this.cin,
     required this.name,
     required this.email,
     required this.token,
+    required this.role,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -22,6 +24,7 @@ class UserModel {
     String? name,
     String? email,
     String? token,
+    String? role,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -30,6 +33,7 @@ class UserModel {
       name: name ?? this.name,
       email: email ?? this.email,
       token: token ?? this.token,
+      role: role ?? this.role,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -41,6 +45,7 @@ class UserModel {
       'name': name,
       'email': email,
       'token': token,
+      'role': role, // Include role in toMap
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt.millisecondsSinceEpoch,
     };
@@ -52,6 +57,7 @@ class UserModel {
       name: map['name'] as String,
       email: map['email'] as String,
       token: map['token'] as String,
+      role: map['role'] as String, // Extract role from map
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
       updatedAt: DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int),
     );
@@ -64,7 +70,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(cin: $cin, name: $name, email: $email, token: $token, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'UserModel(cin: $cin, name: $name, email: $email, token: $token, role: $role, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -75,6 +81,7 @@ class UserModel {
         other.name == name &&
         other.email == email &&
         other.token == token &&
+        other.role == role &&
         other.createdAt == createdAt &&
         other.updatedAt == updatedAt;
   }
@@ -85,6 +92,7 @@ class UserModel {
         name.hashCode ^
         email.hashCode ^
         token.hashCode ^
+        role.hashCode ^
         createdAt.hashCode ^
         updatedAt.hashCode;
   }

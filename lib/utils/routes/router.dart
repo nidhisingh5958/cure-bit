@@ -88,8 +88,8 @@ class AppRouter {
                   name: RouteConstants.passReset,
                   path: 'password-reset',
                   builder: (context, state) => AuthMiddleware(
-                    child: PasswordInputScreen(),
                     requiresAuth: false,
+                    child: PasswordInputScreen(),
                   ),
                 ),
               ],
@@ -108,7 +108,7 @@ class AppRouter {
           path: '/contactUs',
           name: RouteConstants.contactUs,
           builder: (context, state) => AuthMiddleware(
-            requiresAuth: false,
+            requiresAuth: true,
             child: const ContactUsScreen(),
           ),
         ),
@@ -116,7 +116,7 @@ class AppRouter {
           path: '/reportProblem',
           name: RouteConstants.reportProblem,
           builder: (context, state) => AuthMiddleware(
-            requiresAuth: false,
+            requiresAuth: true,
             child: const ReportAProblemScreen(),
           ),
         ),

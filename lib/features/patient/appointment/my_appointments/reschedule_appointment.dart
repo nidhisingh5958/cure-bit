@@ -1,10 +1,12 @@
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/repository.dart';
+import 'package:CuraDocs/features/features_api_repository/feature_repository.dart';
+import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
-class PatientRescheduleAppointment extends StatefulWidget {
+class PatientRescheduleAppointment extends ConsumerStatefulWidget {
   final Map<String, dynamic>? appointment;
 
   const PatientRescheduleAppointment({
@@ -13,20 +15,22 @@ class PatientRescheduleAppointment extends StatefulWidget {
   });
 
   @override
-  State<PatientRescheduleAppointment> createState() =>
+  ConsumerState<PatientRescheduleAppointment> createState() =>
       _PatientRescheduleAppointmentState();
 }
 
 class _PatientRescheduleAppointmentState
-    extends State<PatientRescheduleAppointment> {
+    extends ConsumerState<PatientRescheduleAppointment> {
   late TextEditingController titleController;
-  late TextEditingController locationController;
+
   late TextEditingController startTimeController;
-  late TextEditingController endTimeController;
+
   late TextEditingController dateController;
-  late TextEditingController notesController;
-  late TextEditingController
-      reasonController; // New controller for reschedule reason
+
+  // API required controllers
+  late TextEditingController reasonController;
+  // String appointmentId = '';
+  String appointmentId = 'ghsdjhgs24';
   Color selectedColor = Colors.blue;
   DateTime selectedDate = DateTime.now();
 
@@ -51,10 +55,9 @@ class _PatientRescheduleAppointmentState
 
     // Initialize all controllers first
     titleController = TextEditingController();
-    locationController = TextEditingController();
+
     startTimeController = TextEditingController();
-    endTimeController = TextEditingController();
-    notesController = TextEditingController();
+
     reasonController = TextEditingController(); // Initialize reason controller
     dateController = TextEditingController(
         text: DateFormat('MMMM d, yyyy').format(selectedDate));
@@ -62,11 +65,13 @@ class _PatientRescheduleAppointmentState
     // Then populate with appointment data if available
     if (widget.appointment != null) {
       final appointment = widget.appointment!;
+
+      // appointmentId = appointment['id'] ?? '';
+      appointmentId = 'ghsdjhgs24';
+
       titleController.text = appointment['title'] ?? '';
-      locationController.text = appointment['location'] ?? '';
+
       startTimeController.text = appointment['startTime'] ?? '';
-      endTimeController.text = appointment['endTime'] ?? '';
-      notesController.text = appointment['notes'] ?? '';
 
       if (appointment['date'] != null) {
         try {
@@ -107,12 +112,9 @@ class _PatientRescheduleAppointmentState
   @override
   void dispose() {
     titleController.dispose();
-    locationController.dispose();
     startTimeController.dispose();
-    endTimeController.dispose();
     dateController.dispose();
-    notesController.dispose();
-    reasonController.dispose(); // Dispose reason controller
+    reasonController.dispose();
     super.dispose();
   }
 
@@ -205,15 +207,10 @@ class _PatientRescheduleAppointmentState
         isSubmitting = true;
       });
 
-      // Get appointment ID
-      final appointmentId = widget.appointment != null
-          ? widget.appointment!['id']
-          : DateTime.now().millisecondsSinceEpoch.toString();
-
       // Format date for API (YYYY-MM-DD)
       final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
 
-      // Format time for API (HH:MM)
+      // Format time for API (HH:MM) - 24-hour format
       String apiTimeFormat = '';
       if (startTimeController.text.isNotEmpty) {
         try {
@@ -229,19 +226,31 @@ class _PatientRescheduleAppointmentState
           apiTimeFormat =
               '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
         } catch (e) {
-          apiTimeFormat =
-              startTimeController.text; // Use as-is if parsing fails
+          // Fallback to original format if parsing fails
+          debugPrint('Error parsing time: ${e.toString()}');
+          apiTimeFormat = startTimeController.text;
         }
       }
+      // Check if appointment ID is available
+      if (appointmentId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Cannot reschedule: Missing appointment ID'),
+          backgroundColor: Colors.red[700],
+          behavior: SnackBarBehavior.floating,
+        ));
+        setState(() {
+          isSubmitting = false;
+        });
+        return;
+      }
 
-      // Call repository to reschedule appointment
       final success = await _appointmentRepository.rescheduleAppointment(
         context,
-        appointmentId,
+        appointmentId = '13456fAS',
         formattedDate,
         apiTimeFormat,
-        notesController.text.trim(),
         reasonController.text.trim(),
+        ref.read(userProvider)?.role ?? '',
       );
 
       setState(() {
@@ -249,18 +258,16 @@ class _PatientRescheduleAppointmentState
       });
 
       if (success) {
-        // Update local data
+        // Update UI representation (this doesn't affect the API)
         final appointmentData = {
           'id': appointmentId,
           'title': titleController.text,
-          'location': locationController.text,
           'startTime': startTimeController.text,
-          'endTime': endTimeController.text,
           'date': dateController.text,
-          'notes': notesController.text,
           'color': selectedColor,
         };
 
+        // Update local state if needed
         if (widget.appointment != null) {
           final index =
               appointments.indexWhere((a) => a['id'] == appointmentData['id']);
@@ -436,22 +443,6 @@ class _PatientRescheduleAppointmentState
                       ),
                       const SizedBox(height: 20),
 
-                      // Location field
-                      _buildFormLabel('Location'),
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: locationController,
-                        hintText: 'Enter appointment location',
-                        prefixIcon: Icons.location_on_outlined,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter a location';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
                       // Date field with calendar
                       _buildFormLabel('Date'),
                       const SizedBox(height: 8),
@@ -484,7 +475,7 @@ class _PatientRescheduleAppointmentState
                                       style: TextStyle(
                                         color: primaryColor,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                        fontSize: 14,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -505,7 +496,7 @@ class _PatientRescheduleAppointmentState
                                   dateController.text,
                                   style: TextStyle(
                                     color: textColor,
-                                    fontSize: 14,
+                                    fontSize: 10,
                                   ),
                                 ),
                               ),
@@ -532,31 +523,15 @@ class _PatientRescheduleAppointmentState
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
-                      // End Time field
-                      _buildFormLabel('End Time'),
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: endTimeController,
-                        hintText: 'Select end time',
-                        prefixIcon: Icons.access_time,
-                        readOnly: true,
-                        onTap: () => _selectTime(context, endTimeController),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please select an end time';
-                          }
-                          return null;
-                        },
-                      ),
+
                       const SizedBox(height: 20),
 
-                      // Reason for rescheduling
-                      _buildFormLabel('Reason for Rescheduling'),
+                      // Reason for rescheduling - REQUIRED BY API
+                      _buildFormLabel('Reason for Rescheduling *'),
                       const SizedBox(height: 8),
                       _buildTextFormField(
                         controller: reasonController,
-                        hintText: 'Please provide a reason for rescheduling',
+                        hintText: 'Why are you rescheduling this appointment?',
                         prefixIcon: Icons.question_answer_outlined,
                         maxLines: 2,
                         validator: (value) {
@@ -567,17 +542,6 @@ class _PatientRescheduleAppointmentState
                         },
                       ),
                       const SizedBox(height: 20),
-
-                      // Notes field
-                      _buildFormLabel('Notes'),
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: notesController,
-                        hintText: 'Add any notes or details',
-                        prefixIcon: Icons.notes,
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: 24),
 
                       // Save button
                       ElevatedButton(

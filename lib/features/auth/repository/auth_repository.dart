@@ -16,10 +16,12 @@ import 'package:go_router/go_router.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:CuraDocs/utils/providers/user_provider.dart';
 
 final authRepositoryProvider = Provider((ref) {
   final tokenRepository = ref.watch(tokenRepositoryProvider);
-  return AuthRepository(tokenRepository);
+  final userNotifier = ref.watch(userProvider.notifier);
+  return AuthRepository(tokenRepository, userNotifier);
 });
 
 bool _isValidEmail(String email) {
@@ -42,8 +44,9 @@ Future<bool> verify(String hashedPassword, String plainPassword) async {
 
 class AuthRepository {
   final TokenRepository _tokenRepository;
+  final UserNotifier _userNotifier;
 
-  AuthRepository(this._tokenRepository);
+  AuthRepository(this._tokenRepository, this._userNotifier);
 
   static const int maxRetries = 3;
   static const Duration retryDelay = Duration(seconds: 2);
@@ -122,6 +125,29 @@ class AuthRepository {
               accessTokenDuration:
                   const Duration(hours: 1), // Default to 1 hour
             );
+
+            // Create and store user model
+            if (responseData.containsKey('user')) {
+              final userData = responseData['user'];
+
+              // Create UserModel
+              final UserModel user = UserModel(
+                cin: userData['cin'] ?? '',
+                name: userData['name'] ??
+                    userData['first_name'] +
+                        ' ' +
+                        (userData['last_name'] ?? ''),
+                email: userData['email'] ??
+                    input, // Use input if email not provided
+                token: accessToken,
+                role: role, // Store the role
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              );
+
+              // Save the user data
+              await _userNotifier.setUser(user);
+            }
 
             // Set user as authenticated with the specific role
             notifier.setAuthenticated(true, role);
@@ -349,6 +375,19 @@ class AuthRepository {
 
       if (isMatch) {
         notifier.setAuthenticated(true, role);
+
+        final UserModel user = UserModel(
+          cin: '',
+          name: '',
+          email: _isValidEmail(identifier) ? identifier : '',
+          token: '',
+          role: role,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        // Save the user data
+        await _userNotifier.setUser(user);
 
         showSnackBar(context: context, message: 'Login successful');
 
@@ -625,22 +664,36 @@ class AuthRepository {
       if (response.statusCode != 201) {
         throw jsonDecode(response.body)['error'] ?? 'Unknown error';
       } else {
-        debugPrint('Signup successful');
+        // Parse the response and create user model
+        final responseData = jsonDecode(response.body);
+        final String? token = responseData['token'] ?? '';
+
+        // Create UserModel
+        final UserModel user = UserModel(
+          cin: responseData['cin'] ?? '',
+          name: '$firstName $lastName',
+          email: email,
+          token: token ?? '',
+          role: role, // Store the role
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        // Save the user data
+        await _userNotifier.setUser(user);
+        // Set user as authenticated with the specific role
+        notifier.setAuthenticated(true, role);
+
+        showSnackBar(context: context, message: 'Sign up successful');
+
+        // Router will redirect to appropriate home screen based on role
+        if (role == 'Doctor') {
+          context.goNamed(RouteConstants.doctorHome);
+        } else {
+          context.goNamed(RouteConstants.home);
+        }
+        return user;
       }
-
-      // Set user as authenticated with the specific role
-      notifier.setAuthenticated(true, role);
-
-      showSnackBar(context: context, message: 'Sign up successful');
-
-      // Router will redirect to appropriate home screen based on role
-      if (role == 'Doctor') {
-        context.goNamed(RouteConstants.doctorHome);
-      } else {
-        context.goNamed(RouteConstants.home);
-      }
-
-      return UserModel.fromJson(response.body);
     } on FormatException {
       debugPrint(email);
       showSnackBar(
@@ -948,6 +1001,9 @@ class AuthRepository {
     try {
       // Clear tokens
       await _tokenRepository.clearTokens();
+
+      // Clear user data
+      await _userNotifier.clearUser();
 
       // Clear authentication state
       notifier.logout();

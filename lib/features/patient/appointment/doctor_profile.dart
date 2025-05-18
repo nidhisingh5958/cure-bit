@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+Color primaryColor = black;
+Color secondaryColor = grey400;
+
 class DoctorProfile extends StatefulWidget {
   const DoctorProfile({super.key});
 
@@ -63,7 +66,7 @@ class _DoctorProfileState extends State<DoctorProfile>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 207, 221, 233),
+        backgroundColor: const Color.fromARGB(255, 212, 218, 222),
         // Using the consistent header component
         appBar: AppHeader(
           title: 'Doctor Profile',
@@ -246,9 +249,8 @@ class _DoctorProfileState extends State<DoctorProfile>
             icon: Icon(Icons.message_outlined),
             label: Text('Message'),
             style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor:
-                  Theme.of(context).colorScheme.primary.withValues(alpha: .1),
+              foregroundColor: primaryColor,
+              backgroundColor: secondaryColor.withValues(alpha: .1),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -274,12 +276,9 @@ class _DoctorProfileState extends State<DoctorProfile>
               }
             },
             style: ElevatedButton.styleFrom(
-              foregroundColor: isConnected
-                  ? Colors.white
-                  : Theme.of(context).colorScheme.primary,
-              backgroundColor: isConnected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.primary.withValues(alpha: .1),
+              foregroundColor: isConnected ? Colors.white : primaryColor,
+              backgroundColor:
+                  isConnected ? grey800 : secondaryColor.withValues(alpha: .1),
               elevation: isConnected ? 2 : 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -404,15 +403,12 @@ class _DoctorProfileState extends State<DoctorProfile>
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: 0.1),
+                  color: secondaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   icon,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: primaryColor,
                 ),
               ),
               SizedBox(width: 12),

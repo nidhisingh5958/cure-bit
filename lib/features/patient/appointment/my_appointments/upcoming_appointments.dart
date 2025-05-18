@@ -1,5 +1,7 @@
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class UpcomingAppointments extends StatefulWidget {
   const UpcomingAppointments({super.key});
@@ -93,7 +95,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -153,7 +155,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     // Navigate to doctor profile
-                    print('Navigate to doctor profile: $doctorId');
+                    debugPrint('Navigate to doctor profile: $doctorId');
                   },
                   icon: const Icon(Icons.person_outline),
                   label: const Text('Doctor Profile'),
@@ -168,7 +170,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     // Cancel appointment
-                    print('Cancel appointment');
+                    debugPrint('Cancel appointment');
                     // Show confirmation dialog
                     _showCancelConfirmationDialog(context, doctorName);
                   },
@@ -187,8 +189,9 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () {
+                context.goNamed(RouteConstants.rescheduleAppointment);
                 // Reschedule appointment
-                print('Reschedule appointment');
+                debugPrint('Reschedule appointment');
               },
               icon: const Icon(Icons.calendar_today),
               label: const Text('Reschedule'),
@@ -226,7 +229,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
               ),
               onPressed: () {
                 // Perform cancellation logic here
-                print('Appointment cancelled');
+                debugPrint('Appointment cancelled');
                 Navigator.of(context).pop();
                 // You might want to also update the UI to remove this appointment
                 // and show a confirmation snackbar

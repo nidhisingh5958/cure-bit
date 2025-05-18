@@ -1,6 +1,6 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/general_api/repository.dart';
+import 'package:CuraDocs/common/general_api/general_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +15,14 @@ class ReportAProblemScreen extends StatefulWidget {
 
 class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _firstnameController = TextEditingController();
+  final _fullnameController = TextEditingController();
   final _phonenumberController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
   bool _isSubmitting = false;
 
   String firstname = '';
-  String lastname = '';
+  String phonenumber = '';
   String email = '';
   String message = '';
   String topic = '';
@@ -35,7 +35,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
 
   @override
   void dispose() {
-    _firstnameController.dispose();
+    _fullnameController.dispose();
     _phonenumberController.dispose();
     _emailController.dispose();
     _messageController.dispose();
@@ -51,7 +51,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
 
         final ReportProblemRepository = GeneralApiRepository();
         await ReportProblemRepository.reportProblem(
-          _firstnameController.text,
+          _fullnameController.text,
           _phonenumberController.text,
           _emailController.text,
           topic,
@@ -60,7 +60,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
         );
 
         // Clear form fields
-        _firstnameController.clear();
+        _fullnameController.clear();
         _phonenumberController.clear();
         _emailController.clear();
         _messageController.clear();
@@ -86,7 +86,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppHeader(
-          title: 'Contact Us',
+          title: 'Report a Problem',
           backgroundColor: transparent,
           elevation: 2,
           onBackPressed: () {
@@ -160,11 +160,13 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
                           const SizedBox(height: 16),
                           _buildNameField(),
                           const SizedBox(height: 20),
+                          _buildPhoneField(),
+                          const SizedBox(height: 20),
                           _buildEmailField(),
                           const SizedBox(height: 32),
                           _buildSectionTitle('Inquiry Details'),
                           const SizedBox(height: 16),
-                          _buildTopicBar(),
+                          _buildSubjectBar(),
                           const SizedBox(height: 24),
                           _buildChoice(),
                           const SizedBox(height: 24),
@@ -214,89 +216,89 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
             ),
           ),
         ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _firstnameController,
-                decoration: InputDecoration(
-                  hintText: 'First Name',
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: transparent, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade50,
-                ),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: black,
-                ),
-                keyboardType: TextInputType.name,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your first name';
-                  }
-                  if (value.length < 2) {
-                    return 'Name must be at least 2 characters';
-                  }
-                  return null;
-                },
-                onSaved: (value) => firstname = value!,
-              ),
+        TextFormField(
+          controller: _fullnameController,
+          decoration: InputDecoration(
+            hintText: 'John Doe',
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: TextFormField(
-                controller: _phonenumberController,
-                decoration: InputDecoration(
-                  hintText: 'Last Name',
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: transparent, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade50,
-                ),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: black,
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your last name';
-                  }
-                  if (value.length < 2) {
-                    return 'Name must be at least 2 characters';
-                  }
-                  return null;
-                },
-                onSaved: (value) => lastname = value!,
-              ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
             ),
-          ],
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: transparent, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+          ),
+          style: TextStyle(
+            fontSize: 14,
+            color: black,
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your name';
+            }
+            return null;
+          },
+          onSaved: (value) => firstname = value!,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            'Phone Number',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: black.withValues(alpha: .8),
+            ),
+          ),
+        ),
+        TextFormField(
+          controller: _phonenumberController,
+          decoration: InputDecoration(
+            hintText: '+1 (555) 123-4567',
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: transparent, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+          ),
+          style: TextStyle(
+            fontSize: 14,
+            color: black,
+          ),
+          keyboardType: TextInputType.phone,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your phone number';
+            }
+            return null;
+          },
+          onSaved: (value) => phonenumber = value!,
         ),
       ],
     );
@@ -411,14 +413,14 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
     );
   }
 
-  Widget _buildTopicBar() {
+  Widget _buildSubjectBar() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Text(
-            'Topic',
+            'Subject',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -483,12 +485,9 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
 
   Widget _buildChoice() {
     final List<String> assistanceOptions = [
-      'Help with accessing my medical records',
-      'Report incorrect medical data',
-      'Request technical support',
-      'Feedback about CuraDocs',
-      'Issues with chatbot responses',
-      'Other',
+      'Email',
+      'Phone Call',
+      'Chat',
     ];
 
     return Column(
@@ -497,7 +496,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
         Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: Text(
-            'How can we assist you?',
+            'Contacting Preference',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,

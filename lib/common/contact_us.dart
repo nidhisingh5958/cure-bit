@@ -1,10 +1,11 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/general_api/repository.dart';
+import 'package:CuraDocs/common/general_api/general_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:country_state_city_picker/country_state_city_picker.dart';
 
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -26,91 +27,22 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   final _otherEntityController = TextEditingController();
   bool _isSubmitting = false;
 
-  String _countryCode = '+1'; // Default to US
-  String _country = 'United States';
+  String _countryCode = '+91'; // Default to india
+  String _country = 'India';
   String _state = '';
   String _entityType = 'clinic'; // Default entity type
 
-  // List of country codes for dropdown
-  final List<Map<String, String>> _countryCodes = [
-    {'code': '+1', 'name': 'United States (+1)'},
-    {'code': '+44', 'name': 'United Kingdom (+44)'},
-    {'code': '+91', 'name': 'India (+91)'},
-    {'code': '+61', 'name': 'Australia (+61)'},
-    {'code': '+86', 'name': 'China (+86)'},
-    {'code': '+33', 'name': 'France (+33)'},
-    {'code': '+49', 'name': 'Germany (+49)'},
-    // Add more country codes as needed
-  ];
-
-  // List of countries for dropdown
-  final List<String> _countries = [
-    'United States',
-    'United Kingdom',
-    'India',
-    'Australia',
-    'China',
-    'France',
-    'Germany',
-    // Add more countries as needed
-  ];
-
-  // Map of countries to states for dropdown
-  final Map<String, List<String>> _countryStates = {
-    'United States': [
-      'Alabama',
-      'Alaska',
-      'Arizona',
-      'Arkansas',
-      'California',
-      'Colorado',
-      'Connecticut',
-      'Delaware',
-      'Florida',
-      'Georgia',
-      'Hawaii',
-      'Idaho',
-      'Illinois',
-      'Indiana',
-      'Iowa',
-      'Kansas',
-      'Kentucky',
-      'Louisiana',
-      'Maine',
-      'Maryland',
-      'Massachusetts',
-      'Michigan',
-      'Minnesota',
-      'Mississippi',
-      'Missouri',
-      'Montana',
-      'Nebraska',
-      'Nevada',
-      'New Hampshire',
-      'New Jersey',
-      'New Mexico',
-      'New York',
-      'North Carolina',
-      'North Dakota',
-      'Ohio',
-      'Oklahoma',
-      'Oregon',
-      'Pennsylvania',
-      'Rhode Island',
-      'South Carolina',
-      'South Dakota',
-      'Tennessee',
-      'Texas',
-      'Utah',
-      'Vermont',
-      'Virginia',
-      'Washington',
-      'West Virginia',
-      'Wisconsin',
-      'Wyoming'
-    ],
-    'United Kingdom': ['England', 'Scotland', 'Wales', 'Northern Ireland'],
-    // Add states for other countries as needed
+  // Map of common country codes (we'll select the appropriate one based on country selection)
+  final Map<String, String> _commonCountryCodes = {
+    'United States': '+1',
+    'United Kingdom': '+44',
+    'Canada': '+1',
+    'Australia': '+61',
+    'India': '+91',
+    'China': '+86',
+    'Germany': '+49',
+    'France': '+33',
+    // Add more common codes as needed
   };
 
   // List of entity types for radio buttons
@@ -429,11 +361,12 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Country code dropdown
+            // Country code field that will be updated based on country selection
             Container(
               width: 120,
-              child: DropdownButtonFormField<String>(
-                value: _countryCode,
+              child: TextFormField(
+                readOnly: true,
+                initialValue: _countryCode,
                 decoration: InputDecoration(
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -456,20 +389,6 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   fontSize: 14,
                   color: black,
                 ),
-                icon:
-                    Icon(Icons.arrow_drop_down, color: black.withOpacity(0.8)),
-                isExpanded: true,
-                items: _countryCodes.map((Map<String, String> country) {
-                  return DropdownMenuItem<String>(
-                    value: country['code'],
-                    child: Text(country['name']!),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _countryCode = value!;
-                  });
-                },
               ),
             ),
             const SizedBox(width: 10),
@@ -507,8 +426,8 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   }
                   // Remove any non-digit characters for validation
                   String digitsOnly = value.replaceAll(RegExp(r'\D'), '');
-                  if (digitsOnly.length != 10) {
-                    return 'Please enter a valid 10-digit phone number';
+                  if (digitsOnly.length < 7) {
+                    return 'Please enter a valid phone number';
                   }
                   return null;
                 },
@@ -580,11 +499,10 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Country Field
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Text(
-            'Country',
+            'Location',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -592,147 +510,33 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             ),
           ),
         ),
-        DropdownButtonFormField<String>(
-          value: _country,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: transparent, width: 2),
-            ),
-            filled: true,
-            fillColor: Colors.grey.shade50,
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.grey.shade50,
           ),
-          style: TextStyle(
-            fontSize: 14,
-            color: black,
-          ),
-          icon: Icon(Icons.arrow_drop_down, color: black.withOpacity(0.8)),
-          isExpanded: true,
-          items: _countries.map((String country) {
-            return DropdownMenuItem<String>(
-              value: country,
-              child: Text(country),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _country = value!;
-              // Reset state when country changes
-              _state = '';
-            });
-          },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please select your country';
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 20),
-
-        // State/Province Field
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Text(
-            'State/Province',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
-            ),
+          padding: const EdgeInsets.all(16),
+          child: SelectState(
+            // using the country_state_city_picker package
+            onCountryChanged: (country) {
+              setState(() {
+                _country = country;
+                // Update country code if we have it in our map
+                _countryCode = _commonCountryCodes[country] ??
+                    '+1'; // Default to +1 if not found
+              });
+            },
+            onStateChanged: (state) {
+              setState(() {
+                _state = state;
+              });
+            },
+            onCityChanged: (city) {
+              // We're not using city in this form
+            },
           ),
         ),
-        _countryStates.containsKey(_country)
-            ? DropdownButtonFormField<String>(
-                value: _state.isEmpty ? null : _state,
-                hint: Text('Select state/province'),
-                decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: transparent, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade50,
-                ),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: black,
-                ),
-                icon:
-                    Icon(Icons.arrow_drop_down, color: black.withOpacity(0.8)),
-                isExpanded: true,
-                items: _countryStates[_country]!.map((String state) {
-                  return DropdownMenuItem<String>(
-                    value: state,
-                    child: Text(state),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _state = value!;
-                  });
-                },
-                validator: (value) {
-                  if (_countryStates.containsKey(_country) &&
-                      (value == null || value.isEmpty)) {
-                    return 'Please select your state/province';
-                  }
-                  return null;
-                },
-              )
-            : TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Enter your state/province',
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: transparent, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade50,
-                ),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: black,
-                ),
-                onChanged: (value) {
-                  _state = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your state/province';
-                  }
-                  return null;
-                },
-              ),
       ],
     );
   }
