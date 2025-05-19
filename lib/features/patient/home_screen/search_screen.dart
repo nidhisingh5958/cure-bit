@@ -1,127 +1,50 @@
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:CuraDocs/utils/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:CuraDocs/features/features_api_repository/search/external_search/doctor_search_provider.dart';
 
-// This is the search screen for the patient where they can search doctors
 class DoctorSearchScreen extends StatefulWidget {
-  final Map<String, dynamic> map;
-
-  const DoctorSearchScreen({super.key, required this.map});
+  const DoctorSearchScreen({super.key});
 
   @override
   State<DoctorSearchScreen> createState() => _DoctorSearchScreenState();
 }
 
 class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
-  final FocusNode _focusNode = FocusNode();
-  bool isExpanded = false;
-  String query = '';
-  String activeFilter = 'All'; // Default filter option
-  List<Map<String, dynamic>> filteredDoctors = [];
-
-  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  bool _showFilters = false;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the filtered doctors list with all doctors
-    filteredDoctors =
-        List<Map<String, dynamic>>.from(widget.map['doctors'] ?? []);
-
-    // Listen for changes to update the isExpanded state
-    _textController.addListener(() {
-      setState(() {
-        isExpanded = _textController.text.isNotEmpty;
-      });
+    // Initialize the provider with some default doctors when the screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DoctorSearchProvider>().initialize();
     });
   }
 
   @override
   void dispose() {
-    // Clean up resources
-    _textController.dispose();
-    _focusNode.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
-  void onQueryChanged(String newQuery) {
-    setState(() {
-      query = newQuery;
-      _filterDoctors();
-    });
-  }
-
-  // Filter doctors based on query and active filter
-  void _filterDoctors() {
-    if (widget.map['doctors'] == null || widget.map['doctors'].isEmpty) {
-      filteredDoctors = [];
-      return;
-    }
-
-    if (query.isEmpty) {
-      filteredDoctors = List<Map<String, dynamic>>.from(widget.map['doctors']);
-      return;
-    }
-
-    String lowerQuery = query.toLowerCase();
-    filteredDoctors = widget.map['doctors'].where((doctor) {
-      // Search by name
-      bool nameMatch =
-          doctor['name']?.toString().toLowerCase().contains(lowerQuery) ??
-              false;
-
-      // Search by location
-      bool locationMatch =
-          doctor['location']?.toString().toLowerCase().contains(lowerQuery) ??
-              false;
-
-      // Search by CIN (Case Identification Number)
-      bool cinMatch =
-          doctor['cin']?.toString().toLowerCase().contains(lowerQuery) ?? false;
-
-      // Apply filter if selected
-      if (activeFilter == 'Name') {
-        return nameMatch;
-      } else if (activeFilter == 'Location') {
-        return locationMatch;
-      } else if (activeFilter == 'CIN') {
-        return cinMatch;
-      }
-
-      // Default: search in all fields
-      return nameMatch || locationMatch || cinMatch;
-    }).toList();
-  }
-
-  // Delete items function to clear the text
-  void _deleteItems() {
-    setState(() {
-      _textController.clear();
-      query = '';
-      isExpanded = false;
-      // Reset filtered doctors to show all
-      filteredDoctors =
-          List<Map<String, dynamic>>.from(widget.map['doctors'] ?? []);
-    });
-  }
-
-  // Show filter options dialog
-  void _showFilterOptions() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Filter Search By'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<DoctorSearchProvider>(
+      builder: (context, provider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Find a Doctor'),
+            elevation: 0,
+          ),
+          body: Column(
             children: [
-              _buildFilterOption('All'),
-              _buildFilterOption('Name'),
-              _buildFilterOption('Location'),
-              _buildFilterOption('CIN'),
+              _buildSearchBar(provider),
+              if (_showFilters) _buildFilterOptions(provider),
+              _buildFilterChips(provider),
+              Expanded(
+                child: _buildDoctorList(provider),
+              ),
             ],
           ),
         );
@@ -129,66 +52,38 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
     );
   }
 
-  // Build individual filter option
-  Widget _buildFilterOption(String filterName) {
-    return ListTile(
-      title: Text(filterName),
-      selected: activeFilter == filterName,
-      onTap: () {
-        setState(() {
-          activeFilter = filterName;
-          _filterDoctors(); // Apply filter immediately
-        });
-        Navigator.pop(context);
-      },
-      trailing: activeFilter == filterName
-          ? Icon(Icons.check, color: Colors.blue)
-          : null,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppHeader(
-        backgroundColor: transparent,
-        onBackPressed: () {
-          context.goNamed(RouteConstants.home);
-        },
-        actions: [
-          IconButton(
-            icon: Icon(Icons.filter_list),
-            onPressed: _showFilterOptions,
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildSearchBar(context),
-            _buildActiveFilterChip(),
-            _buildDoctorList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActiveFilterChip() {
-    // Only show filter chip if not set to 'All'
-    if (activeFilter == 'All') return SizedBox(height: 8);
-
+  Widget _buildSearchBar(DoctorSearchProvider provider) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          Chip(
-            label: Text('Filter: $activeFilter'),
-            deleteIcon: Icon(Icons.close, size: 16),
-            onDeleted: () {
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search doctors by name or specialty',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+              ),
+              onSubmitted: (value) {
+                provider.searchDoctors(value);
+              },
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              _showFilters ? Icons.filter_list_off : Icons.filter_list,
+              color: _showFilters ? Theme.of(context).primaryColor : null,
+            ),
+            onPressed: () {
               setState(() {
-                activeFilter = 'All';
-                _filterDoctors();
+                _showFilters = !_showFilters;
               });
             },
           ),
@@ -197,195 +92,254 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
     );
   }
 
-  Widget _buildSearchBar(context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: TextField(
-        focusNode: _focusNode,
-        controller: _textController,
-        onChanged: onQueryChanged,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          prefixIcon: Icon(
-            Icons.search,
-            color: black,
-            size: 20,
+  Widget _buildFilterOptions(DoctorSearchProvider provider) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Filter Options',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 8),
+          // Specialty filter
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Specialty (e.g., Dentist, Cardiologist)',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+            ),
+            onChanged: (value) {
+              provider.setSpecialtyFilter(value);
+            },
+          ),
+          const SizedBox(height: 8),
+          // Location filter
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Location (e.g., Delhi, Mumbai)',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+            ),
+            onChanged: (value) {
+              provider.setLocationFilter(value);
+            },
+          ),
+          const SizedBox(height: 8),
+          // Rating filter
+          Row(
             children: [
-              if (isExpanded)
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: black,
-                    size: 20,
-                  ),
-                  onPressed: _deleteItems,
-                )
-              else
-                Icon(
-                  Icons.mic,
-                  color: black,
-                  size: 20,
+              const Text('Minimum Rating: '),
+              Expanded(
+                child: Slider(
+                  value: provider.selectedRating.toDouble(),
+                  min: 0,
+                  max: 5,
+                  divisions: 5,
+                  label: provider.selectedRating.toString(),
+                  onChanged: (value) {
+                    provider.setRatingFilter(value.toInt());
+                  },
                 ),
+              ),
+              Text('${provider.selectedRating}'),
             ],
           ),
-          hintText: "Search doctors by name, location or CIN",
-          hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey,
-              ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+          const SizedBox(height: 8),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                provider.clearFilters();
+              },
+              child: const Text('Clear All Filters'),
+            ),
           ),
-        ),
-        style: TextStyle(fontSize: 14),
-        minLines: 1,
-        maxLines: 1,
-        onSubmitted: (value) {
-          if (value.isNotEmpty) {
-            // Apply search
-            onQueryChanged(value);
-          }
-        },
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }
 
-  // Get doctor's specialization
-  String getCategory(String? specialization) {
-    return specialization ?? 'General Physician';
-  }
+  Widget _buildFilterChips(DoctorSearchProvider provider) {
+    // Only show the active filters
+    List<Widget> chips = [];
 
-  Widget _buildDoctorList() {
-    if (filteredDoctors.isEmpty) {
-      return Expanded(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.search_off, size: 64, color: Colors.grey),
-              SizedBox(height: 16),
-              Text(
-                'No doctors found',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Try adjusting your search or filter',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-            ],
-          ),
+    if (provider.selectedSpecialty.isNotEmpty) {
+      chips.add(
+        Chip(
+          label: Text('Specialty: ${provider.selectedSpecialty}'),
+          onDeleted: () {
+            provider.setSpecialtyFilter('');
+          },
         ),
       );
     }
 
-    return Expanded(
-      child: ListView.builder(
-        itemCount: filteredDoctors.length,
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        itemBuilder: (context, index) {
-          final doctor = filteredDoctors[index];
+    if (provider.selectedLocation.isNotEmpty) {
+      chips.add(
+        Chip(
+          label: Text('Location: ${provider.selectedLocation}'),
+          onDeleted: () {
+            provider.setLocationFilter('');
+          },
+        ),
+      );
+    }
 
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+    if (provider.selectedRating > 0) {
+      chips.add(
+        Chip(
+          label: Text('Rating: ${provider.selectedRating}+'),
+          onDeleted: () {
+            provider.setRatingFilter(0);
+          },
+        ),
+      );
+    }
+
+    if (chips.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Wrap(
+        spacing: 8.0,
+        children: chips,
+      ),
+    );
+  }
+
+  Widget _buildDoctorList(DoctorSearchProvider provider) {
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.error.isNotEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Error: ${provider.error}',
+              style: const TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                provider.initialize();
+              },
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final doctors =
+        provider.filteredDoctors.isEmpty && provider.searchQuery.isEmpty
+            ? provider.doctors
+            : provider.filteredDoctors;
+
+    if (doctors.isEmpty) {
+      return const Center(
+        child: Text('No doctors found. Try a different search.'),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(8.0),
+      itemCount: doctors.length,
+      itemBuilder: (context, index) {
+        final doctor = doctors[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          elevation: 2,
+          child: InkWell(
+            onTap: () {
+              // Navigate to doctor details screen
+              // You can implement this later
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Selected ${doctor.name}')),
+              );
+            },
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenHeight(16),
-                vertical: getProportionateScreenHeight(8),
-              ),
-              child: Column(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ListTile(
-                    leading: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 64,
-                        minHeight: 64,
-                        maxWidth: 64,
-                        maxHeight: 64,
-                      ),
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(doctor['imageUrl'] ??
-                            'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
-                        radius: 30,
-                      ),
+                  // Doctor image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.asset(
+                      doctor.imageUrl,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.person, size: 40),
+                        );
+                      },
                     ),
-                    title: Text(
-                      doctor['name'] ?? 'Unknown Doctor',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: black.withValues(alpha: .8),
-                      ),
-                    ),
-                    subtitle: Column(
+                  ),
+                  const SizedBox(width: 16),
+                  // Doctor info
+                  Expanded(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 4),
                         Text(
-                          getCategory(doctor['specialization']),
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                            color: black.withValues(alpha: .8),
+                          doctor.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
+                        Text(doctor.specialty),
+                        const SizedBox(height: 4),
+                        Text(doctor.location),
+                        const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.location_on,
-                                size: 16, color: Colors.grey),
-                            SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                doctor['location'] ?? 'Location not specified',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[600],
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            const Icon(Icons.star,
+                                color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${doctor.rating}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
+                            const SizedBox(width: 16),
+                            Text('₹${doctor.fee.toStringAsFixed(0)}'),
                           ],
                         ),
-                        if (doctor['cin'] != null) SizedBox(height: 4),
-                        if (doctor['cin'] != null)
-                          Row(
-                            children: [
-                              Icon(Icons.badge, size: 16, color: Colors.grey),
-                              SizedBox(width: 4),
-                              Text(
-                                'CIN: ${doctor['cin']}',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
                       ],
                     ),
-                    onTap: () {
-                      // Navigate to doctor's details page
-                      context.pushNamed(
-                        RouteConstants.doctorDetails,
-                        extra: doctor,
-                      );
-                    },
                   ),
                 ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

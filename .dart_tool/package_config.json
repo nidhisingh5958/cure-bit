@@ -500,6 +500,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "simple_gesture_detector",
+      "rootUri": "file:///Users/nidhisingh/.pub-cache/hosted/pub.dev/simple_gesture_detector-0.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///Users/nidhisingh/Developer/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -546,6 +552,12 @@
       "rootUri": "file:///Users/nidhisingh/.pub-cache/hosted/pub.dev/synchronized-3.3.1",
       "packageUri": "lib/",
       "languageVersion": "3.7"
+    },
+    {
+      "name": "table_calendar",
+      "rootUri": "file:///Users/nidhisingh/.pub-cache/hosted/pub.dev/table_calendar-3.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "term_glyph",
@@ -674,7 +686,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-05-18T10:47:53.723048Z",
+  "generated": "2025-05-19T14:35:45.427468Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/nidhisingh/Developer/flutter",

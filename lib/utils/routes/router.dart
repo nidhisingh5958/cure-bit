@@ -38,7 +38,7 @@ class AppRouter {
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
     return GoRouter(
       navigatorKey: rootNavigatorKey,
-      initialLocation: isDev ? '/doctor/home' : '/',
+      initialLocation: isDev ? '/home' : '/',
       debugLogDiagnostics: true,
       routes: [
         GoRoute(

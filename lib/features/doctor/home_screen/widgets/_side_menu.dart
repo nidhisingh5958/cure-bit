@@ -1,4 +1,5 @@
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -11,51 +12,57 @@ class DoctorSideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.white,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
+      elevation: 2,
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(20),
-          bottomRight: Radius.circular(20),
+          topRight: Radius.circular(16),
+          bottomRight: Radius.circular(16),
         ),
       ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    _buildProfileOptions(),
-                    Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: black,
-                        indent: 20,
-                        endIndent: 20),
-                    _buildSettingsSection(context),
-                    Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: black,
-                        indent: 20,
-                        endIndent: 20),
-                    _buildLanguageAndHelpSection(),
-                    _buildAboutSection(context),
-                    Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: black,
-                        indent: 20,
-                        endIndent: 20),
-                    _buildAccountsSection(context),
-                  ],
+      child: Container(
+        color: Colors.white,
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 8),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    children: [
+                      _buildProfileOptions(context),
+                      const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Color(0xFFEEEEEE),
+                          indent: 20,
+                          endIndent: 20),
+                      _buildSettingsSection(context),
+                      const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Color(0xFFEEEEEE),
+                          indent: 20,
+                          endIndent: 20),
+                      _buildLanguageAndHelpSection(),
+                      _buildAboutSection(context),
+                      const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Color(0xFFEEEEEE),
+                          indent: 20,
+                          endIndent: 20),
+                      // _buildAccountsSection(context),
+                      _buildLogoutButton(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            _buildLogoutButton(),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -64,12 +71,9 @@ class DoctorSideMenu extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 30, 16, 20),
+      width: double.infinity,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3F51B5), Color(0xFF303F9F)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: const Color.fromARGB(255, 142, 148, 184),
       ),
       child: Row(
         children: [
@@ -130,8 +134,9 @@ class DoctorSideMenu extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileOptions() {
-    return Padding(
+  Widget _buildProfileOptions(context) {
+    return Container(
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,27 +148,31 @@ class DoctorSideMenu extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: grey600,
+                color: Colors.black87,
               ),
             ),
           ),
           _buildOptionItem(
             icon: Icons.person_outline,
             label: 'Share your profile',
-            trailing: Icon(Icons.share, size: 18, color: grey600),
+            trailing: const Icon(Icons.share, size: 18, color: Colors.black54),
           ),
           _buildOptionItem(
-            icon: Icons.qr_code_scanner_outlined,
-            label: 'Scan QR',
-            trailing: Icon(Icons.arrow_forward_ios, size: 16, color: grey600),
-          ),
+              icon: Icons.qr_code_scanner_outlined,
+              label: 'Scan QR',
+              trailing: const Icon(Icons.arrow_forward_ios,
+                  size: 16, color: Colors.black54),
+              onTap: () {
+                context.pushNamed(RouteConstants.qrScan);
+              }),
         ],
       ),
     );
   }
 
   Widget _buildSettingsSection(BuildContext context) {
-    return Padding(
+    return Container(
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,10 +181,10 @@ class DoctorSideMenu extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Text(
               "Preferences",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: grey600,
+                color: Colors.black87,
               ),
             ),
           ),
@@ -183,30 +192,30 @@ class DoctorSideMenu extends StatelessWidget {
             icon: Icons.settings_outlined,
             label: 'Settings & Privacy',
           ),
-          _buildOptionItem(
-            icon: Icons.insights_outlined,
-            label: 'Your Activity',
-            badge: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                "2",
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            ),
-          ),
-          _buildOptionItem(
-            icon: Icons.brightness_6_outlined,
-            label: 'Switch Appearance',
-            trailing: Switch(
-              value: false,
-              onChanged: (value) {},
-              activeColor: Theme.of(context).primaryColor,
-            ),
-          ),
+          // _buildOptionItem(
+          //   icon: Icons.insights_outlined,
+          //   label: 'Your Activity',
+          //   badge: Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          //     decoration: BoxDecoration(
+          //       color: Colors.red,
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     child: const Text(
+          //       "2",
+          //       style: TextStyle(color: Colors.white, fontSize: 12),
+          //     ),
+          //   ),
+          // ),
+          // _buildOptionItem(
+          //   icon: Icons.brightness_6_outlined,
+          //   label: 'Switch Appearance',
+          //   trailing: Switch(
+          //     value: false,
+          //     onChanged: (value) {},
+          //     activeColor: Theme.of(context).primaryColor,
+          //   ),
+          // ),
           _buildOptionItem(
             icon: Icons.report_problem_outlined,
             label: 'Report a problem',
@@ -217,7 +226,8 @@ class DoctorSideMenu extends StatelessWidget {
   }
 
   Widget _buildLanguageAndHelpSection() {
-    return Padding(
+    return Container(
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,27 +236,29 @@ class DoctorSideMenu extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Text(
               "Support",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: grey600,
+                color: Colors.black87,
               ),
             ),
           ),
-          _buildOptionItem(
-            icon: Icons.language,
-            label: 'Language',
-            trailing: Row(
-              children: [
-                Text(
-                  "English",
-                  style: TextStyle(color: grey600, fontSize: 14),
-                ),
-                SizedBox(width: 4),
-                Icon(Icons.arrow_forward_ios, size: 16, color: grey600),
-              ],
-            ),
-          ),
+          // _buildOptionItem(
+          //   icon: Icons.language,
+          //   label: 'Language',
+          //   trailing: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       const Text(
+          //         "English",
+          //         style: TextStyle(color: Colors.black54, fontSize: 14),
+          //       ),
+          //       const SizedBox(width: 4),
+          //       const Icon(Icons.arrow_forward_ios,
+          //           size: 16, color: Colors.black54),
+          //     ],
+          //   ),
+          // ),
           _buildOptionItem(
             icon: Icons.help_outline,
             label: 'Help Center',
@@ -272,7 +284,8 @@ class DoctorSideMenu extends StatelessWidget {
   }
 
   Widget _buildAccountsSection(BuildContext context) {
-    return Padding(
+    return Container(
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,10 +294,10 @@ class DoctorSideMenu extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Text(
               "Account",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: grey600,
+                color: Colors.black87,
               ),
             ),
           ),
@@ -294,7 +307,7 @@ class DoctorSideMenu extends StatelessWidget {
             trailing: CircleAvatar(
               radius: 12,
               backgroundColor: Colors.grey[300],
-              child: Text(
+              child: const Text(
                 "2",
                 style: TextStyle(fontSize: 12, color: Colors.black),
               ),
@@ -308,15 +321,17 @@ class DoctorSideMenu extends StatelessWidget {
   Widget _buildLogoutButton() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      color: Colors.white,
       child: ElevatedButton.icon(
         onPressed: () {},
-        icon: Icon(Icons.logout, size: 20),
-        label: Text("Log Out"),
+        icon: const Icon(Icons.logout, size: 20),
+        label: const Text("Log Out"),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFFF44336),
+          backgroundColor: grey800,
           foregroundColor: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          elevation: 1,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -334,34 +349,34 @@ class DoctorSideMenu extends StatelessWidget {
   }) {
     return ListTile(
       leading: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: black,
+          color: transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
-          color: Color(0xFF3F51B5),
+          color: grey800,
           size: 22,
         ),
       ),
       title: Text(
         label,
-        style: TextStyle(
-          color: black,
+        style: const TextStyle(
+          color: Colors.black87,
           fontSize: 15,
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing:
-          trailing ?? Icon(Icons.arrow_forward_ios, size: 16, color: grey600),
+      trailing: trailing ??
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black54),
       onTap: onTap ?? () {},
+      tileColor: Colors.white,
       dense: true,
-      visualDensity: VisualDensity(horizontal: 0, vertical: -1),
+      visualDensity: const VisualDensity(horizontal: 0, vertical: -1),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       horizontalTitleGap: 12,
-      subtitle: badge != null ? SizedBox(height: 4) : null,
-      titleAlignment: ListTileTitleAlignment.center,
+      subtitle: badge != null ? const SizedBox(height: 4) : null,
     );
   }
 }

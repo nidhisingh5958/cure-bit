@@ -16,10 +16,24 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
   String docName = "John Doe";
   String specialization = "Cardiologist";
 
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xFFF8F9FB),
         appBar: AppHeader(
           title: 'My Patients',
           actions: [
@@ -27,25 +41,48 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
               icon: Icon(LucideIcons.heart),
               style: IconButton.styleFrom(
                 backgroundColor: transparent,
-                foregroundColor: black.withValues(alpha: .8),
-                padding: const EdgeInsets.all(8),
+                foregroundColor: black.withValues(alpha: .7),
+                padding: const EdgeInsets.all(12),
               ),
               onPressed: () {
                 context.goNamed(RouteConstants.favouritePatients);
               },
             ),
+            IconButton(
+              icon: Icon(LucideIcons.bell),
+              style: IconButton.styleFrom(
+                backgroundColor: transparent,
+                foregroundColor: black.withValues(alpha: .7),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+              onPressed: () {
+                // Navigate to notifications
+              },
+            ),
           ],
         ),
         body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildProfile(context),
               _buildSearchBar(context),
-              SizedBox(height: 20),
+              SizedBox(height: 24),
               _buildPatientList(context),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Add new patient
+          },
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Colors.white,
+          elevation: 4,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Icon(Icons.add),
         ),
       ),
     );
@@ -54,13 +91,13 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
   Widget _buildProfile(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: .05),
+            Theme.of(context).colorScheme.primary.withValues(alpha: .08),
             transparent,
           ],
         ),
@@ -73,19 +110,23 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: black.withValues(alpha: .1),
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  offset: Offset(0, 2),
+                  color: black.withValues(alpha: .12),
+                  blurRadius: 12,
+                  spreadRadius: 0,
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
             child: CircleAvatar(
-              radius: 36,
-              backgroundImage: AssetImage("images/doctor.jpg"),
+              radius: 42,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 40,
+                backgroundImage: AssetImage("images/doctor.jpg"),
+              ),
             ),
           ),
-          SizedBox(width: 15),
+          SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,30 +134,48 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                 Text(
                   'Dr. $docName',
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: black.withValues(alpha: .9),
                   ),
                   softWrap: true,
                   overflow: TextOverflow.visible,
                 ),
-                SizedBox(height: 5),
-                Text(
-                  specialization,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: grey600,
+                SizedBox(height: 6),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: .1),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Text(
+                    specialization,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.location_on, color: grey600, size: 16),
+                    Icon(Icons.location_on,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: .7),
+                        size: 18),
                     SizedBox(width: 5),
                     Text(
                       'Delhi, India',
                       style: TextStyle(
-                        color: Colors.grey[600],
+                        color: grey600,
                         fontSize: 14,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     Icon(Icons.keyboard_arrow_down,
@@ -133,40 +192,60 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
 
   Widget _buildSearchBar(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 24),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: black.withValues(alpha: .06),
+              blurRadius: 12,
+              spreadRadius: 0,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
         child: Row(
           children: [
+            Icon(
+              Icons.search,
+              color: grey600.withValues(alpha: .7),
+              size: 20,
+            ),
+            SizedBox(width: 12),
             Expanded(
               child: TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search patients...',
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: black.withValues(alpha: .5),
-                  ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(vertical: 14),
                   hintStyle: TextStyle(
                     color: grey400,
-                    fontSize: 14,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(fontSize: 15),
+                onChanged: (value) {
+                  // Implement search functionality
+                },
               ),
             ),
             SizedBox(width: 10),
             Container(
-              height: 36,
-              width: 36,
+              height: 38,
+              width: 38,
               decoration: BoxDecoration(
-                color: grey600.withValues(alpha: .1),
+                color:
+                    Theme.of(context).colorScheme.primary.withValues(alpha: .1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
                 icon: Icon(
-                  LucideIcons.filter,
+                  LucideIcons.sliders,
                   color: Theme.of(context).colorScheme.primary,
                   size: 20,
                 ),
@@ -181,18 +260,18 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
     );
   }
 
-  // Show filter dialog
   void _showFilterDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
           ),
-          elevation: 8,
+          elevation: 12,
+          backgroundColor: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,61 +280,81 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Filter Doctors',
+                      'Filter Patients',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     IconButton(
                       icon: Icon(Icons.close, size: 20),
+                      style: IconButton.styleFrom(
+                        backgroundColor: grey600.withValues(alpha: .1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
-                Divider(),
-                SizedBox(height: 8),
+                Divider(height: 32),
                 Text(
-                  'Disease',
+                  'Condition',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
-                SizedBox(height: 8),
-                TextField(
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    border: InputBorder.none,
-                    hintText: 'E.g. Fever',
-                    hintStyle: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: grey600.withValues(alpha: .05),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: grey600,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      border: InputBorder.none,
+                      hintText: 'E.g. Fever, Headache',
+                      hintStyle:
+                          TextStyle(fontSize: 15, color: Colors.grey[400]),
+                    ),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: grey600,
+                    ),
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
                 Text(
                   'Location',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
+                    color: black.withValues(alpha: .8),
                   ),
                 ),
-                SizedBox(height: 8),
-                TextField(
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    border: InputBorder.none,
-                    hintText: 'E.g. Delhi',
-                    hintStyle: TextStyle(fontSize: 14, color: grey400),
+                SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: grey600.withValues(alpha: .05),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                  child: TextField(
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      border: InputBorder.none,
+                      hintText: 'E.g. Delhi, Mumbai',
+                      hintStyle: TextStyle(fontSize: 15, color: grey400),
+                    ),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[600],
+                    ),
                   ),
                 ),
                 SizedBox(height: 24),
@@ -264,30 +363,47 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-                          // Navigator.pop(context);
+                          // Reset filters
                         },
                         style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12),
+                          padding: EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          side: BorderSide(
+                            color: grey600.withValues(alpha: .3),
                           ),
                         ),
-                        child: Text('Reset'),
+                        child: Text(
+                          'Reset',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('Apply Filter'),
+                        child: Text(
+                          'Apply Filter',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -306,6 +422,9 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
         'image': 'images/doctor.jpg',
         'patientName': 'Mathur Saab',
         'symptoms': 'Fever',
+        'age': '42',
+        'gender': 'Male',
+        'lastVisit': '2 days ago',
         'onPressed': () {
           context.goNamed('patientProfile');
         }
@@ -314,40 +433,67 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
         'image': 'images/doctor.jpg',
         'patientName': 'Hema Kumari',
         'symptoms': 'Headache',
+        'age': '35',
+        'gender': 'Female',
+        'lastVisit': '1 week ago',
         'onPressed': () {
           context.goNamed('patientProfile');
         }
       },
       {
         'image': 'images/doctor.jpg',
-        'patientName': 'Retarded Kumar',
+        'patientName': 'Rajesh Kumar',
         'symptoms': 'Cold',
+        'age': '28',
+        'gender': 'Male',
+        'lastVisit': 'Today',
         'onPressed': () {
           context.goNamed('patientProfile');
         }
       },
     ];
 
-    // build the top doctors section
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Patients',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Text(
+                    'My Patients',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: black.withValues(alpha: .9),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      '${items.length}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.primary,
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 ),
                 child: Row(
                   children: [
@@ -355,7 +501,7 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                       'See All',
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(width: 4),
@@ -366,9 +512,9 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 24),
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: items.length,
@@ -381,32 +527,40 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                 item['image'] as String,
                 item['patientName'] as String,
                 item['symptoms'] as String,
+                item['age'] as String,
+                item['gender'] as String,
+                item['lastVisit'] as String,
                 onPressed: item['onPressed'] as void Function()?,
               ),
             );
           },
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 80), // Space for FAB
       ],
     );
   }
 
-  // build the patient item
   Widget _buildPatientListItem(
-      BuildContext context, String image, String patientName, String symptoms,
+      BuildContext context,
+      String image,
+      String patientName,
+      String symptoms,
+      String age,
+      String gender,
+      String lastVisit,
       {void Function()? onPressed}) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: .05),
-              blurRadius: 10,
+              color: Colors.black.withValues(alpha: .04),
+              blurRadius: 16,
               spreadRadius: 0,
-              offset: Offset(0, 2),
+              offset: Offset(0, 4),
             ),
           ],
         ),
@@ -417,20 +571,20 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
               Hero(
                 tag: patientName,
                 child: Container(
-                  width: 70,
-                  height: 70,
+                  width: 75,
+                  height: 75,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(16),
                     image: DecorationImage(
                       image: AssetImage(image),
                       fit: BoxFit.cover,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: .1),
-                        blurRadius: 8,
+                        color: Colors.black.withValues(alpha: .12),
+                        blurRadius: 10,
                         spreadRadius: 0,
-                        offset: Offset(0, 2),
+                        offset: Offset(0, 3),
                       ),
                     ],
                   ),
@@ -444,8 +598,9 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                     Text(
                       patientName,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 17,
                         fontWeight: FontWeight.bold,
+                        color: black.withValues(alpha: .9),
                       ),
                     ),
                     SizedBox(height: 6),
@@ -453,20 +608,47 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                       children: [
                         Container(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: Theme.of(context)
                                 .colorScheme
                                 .primary
                                 .withValues(alpha: .1),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(30),
                           ),
                           child: Text(
                             symptoms,
                             style: TextStyle(
                               fontSize: 12,
+                              fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.primary,
                             ),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '$age • $gender',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: grey600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          size: 14,
+                          color: grey600,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Last visit: $lastVisit',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: grey600,
                           ),
                         ),
                       ],
@@ -475,18 +657,18 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Theme.of(context)
                       .colorScheme
                       .primary
                       .withValues(alpha: .1),
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
-                  Icons.arrow_forward_ios,
+                  Icons.arrow_forward,
                   color: Theme.of(context).colorScheme.primary,
-                  size: 16,
+                  size: 18,
                 ),
               ),
             ],

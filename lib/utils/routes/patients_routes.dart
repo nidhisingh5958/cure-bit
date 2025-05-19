@@ -10,7 +10,7 @@ import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 
 // PATIENT
 // appointment
-import 'package:CuraDocs/features/patient/appointment/appointment_screen.dart';
+import 'package:CuraDocs/features/patient/appointment/appointment_home.dart';
 import 'package:CuraDocs/features/patient/appointment/doctor_profile.dart';
 import 'package:CuraDocs/features/patient/appointment/book_appointment.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/my_appointments.dart';
@@ -72,9 +72,7 @@ List<RouteBase> get patientRoutes {
     GoRoute(
       path: '/doctor-search',
       name: RouteConstants.doctorSearch,
-      builder: (context, state) => DoctorSearchScreen(
-        map: {},
-      ),
+      builder: (context, state) => DoctorSearchScreen(),
     ),
 
     GoRoute(

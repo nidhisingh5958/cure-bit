@@ -41,3 +41,9 @@ final String updatePatientPublicProfile =
 final String getDoctorPublicProfile = '';
 final String updateDoctorPublicProfile =
     'https://1f3ehj2tli.execute-api.us-east-1.amazonaws.com/Dev/doctor_profile';
+
+//  search
+final String searchDoctor_api =
+    'https://nf9rfloqn0.execute-api.us-east-1.amazonaws.com/Dev/doctor-search';
+final String searchPatient_api =
+    'https://iylosoz7m1.execute-api.us-east-1.amazonaws.com/Dev/internal';

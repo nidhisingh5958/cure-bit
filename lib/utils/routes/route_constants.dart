@@ -112,6 +112,11 @@ class RouteConstants {
   static String doctorPatientSearch = "doctorPatientSearch";
   static String doctorMyPatients = "doctorMyPatients";
   static String favouritePatients = "favouritePatients";
+  // mantan
+  static String doctorFollowUps = "doctorFollowUps";
+  static String doctorTasks = "doctorTasks";
+  static String doctorDailySchedule = "doctorPatientDetails";
+  static String doctorLabResults = "doctorPatientDetails";
 
   // settings routes
   static String doctorNotifications = "doctorNotifications";
