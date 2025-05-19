@@ -1,5 +1,5 @@
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/feature_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/patient_repository.dart';
 import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,8 +46,9 @@ class _PatientRescheduleAppointmentState
   bool isSubmitting = false; // Track submission state
   final _formKey = GlobalKey<FormState>();
 
-  // Instance of AppointmentRepository
-  final AppointmentRepository _appointmentRepository = AppointmentRepository();
+  // Instance of PatientAppointmentRepository
+  final PatientAppointmentRepository _PatientappointmentRepository =
+      PatientAppointmentRepository();
 
   @override
   void initState() {
@@ -244,7 +245,7 @@ class _PatientRescheduleAppointmentState
         return;
       }
 
-      final success = await _appointmentRepository.rescheduleAppointment(
+      final success = await _PatientappointmentRepository.rescheduleAppointment(
         context,
         appointmentId = '13456fAS',
         formattedDate,
@@ -258,7 +259,6 @@ class _PatientRescheduleAppointmentState
       });
 
       if (success) {
-        // Update UI representation (this doesn't affect the API)
         final appointmentData = {
           'id': appointmentId,
           'title': titleController.text,
@@ -526,8 +526,8 @@ class _PatientRescheduleAppointmentState
 
                       const SizedBox(height: 20),
 
-                      // Reason for rescheduling - REQUIRED BY API
-                      _buildFormLabel('Reason for Rescheduling *'),
+                      // Reason for rescheduling
+                      _buildFormLabel('Reason for Rescheduling '),
                       const SizedBox(height: 8),
                       _buildTextFormField(
                         controller: reasonController,

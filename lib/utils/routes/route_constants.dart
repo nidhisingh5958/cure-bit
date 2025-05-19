@@ -51,11 +51,15 @@ class RouteConstants {
   static String chat = "chat";
   static String chatScreen = "chatScreen";
 
-  // profile routes
+  // medical records routes
   static String documents = "documents";
   static String prescription = "prescriptions";
   static String testRecords = "testRecords";
   static String addDocument = "addDocument";
+  static String timeline = "timeline";
+  static String patientBasicMedicalInfo = "patientBasicMedicalInfo";
+
+  // my doctors routes
   static String doctorProfile = "doctorProfile";
   static String doctorSearch = "doctorSearch"; // doctor search screen
   static String myDoctors = "myDoctors";
@@ -63,7 +67,9 @@ class RouteConstants {
   // settings routes
   static String profile = "profile";
   static String personalProfile = "personalProfile";
-  static String editProfile = "editProfile";
+  static String editProfile = "editPersonalProfile";
+  static String publicProfile = "publicProfile";
+  static String editPublicProfile = "editPublicProfile";
   static String notifications = "notifications";
   static String activityLog = "activityLog";
   static String profileSettings = "profileSettings";
@@ -93,6 +99,8 @@ class RouteConstants {
   // profile routes
   static String doctorPersonalProfile = "doctortorPersonalProfile";
   static String doctorEditProfile = "doctorEditProfile";
+  static String doctorPublicProfile = "doctorPublicProfile";
+  static String doctorEditPublicProfile = "doctorEditPublicProfile";
   static String doctorDocuments = "doctorDocuments";
   static String doctorQRCode = "doctorQrCode";
 

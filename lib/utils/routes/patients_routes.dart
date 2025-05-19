@@ -1,6 +1,8 @@
 import 'package:CuraDocs/features/patient/appointment/my_appointments/reschedule_appointment.dart';
+import 'package:CuraDocs/features/patient/medical_records/basic_medical_info.dart';
 import 'package:CuraDocs/features/patient/home_screen/qr_screen.dart';
-import 'package:CuraDocs/features/patient/home_screen/scan_qr.dart';
+import 'package:CuraDocs/features/patient/settings/public_profile/edit_public_profile.dart';
+import 'package:CuraDocs/features/patient/settings/public_profile/public_profile.dart';
 import 'package:CuraDocs/features/patient/settings/support/help.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +24,7 @@ import 'package:CuraDocs/features/patient/chat/chat_home.dart';
 import 'package:CuraDocs/features/patient/chat/chat_screen.dart';
 import '../../features/patient/chat/entities/chat_data.dart';
 // documents
-import 'package:CuraDocs/features/patient/documents/document_screen.dart';
+import 'package:CuraDocs/features/patient/medical_records/document_screen.dart';
 // home
 import 'package:CuraDocs/features/patient/home_screen/home_screen.dart';
 import 'package:CuraDocs/features/patient/home_screen/notification.dart';
@@ -32,8 +34,8 @@ import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
 import 'package:CuraDocs/utils/routes/components/patient_navigation_bar.dart';
 import 'package:CuraDocs/features/patient/settings/account_and_settings.dart';
 import 'package:CuraDocs/features/patient/settings/security_and_login.dart';
-import 'package:CuraDocs/features/patient/settings/edit_account_details.dart';
-import 'package:CuraDocs/features/patient/settings/account.dart';
+import 'package:CuraDocs/features/patient/settings/private_profile/edit_personal_details.dart';
+import 'package:CuraDocs/features/patient/settings/private_profile/account.dart';
 
 List<RouteBase> get patientRoutes {
   return [
@@ -64,13 +66,6 @@ List<RouteBase> get patientRoutes {
       parentNavigatorKey: rootNavigatorKey,
       name: RouteConstants.helpAndSupport,
       builder: (context, state) => HelpScreen(),
-    ),
-
-    GoRoute(
-      path: '/scan-qr',
-      parentNavigatorKey: rootNavigatorKey,
-      name: RouteConstants.qrScan,
-      builder: (context, state) => ScanQR(),
     ),
 
     // Doctor search
@@ -180,7 +175,7 @@ List<RouteBase> get patientRoutes {
           ],
         ),
 
-        // Documents Branch
+        // Medical Records Branch
         StatefulShellBranch(
           navigatorKey: documentsNavigatorKey,
           routes: [
@@ -188,7 +183,14 @@ List<RouteBase> get patientRoutes {
               path: '/documents',
               name: RouteConstants.documents,
               builder: (context, state) => const DocumentScreen(),
-              routes: [],
+              routes: [
+                GoRoute(
+                  path: '/patientBasicMedicalInfo',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.patientBasicMedicalInfo,
+                  builder: (context, state) => const BasicMedicalInfo(),
+                ),
+              ],
             ),
           ],
         ),
@@ -220,6 +222,17 @@ List<RouteBase> get patientRoutes {
                   name: RouteConstants.personalProfile,
                   builder: (context, state) => const PersonalProfile(),
                 ),
+                GoRoute(
+                  path: 'public-profile',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.publicProfile,
+                  builder: (context, state) => const PatientPublicProfile(),
+                ),
+                GoRoute(
+                    path: 'edit-public-profile',
+                    parentNavigatorKey: rootNavigatorKey,
+                    name: RouteConstants.editPublicProfile,
+                    builder: (context, state) => const EditPublicProfile()),
                 GoRoute(
                   path: 'profileQR',
                   parentNavigatorKey: rootNavigatorKey,

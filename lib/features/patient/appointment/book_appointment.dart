@@ -1,5 +1,5 @@
 import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/features/features_api_repository/feature_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/patient_repository.dart';
 import 'package:CuraDocs/features/patient/appointment/components/problem_selection_widget.dart';
 import 'package:CuraDocs/features/patient/appointment/success_screen.dart';
 import 'package:CuraDocs/utils/size_config.dart';
@@ -77,7 +77,7 @@ class _BookAppointmentState extends State<BookAppointment> {
           },
         );
 
-        final appoRepository = AppointmentRepository();
+        final appoRepository = PatientAppointmentRepository();
 
         // Convert selected date to string format expected by API
         final String formattedDate =

@@ -7,6 +7,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBackPressed;
   final VoidCallback? onMenuPressed;
+  final VoidCallback? onDetailPressed;
+
   final List<Widget>? actions;
   final bool centerTitle;
   final double elevation;
@@ -24,6 +26,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.title = '',
     this.onBackPressed,
     this.onMenuPressed,
+    this.onDetailPressed,
     this.actions,
     this.centerTitle = true,
     this.elevation = 0,
@@ -58,6 +61,15 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           color: foregroundColor ?? black.withValues(alpha: .8),
         ),
         onPressed: onMenuPressed,
+      );
+    } else if (onDetailPressed != null) {
+      leadingWidget = IconButton(
+        icon: Icon(
+          LucideIcons.userSquare,
+          size: 20,
+          color: foregroundColor ?? black.withValues(alpha: .8),
+        ),
+        onPressed: onDetailPressed,
       );
     }
 

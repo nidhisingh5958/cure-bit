@@ -4,6 +4,7 @@ import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class DoctorProfileSettings extends StatefulWidget {
   const DoctorProfileSettings({super.key});
@@ -91,6 +92,14 @@ class _ProfileScreenState extends State<DoctorProfileSettings> {
                             onTap: () {
                               context.goNamed(
                                   RouteConstants.doctorPersonalProfile);
+                            },
+                          ),
+                          _buildSettingsItem(
+                            icon: LucideIcons.user,
+                            title: 'Public Profile',
+                            onTap: () {
+                              context
+                                  .goNamed(RouteConstants.doctorPublicProfile);
                             },
                           ),
                           _buildSettingsItem(

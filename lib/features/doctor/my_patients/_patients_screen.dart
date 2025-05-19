@@ -22,7 +22,6 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
       child: Scaffold(
         appBar: AppHeader(
           title: 'My Patients',
-          onBackPressed: () => context.goNamed('home'),
           actions: [
             IconButton(
               icon: Icon(LucideIcons.heart),

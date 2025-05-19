@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:CuraDocs/common/contact_us.dart';
+import 'package:CuraDocs/common/scan_qr.dart';
 import 'package:CuraDocs/features/auth/landing/splash/main_splash_screen.dart';
 import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
 import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass.dart';
@@ -37,7 +38,7 @@ class AppRouter {
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
     return GoRouter(
       navigatorKey: rootNavigatorKey,
-      initialLocation: isDev ? '/home' : '/',
+      initialLocation: isDev ? '/doctor/home' : '/',
       debugLogDiagnostics: true,
       routes: [
         GoRoute(
@@ -119,6 +120,12 @@ class AppRouter {
             requiresAuth: true,
             child: const ReportAProblemScreen(),
           ),
+        ),
+        GoRoute(
+          path: '/scan-qr',
+          parentNavigatorKey: rootNavigatorKey,
+          name: RouteConstants.qrScan,
+          builder: (context, state) => ScanQR(),
         ),
         ...patientRoutes,
         ...doctorRoutes,

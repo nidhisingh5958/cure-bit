@@ -1,9 +1,12 @@
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/doctor_repository.dart';
+import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
-class DoctorRescheduleAppointment extends StatefulWidget {
+class DoctorRescheduleAppointment extends ConsumerStatefulWidget {
   final Map<String, dynamic>? appointment;
 
   const DoctorRescheduleAppointment({
@@ -12,18 +15,22 @@ class DoctorRescheduleAppointment extends StatefulWidget {
   });
 
   @override
-  State<DoctorRescheduleAppointment> createState() =>
+  ConsumerState<DoctorRescheduleAppointment> createState() =>
       _DoctorRescheduleAppointmentState();
 }
 
 class _DoctorRescheduleAppointmentState
-    extends State<DoctorRescheduleAppointment> {
+    extends ConsumerState<DoctorRescheduleAppointment> {
   late TextEditingController titleController;
-  late TextEditingController locationController;
+
   late TextEditingController startTimeController;
-  late TextEditingController endTimeController;
+
   late TextEditingController dateController;
-  late TextEditingController notesController;
+
+  // API required controllers
+  late TextEditingController reasonController;
+  // String appointmentId = '';
+  String appointmentId = 'ghsdjhgs24';
   Color selectedColor = Colors.blue;
   DateTime selectedDate = DateTime.now();
 
@@ -36,7 +43,12 @@ class _DoctorRescheduleAppointmentState
 
   List<Map<String, dynamic>> appointments = [];
   bool isLoading = false;
+  bool isSubmitting = false; // Track submission state
   final _formKey = GlobalKey<FormState>();
+
+  // Instance of DoctorAppointmentRepository
+  final DoctorAppointmentRepository _DoctorAppointmentRepository =
+      DoctorAppointmentRepository();
 
   @override
   void initState() {
@@ -44,21 +56,23 @@ class _DoctorRescheduleAppointmentState
 
     // Initialize all controllers first
     titleController = TextEditingController();
-    locationController = TextEditingController();
+
     startTimeController = TextEditingController();
-    endTimeController = TextEditingController();
-    notesController = TextEditingController();
+
+    reasonController = TextEditingController(); // Initialize reason controller
     dateController = TextEditingController(
         text: DateFormat('MMMM d, yyyy').format(selectedDate));
 
     // Then populate with appointment data if available
     if (widget.appointment != null) {
       final appointment = widget.appointment!;
+
+      // appointmentId = appointment['id'] ?? '';
+      appointmentId = 'ghsdjhgs24';
+
       titleController.text = appointment['title'] ?? '';
-      locationController.text = appointment['location'] ?? '';
+
       startTimeController.text = appointment['startTime'] ?? '';
-      endTimeController.text = appointment['endTime'] ?? '';
-      notesController.text = appointment['notes'] ?? '';
 
       if (appointment['date'] != null) {
         try {
@@ -99,11 +113,9 @@ class _DoctorRescheduleAppointmentState
   @override
   void dispose() {
     titleController.dispose();
-    locationController.dispose();
     startTimeController.dispose();
-    endTimeController.dispose();
     dateController.dispose();
-    notesController.dispose();
+    reasonController.dispose();
     super.dispose();
   }
 
@@ -186,59 +198,92 @@ class _DoctorRescheduleAppointmentState
     }
   }
 
-  void _saveAppointment() {
+  void _saveAppointment() async {
     if (_formKey.currentState!.validate()) {
       // Provide haptic feedback
       HapticFeedback.lightImpact();
 
-      final appointmentData = {
-        'id': widget.appointment != null
-            ? widget.appointment!['id']
-            : DateTime.now().millisecondsSinceEpoch.toString(),
-        'title': titleController.text,
-        'location': locationController.text,
-        'startTime': startTimeController.text,
-        'endTime': endTimeController.text,
-        'date': dateController.text,
-        'notes': notesController.text,
-        'color': selectedColor,
-      };
+      // Set loading state
+      setState(() {
+        isSubmitting = true;
+      });
 
-      // Update or create appointment
-      if (widget.appointment != null) {
-        final index =
-            appointments.indexWhere((a) => a['id'] == appointmentData['id']);
-        if (index != -1) {
-          setState(() {
-            appointments[index] = appointmentData;
-          });
+      // Format date for API (YYYY-MM-DD)
+      final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+
+      // Format time for API (HH:MM) - 24-hour format
+      String apiTimeFormat = '';
+      if (startTimeController.text.isNotEmpty) {
+        try {
+          final timeParts = startTimeController.text.split(':');
+          int hour = int.parse(timeParts[0]);
+          int minute = int.parse(timeParts[1].split(' ')[0]);
+          String period = timeParts[1].split(' ')[1].toUpperCase();
+
+          // Convert to 24-hour format
+          if (period == 'PM' && hour < 12) hour += 12;
+          if (period == 'AM' && hour == 12) hour = 0;
+
+          apiTimeFormat =
+              '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+        } catch (e) {
+          // Fallback to original format if parsing fails
+          debugPrint('Error parsing time: ${e.toString()}');
+          apiTimeFormat = startTimeController.text;
         }
-      } else {
+      }
+      // Check if appointment ID is available
+      if (appointmentId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Cannot reschedule: Missing appointment ID'),
+          backgroundColor: Colors.red[700],
+          behavior: SnackBarBehavior.floating,
+        ));
         setState(() {
-          appointments.add(appointmentData);
+          isSubmitting = false;
         });
+        return;
       }
 
-      // Sort appointments by time
-      appointments.sort((a, b) => a['startTime'].compareTo(b['startTime']));
+      final success =
+          await _DoctorAppointmentRepository.docRescheduleAppointment(
+        context,
+        appointmentId = '13456fAS',
+        formattedDate,
+        apiTimeFormat,
+        reasonController.text.trim(),
+        ref.read(userProvider)?.role ?? '',
+      );
 
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(widget.appointment != null
-            ? 'Appointment updated successfully'
-            : 'Appointment scheduled successfully'),
-        backgroundColor: Colors.green[700],
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        duration: const Duration(seconds: 2),
-      ));
-
-      // Navigate back with success result
-      Future.delayed(const Duration(milliseconds: 300), () {
-        Navigator.of(context).pop(true);
+      setState(() {
+        isSubmitting = false;
       });
+
+      if (success) {
+        final appointmentData = {
+          'id': appointmentId,
+          'title': titleController.text,
+          'startTime': startTimeController.text,
+          'date': dateController.text,
+          'color': selectedColor,
+        };
+
+        // Update local state if needed
+        if (widget.appointment != null) {
+          final index =
+              appointments.indexWhere((a) => a['id'] == appointmentData['id']);
+          if (index != -1) {
+            setState(() {
+              appointments[index] = appointmentData;
+            });
+          }
+        }
+
+        // Navigate back with success result
+        Future.delayed(const Duration(milliseconds: 300), () {
+          Navigator.of(context).pop(true);
+        });
+      }
     }
   }
 
@@ -331,9 +376,7 @@ class _DoctorRescheduleAppointmentState
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          widget.appointment != null
-              ? 'Reschedule Appointment'
-              : 'New Appointment',
+          'Reschedule Appointment',
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w600,
@@ -345,12 +388,10 @@ class _DoctorRescheduleAppointmentState
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          if (widget.appointment != null)
-            IconButton(
-              icon:
-                  Icon(Icons.delete_outline, color: Colors.red[700], size: 24),
-              onPressed: _deleteAppointment,
-            ),
+          IconButton(
+            icon: Icon(Icons.delete_outline, color: Colors.red[700], size: 24),
+            onPressed: _deleteAppointment,
+          ),
         ],
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
@@ -379,9 +420,7 @@ class _DoctorRescheduleAppointmentState
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            widget.appointment != null
-                                ? Icons.edit_calendar_rounded
-                                : Icons.calendar_month_rounded,
+                            Icons.edit_calendar_rounded,
                             size: 48,
                             color: primaryColor,
                           ),
@@ -399,22 +438,6 @@ class _DoctorRescheduleAppointmentState
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Please enter a title';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Location field
-                      _buildFormLabel('Location'),
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: locationController,
-                        hintText: 'Enter appointment location',
-                        prefixIcon: Icons.location_on_outlined,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter a location';
                           }
                           return null;
                         },
@@ -453,7 +476,7 @@ class _DoctorRescheduleAppointmentState
                                       style: TextStyle(
                                         color: primaryColor,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                        fontSize: 14,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -474,7 +497,7 @@ class _DoctorRescheduleAppointmentState
                                   dateController.text,
                                   style: TextStyle(
                                     color: textColor,
-                                    fontSize: 14,
+                                    fontSize: 10,
                                   ),
                                 ),
                               ),
@@ -501,48 +524,51 @@ class _DoctorRescheduleAppointmentState
                           return null;
                         },
                       ),
+
                       const SizedBox(height: 20),
-                      // End Time field
-                      _buildFormLabel('End Time'),
+
+                      // Reason for rescheduling
+                      _buildFormLabel('Reason for Rescheduling '),
                       const SizedBox(height: 8),
                       _buildTextFormField(
-                        controller: endTimeController,
-                        hintText: 'Select end time',
-                        prefixIcon: Icons.access_time,
-                        readOnly: true,
-                        onTap: () => _selectTime(context, endTimeController),
+                        controller: reasonController,
+                        hintText: 'Why are you rescheduling this appointment?',
+                        prefixIcon: Icons.question_answer_outlined,
+                        maxLines: 2,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please select an end time';
+                            return 'Please provide a reason for rescheduling';
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 20),
-                      // Notes field
-                      _buildFormLabel('Notes'),
 
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: notesController,
-                        hintText: 'Add any notes or details',
-                        prefixIcon: Icons.notes,
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: 20),
                       // Save button
                       ElevatedButton(
-                        onPressed: _saveAppointment,
+                        onPressed: isSubmitting ? null : _saveAppointment,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primaryColor,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          disabledBackgroundColor: Colors.grey,
                         ),
-                        child: Text(
-                          widget.appointment != null
-                              ? 'Update Appointment'
-                              : 'Schedule Appointment',
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.white),
-                        ),
+                        child: isSubmitting
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                'Reschedule Appointment',
+                                style: const TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -583,10 +609,22 @@ class _DoctorRescheduleAppointmentState
         hintText: hintText,
         prefixIcon: Icon(prefixIcon, color: primaryColor),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.grey[50],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: primaryColor),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red[400]!),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

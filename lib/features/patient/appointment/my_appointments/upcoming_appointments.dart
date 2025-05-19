@@ -1,4 +1,5 @@
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/patient_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,9 @@ class UpcomingAppointments extends StatefulWidget {
 
 class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
   Set<int> expandedIndices = {};
+  final PatientAppointmentRepository _PatientAppointmentRepository =
+      PatientAppointmentRepository();
+  bool _isLoading = false;
 
   void toggleExpanded(int index) {
     setState(() {
@@ -21,6 +25,48 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
         expandedIndices.add(index);
       }
     });
+  }
+
+  // Method to handle appointment cancellation
+  Future<void> _cancelAppointment(
+      String appointmentId, String doctorName) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // You might need to get the user role from a user service or provider
+      String userRole =
+          'Patient'; // Default role, replace with actual user role
+
+      bool success = await _PatientAppointmentRepository.cancelAppointment(
+        context,
+        appointmentId,
+        userRole,
+      );
+
+      if (success) {
+        // Refresh appointments list - you might want to call a method to reload data
+        // refreshAppointments();
+
+        // For now, let's just close the dialog and show a snackbar
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('Appointment with $doctorName cancelled successfully'),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -33,6 +79,7 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
         'time': 'Tomorrow, 10:00 AM',
         'problem': 'Recurring migraines and dizziness',
         'doctorId': 'dr_banner_123',
+        'appointmentId': '504542', // Add appointment ID
       },
     ];
 
@@ -60,6 +107,8 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
                       onTap: () => toggleExpanded(index),
                       problem: appointment['problem'] ?? '',
                       doctorId: appointment['doctorId'] ?? '',
+                      appointmentId: appointment['appointmentId'] ??
+                          '', // Pass appointment ID
                     ),
                   ],
                 );
@@ -88,7 +137,9 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
       {required bool isExpanded,
       required VoidCallback onTap,
       required String problem,
-      required String doctorId}) {
+      required String doctorId,
+      required String appointmentId}) {
+    // Add appointmentId parameter
     return Container(
       decoration: BoxDecoration(
         color: white,
@@ -111,15 +162,16 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
             onTap: onTap,
           ),
           if (isExpanded)
-            _buildUpcomingAppointmentDetails(
-                context, problem, doctorId, doctorName),
+            _buildUpcomingAppointmentDetails(context, problem, doctorId,
+                doctorName, appointmentId), // Pass appointmentId
         ],
       ),
     );
   }
 
   Widget _buildUpcomingAppointmentDetails(BuildContext context, String problem,
-      String doctorId, String doctorName) {
+      String doctorId, String doctorName, String appointmentId) {
+    // Add appointmentId parameter
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -170,9 +222,10 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     // Cancel appointment
-                    debugPrint('Cancel appointment');
+                    debugPrint('Cancel appointment: $appointmentId');
                     // Show confirmation dialog
-                    _showCancelConfirmationDialog(context, doctorName);
+                    _showCancelConfirmationDialog(
+                        context, doctorName, appointmentId);
                   },
                   icon: const Icon(Icons.cancel_outlined),
                   label: const Text('Cancel'),
@@ -207,7 +260,8 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
   }
 
   // Dialog to confirm appointment cancellation
-  void _showCancelConfirmationDialog(BuildContext context, String doctorName) {
+  void _showCancelConfirmationDialog(
+      BuildContext context, String doctorName, String appointmentId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -223,24 +277,25 @@ class _UpcomingAppointmentsState extends State<UpcomingAppointments> {
               },
             ),
             TextButton(
-              child: Text(
-                'Yes, Cancel',
-                style: TextStyle(color: Colors.red.shade700),
-              ),
-              onPressed: () {
-                // Perform cancellation logic here
-                debugPrint('Appointment cancelled');
-                Navigator.of(context).pop();
-                // You might want to also update the UI to remove this appointment
-                // and show a confirmation snackbar
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Appointment with $doctorName cancelled'),
-                    backgroundColor: Colors.red.shade700,
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      // Call the cancel method
+                      _cancelAppointment(appointmentId, doctorName);
+                    },
+              child: _isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.red.shade700,
+                      ),
+                    )
+                  : Text(
+                      'Yes, Cancel',
+                      style: TextStyle(color: Colors.red.shade700),
+                    ),
             ),
           ],
           shape: RoundedRectangleBorder(

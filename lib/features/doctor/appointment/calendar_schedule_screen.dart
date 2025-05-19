@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/doctor_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -18,8 +19,15 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
   DateTime selectedDate = DateTime.now(); // Use current date by default
   bool isCalendarExpanded = false;
 
+  // Repository instance for API calls
+  final DoctorAppointmentRepository _appointmentRepository =
+      DoctorAppointmentRepository();
+
   // Currently editing appointment
   Map<String, dynamic>? editingAppointment;
+
+  // Loading state for appointments being updated
+  Map<String, bool> loadingAppointments = {};
 
   List<Map<String, dynamic>> appointments = [
     {
@@ -108,13 +116,45 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
     });
   }
 
-  void toggleAppointmentStatus(String appointmentId) {
+  // Updated to use the repository and prevent undoing completed appointments
+  Future<void> toggleAppointmentStatus(String appointmentId) async {
+    // Find the appointment
+    final index = appointments.indexWhere((a) => a['id'] == appointmentId);
+    if (index == -1) return;
+
+    // If the appointment is already marked as done, don't allow undoing
+    if (appointments[index]['isDone']) {
+      debugPrint('Appointment already marked as done, cannot undo');
+      return;
+    }
+
+    // Set loading state
     setState(() {
-      final index = appointments.indexWhere((a) => a['id'] == appointmentId);
-      if (index != -1) {
-        appointments[index]['isDone'] = !appointments[index]['isDone'];
-      }
+      loadingAppointments[appointmentId] = true;
     });
+
+    try {
+      // Call the API to update the appointment status
+      final success = await _appointmentRepository.updateAppointmentStatus(
+          context,
+          appointmentId,
+          true // Always set to true because we're marking as done and not allowing undo
+          );
+
+      if (success) {
+        // Update the local state only if the API call was successful
+        setState(() {
+          appointments[index]['isDone'] = true;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error toggling appointment status: ${e.toString()}");
+    } finally {
+      // Clear loading state
+      setState(() {
+        loadingAppointments[appointmentId] = false;
+      });
+    }
   }
 
   void changeSelectedDate(DateTime date) {
@@ -526,6 +566,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
         final appointment = appointments[index];
         final isFirstItem = index == 0;
         final isLastItem = index == appointments.length - 1;
+        final isLoading = loadingAppointments[appointment['id']] ?? false;
 
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -573,9 +614,12 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                               ),
                             ),
                           // Dot - Make it tappable to toggle status with new design
+                          // - only if not already marked as done
                           GestureDetector(
-                            onTap: () =>
-                                toggleAppointmentStatus(appointment['id']),
+                            onTap: appointment['isDone']
+                                ? null
+                                : () =>
+                                    toggleAppointmentStatus(appointment['id']),
                             child: Container(
                               width: 26,
                               height: 26,
@@ -597,17 +641,29 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                                   ),
                                 ],
                               ),
-                              child: appointment['isDone']
-                                  ? Icon(Icons.check,
-                                      size: 16,
-                                      color: black.withValues(alpha: .8))
-                                  : Container(
-                                      margin: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: appointment['color'],
-                                        shape: BoxShape.circle,
+                              child: isLoading
+                                  ? SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          grey800,
+                                        ),
                                       ),
-                                    ),
+                                    )
+                                  : appointment['isDone']
+                                      ? Icon(Icons.check,
+                                          size: 16,
+                                          color: black.withValues(alpha: .8))
+                                      : Container(
+                                          margin: const EdgeInsets.all(5),
+                                          decoration: BoxDecoration(
+                                            color: appointment['color'],
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
                             ),
                           ),
                           // Line after the dot
@@ -921,15 +977,15 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                     TextField(
                       controller: locationController,
                       decoration: const InputDecoration(
-                          labelText: 'Location',
-                          labelStyle: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey,
-                          )),
+                        labelText: 'Location',
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey,
+                        ),
+                      ),
                       style: const TextStyle(fontSize: 16),
                       onChanged: (value) {
                         setState(() {
-                          // Update the location in the editing appointment
                           if (editingAppointment != null) {
                             editingAppointment!['location'] = value;
                           }
@@ -940,128 +996,249 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                     Row(
                       children: [
                         Expanded(
-                          child: TextField(
-                            controller: startTimeController,
-                            decoration: const InputDecoration(
-                              labelText: 'Start Time',
-                              labelStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
+                          child: GestureDetector(
+                            onTap: () => _showTimePicker(
+                              context,
+                              startTimeController,
+                              (newTime) {
+                                setState(() {
+                                  startTimeController.text = newTime;
+                                  if (editingAppointment != null) {
+                                    editingAppointment!['startTime'] = newTime;
+                                  }
+                                });
+                              },
+                            ),
+                            child: AbsorbPointer(
+                              child: TextField(
+                                controller: startTimeController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Start Time',
+                                  labelStyle: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                  ),
+                                  suffixIcon: Icon(Icons.access_time),
+                                ),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
-                            style: const TextStyle(fontSize: 16),
-                            readOnly: true,
-                            onTap: () {
-                              _showTimePicker(context, startTimeController);
-                            },
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 16),
                         Expanded(
-                          child: TextField(
-                            controller: endTimeController,
-                            decoration: const InputDecoration(
-                              labelText: 'End Time',
-                              labelStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
+                          child: GestureDetector(
+                            onTap: () => _showTimePicker(
+                              context,
+                              endTimeController,
+                              (newTime) {
+                                setState(() {
+                                  endTimeController.text = newTime;
+                                  if (editingAppointment != null) {
+                                    editingAppointment!['endTime'] = newTime;
+                                  }
+                                });
+                              },
+                            ),
+                            child: AbsorbPointer(
+                              child: TextField(
+                                controller: endTimeController,
+                                decoration: const InputDecoration(
+                                  labelText: 'End Time',
+                                  labelStyle: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                  ),
+                                  suffixIcon: Icon(Icons.access_time),
+                                ),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
-                            style: const TextStyle(fontSize: 16),
-                            readOnly: true,
-                            onTap: () {
-                              _showTimePicker(context, endTimeController);
-                            },
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Choose Color',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        Colors.blue,
+                        Colors.red,
+                        Colors.green,
+                        Colors.amber,
+                        Colors.indigo,
+                        Colors.pink,
+                        Colors.orange,
+                        Colors.purple,
+                      ].map((color) {
+                        final isSelected = selectedColor == color;
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedColor = color;
+                              if (editingAppointment != null) {
+                                editingAppointment!['color'] = color;
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            margin: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: isSelected
+                                  ? Border.all(color: Colors.black, width: 2)
+                                  : null,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: color.withOpacity(0.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 3,
+                                ),
+                              ],
+                            ),
+                            child: isSelected
+                                ? const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 20,
+                                  )
+                                : null,
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: grey800,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                   onPressed: () {
-                    if (titleController.text.isNotEmpty &&
-                        locationController.text.isNotEmpty) {
-                      // Add new appointment
-                      final newAppointment = {
-                        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-                        'title': titleController.text,
-                        'location': locationController.text,
-                        'date': DateFormat('MMMM d, yyyy').format(selectedDate),
-                        'startTime': startTimeController.text,
-                        'endTime': endTimeController.text,
-                        'color': selectedColor,
-                        'isDone': false,
-                      };
-
-                      setState(() {
-                        appointments.add(newAppointment);
-                        // Sort appointments by time
-                        appointments.sort(
-                            (a, b) => a['startTime'].compareTo(b['startTime']));
-                      });
-
-                      Navigator.of(context).pop();
+                    // Validate inputs
+                    if (titleController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please enter a title'),
+                        ),
+                      );
+                      return;
                     }
+
+                    if (locationController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please enter a location'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // Format date
+                    final formattedDate =
+                        DateFormat('MMMM d, yyyy').format(selectedDate);
+
+                    if (editingAppointment != null) {
+                      // Update existing appointment
+                      final index = appointments.indexWhere(
+                          (a) => a['id'] == editingAppointment!['id']);
+                      if (index != -1) {
+                        setState(() {
+                          appointments[index] = editingAppointment!;
+                        });
+                      }
+                    } else {
+                      // Create new appointment
+                      setState(() {
+                        appointments.add({
+                          'id':
+                              DateTime.now().millisecondsSinceEpoch.toString(),
+                          'title': titleController.text,
+                          'location': locationController.text,
+                          'date': formattedDate,
+                          'startTime': startTimeController.text,
+                          'endTime': endTimeController.text,
+                          'color': selectedColor,
+                          'isDone': false,
+                        });
+                      });
+                    }
+
+                    Navigator.pop(context);
                   },
-                  child: const Text('Add'),
+                  child: Text(
+                    editingAppointment != null ? 'Update' : 'Add',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ],
             );
           },
         );
       },
-    );
+    ).then((_) {
+      // Reset editing appointment
+      editingAppointment = null;
+    });
   }
 
-  void _showTimePicker(BuildContext context, TextEditingController controller) {
-    // For a real app, you would use a proper time picker here
-    // This is a simplified version to mimic time selection
-    final times = [
-      '08:00 AM',
-      '09:00 AM',
-      '10:00 AM',
-      '11:00 AM',
-      '12:00 PM',
-      '01:00 PM',
-      '02:00 PM',
-      '03:00 PM',
-      '04:00 PM',
-      '05:00 PM',
-      '06:00 PM',
-      '07:00 PM'
-    ];
-
-    showDialog(
+  void _showTimePicker(
+    BuildContext context,
+    TextEditingController controller,
+    Function(String) onTimeSelected,
+  ) async {
+    final TimeOfDay? picked = await showTimePicker(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Select Time'),
-          content: SizedBox(
-            width: 300,
-            height: 300,
-            child: ListView.builder(
-              itemCount: times.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(times[index], textAlign: TextAlign.center),
-                  onTap: () {
-                    controller.text = times[index];
-                    Navigator.pop(context);
-                  },
-                );
-              },
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: grey800,
+            ),
+            buttonTheme: const ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
             ),
           ),
+          child: child!,
         );
       },
     );
+
+    if (picked != null) {
+      final hour = picked.hourOfPeriod == 0 ? 12 : picked.hourOfPeriod;
+      final period = picked.period == DayPeriod.am ? 'AM' : 'PM';
+      final formattedTime =
+          '${hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')} $period';
+
+      onTimeSelected(formattedTime);
+    }
   }
 }

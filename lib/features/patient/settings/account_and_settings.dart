@@ -4,6 +4,7 @@ import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -77,6 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context.goNamed(RouteConstants.personalProfile);
                     },
                   ),
+                  _buildSettingsItem(
+                      icon: LucideIcons.user,
+                      title: 'Public Profile',
+                      onTap: () {
+                        context.goNamed(RouteConstants.publicProfile);
+                      }),
                   _buildSettingsItem(
                     icon: Icons.lock,
                     title: 'Security and login',

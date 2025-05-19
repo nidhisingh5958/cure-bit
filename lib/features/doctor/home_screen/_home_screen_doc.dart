@@ -10,74 +10,380 @@ class DoctorHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen size for responsive adjustments
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 360;
+
     return Scaffold(
-      appBar: AppHeader(
-        backgroundColor: transparent,
-        foregroundColor: black,
-        onMenuPressed: () => Scaffold.of(context).openDrawer(),
-        actions: [
-          _buildActionButtons(context),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Builder(
+          builder: (context) => AppHeader(
+            backgroundColor: grey200,
+            onMenuPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+            centerTitle: false,
+            foregroundColor: black,
+            elevation: 0,
+            actions: [
+              _buildIconButton(
+                context,
+                Icons.search_outlined,
+                RouteConstants.doctorPatientSearch,
+                hasNotification: false,
+              ),
+              _buildIconButton(
+                context,
+                Icons.notifications_none_outlined,
+                RouteConstants.doctorNotifications,
+                hasNotification: true,
+              ),
+            ],
+          ),
+        ),
       ),
-      drawer: Drawer(
+      drawer: const Drawer(
         child: DoctorSideMenu(),
       ),
-      // floatingActionButton property
-      // floatingActionButton: _buildChatBotFloatingButton(context),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildBody(context),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              grey200.withValues(alpha: .8),
+              grey200.withValues(alpha: .6),
             ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                _buildWelcomeSection(),
+                Container(
+                  margin: const EdgeInsets.only(top: 24),
+                  decoration: const BoxDecoration(
+                    color: white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 16,
+                        offset: Offset(0, -8),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildPatientsAttendedSection(),
+                        const SizedBox(height: 32),
+                        _buildUpcomingSection(context),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
+  Widget _buildWelcomeSection() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildGreeting(),
-          const SizedBox(height: 32),
-          _buildFeaturesSection(context),
-          const SizedBox(height: 32),
-          _buildUpcomingSection(context),
+          RichText(
+            text: const TextSpan(
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: black,
+                height: 1.2,
+                letterSpacing: -0.5,
+              ),
+              children: [
+                TextSpan(text: 'Hello, '),
+                TextSpan(
+                  text: 'Dr. Sahil',
+                  style: TextStyle(fontWeight: FontWeight.normal, color: black),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Welcome to your personal assistant',
+            style: TextStyle(
+              fontSize: 16,
+              color: black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  // Widget _buildChatBotFloatingButton(BuildContext context) {
-  //   return FloatingActionButton(
-  //     onPressed: () => context.goNamed(RouteConstants.doctorChatBot),
-  //     backgroundColor: white,
-  //     tooltip: 'Chat with Bot',
-  //     child: Icon(Icons.chat_bubble_outline, color: black),
-  //   );
-  // }
-
-  Widget _buildActionButtons(BuildContext context) {
-    return Row(
+  Widget _buildPatientsAttendedSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildIconButton(
-          context,
-          Icons.search_outlined,
-          RouteConstants.doctorPatientSearch,
-          hasNotification: false,
+        const Text(
+          'Patients attended',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: black,
+          ),
         ),
-        _buildIconButton(
-          context,
-          Icons.notifications_none_outlined,
-          RouteConstants.doctorNotifications,
-          hasNotification: true,
+        const SizedBox(height: 16),
+        Container(
+          height: 200,
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: grey100,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '148',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: black,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: CustomPaint(
+                  size: Size.infinite,
+                  painter: ChartPainter(),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('1 Oct', style: TextStyle(color: grey600, fontSize: 12)),
+                  Text('8 Oct', style: TextStyle(color: grey600, fontSize: 12)),
+                  Text('15 Oct',
+                      style: TextStyle(color: grey600, fontSize: 12)),
+                  Text('22 Oct',
+                      style: TextStyle(color: grey600, fontSize: 12)),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _buildFeatureItem(
+    BuildContext context,
+    IconData icon,
+    String label, {
+    required VoidCallback onTap,
+    required bool isSmallScreen,
+  }) {
+    return Column(
+      children: [
+        Container(
+          width: isSmallScreen ? 60 : 70,
+          height: isSmallScreen ? 60 : 70,
+          decoration: BoxDecoration(
+            color: grey200,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: .1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: Icon(
+              icon,
+              color: black,
+              size: 28,
+            ),
+            onPressed: onTap,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            color: black,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUpcomingSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Upcoming',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: black,
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(50, 30),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'See All',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 12,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        _buildAppointmentItem(
+          context,
+          name: 'Dhruv Gupta',
+          condition: 'Pain',
+          time: 'wed 1:30 pm',
+        ),
+        const SizedBox(height: 16),
+        _buildAppointmentItem(
+          context,
+          name: 'Dhruvi Singh',
+          condition: 'Thyroid',
+          time: 'wed 2:15 pm',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAppointmentItem(
+    BuildContext context, {
+    required String name,
+    required String condition,
+    required String time,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: grey200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: grey200,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.person_outline,
+              color: grey800,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  condition,
+                  style: TextStyle(
+                    color: grey600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              time,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -95,7 +401,7 @@ class DoctorHomeScreen extends StatelessWidget {
             icon: Icon(icon, color: black),
             onPressed: () => context.goNamed(route),
             style: IconButton.styleFrom(
-              backgroundColor: transparent,
+              backgroundColor: Colors.transparent,
               padding: const EdgeInsets.all(12),
             ),
           ),
@@ -110,7 +416,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.error,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: transparent,
+                    color: Colors.transparent,
                     width: 2,
                   ),
                 ),
@@ -120,372 +426,63 @@ class DoctorHomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildGreeting() {
-    String name = 'Random';
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Hello, ',
-                style: TextStyle(
-                  color: black,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  height: 1.2,
-                ),
-              ),
-              Text(
-                name,
-                style: TextStyle(
-                  fontSize: 30,
-                  color: black,
-                  height: 1.2,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Welcome to your health dashboard',
-            style: TextStyle(
-              fontSize: 16,
-              color: black.withValues(alpha: .8),
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+class ChartPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Paint for the grid lines
+    final gridPaint = Paint()
+      ..color = Colors.grey.withOpacity(0.3)
+      ..strokeWidth = 1;
 
-  Widget _buildFeaturesSection(BuildContext context) {
-    final features = [
-      {
-        'icon': Icons.description_outlined,
-        'label': 'Prescription',
-        'route': 'myPatientsPrescriptions',
-      },
-      {
-        'icon': Icons.calendar_today_outlined,
-        'label': 'Booking',
-        'route': 'myPatientsAppointments',
-      },
-      {
-        'icon': Icons.science_outlined,
-        'label': 'Test Record',
-        'route': 'myPatientsTestRecords',
-      },
-      {
-        'icon': Icons.medication_outlined,
-        'label': 'Medicines',
-        'route': 'medicineReminder',
-      },
+    // Paint for the chart line
+    final linePaint = Paint()
+      ..color = Colors.blue.shade500
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
+    // Draw horizontal grid lines
+    for (int i = 0; i <= 4; i++) {
+      final y = size.height * i / 4;
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        gridPaint,
+      );
+    }
+
+    // Define data points for the wavy line (similar to the image)
+    final points = [
+      Offset(0, size.height * 0.6), // Starting point
+      Offset(size.width * 0.15, size.height * 0.3), // Rise
+      Offset(size.width * 0.3, size.height * 0.45), // Fall
+      Offset(size.width * 0.45, size.height * 0.65), // Fall more
+      Offset(size.width * 0.6, size.height * 0.5), // Rise a bit
+      Offset(size.width * 0.75, size.height * 0.2), // Rise to peak
+      Offset(size.width * 0.9, size.height * 0.3), // Slight fall
+      Offset(size.width, size.height * 0.25), // End point
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader(context, 'Quick Access'),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: features.map((feature) {
-              return _buildFeatureItem(
-                context,
-                feature['icon'] as IconData,
-                feature['label'] as String,
-                onTap: () => context.goNamed(feature['route'] as String),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
+    // Create a path for the line
+    final path = Path();
+    path.moveTo(points[0].dx, points[0].dy);
+
+    for (int i = 1; i < points.length; i++) {
+      // Use quadratic bezier curves for smooth lines
+      final controlPointX = (points[i - 1].dx + points[i].dx) / 2;
+      path.quadraticBezierTo(
+        controlPointX,
+        points[i - 1].dy,
+        points[i].dx,
+        points[i].dy,
+      );
+    }
+
+    // Draw the path
+    canvas.drawPath(path, linePaint);
   }
 
-  Widget _buildFeatureItem(
-    BuildContext context,
-    IconData icon,
-    String label, {
-    VoidCallback? onTap,
-  }) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    // Calculate item width based on screen width
-    // Subtracting total horizontal padding (40) and spacing between items (3 * 12 = 36)
-    final itemWidth = (screenWidth - 76) / 4;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        width: itemWidth,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        decoration: BoxDecoration(
-          // color: Colors.blue.withValues(0.1),
-          borderRadius: BorderRadius.circular(16),
-          // border: Border.all(
-          //   color: Colors.blue.withValues(0.2),
-          //   width: 1,
-          // ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: black.withValues(alpha: .8), size: 24),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: black.withValues(alpha: .8),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUpcomingSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader(context, 'Upcoming ', onSeeAll: () {}),
-        const SizedBox(height: 16),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 2,
-          itemBuilder: (context, index) {
-            return _buildAppointmentCard(
-              context,
-              title: index == 0 ? 'Dr. Jean Grey' : 'Regular Checkup',
-              specialty: index == 0 ? 'Cardiologist' : 'General Practitioner',
-              rating: index == 0 ? '4.8' : null,
-              time: 'Today, ${index == 0 ? '15:00' : '14:00'} PM',
-              index: index,
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSectionHeader(
-    BuildContext context,
-    String title, {
-    VoidCallback? onSeeAll,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        TextButton(
-          onPressed: onSeeAll,
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.primary,
-          ),
-          child: Row(
-            children: const [
-              Text('See All'),
-              SizedBox(width: 4),
-              Icon(Icons.arrow_forward, size: 16),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAppointmentCard(
-    BuildContext context, {
-    required String title,
-    required String specialty,
-    String? rating,
-    required String time,
-    required int index,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: black,
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withValues(alpha: .05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                // Doctor/Appointment Avatar
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: .1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(
-                        Icons.person_outline,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 32,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Appointment Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            title,
-                            style: TextStyle(
-                              color: black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green.withValues(alpha: .1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              'Confirmed',
-                              style: TextStyle(
-                                color: Colors.green.shade700,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        specialty,
-                        style: TextStyle(
-                          color: grey600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          _buildInfoChip(
-                            context,
-                            Icons.access_time,
-                            time,
-                            Colors.blue,
-                          ),
-                          if (rating != null) ...[
-                            const SizedBox(width: 12),
-                            _buildInfoChip(
-                              context,
-                              Icons.star,
-                              rating,
-                              Colors.amber,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                // Arrow indicator
-                Container(
-                  margin: const EdgeInsets.only(left: 12),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: grey600,
-                    size: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoChip(
-    BuildContext context,
-    IconData icon,
-    String label,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: .1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 14,
-            color: color,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

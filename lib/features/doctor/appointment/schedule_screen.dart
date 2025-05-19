@@ -66,7 +66,9 @@ class DoctorScheduleScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppHeader(
         title: 'Appointments',
-        onMenuPressed: () => Scaffold.of(context).openDrawer(),
+        onDetailPressed: () => context.goNamed(
+          RouteConstants.doctorSchedulingAppointmentDetails,
+        ),
         centerTitle: true,
         elevation: 0,
         actions: [
