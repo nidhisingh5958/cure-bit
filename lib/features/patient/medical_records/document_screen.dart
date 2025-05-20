@@ -1,5 +1,6 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/patient/medical_records/components/animated_fab_medicalrecords.dart';
 import 'package:CuraDocs/features/patient/medical_records/data/sample.dart'
     show patientData;
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
@@ -20,6 +21,7 @@ class DocumentScreen extends StatefulWidget {
 class _DocumentScreenState extends State<DocumentScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  bool _isViewingPreviousAppointments = false;
 
   // Sample timeline data
   // final List<TimelineRecord> timelineData = [
@@ -99,7 +101,20 @@ class _DocumentScreenState extends State<DocumentScreen>
         ),
       ),
       drawer: SideMenu(),
-      floatingActionButton: _buildAddFloatingButton(context),
+      floatingActionButton: !_isViewingPreviousAppointments
+          ? AnimatedFloatingActionButtonRecords(
+              onAddDocument: () {
+                // Handle new appointment action
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Creating new appointment...')),
+                );
+              },
+              onUploadDocument: () {
+                // Handle reschedule action
+                context.goNamed(RouteConstants.doctorRescheduleAppointment);
+              },
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: TabBarView(
         controller: _tabController,

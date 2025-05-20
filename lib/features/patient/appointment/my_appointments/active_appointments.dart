@@ -1,14 +1,17 @@
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/patient/my_appointments/active_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
-class ActiveAppointments extends StatefulWidget {
+class ActiveAppointments extends ConsumerStatefulWidget {
   const ActiveAppointments({super.key});
 
   @override
-  State<ActiveAppointments> createState() => _ActiveAppointmentsState();
+  ConsumerState<ActiveAppointments> createState() => _ActiveAppointmentsState();
 }
 
-class _ActiveAppointmentsState extends State<ActiveAppointments> {
+class _ActiveAppointmentsState extends ConsumerState<ActiveAppointments> {
   Set<int> expandedIndices = {};
 
   void toggleExpanded(int index) {
@@ -22,56 +25,119 @@ class _ActiveAppointmentsState extends State<ActiveAppointments> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Fetch appointments when widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAppointments();
+    });
+  }
+
+  Future<void> _loadAppointments() async {
+    // Use ref directly from ConsumerState
+    final patientEmail = ref.read(currentPatientEmailProvider);
+    if (patientEmail != null) {
+      await ref
+          .read(appointmentStateProvider.notifier)
+          .fetchPatientAppointments(
+            context,
+            patientEmail,
+          );
+    }
+  }
+
+  Future<void> _refreshAppointments() async {
+    // Use ref directly from ConsumerState
+    final patientEmail = ref.read(currentPatientEmailProvider);
+    if (patientEmail != null) {
+      await ref
+          .read(appointmentStateProvider.notifier)
+          .refreshPatientAppointments(
+            context,
+            patientEmail,
+          );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Example data - you can replace with actual data source
-    final List<Map<String, dynamic>> appointments = [
-      {
-        'doctorName': 'Dr. Jean Grey',
-        'specialty': 'Cardiologist',
-        'time': 'Today, 3:00 PM',
-        'meetingLink': 'https://meet.curadocs.com/dr-grey',
-        'patientInstructions':
-            'Please be prepared to discuss your recent test results',
-      },
-      {
-        'doctorName': 'Dr. Stephen Strange',
-        'specialty': 'Neurologist',
-        'time': 'Today, 5:30 PM',
-        'meetingLink': 'https://meet.curadocs.com/dr-strange',
-        'patientInstructions': 'Have your recent MRI scans ready for review',
-      },
-    ];
+    // Get appointment state from provider
+    final appointmentState = ref.watch(appointmentStateProvider);
+    final appointments = appointmentState.appointments;
+    final isLoading = appointmentState.isLoading;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: appointments.isEmpty
-          ? _buildNoAppointmentsMessage('No active appointments found.')
-          : ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: appointments.length,
-              itemBuilder: (context, index) {
-                final appointment = appointments[index];
-                final isExpanded = expandedIndices.contains(index);
+    return RefreshIndicator(
+      onRefresh: _refreshAppointments,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: isLoading
+            ? _buildLoadingIndicator()
+            : appointments.isEmpty
+                ? _buildNoAppointmentsMessage('No active appointments found.')
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: appointments.length,
+                    itemBuilder: (context, index) {
+                      final appointment = appointments[index];
+                      final isExpanded = expandedIndices.contains(index);
 
-                return Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    _buildActiveAppointment(
-                      context,
-                      appointment['doctorName'] ?? '',
-                      appointment['specialty'] ?? '',
-                      appointment['time'] ?? '',
-                      isExpanded: isExpanded,
-                      onTap: () => toggleExpanded(index),
-                      meetingLink: appointment['meetingLink'] ?? '',
-                      patientInstructions:
-                          appointment['patientInstructions'] ?? '',
-                    ),
-                  ],
-                );
-              },
-            ),
+                      // Format appointment time for display
+                      final appointmentDateTime = DateTime.parse(
+                          appointment['appointmentDate'] ??
+                              DateTime.now().toIso8601String());
+
+                      final formattedDate =
+                          _formatAppointmentDate(appointmentDateTime);
+                      final formattedTime =
+                          DateFormat('h:mm a').format(appointmentDateTime);
+                      final displayTime = '$formattedDate, $formattedTime';
+
+                      return Column(
+                        children: [
+                          const SizedBox(height: 16),
+                          _buildActiveAppointment(
+                            context,
+                            appointment['doctorName'] ?? 'Unknown Doctor',
+                            appointment['specialty'] ?? 'Medical Professional',
+                            displayTime,
+                            isExpanded: isExpanded,
+                            onTap: () => toggleExpanded(index),
+                            meetingLink: appointment['meetingLink'] ?? '',
+                            patientInstructions:
+                                appointment['patientInstructions'] ??
+                                    'No specific instructions provided.',
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+      ),
+    );
+  }
+
+  String _formatAppointmentDate(DateTime date) {
+    final now = DateTime.now();
+
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
+      return 'Today';
+    } else if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day + 1) {
+      return 'Tomorrow';
+    } else {
+      return DateFormat('MMM d, yyyy').format(date);
+    }
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.all(24.0),
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 
@@ -156,19 +222,21 @@ class _ActiveAppointmentsState extends State<ActiveAppointments> {
             ),
           ),
           const SizedBox(height: 16),
-          // ElevatedButton.icon(
-          //   onPressed: () {
-          //     // Navigate to video call
-          //     print('Join video call: $meetingLink');
-          //   },
-          //   icon: const Icon(Icons.videocam),
-          //   label: const Text('Join Video Call'),
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor: Theme.of(context).primaryColor,
-          //     foregroundColor: Colors.white,
-          //     minimumSize: const Size(double.infinity, 40),
-          //   ),
-          // ),
+          if (meetingLink.isNotEmpty)
+            ElevatedButton.icon(
+              onPressed: () {
+                // Navigate to video call
+                debugPrint('Join video call: $meetingLink');
+                // Implementation for launching the meeting would go here
+              },
+              icon: const Icon(Icons.videocam),
+              label: const Text('Join Video Call'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 40),
+              ),
+            ),
         ],
       ),
     );
@@ -234,7 +302,11 @@ class _ActiveAppointmentsState extends State<ActiveAppointments> {
                 ),
               ),
             ),
-            // No arrow icon for active appointments
+            // Arrow icon to indicate expandable content
+            Icon(
+              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              color: grey600,
+            ),
           ],
         ),
       ),

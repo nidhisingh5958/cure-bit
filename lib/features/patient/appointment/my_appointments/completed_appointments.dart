@@ -1,15 +1,35 @@
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/patient/my_appointments/completed_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
-class CompletedAppointments extends StatefulWidget {
-  const CompletedAppointments({super.key});
+class CompletedAppointments extends ConsumerStatefulWidget {
+  final String patientEmail;
+
+  const CompletedAppointments({
+    super.key,
+    required this.patientEmail,
+  });
 
   @override
-  State<CompletedAppointments> createState() => _CompletedAppointmentsState();
+  ConsumerState<CompletedAppointments> createState() =>
+      _CompletedAppointmentsState();
 }
 
-class _CompletedAppointmentsState extends State<CompletedAppointments> {
+class _CompletedAppointmentsState extends ConsumerState<CompletedAppointments> {
   Set<int> expandedIndices = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch completed appointments when widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(completedAppointmentsProvider.notifier)
+          .fetchCompletedAppointments(context, widget.patientEmail);
+    });
+  }
 
   void toggleExpanded(int index) {
     setState(() {
@@ -21,51 +41,98 @@ class _CompletedAppointmentsState extends State<CompletedAppointments> {
     });
   }
 
+  // Format appointment date
+  String _formatAppointmentDate(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      return DateFormat('MMM d, h:mm a').format(dateTime);
+    } catch (e) {
+      return dateTimeString;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Example data - you can replace with actual data source
-    final List<Map<String, dynamic>> appointments = [
-      // Uncomment to add sample appointments
-      {
-        'doctorName': 'Dr. Hank McCoy',
-        'specialty': 'Dermatologist',
-        'time': 'May 15, 2:30 PM',
-        'diagnosis': 'Eczema on right arm',
-        'prescriptionId': 'RX2023051501',
-        'summaryId': 'SUMM2023051501',
-      },
-    ];
+    final state = ref.watch(completedAppointmentsProvider);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: appointments.isEmpty
-          ? _buildNoAppointmentsMessage('No completed appointments found.')
-          : ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: appointments.length,
-              itemBuilder: (context, index) {
-                final appointment = appointments[index];
-                final isExpanded = expandedIndices.contains(index);
+    // If loading, show progress indicator
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-                return Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    _buildCompletedAppointment(
-                      context,
-                      appointment['doctorName'] ?? '',
-                      appointment['specialty'] ?? '',
-                      appointment['time'] ?? '',
-                      isExpanded: isExpanded,
-                      onTap: () => toggleExpanded(index),
-                      diagnosis: appointment['diagnosis'] ?? '',
-                      prescriptionId: appointment['prescriptionId'] ?? '',
-                      summaryId: appointment['summaryId'] ?? '',
-                    ),
-                  ],
-                );
-              },
-            ),
+    // If error, show error message
+    if (state.hasError) {
+      return _buildNoAppointmentsMessage('Error: ${state.errorMessage}');
+    }
+
+    // If appointments list is empty
+    if (state.appointments.isEmpty) {
+      return _buildNoAppointmentsMessage('No completed appointments found.');
+    }
+
+    return Column(
+      children: [
+        // Add refresh button at the top
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton.icon(
+                onPressed: () {
+                  ref
+                      .read(completedAppointmentsProvider.notifier)
+                      .refreshCompletedAppointments(
+                          context, widget.patientEmail);
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Refresh'),
+              ),
+            ],
+          ),
+        ),
+        // Appointments list
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: state.appointments.length,
+            itemBuilder: (context, index) {
+              final appointment = state.appointments[index];
+              final isExpanded = expandedIndices.contains(index);
+
+              // Extract values from appointment data
+              final doctorName = appointment['doctor_name'] ?? 'Unknown Doctor';
+              final specialty = appointment['doctor_specialty'] ?? 'Specialist';
+              final appointmentTime =
+                  _formatAppointmentDate(appointment['appointment_date'] ?? '');
+              final diagnosis =
+                  appointment['diagnosis'] ?? 'No diagnosis available';
+              final prescriptionId = appointment['prescription_id'] ?? '';
+              final summaryId =
+                  appointment['summary_id'] ?? appointment['id'] ?? '';
+
+              return Column(
+                children: [
+                  const SizedBox(height: 16),
+                  _buildCompletedAppointment(
+                    context,
+                    doctorName,
+                    specialty,
+                    appointmentTime,
+                    isExpanded: isExpanded,
+                    onTap: () => toggleExpanded(index),
+                    diagnosis: diagnosis,
+                    prescriptionId: prescriptionId,
+                    summaryId: summaryId,
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -73,12 +140,34 @@ class _CompletedAppointmentsState extends State<CompletedAppointments> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Text(
-          message,
-          style: TextStyle(
-            fontSize: 16,
-            color: grey600,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              message,
+              style: TextStyle(
+                fontSize: 16,
+                color: grey600,
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (message.startsWith(
+                'No')) // Only show refresh button if there are no appointments
+              ElevatedButton.icon(
+                onPressed: () {
+                  ref
+                      .read(completedAppointmentsProvider.notifier)
+                      .refreshCompletedAppointments(
+                          context, widget.patientEmail);
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Refresh'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -155,10 +244,13 @@ class _CompletedAppointmentsState extends State<CompletedAppointments> {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    // Navigate to prescription
-                    print('Navigate to prescription: $prescriptionId');
-                  },
+                  onPressed: prescriptionId.isEmpty
+                      ? null // Disable button if no prescription
+                      : () {
+                          // Navigate to prescription
+                          debugPrint(
+                              'Navigate to prescription: $prescriptionId');
+                        },
                   icon: const Icon(Icons.description_outlined),
                   label: const Text('Prescription'),
                   style: OutlinedButton.styleFrom(
@@ -170,10 +262,12 @@ class _CompletedAppointmentsState extends State<CompletedAppointments> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    // View appointment summary
-                    print('View summary: $summaryId');
-                  },
+                  onPressed: summaryId.isEmpty
+                      ? null // Disable button if no summary
+                      : () {
+                          // View appointment summary
+                          debugPrint('View summary: $summaryId');
+                        },
                   icon: const Icon(Icons.summarize),
                   label: const Text('Summary'),
                   style: ElevatedButton.styleFrom(
@@ -190,7 +284,8 @@ class _CompletedAppointmentsState extends State<CompletedAppointments> {
             child: OutlinedButton.icon(
               onPressed: () {
                 // Book follow-up
-                print('Book follow-up appointment');
+                debugPrint('Book follow-up appointment');
+                // Here you would navigate to appointment booking screen
               },
               icon: const Icon(Icons.calendar_today),
               label: const Text('Book Follow-up'),
