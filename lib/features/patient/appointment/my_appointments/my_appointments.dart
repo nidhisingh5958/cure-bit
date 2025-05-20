@@ -1,9 +1,12 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/patient/appointment/components/animated_fab.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/active_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/completed_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/upcoming_appointments.dart';
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MyAppointments extends StatefulWidget {
   const MyAppointments({super.key});
@@ -15,6 +18,7 @@ class MyAppointments extends StatefulWidget {
 class _MyAppointmentsState extends State<MyAppointments>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  bool _isViewingPreviousAppointments = false;
 
   @override
   void initState() {
@@ -74,6 +78,21 @@ class _MyAppointmentsState extends State<MyAppointments>
           const CompletedAppointments(),
         ],
       ),
+      floatingActionButton: !_isViewingPreviousAppointments
+          ? AnimatedFloatingActionButton(
+              onNewAppointment: () {
+                // Handle new appointment action
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Creating new appointment...')),
+                );
+              },
+              onReschedule: () {
+                // Handle reschedule action
+                context.goNamed(RouteConstants.doctorRescheduleAppointment);
+              },
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/features/features_api_repository/search/internal_search/patient_search_provider.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/doctor/previous_patients_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,11 +22,17 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
       "DOC123456"; // Add your doctor CIN here or get it from a provider
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
+  final int _maxPatientsToShow = 10; // Maximum patients to show on main screen
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+
+    // Load patient data on widget initialization
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(previousPatientsProvider(doctorCIN).notifier).loadPatients();
+    });
   }
 
   @override
@@ -52,6 +59,10 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(patientSearchProvider(doctorCIN));
+    final patientsState = ref.watch(previousPatientsProvider(doctorCIN));
+    final isLoading = patientsState.isLoading;
+    final patients = patientsState.patients;
+    final hasError = patientsState.errorMessage.isNotEmpty;
 
     return SafeArea(
       child: Scaffold(
@@ -83,31 +94,33 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfile(context),
-              _buildSearchBar(context),
-              SizedBox(height: 24),
-              _isSearching
-                  ? _buildSearchResults(context, searchState)
-                  : _buildPatientList(context),
-            ],
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await ref
+                .read(previousPatientsProvider(doctorCIN).notifier)
+                .refreshPatients();
+          },
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProfile(context),
+                _buildSearchBar(context),
+                SizedBox(height: 24),
+                _isSearching
+                    ? _buildSearchResults(context, searchState)
+                    : _buildPatientList(context, patients, isLoading, hasError),
+              ],
+            ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Add new patient
-          },
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Colors.white,
-          elevation: 4,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Icon(Icons.add),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     context.goNamed(RouteConstants.addPatient);
+        //   },
+        //   backgroundColor: Theme.of(context).colorScheme.primary,
+        //   child: Icon(Icons.add),
       ),
     );
   }
@@ -220,7 +233,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.transparent,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -600,42 +613,102 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
     );
   }
 
-  Widget _buildPatientList(BuildContext context) {
-    final items = [
-      {
-        'image': 'images/doctor.jpg',
-        'patientName': 'Mathur Saab',
-        'symptoms': 'Fever',
-        'age': '42',
-        'gender': 'Male',
-        'lastVisit': '2 days ago',
-        'onPressed': () {
-          context.goNamed('patientProfile');
-        }
-      },
-      {
-        'image': 'images/doctor.jpg',
-        'patientName': 'Hema Kumari',
-        'symptoms': 'Headache',
-        'age': '35',
-        'gender': 'Female',
-        'lastVisit': '1 week ago',
-        'onPressed': () {
-          context.goNamed('patientProfile');
-        }
-      },
-      {
-        'image': 'images/doctor.jpg',
-        'patientName': 'Rajesh Kumar',
-        'symptoms': 'Cold',
-        'age': '28',
-        'gender': 'Male',
-        'lastVisit': 'Today',
-        'onPressed': () {
-          context.goNamed('patientProfile');
-        }
-      },
-    ];
+  Widget _buildPatientList(BuildContext context, List<PatientData> patients,
+      bool isLoading, bool hasError) {
+    if (isLoading && patients.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (hasError && patients.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 60,
+                color: Colors.red.shade300,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Error Loading Patients',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                ref.read(previousPatientsProvider(doctorCIN)).errorMessage,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey.shade700),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  ref
+                      .read(previousPatientsProvider(doctorCIN).notifier)
+                      .loadPatients();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Text('Try Again'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (patients.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.people_outline,
+                size: 60,
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'No Patients Found',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade700,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'You don\'t have any patients in your history yet',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Display only first 10 patients on the main screen
+    final displayedPatients = patients.length > _maxPatientsToShow
+        ? patients.sublist(0, _maxPatientsToShow)
+        : patients;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,7 +736,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Text(
-                      '${items.length}',
+                      '${patients.length}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -674,7 +747,10 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                 ],
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Navigate to All Patients screen
+                  context.pushNamed(RouteConstants.doctorAllPatients);
+                },
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.primary,
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -701,20 +777,31 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
           padding: EdgeInsets.symmetric(horizontal: 24),
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: items.length,
+          itemCount: displayedPatients.length,
           itemBuilder: (context, index) {
-            final item = items[index];
+            final patient = displayedPatients[index];
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: _buildPatientListItem(
                 context,
-                item['image'] as String,
-                item['patientName'] as String,
-                item['symptoms'] as String,
-                item['age'] as String,
-                item['gender'] as String,
-                item['lastVisit'] as String,
-                onPressed: item['onPressed'] as void Function()?,
+                patient.image,
+                patient.name,
+                patient.symptoms,
+                patient.age,
+                patient.gender,
+                patient.lastVisit,
+                onPressed: () {
+                  context.goNamed('patientProfile', extra: {
+                    'id': patient.id,
+                    'name': patient.name,
+                    'symptoms': patient.symptoms,
+                    'age': patient.age,
+                    'gender': patient.gender,
+                    'lastVisit': patient.lastVisit,
+                  });
+                },
+                isFavorite: patient.isFavorite,
+                patientId: patient.id,
               ),
             );
           },
@@ -732,7 +819,9 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
       String age,
       String gender,
       String lastVisit,
-      {void Function()? onPressed}) {
+      {void Function()? onPressed,
+      bool isFavorite = false,
+      String patientId = ''}) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -753,7 +842,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
           child: Row(
             children: [
               Hero(
-                tag: patientName,
+                tag: patientId.isNotEmpty ? patientId : patientName,
                 child: Container(
                   width: 75,
                   height: 75,
@@ -779,13 +868,25 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      patientName,
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: black.withValues(alpha: .9),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            patientName,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: black.withValues(alpha: .9),
+                            ),
+                          ),
+                        ),
+                        if (isFavorite)
+                          Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                            size: 18,
+                          ),
+                      ],
                     ),
                     SizedBox(height: 6),
                     Row(
@@ -840,21 +941,34 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: .1),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 18,
-                ),
-              ),
+              patientId.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? Colors.red : grey600,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        ref
+                            .read(previousPatientsProvider(doctorCIN).notifier)
+                            .toggleFavorite(patientId);
+                      },
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: .1),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 18,
+                      ),
+                    ),
             ],
           ),
         ),

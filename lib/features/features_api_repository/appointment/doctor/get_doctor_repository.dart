@@ -176,7 +176,7 @@ class DoctorGetAppointmentRepository {
   }
 
   // Utility method to handle API errors with proper error messages
-  String _handleApiError(http.Response response) {
+  String handleApiError(http.Response response) {
     try {
       final Map<String, dynamic> errorData = jsonDecode(response.body);
       return errorData['message'] ?? 'An unexpected error occurred';

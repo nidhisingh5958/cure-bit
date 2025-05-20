@@ -1,5 +1,5 @@
 import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/features/features_api_repository/appointment/patient/patient_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/patient/post_patient_repository.dart';
 import 'package:CuraDocs/features/patient/appointment/components/problem_selection_widget.dart';
 import 'package:CuraDocs/features/patient/appointment/success_screen.dart';
 import 'package:CuraDocs/utils/size_config.dart';

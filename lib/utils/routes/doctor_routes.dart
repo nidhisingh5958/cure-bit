@@ -1,4 +1,5 @@
 import 'package:CuraDocs/features/doctor/home_screen/_search_screen.dart';
+import 'package:CuraDocs/features/doctor/my_patients/all_patients.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_account.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_edit_personal_details.dart';
 import 'package:flutter/material.dart';
@@ -113,15 +114,16 @@ List<RouteBase> get doctorRoutes {
                 requiresAuth: false,
               ),
               routes: [
-                // GoRoute(
-                //   path: '/doctor/my-patients',
-                //   parentNavigatorKey: rootNavigatorKey,
-                //   name: RouteConstants.doctorMyPatients,
-                //   builder: (context, state) {
-                //     final chat = state.extra as ChatData;
-                //     return ChatScreen(chat: chat);
-                //   },
-                // ),
+                GoRoute(
+                  path: '/doctor/allPatients',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.doctorAllPatients,
+                  builder: (context, state) => AuthMiddleware(
+                    child: AllPatientsScreen(
+                        doctorCIN: ''), // Pass the actual doctor CIN here
+                    requiresAuth: false,
+                  ),
+                ),
               ],
             ),
           ],
@@ -142,7 +144,7 @@ List<RouteBase> get doctorRoutes {
                 GoRoute(
                   path: 'calendar',
                   parentNavigatorKey: rootNavigatorKey,
-                  name: RouteConstants.doctorScheduleCalendar,
+                  name: RouteConstants.doctorDailySchedule,
                   builder: (context, state) => AuthMiddleware(
                     child: DoctorCalendarSchedule(),
                     requiresAuth: false,

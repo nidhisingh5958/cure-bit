@@ -83,7 +83,7 @@ class RouteConstants {
   // schedule routes
   static String doctorSchedule = "doctorSchedule";
   static String doctorRescheduleAppointment = "doctorRescheduleAppointment";
-  static String doctorScheduleCalendar = "doctorScheduleCalendar";
+  static String doctorDailySchedule = "doctorScheduleCalendar";
   static String doctorSchedulingAppointmentDetails =
       "doctorSchedulingAppointmentDetails";
 
@@ -110,12 +110,13 @@ class RouteConstants {
   static String doctorAddDocument = "doctorAddDocument";
   static String doctorPatientProfile = "doctorPatientProfile";
   static String doctorPatientSearch = "doctorPatientSearch";
+  static String doctorAllPatients = "doctorAllPatients";
   static String doctorMyPatients = "doctorMyPatients";
   static String favouritePatients = "favouritePatients";
+
   // mantan
   static String doctorFollowUps = "doctorFollowUps";
   static String doctorTasks = "doctorTasks";
-  static String doctorDailySchedule = "doctorPatientDetails";
   static String doctorLabResults = "doctorPatientDetails";
 
   // settings routes

@@ -527,7 +527,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
               children: [
                 OutlinedButton(
                   onPressed: () {
-                    context.goNamed(RouteConstants.doctorSchedule);
+                    context.goNamed(RouteConstants.doctorDailySchedule);
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
