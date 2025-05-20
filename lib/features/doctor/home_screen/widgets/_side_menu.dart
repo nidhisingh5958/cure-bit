@@ -191,6 +191,9 @@ class DoctorSideMenu extends StatelessWidget {
           _buildOptionItem(
             icon: Icons.settings_outlined,
             label: 'Settings & Privacy',
+            onTap: () {
+              // Handle settings action
+            },
           ),
           // _buildOptionItem(
           //   icon: Icons.insights_outlined,

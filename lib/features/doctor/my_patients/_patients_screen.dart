@@ -1,36 +1,58 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CuraDocs/features/features_api_repository/search/internal_search/patient_search_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MyPatientsScreen extends StatefulWidget {
+class MyPatientsScreen extends ConsumerStatefulWidget {
   const MyPatientsScreen({super.key});
 
   @override
-  State<MyPatientsScreen> createState() => _MyPatientsScreenState();
+  ConsumerState<MyPatientsScreen> createState() => _MyPatientsScreenState();
 }
 
-class _MyPatientsScreenState extends State<MyPatientsScreen> {
+class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
   String docName = "John Doe";
   String specialization = "Cardiologist";
-
+  String doctorCIN =
+      "DOC123456"; // Add your doctor CIN here or get it from a provider
   final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
+  void _onSearchChanged() {
+    final query = _searchController.text;
+    if (query.isNotEmpty) {
+      setState(() {
+        _isSearching = true;
+      });
+      ref.read(patientSearchProvider(doctorCIN).notifier).searchPatients(query);
+    } else {
+      setState(() {
+        _isSearching = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final searchState = ref.watch(patientSearchProvider(doctorCIN));
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFF8F9FB),
@@ -69,7 +91,9 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
               _buildProfile(context),
               _buildSearchBar(context),
               SizedBox(height: 24),
-              _buildPatientList(context),
+              _isSearching
+                  ? _buildSearchResults(context, searchState)
+                  : _buildPatientList(context),
             ],
           ),
         ),
@@ -196,7 +220,7 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -209,12 +233,6 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.search,
-              color: grey600.withValues(alpha: .7),
-              size: 20,
-            ),
-            SizedBox(width: 12),
             Expanded(
               child: TextField(
                 controller: _searchController,
@@ -227,13 +245,27 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                   ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: grey600,
+                    size: 20,
+                  ),
                 ),
                 style: TextStyle(fontSize: 15),
-                onChanged: (value) {
-                  // Implement search functionality
-                },
               ),
             ),
+            if (_isSearching)
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() {
+                    _isSearching = false;
+                  });
+                },
+                color: grey600,
+                iconSize: 20,
+              ),
             SizedBox(width: 10),
             Container(
               height: 38,
@@ -256,6 +288,158 @@ class _MyPatientsScreenState extends State<MyPatientsScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults(BuildContext context, PatientSearchState state) {
+    if (state.isLoading) {
+      return Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (state.errorMessage.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Center(
+          child: Column(
+            children: [
+              Text(
+                'Error',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                state.errorMessage,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  ref
+                      .read(patientSearchProvider(doctorCIN).notifier)
+                      .refreshSearchIndex();
+                },
+                child: Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (state.searchResults.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(
+                Icons.search_off,
+                size: 48,
+                color: grey600,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'No patients found',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: grey600,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Try adjusting your search terms',
+                style: TextStyle(
+                  color: grey600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Search Results',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: black.withValues(alpha: .9),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      '${state.searchResults.length}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: () {
+                  ref
+                      .read(patientSearchProvider(doctorCIN).notifier)
+                      .refreshSearchIndex();
+                },
+                tooltip: 'Refresh results',
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: state.searchResults.length,
+            itemBuilder: (context, index) {
+              final patient = state.searchResults[index];
+              // Adapt this to match your actual data structure
+              return _buildPatientListItem(
+                context,
+                'images/doctor.jpg', // Default image or extract from patient data
+                patient['name'] ?? 'Unknown',
+                patient['symptoms'] ?? 'No symptoms',
+                patient['age']?.toString() ?? 'Unknown',
+                patient['gender'] ?? 'Unknown',
+                patient['lastVisit'] ?? 'Unknown',
+                onPressed: () {
+                  context.goNamed('patientProfile', extra: patient);
+                },
+              );
+            },
+          ),
+          SizedBox(height: 80),
+        ],
       ),
     );
   }

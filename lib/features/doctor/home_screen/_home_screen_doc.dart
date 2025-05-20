@@ -224,7 +224,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
   Widget _buildSearchBar(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.goNamed(RouteConstants.doctorSearch);
+        context.goNamed(RouteConstants.doctorPatientSearch);
       },
       child: Container(
         height: 40,

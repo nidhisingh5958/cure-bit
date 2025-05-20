@@ -1,5 +1,5 @@
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/appointment/patient_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/patient/patient_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

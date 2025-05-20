@@ -2,24 +2,23 @@
 // ignore_for_file: non_constant_identifier_names
 
 //  appointments
-final bookAppointment =
+final appointment =
     'https://a7r3s7iyx1.execute-api.us-east-1.amazonaws.com/Dev/appointment';
 
 // patinet routes
-final patientBookAppointment = '$bookAppointment/patient/appointment/book';
+final patientBookAppointment = '$appointment/patient/appointment/book';
 final rescheduleAppointment_patient =
-    '$bookAppointment/patient/appointment/reschedule';
+    '$appointment/patient/appointment/reschedule';
 final String patientCancelAppointment =
-    '$bookAppointment/patient/appointment/cancel';
-final String patientGetAppointments = '$bookAppointment/patient/appointments';
+    '$appointment/patient/appointment/cancel';
+final String patientGetAppointments = '$appointment/patient/appointments';
 
 // doctor routes
-final rescheduleAppointment_doc =
-    '$bookAppointment/doctor/appointment/reschedule';
-final String doctorGetAppointments = '$bookAppointment/doctor';
+final rescheduleAppointment_doc = '$appointment/doctor/appointment/reschedule';
+final String doctorGetAppointments = '$appointment/doctor';
 // final String doctorCancelAppointment =
-//     '$bookAppointment/doctor/appointment/cancel';
-final String appointmentDone = '$bookAppointment/doctor/appointment/done';
+//     '$appointment/doctor/appointment/cancel';
+final String appointmentDone = '$appointment/doctor/appointment/done';
 
 // profile
 final String privateProfile =

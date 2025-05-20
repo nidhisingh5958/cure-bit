@@ -1,3 +1,4 @@
+import 'package:CuraDocs/features/doctor/home_screen/_search_screen.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_account.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_edit_personal_details.dart';
 import 'package:flutter/material.dart';
@@ -305,6 +306,18 @@ List<RouteBase> get doctorRoutes {
           ],
         ),
       ],
+    ),
+
+    GoRoute(
+      path: '/doctor/patient-search',
+      parentNavigatorKey: rootNavigatorKey,
+      name: RouteConstants.doctorPatientSearch,
+      builder: (context, state) => AuthMiddleware(
+        requiresAuth: false,
+        child: PatientSearch(
+          doctorCIN: '123456789',
+        ),
+      ),
     ),
   ];
 }

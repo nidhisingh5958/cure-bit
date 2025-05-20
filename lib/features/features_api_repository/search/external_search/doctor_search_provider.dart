@@ -1,8 +1,9 @@
-import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:CuraDocs/features/features_api_repository/search/external_search/doctor_search_repository.dart';
+import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 
-class Doctor {
+final class Doctor {
   final String id;
   final String name;
   final String specialty;
@@ -31,15 +32,21 @@ class Doctor {
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      specialty: json['specialty'] ?? json['category'] ?? '',
-      location: json['location'] ?? '',
-      imageUrl: json['image_url'] ?? json['image'] ?? 'images/doctor.jpg',
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      specialty: json['specialty']?.toString() ??
+          json['specialization']?.toString() ??
+          json['category']?.toString() ??
+          '',
+      location: json['location']?.toString() ?? '',
+      imageUrl: json['image_url']?.toString() ??
+          json['imageUrl']?.toString() ??
+          json['image']?.toString() ??
+          'images/doctor.jpg',
       rating: (json['rating'] != null)
           ? double.tryParse(json['rating'].toString()) ?? 0.0
           : 0.0,
-      about: json['about'] ?? '',
+      about: json['about']?.toString() ?? '',
       experience: json['experience'] != null
           ? int.tryParse(json['experience'].toString()) ?? 0
           : 0,
@@ -56,148 +63,178 @@ class Doctor {
   }
 }
 
-class DoctorSearchProvider extends ChangeNotifier {
-  List<Doctor> _doctors = [];
-  List<Doctor> _filteredDoctors = [];
-  bool _isLoading = false;
-  String _searchQuery = '';
-  String _selectedSpecialty = '';
-  String _selectedLocation = '';
-  int _selectedRating = 0;
-  String _error = '';
+// State class to hold all doctor search related state
+class DoctorSearchState {
+  final List<Doctor> doctors;
+  final List<Doctor> filteredDoctors;
+  final bool isLoading;
+  final String searchQuery;
+  final String selectedSpecialty;
+  final String selectedLocation;
+  final int selectedRating;
+  final String error;
 
-  // Getters
-  List<Doctor> get doctors => _doctors;
-  List<Doctor> get filteredDoctors => _filteredDoctors;
-  bool get isLoading => _isLoading;
-  String get searchQuery => _searchQuery;
-  String get selectedSpecialty => _selectedSpecialty;
-  String get selectedLocation => _selectedLocation;
-  int get selectedRating => _selectedRating;
-  String get error => _error;
+  DoctorSearchState({
+    this.doctors = const [],
+    this.filteredDoctors = const [],
+    this.isLoading = false,
+    this.searchQuery = '',
+    this.selectedSpecialty = '',
+    this.selectedLocation = '',
+    this.selectedRating = 0,
+    this.error = '',
+  });
+
+  DoctorSearchState copyWith({
+    List<Doctor>? doctors,
+    List<Doctor>? filteredDoctors,
+    bool? isLoading,
+    String? searchQuery,
+    String? selectedSpecialty,
+    String? selectedLocation,
+    int? selectedRating,
+    String? error,
+  }) {
+    return DoctorSearchState(
+      doctors: doctors ?? this.doctors,
+      filteredDoctors: filteredDoctors ?? this.filteredDoctors,
+      isLoading: isLoading ?? this.isLoading,
+      searchQuery: searchQuery ?? this.searchQuery,
+      selectedSpecialty: selectedSpecialty ?? this.selectedSpecialty,
+      selectedLocation: selectedLocation ?? this.selectedLocation,
+      selectedRating: selectedRating ?? this.selectedRating,
+      error: error ?? this.error,
+    );
+  }
+}
+
+// StateNotifier to handle doctor search operations
+class DoctorSearchNotifier extends StateNotifier<DoctorSearchState> {
+  DoctorSearchNotifier() : super(DoctorSearchState());
 
   // Method to initialize with some default doctors
   Future<void> initialize() async {
-    _isLoading = true;
-    notifyListeners();
-
+    state = state.copyWith(isLoading: true);
     try {
       // Load some initial doctors
       await searchDoctors('');
     } catch (e) {
-      _error = 'Failed to load initial doctors: $e';
+      state = state.copyWith(error: 'Failed to load initial doctors: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
   // Method to search doctors
-  Future<void> searchDoctors(String query) async {
-    _isLoading = true;
-    _searchQuery = query;
-    notifyListeners();
+  Future<void> searchDoctors(String query, {BuildContext? context}) async {
+    state = state.copyWith(isLoading: true, searchQuery: query);
 
     try {
       final results = await DoctorSearchService.searchDoctors(query);
+      List<Doctor> doctorList;
 
       if (results.isEmpty) {
         // If no results from API, use mock data for demonstration
-        _doctors = _getMockDoctors();
+        doctorList = _getMockDoctors();
       } else {
-        _doctors = results.map((doctor) => Doctor.fromJson(doctor)).toList();
+        doctorList =
+            results.map<Doctor>((doctor) => Doctor.fromJson(doctor)).toList();
       }
 
+      state = state.copyWith(doctors: doctorList);
       // Apply any active filters
       _applyFilters();
     } catch (e) {
-      _error = 'Error searching doctors: $e';
+      if (context != null) {
+        showSnackBar(context: context, message: 'Error: $e');
+      }
+
       // Fall back to mock data in case of error
-      _doctors = _getMockDoctors();
+      final mockDoctors = _getMockDoctors();
+      state = state.copyWith(
+        error: 'Error searching doctors: $e',
+        doctors: mockDoctors,
+      );
       _applyFilters();
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
   // Method to apply filters
   void _applyFilters() {
-    _filteredDoctors = _doctors.where((doctor) {
+    final filteredList = state.doctors.where((doctor) {
       // Filter by specialty if selected
-      if (_selectedSpecialty.isNotEmpty &&
+      if (state.selectedSpecialty.isNotEmpty &&
           !doctor.specialty
               .toLowerCase()
-              .contains(_selectedSpecialty.toLowerCase())) {
+              .contains(state.selectedSpecialty.toLowerCase())) {
         return false;
       }
 
       // Filter by location if selected
-      if (_selectedLocation.isNotEmpty &&
+      if (state.selectedLocation.isNotEmpty &&
           !doctor.location
               .toLowerCase()
-              .contains(_selectedLocation.toLowerCase())) {
+              .contains(state.selectedLocation.toLowerCase())) {
         return false;
       }
 
       // Filter by rating if selected
-      if (_selectedRating > 0 && doctor.rating < _selectedRating) {
+      if (state.selectedRating > 0 && doctor.rating < state.selectedRating) {
         return false;
       }
 
       return true;
     }).toList();
+
+    state = state.copyWith(filteredDoctors: filteredList);
   }
 
   // Method to set specialty filter
   void setSpecialtyFilter(String specialty) {
-    _selectedSpecialty = specialty;
+    state = state.copyWith(selectedSpecialty: specialty);
     _applyFilters();
-    notifyListeners();
   }
 
   // Method to set location filter
   void setLocationFilter(String location) {
-    _selectedLocation = location;
+    state = state.copyWith(selectedLocation: location);
     _applyFilters();
-    notifyListeners();
   }
 
   // Method to set rating filter
   void setRatingFilter(int rating) {
-    _selectedRating = rating;
+    state = state.copyWith(selectedRating: rating);
     _applyFilters();
-    notifyListeners();
   }
 
   // Method to clear all filters
   void clearFilters() {
-    _selectedSpecialty = '';
-    _selectedLocation = '';
-    _selectedRating = 0;
-    _filteredDoctors = List.from(_doctors);
-    notifyListeners();
+    state = state.copyWith(
+      selectedSpecialty: '',
+      selectedLocation: '',
+      selectedRating: 0,
+      filteredDoctors: state.doctors,
+    );
   }
 
   // Method to clear only location filter
   void clearLocationFilter() {
-    _selectedLocation = '';
+    state = state.copyWith(selectedLocation: '');
     _applyFilters();
-    notifyListeners();
   }
 
   // Method to clear only rating filter
   void clearRatingFilter() {
-    _selectedRating = 0;
+    state = state.copyWith(selectedRating: 0);
     _applyFilters();
-    notifyListeners();
   }
 
   // Method to clear only specialty filter
   void clearSpecialtyFilter() {
-    _selectedSpecialty = '';
+    state = state.copyWith(selectedSpecialty: '');
     _applyFilters();
-    notifyListeners();
   }
 
   // Mock data for offline testing or when API fails
@@ -229,45 +266,25 @@ class DoctorSearchProvider extends ChangeNotifier {
         reviews: 425,
         fee: 2500,
       ),
-      Doctor(
-        id: '3',
-        name: 'Dr. Ravi Sharma',
-        specialty: 'Ophthalmologist',
-        location: 'Bangalore, India',
-        imageUrl: 'images/doctor.jpg',
-        rating: 4.8,
-        about: 'Expert in eye care and surgery.',
-        experience: 8,
-        patients: 1800,
-        reviews: 290,
-        fee: 1800,
-      ),
-      Doctor(
-        id: '4',
-        name: 'Dr. Priya Patel',
-        specialty: 'Neurologist',
-        location: 'Hyderabad, India',
-        imageUrl: 'images/doctor.jpg',
-        rating: 4.7,
-        about: 'Specialized in neurological disorders and treatments.',
-        experience: 12,
-        patients: 2100,
-        reviews: 310,
-        fee: 2200,
-      ),
-      Doctor(
-        id: '5',
-        name: 'Dr. Rajesh Kumar',
-        specialty: 'ENT',
-        location: 'Chennai, India',
-        imageUrl: 'images/doctor.jpg',
-        rating: 4.6,
-        about: 'Expert in ear, nose, and throat conditions.',
-        experience: 9,
-        patients: 1950,
-        reviews: 278,
-        fee: 1700,
-      ),
     ];
   }
 }
+
+// Provider for DoctorSearchState
+final doctorSearchProvider =
+    StateNotifierProvider<DoctorSearchNotifier, DoctorSearchState>((ref) {
+  return DoctorSearchNotifier();
+});
+
+// Individual providers for easier consumption of specific pieces of state
+final doctorsProvider = Provider<List<Doctor>>((ref) {
+  return ref.watch(doctorSearchProvider).doctors;
+});
+
+final filteredDoctorsProvider = Provider<List<Doctor>>((ref) {
+  return ref.watch(doctorSearchProvider).filteredDoctors;
+});
+
+final isLoadingProvider = Provider<bool>((ref) {
+  return ref.watch(doctorSearchProvider).isLoading;
+});

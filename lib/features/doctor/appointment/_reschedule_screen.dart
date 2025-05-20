@@ -1,5 +1,5 @@
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/appointment/doctor_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/doctor/post_doctor_repository.dart';
 import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,8 +47,8 @@ class _DoctorRescheduleAppointmentState
   final _formKey = GlobalKey<FormState>();
 
   // Instance of DoctorAppointmentRepository
-  final DoctorAppointmentRepository _DoctorAppointmentRepository =
-      DoctorAppointmentRepository();
+  final DoctorPostAppointmentRepository _DoctorPostAppointmentRepository =
+      DoctorPostAppointmentRepository();
 
   @override
   void initState() {
@@ -246,7 +246,7 @@ class _DoctorRescheduleAppointmentState
       }
 
       final success =
-          await _DoctorAppointmentRepository.docRescheduleAppointment(
+          await _DoctorPostAppointmentRepository.docRescheduleAppointment(
         context,
         appointmentId = '13456fAS',
         formattedDate,

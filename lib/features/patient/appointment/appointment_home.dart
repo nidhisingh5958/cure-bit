@@ -4,19 +4,19 @@ import 'package:CuraDocs/features/features_api_repository/search/external_search
 import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
 import 'dart:async';
 
-class AppointmentHome extends StatefulWidget {
+class AppointmentHome extends ConsumerStatefulWidget {
   const AppointmentHome({super.key});
 
   @override
-  State<AppointmentHome> createState() => _AppointmentHomeState();
+  ConsumerState<AppointmentHome> createState() => _AppointmentHomeState();
 }
 
-class _AppointmentHomeState extends State<AppointmentHome> {
+class _AppointmentHomeState extends ConsumerState<AppointmentHome> {
   int _selectedRating = 0;
   int _selectedCategoryIndex = 0;
   final TextEditingController _searchController = TextEditingController();
@@ -26,9 +26,9 @@ class _AppointmentHomeState extends State<AppointmentHome> {
   void initState() {
     super.initState();
 
-    // Initialize the doctor search provider
+    // Initialize the doctor search provider with Riverpod
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DoctorSearchProvider>(context, listen: false).initialize();
+      ref.read(doctorSearchProvider.notifier).initialize();
     });
 
     // Add listener to search controller for real-time searching
@@ -48,7 +48,8 @@ class _AppointmentHomeState extends State<AppointmentHome> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (_searchController.text.isNotEmpty) {
-        Provider.of<DoctorSearchProvider>(context, listen: false)
+        ref
+            .read(doctorSearchProvider.notifier)
             .searchDoctors(_searchController.text);
       }
     });
@@ -224,8 +225,9 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                 onSubmitted: (value) {
                   // Navigate to search screen with the query
                   if (value.isNotEmpty) {
-                    Provider.of<DoctorSearchProvider>(context, listen: false)
-                        .searchDoctors(value);
+                    ref
+                        .read(doctorSearchProvider.notifier)
+                        .searchDoctors(value, context: context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -272,11 +274,12 @@ class _AppointmentHomeState extends State<AppointmentHome> {
 
   // Show filter dialog
   void _showFilterDialog(BuildContext context) {
-    final provider = Provider.of<DoctorSearchProvider>(context, listen: false);
+    final notifier = ref.read(doctorSearchProvider.notifier);
+    final state = ref.read(doctorSearchProvider);
 
-    String specialtyFilter = provider.selectedSpecialty;
-    String locationFilter = provider.selectedLocation;
-    int ratingFilter = provider.selectedRating;
+    String specialtyFilter = state.selectedSpecialty;
+    String locationFilter = state.selectedLocation;
+    int ratingFilter = state.selectedRating;
 
     showDialog(
       context: context,
@@ -434,9 +437,9 @@ class _AppointmentHomeState extends State<AppointmentHome> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            provider.setSpecialtyFilter(specialtyFilter);
-                            provider.setLocationFilter(locationFilter);
-                            provider.setRatingFilter(ratingFilter);
+                            notifier.setSpecialtyFilter(specialtyFilter);
+                            notifier.setLocationFilter(locationFilter);
+                            notifier.setRatingFilter(ratingFilter);
 
                             // Navigate to search results after applying filters
                             Navigator.pop(context);
@@ -479,11 +482,10 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           });
 
           // Set the specialty filter and navigate to search results
-          final provider =
-              Provider.of<DoctorSearchProvider>(context, listen: false);
-          provider.setSpecialtyFilter('Dentist');
-          provider.clearLocationFilter();
-          provider.clearRatingFilter();
+          final notifier = ref.read(doctorSearchProvider.notifier);
+          notifier.setSpecialtyFilter('Dentist');
+          notifier.clearLocationFilter();
+          notifier.clearRatingFilter();
 
           Navigator.push(
             context,
@@ -502,11 +504,10 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           });
 
           // Set the specialty filter and navigate to search results
-          final provider =
-              Provider.of<DoctorSearchProvider>(context, listen: false);
-          provider.setSpecialtyFilter('Cardiologist');
-          provider.clearLocationFilter();
-          provider.clearRatingFilter();
+          final notifier = ref.read(doctorSearchProvider.notifier);
+          notifier.setSpecialtyFilter('Cardiologist');
+          notifier.clearLocationFilter();
+          notifier.clearRatingFilter();
 
           Navigator.push(
             context,
@@ -525,11 +526,10 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           });
 
           // Set the specialty filter and navigate to search results
-          final provider =
-              Provider.of<DoctorSearchProvider>(context, listen: false);
-          provider.setSpecialtyFilter('Ophthalmologist');
-          provider.clearLocationFilter();
-          provider.clearRatingFilter();
+          final notifier = ref.read(doctorSearchProvider.notifier);
+          notifier.setSpecialtyFilter('Ophthalmologist');
+          notifier.clearLocationFilter();
+          notifier.clearRatingFilter();
 
           Navigator.push(
             context,
@@ -548,11 +548,10 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           });
 
           // Set the specialty filter and navigate to search results
-          final provider =
-              Provider.of<DoctorSearchProvider>(context, listen: false);
-          provider.setSpecialtyFilter('Neurologist');
-          provider.clearLocationFilter();
-          provider.clearRatingFilter();
+          final notifier = ref.read(doctorSearchProvider.notifier);
+          notifier.setSpecialtyFilter('Neurologist');
+          notifier.clearLocationFilter();
+          notifier.clearRatingFilter();
 
           Navigator.push(
             context,
@@ -571,11 +570,10 @@ class _AppointmentHomeState extends State<AppointmentHome> {
           });
 
           // Set the specialty filter and navigate to search results
-          final provider =
-              Provider.of<DoctorSearchProvider>(context, listen: false);
-          provider.setSpecialtyFilter('ENT');
-          provider.clearLocationFilter();
-          provider.clearRatingFilter();
+          final notifier = ref.read(doctorSearchProvider.notifier);
+          notifier.setSpecialtyFilter('ENT');
+          notifier.clearLocationFilter();
+          notifier.clearRatingFilter();
 
           Navigator.push(
             context,
@@ -681,91 +679,90 @@ class _AppointmentHomeState extends State<AppointmentHome> {
   }
 
   Widget _buildTopDoctorSection(BuildContext context) {
-    return Consumer<DoctorSearchProvider>(builder: (context, provider, child) {
-      final doctors = provider.filteredDoctors.isEmpty
-          ? provider.doctors
-          : provider.filteredDoctors;
+    // Watch the doctor search state
+    final state = ref.watch(doctorSearchProvider);
 
-      // Only show top 3 doctors on home screen
-      final displayDoctors =
-          doctors.length > 3 ? doctors.sublist(0, 3) : doctors;
+    final doctors =
+        state.filteredDoctors.isEmpty ? state.doctors : state.filteredDoctors;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader('Top Doctors'),
-          const SizedBox(height: 16),
-          provider.isLoading
-              ? Center(child: CircularProgressIndicator())
-              : displayDoctors.isEmpty
-                  ? Center(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20),
-                          Icon(MdiIcons.stethoscope, size: 48, color: grey400),
-                          SizedBox(height: 16),
-                          Text(
-                            'No doctors found',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: grey600,
-                            ),
+    // Only show top 3 doctors on home screen
+    final displayDoctors = doctors.length > 3 ? doctors.sublist(0, 3) : doctors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildHeader('Top Doctors'),
+        const SizedBox(height: 16),
+        state.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : displayDoctors.isEmpty
+                ? Center(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20),
+                        Icon(MdiIcons.stethoscope, size: 48, color: grey400),
+                        SizedBox(height: 16),
+                        Text(
+                          'No doctors found',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: grey600,
                           ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: displayDoctors.length,
-                      itemBuilder: (context, index) {
-                        final doctor = displayDoctors[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: _buildTopDoctorItem(
-                            context,
-                            doctor.imageUrl,
-                            doctor.name,
-                            doctor.specialty,
-                            doctor.rating.toString(),
-                            doctor.location,
-                            onPressed: () {
-                              // Navigate to doctor profile
-                              context.goNamed('doctorProfile', extra: doctor);
-                            },
-                          ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
-          SizedBox(height: 20),
-          if (doctors.length > 3)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigate to see all doctors
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DoctorSearchScreen(),
-                    ),
-                  );
-                },
-                child: Text('See All Doctors'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: displayDoctors.length,
+                    itemBuilder: (context, index) {
+                      final doctor = displayDoctors[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _buildTopDoctorItem(
+                          context,
+                          doctor.imageUrl,
+                          doctor.name,
+                          doctor.specialty,
+                          doctor.rating.toString(),
+                          doctor.location,
+                          onPressed: () {
+                            // Navigate to doctor profile
+                            context.goNamed('doctorProfile', extra: doctor);
+                          },
+                        ),
+                      );
+                    },
                   ),
+        SizedBox(height: 20),
+        if (doctors.length > 3)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              onPressed: () {
+                // Navigate to see all doctors
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DoctorSearchScreen(),
+                  ),
+                );
+              },
+              child: Text('See All Doctors'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
-          SizedBox(height: 20),
-        ],
-      );
-    });
+          ),
+        SizedBox(height: 20),
+      ],
+    );
   }
 
   // build the doctor item

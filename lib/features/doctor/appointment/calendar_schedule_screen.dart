@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/appointment/doctor_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/appointment/doctor/post_doctor_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -20,8 +20,8 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
   bool isCalendarExpanded = false;
 
   // Repository instance for API calls
-  final DoctorAppointmentRepository _appointmentRepository =
-      DoctorAppointmentRepository();
+  final DoctorPostAppointmentRepository _appointmentRepository =
+      DoctorPostAppointmentRepository();
 
   // Currently editing appointment
   Map<String, dynamic>? editingAppointment;

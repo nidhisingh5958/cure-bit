@@ -36,14 +36,19 @@ class DoctorSearchService {
         // Check if the response is a list or needs to be extracted from a property
         if (data is List) {
           return List<Map<String, dynamic>>.from(data);
-        } else if (data is Map && data.containsKey('doctors')) {
+        } else if (data is Map<String, dynamic> &&
+            data.containsKey('doctors')) {
           return List<Map<String, dynamic>>.from(data['doctors']);
-        } else if (data is Map && data.containsKey('results')) {
+        } else if (data is Map<String, dynamic> &&
+            data.containsKey('results')) {
           return List<Map<String, dynamic>>.from(data['results']);
-        } else {
+        } else if (data is Map<String, dynamic>) {
           // For other formats, try to convert directly
-          // This handles when the API returns the doctors list directly
-          return List<Map<String, dynamic>>.from(data);
+          // Return as a single item list if it's a valid doctor object
+          return [data];
+        } else {
+          // If all else fails, return empty list
+          return [];
         }
       } else if (response.statusCode == 422) {
         // Handle validation errors

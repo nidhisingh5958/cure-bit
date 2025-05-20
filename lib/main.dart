@@ -3,12 +3,15 @@ import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'features/features_api_repository/search/external_search/doctor_search_provider.dart';
 
 final nameProvider = Provider<String>((ref) => 'Cura Docs');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child: CuraDocs()));
+  runApp(
+    const ProviderScope(child: CuraDocs()),
+  );
 }
 
 class CuraDocs extends ConsumerStatefulWidget {
