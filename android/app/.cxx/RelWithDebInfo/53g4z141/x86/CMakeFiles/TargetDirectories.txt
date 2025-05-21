@@ -1,2 +1,0 @@
-/Users/nidhisingh/Developer/cure-bit/android/app/.cxx/RelWithDebInfo/53g4z141/x86/CMakeFiles/edit_cache.dir
-/Users/nidhisingh/Developer/cure-bit/android/app/.cxx/RelWithDebInfo/53g4z141/x86/CMakeFiles/rebuild_cache.dir

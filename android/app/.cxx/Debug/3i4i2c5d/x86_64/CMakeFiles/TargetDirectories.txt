@@ -1,2 +1,0 @@
-/home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/Debug/3i4i2c5d/x86_64/CMakeFiles/edit_cache.dir
-/home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/Debug/3i4i2c5d/x86_64/CMakeFiles/rebuild_cache.dir
