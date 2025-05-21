@@ -43,7 +43,8 @@ class _EditProfileState extends State<EditPublicProfile> {
   String _selectedGender = 'Male';
   final List<String> _genderOptions = ['Male', 'Female', 'Other'];
 
-  final ProfileRepository _profileRepository = ProfileRepository();
+  final PostPublicProfileRepository _profileRepository =
+      PostPublicProfileRepository();
   bool _isLoading = false;
   bool _isProfileLoaded = false;
   String? _imagePath;

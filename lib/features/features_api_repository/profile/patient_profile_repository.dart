@@ -5,15 +5,16 @@ import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class ProfileRepository {
+class PostPublicProfileRepository {
   // Singleton instance
-  static final ProfileRepository _instance = ProfileRepository._internal();
+  static final PostPublicProfileRepository _instance =
+      PostPublicProfileRepository._internal();
 
   // Private constructor
-  ProfileRepository._internal();
+  PostPublicProfileRepository._internal();
 
   // Factory constructor to return the singleton instance
-  factory ProfileRepository() {
+  factory PostPublicProfileRepository() {
     return _instance;
   }
 

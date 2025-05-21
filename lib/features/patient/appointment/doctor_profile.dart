@@ -1,27 +1,39 @@
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/components/app_header.dart'; // Import the header component
+import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/pop_up.dart';
+import 'package:CuraDocs/features/features_api_repository/profile/doc_public_profile/get/get_doc_public_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:CuraDocs/features/features_api_repository/profile/doc_public_profile/get/doctor_model.dart'
+    as model;
 
 Color primaryColor = black;
 Color secondaryColor = grey400;
 
-class DoctorProfile extends StatefulWidget {
-  const DoctorProfile({super.key});
+class DoctorProfile extends ConsumerStatefulWidget {
+  final String? doctorCin;
+
+  const DoctorProfile({
+    super.key,
+    this.doctorCin,
+  });
 
   @override
-  State<DoctorProfile> createState() => _DoctorProfileState();
+  ConsumerState<DoctorProfile> createState() => _DoctorProfileState();
 }
 
-class _DoctorProfileState extends State<DoctorProfile>
+class _DoctorProfileState extends ConsumerState<DoctorProfile>
     with TickerProviderStateMixin {
   bool isConnected = false;
   bool showConnectionAnimation = false;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  model.DoctorProfileModel? _doctorProfile;
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -54,6 +66,60 @@ class _DoctorProfileState extends State<DoctorProfile>
         _animationController.reset();
       }
     });
+
+    // Fetch doctor data when the widget is initialized
+    _fetchDoctorData();
+  }
+
+  Future<void> _fetchDoctorData() async {
+    if (widget.doctorCin == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = "Doctor ID not provided";
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final doctorProfileNotifier =
+          ref.read(doctorProfileNotifierProvider.notifier);
+      await doctorProfileNotifier.getDoctorPublicProfile(widget.doctorCin!);
+
+      final profileState = ref.read(doctorProfileNotifierProvider);
+
+      if (profileState is AsyncData && profileState.value != null) {
+        try {
+          // Parse the JSON string to create a DoctorProfile object
+          final doctorProfile =
+              model.DoctorProfileModel.fromResponseString(profileState.value!);
+          setState(() {
+            _doctorProfile = doctorProfile;
+            _isLoading = false;
+          });
+        } catch (parseError) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = "Failed to parse doctor data: $parseError";
+          });
+        }
+      } else if (profileState is AsyncError) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage =
+              "Failed to load doctor profile: ${profileState.error}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = "Error: ${e.toString()}";
+      });
+    }
   }
 
   @override
@@ -64,36 +130,89 @@ class _DoctorProfileState extends State<DoctorProfile>
 
   @override
   Widget build(BuildContext context) {
+    // Listen to the doctor profile provider state
+    final doctorProfileState = ref.watch(doctorProfileNotifierProvider);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 212, 218, 222),
-        // Using the consistent header component
         appBar: AppHeader(
           title: 'Doctor Profile',
           onBackPressed: () => context.goNamed('home'),
         ),
-        body: SingleChildScrollView(
-          // physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildProfileHeader(context),
-              SizedBox(height: 10),
-              _buildInfoCard(context),
-              SizedBox(height: 5),
-            ],
+        body: doctorProfileState.isLoading || _isLoading
+            ? _buildLoadingState()
+            : doctorProfileState.hasError || _errorMessage != null
+                ? _buildErrorState(
+                    _errorMessage ?? doctorProfileState.error.toString())
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildProfileHeader(context),
+                        SizedBox(height: 10),
+                        _buildInfoCard(context),
+                        SizedBox(height: 5),
+                      ],
+                    ),
+                  ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text('Loading doctor profile...'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String errorMessage) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 48, color: Colors.red),
+          SizedBox(height: 16),
+          Text(
+            'Failed to load doctor profile',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-        ),
+          SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+            child: Text(
+              errorMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.red[700]),
+            ),
+          ),
+          SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: _fetchDoctorData,
+            child: Text('Retry'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildProfileHeader(BuildContext context) {
+    final doctorData = _getDoctorData();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Container(
         width: double.infinity,
-        // margin: EdgeInsets.fromLTRB(20, 24, 20, 10),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20),
@@ -115,14 +234,6 @@ class _DoctorProfileState extends State<DoctorProfile>
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(24),
                 ),
-                // gradient: LinearGradient(
-                //   begin: Alignment.topLeft,
-                //   end: Alignment.bottomRight,
-                //   colors: [
-                //     blueish.withValues(alpha: .7),
-                //     blueish.withValues(alpha: .3),
-                //   ],
-                // ),
                 image: DecorationImage(
                   image: AssetImage('assets/images/header_bg.jpg'),
                   fit: BoxFit.cover,
@@ -156,11 +267,6 @@ class _DoctorProfileState extends State<DoctorProfile>
                     radius: 48,
                     backgroundColor: grey200,
                     backgroundImage: AssetImage('assets/images/girl.jpeg'),
-                    // child: Icon(
-                    //   Icons.person,
-                    //   size: 55,
-                    //   color: grey400,
-                    // ),
                   ),
                 ),
               ),
@@ -175,17 +281,18 @@ class _DoctorProfileState extends State<DoctorProfile>
                   children: [
                     // Doctor name and details
                     Text(
-                      'Dr. Sarah Johnson',
+                      doctorData.name,
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                       softWrap: true,
                       overflow: TextOverflow.visible,
+                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 6),
                     Text(
-                      'Cardiologist',
+                      doctorData.specialty ?? 'Specialist',
                       style: TextStyle(
                         color: Colors.grey[700],
                         fontSize: 18,
@@ -193,37 +300,38 @@ class _DoctorProfileState extends State<DoctorProfile>
                       ),
                     ),
                     SizedBox(height: 8),
-                    // Rating display with improved styling
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: .15),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.star, color: Colors.amber, size: 20),
-                          SizedBox(width: 5),
-                          Text(
-                            '5.0',
-                            style: TextStyle(
-                              color: Colors.amber[800],
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                    // Only show ratings if available
+                    if (_hasReviews())
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: .15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.star, color: Colors.amber, size: 20),
+                            SizedBox(width: 5),
+                            Text(
+                              '5.0',
+                              style: TextStyle(
+                                color: Colors.amber[800],
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            ' (124 reviews)',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
+                            Text(
+                              ' (124 reviews)',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
                     SizedBox(height: 16),
                     _buildActionButtons(),
                   ],
@@ -236,7 +344,24 @@ class _DoctorProfileState extends State<DoctorProfile>
     );
   }
 
+  // Helper method to check if reviews are available
+  bool _hasReviews() {
+    // This is a placeholder. Replace with actual logic when review data is available
+    return false;
+  }
+
+  // Helper method to get doctor data safely
+  model.DoctorProfileModel _getDoctorData() {
+    return _doctorProfile ??
+        model.DoctorProfileModel(
+          cin: widget.doctorCin ?? 'Unknown',
+          name: 'Dr. Unknown',
+        );
+  }
+
   Widget _buildActionButtons() {
+    final doctorData = _getDoctorData();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -328,7 +453,15 @@ class _DoctorProfileState extends State<DoctorProfile>
           context,
           onSelected: (value) {
             if (value == 'book') {
-              context.goNamed(RouteConstants.bookAppointment);
+              // Pass doctor information to booking screen
+              context.goNamed(
+                RouteConstants.bookAppointment,
+                queryParameters: {
+                  'doctorCin': doctorData.cin,
+                  'doctorName': doctorData.name,
+                  'doctorSpecialty': doctorData.specialty ?? '',
+                },
+              );
             } else if (value == 'doctorQR') {
               context.goNamed(RouteConstants.helpAndSupport);
             }
@@ -343,6 +476,8 @@ class _DoctorProfileState extends State<DoctorProfile>
   }
 
   Widget _buildInfoCard(BuildContext context) {
+    final doctorData = _getDoctorData();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Container(
@@ -365,7 +500,7 @@ class _DoctorProfileState extends State<DoctorProfile>
               context,
               'Information',
               Icons.info_outline,
-              _buildInfoSection(),
+              _buildInfoSection(doctorData),
             ),
             Divider(height: 1, thickness: 1, indent: 16, endIndent: 16),
             _buildSectionWithIcon(
@@ -379,7 +514,7 @@ class _DoctorProfileState extends State<DoctorProfile>
               context,
               'Location',
               Icons.location_on_outlined,
-              _buildLocationSection(),
+              _buildLocationSection(doctorData),
             ),
           ],
         ),
@@ -428,18 +563,22 @@ class _DoctorProfileState extends State<DoctorProfile>
     );
   }
 
-  Widget _buildInfoSection() {
+  Widget _buildInfoSection(model.DoctorProfileModel doctorData) {
     return Column(
       children: [
-        _buildInfoRow('Specialisation', 'Cardiologist'),
+        _buildInfoRow('Specialisation', doctorData.specialty ?? 'N/A'),
         SizedBox(height: 12),
-        _buildInfoRow('Qualification', 'MBBS, MD'),
+        _buildInfoRow('Qualification',
+            'MBBS, MD'), // Replace with actual data when available
         SizedBox(height: 12),
-        _buildInfoRow('Rating', '4.8'),
+        _buildInfoRow(
+            'Rating', '4.8'), // Replace with actual data when available
         SizedBox(height: 12),
-        _buildInfoRow('Years of experience', '8 +'),
+        _buildInfoRow('Years of experience',
+            '8 +'), // Replace with actual data when available
         SizedBox(height: 12),
-        _buildInfoRow('Patients attended', '2.4K +'),
+        _buildInfoRow('Patients attended',
+            '2.4K +'), // Replace with actual data when available
       ],
     );
   }
@@ -521,18 +660,18 @@ class _DoctorProfileState extends State<DoctorProfile>
     );
   }
 
-  Widget _buildLocationSection() {
+  Widget _buildLocationSection(model.DoctorProfileModel doctorData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLocationCard(
           '09:00 am - 02:00 pm',
-          'Medanta Hospital, Plot 45, Main road, Sector 12, Gurgaon',
+          doctorData.address ?? 'Address not available',
         ),
         SizedBox(height: 16),
         _buildLocationCard(
           '03:00 pm - 08:00 pm',
-          'Medanta Hospital, Plot 45, Main road, Sector 12, Gurgaon',
+          doctorData.address ?? 'Address not available',
         ),
       ],
     );

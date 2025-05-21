@@ -1,6 +1,6 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/profile/doctor_profile_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/profile/doc_public_profile/doctor_profile_repository.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 
@@ -60,7 +60,7 @@ Widget createTextField({
 
 class DoctorEditPublicProfile extends StatefulWidget {
   final String doctorId;
-  final DoctorPublicProfile? initialProfile;
+  final PostDoctorPublicProfile? initialProfile;
 
   const DoctorEditPublicProfile({
     super.key,
@@ -124,7 +124,7 @@ class _DoctorEditPublicProfileState extends State<DoctorEditPublicProfile> {
 
   String? _imagePath;
   bool _isLoading = false;
-  DoctorPublicProfile? _doctorProfile;
+  PostDoctorPublicProfile? _doctorProfile;
 
   @override
   void initState() {
@@ -145,7 +145,8 @@ class _DoctorEditPublicProfileState extends State<DoctorEditPublicProfile> {
     });
 
     try {
-      final profile = await _repository.getDoctorPublicProfile(widget.doctorId);
+      final profile =
+          await _repository.getPostDoctorPublicProfile(widget.doctorId);
       setState(() {
         _doctorProfile = profile;
         _populateFields(profile);
@@ -159,7 +160,7 @@ class _DoctorEditPublicProfileState extends State<DoctorEditPublicProfile> {
     }
   }
 
-  void _populateFields(DoctorPublicProfile profile) {
+  void _populateFields(PostDoctorPublicProfile profile) {
     _firstNameController.text = profile.firstName;
     _lastNameController.text = profile.lastName;
     _descriptionController.text = profile.description;
@@ -251,7 +252,7 @@ class _DoctorEditPublicProfileState extends State<DoctorEditPublicProfile> {
     );
 
     // Build an updated profile
-    final updatedProfile = DoctorPublicProfile(
+    final updatedProfile = PostDoctorPublicProfile(
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
       fullName: 'Dr. ${_firstNameController.text} ${_lastNameController.text}',
@@ -270,7 +271,7 @@ class _DoctorEditPublicProfileState extends State<DoctorEditPublicProfile> {
     );
 
     try {
-      final success = await _repository.updateDoctorPublicProfile(
+      final success = await _repository.updatePostDoctorPublicProfile(
         widget.doctorId,
         updatedProfile,
       );

@@ -5,10 +5,8 @@ import 'package:CuraDocs/features/auth/landing/splash/main_splash_screen.dart';
 import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
 import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
-
 import 'package:CuraDocs/common/report_a_problem.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
-
 import 'package:CuraDocs/utils/routes/doctor_routes.dart';
 import 'package:CuraDocs/utils/routes/patients_routes.dart';
 import 'package:flutter/material.dart';
@@ -35,10 +33,11 @@ class AuthState {
 }
 
 class AppRouter {
+  // ignore: deprecated_member_use
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
     return GoRouter(
       navigatorKey: rootNavigatorKey,
-      initialLocation: isDev ? '/doctor/home' : '/',
+      initialLocation: isDev ? '/home' : '/',
       debugLogDiagnostics: true,
       routes: [
         GoRoute(

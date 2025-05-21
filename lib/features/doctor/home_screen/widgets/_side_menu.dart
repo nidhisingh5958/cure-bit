@@ -2,6 +2,7 @@ import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 
 final String name = "John Doe";
 
@@ -47,7 +48,13 @@ class DoctorSideMenu extends StatelessWidget {
                           color: Color(0xFFEEEEEE),
                           indent: 20,
                           endIndent: 20),
-                      _buildLanguageAndHelpSection(),
+                      _buildLanguageAndHelpSection(context),
+                      const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Color(0xFFEEEEEE),
+                          indent: 20,
+                          endIndent: 20),
                       _buildAboutSection(context),
                       const Divider(
                           height: 1,
@@ -163,7 +170,7 @@ class DoctorSideMenu extends StatelessWidget {
               trailing: const Icon(Icons.arrow_forward_ios,
                   size: 16, color: Colors.black54),
               onTap: () {
-                context.pushNamed(RouteConstants.qrScan);
+                context.goNamed(RouteConstants.qrScan);
               }),
         ],
       ),
@@ -192,7 +199,7 @@ class DoctorSideMenu extends StatelessWidget {
             icon: Icons.settings_outlined,
             label: 'Settings & Privacy',
             onTap: () {
-              // Handle settings action
+              // context.goNamed(RouteConstants.settings);
             },
           ),
           // _buildOptionItem(
@@ -222,13 +229,16 @@ class DoctorSideMenu extends StatelessWidget {
           _buildOptionItem(
             icon: Icons.report_problem_outlined,
             label: 'Report a problem',
+            onTap: () {
+              context.goNamed(RouteConstants.reportProblem);
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLanguageAndHelpSection() {
+  Widget _buildLanguageAndHelpSection(BuildContext context) {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -265,6 +275,16 @@ class DoctorSideMenu extends StatelessWidget {
           _buildOptionItem(
             icon: Icons.help_outline,
             label: 'Help Center',
+            onTap: () {
+              context.goNamed(RouteConstants.helpAndSupport);
+            },
+          ),
+          _buildOptionItem(
+            icon: Icons.privacy_tip_outlined,
+            label: 'Contact Us',
+            onTap: () {
+              context.goNamed(RouteConstants.contactUs);
+            },
           ),
         ],
       ),

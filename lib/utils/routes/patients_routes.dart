@@ -1,3 +1,5 @@
+import 'package:CuraDocs/features/features_api_repository/profile/doc_public_profile/get/doctor_model.dart'
+    as model;
 import 'package:CuraDocs/features/patient/appointment/my_appointments/reschedule_appointment.dart';
 import 'package:CuraDocs/features/patient/medical_records/basic_medical_info.dart';
 import 'package:CuraDocs/features/patient/home_screen/qr_screen.dart';
@@ -92,7 +94,10 @@ List<RouteBase> get patientRoutes {
           path: 'book-appointment',
           parentNavigatorKey: rootNavigatorKey,
           name: RouteConstants.bookAppointment,
-          builder: (context, state) => BookAppointment(),
+          builder: (context, state) {
+            final doctorData = state.extra as model.DoctorProfileModel;
+            return BookAppointmentScreen(doctorData: doctorData.toJson());
+          },
         ),
         GoRoute(
           path: 'booked-appointments',

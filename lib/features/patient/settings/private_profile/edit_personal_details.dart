@@ -1,6 +1,6 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/profile/private_profile_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/profile/private_profile/private_profile_repository.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
