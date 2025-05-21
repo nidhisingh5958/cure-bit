@@ -1,23 +1,39 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/features/features_api_repository/profile/private_profile/get_private_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DoctorPersonalProfile extends StatefulWidget {
+class DoctorPersonalProfile extends ConsumerStatefulWidget {
   const DoctorPersonalProfile({super.key});
 
   @override
-  State<DoctorPersonalProfile> createState() => _DoctorPersonalProfileState();
+  ConsumerState<DoctorPersonalProfile> createState() =>
+      _DoctorPersonalProfileState();
 }
 
-class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
+class _DoctorPersonalProfileState extends ConsumerState<DoctorPersonalProfile> {
+  // Default CIN - In a real app, this would come from user authentication
+  final String _cin = 'doctor_cin_123';
+
+  @override
+  void initState() {
+    super.initState();
+    // Prefetch the doctor profile data when the screen is loaded
+    Future.microtask(() => ref.read(doctorProfileDataProvider(_cin).future));
+  }
+
   @override
   Widget build(BuildContext context) {
     // Get screen size information
     final Size screenSize = MediaQuery.of(context).size;
     final double profileImageSize =
         screenSize.width * 0.25; // 25% of screen width
+
+    // Watch the doctor profile data
+    final profileDataAsync = ref.watch(doctorProfileDataProvider(_cin));
 
     return Scaffold(
       appBar: AppHeader(
@@ -32,25 +48,92 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
               context.pushNamed(RouteConstants.editProfile);
             },
           ),
+          // Add refresh button
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              try {
+                // Show a loading indicator
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Refreshing profile data...')));
+
+                // Call the refresh cache provider
+                final result = await ref
+                    .read(refreshDoctorProfileCacheProvider(_cin).future);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(result.message)));
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error refreshing cache: $e')));
+                }
+              }
+            },
+          ),
         ],
       ),
       backgroundColor: greyWithGreenTint,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Profile Header with Image
-            _buildProfileHeader(profileImageSize),
+      body: profileDataAsync.when(
+        data: (profileData) {
+          // Parse the profile data
+          final Map<String, dynamic> profile =
+              profileData is Map<String, dynamic>
+                  ? profileData
+                  : {'name': 'Livy Sheleina'};
 
-            // Information Section
-            _buildInformationSection(),
-          ],
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Header with Image
+                _buildProfileHeader(profileImageSize, profile),
+
+                // Information Section
+                _buildInformationSection(profile),
+              ],
+            ),
+          );
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (error, stackTrace) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 60, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(
+                  'Error loading profile data: $error',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.invalidate(doctorProfileDataProvider(_cin));
+                  },
+                  child: const Text('Try Again'),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(double imageSize) {
+  Widget _buildProfileHeader(double imageSize, Map<String, dynamic> profile) {
+    final String username = profile['username'] ?? '@livysheleina';
+    final String name = profile['name'] ?? 'Livy Sheleina';
+    final String location = profile['location'] ?? 'New York';
+    final String joinDate = profile['joined_date'] ?? 'August 2023';
+
     return Container(
       width: double.infinity,
       color: white,
@@ -111,9 +194,9 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
           const SizedBox(height: 8),
 
           // DoctorPersonalProfilename handle
-          const Text(
-            '@livysheleina',
-            style: TextStyle(
+          Text(
+            username,
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
             ),
@@ -122,9 +205,9 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
           const SizedBox(height: 4),
 
           // Name
-          const Text(
-            'Livy Sheleina',
-            style: TextStyle(
+          Text(
+            name,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -136,9 +219,9 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'New York',
-                style: TextStyle(
+              Text(
+                location,
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.blue,
                 ),
@@ -153,7 +236,7 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
                 ),
               ),
               Text(
-                'Joined August 2023',
+                'Joined $joinDate',
                 style: TextStyle(
                   fontSize: 14,
                   color: grey600,
@@ -166,7 +249,14 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
     );
   }
 
-  Widget _buildInformationSection() {
+  Widget _buildInformationSection(Map<String, dynamic> profile) {
+    final String dob = profile['date_of_birth'] ?? 'January 1, 1990';
+    final String age = profile['age'] ?? '35 yrs 4 months';
+    final String email = profile['email'] ?? 'sh.agency@gmail.com';
+    final String phone = profile['phone'] ?? '+62 878 XXX XXX';
+    final String phoneType = profile['phone_type'] ?? 'Mobile';
+    final String joined = profile['joined_date'] ?? 'August 2023';
+
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(20),
@@ -193,12 +283,12 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
           ),
           const SizedBox(height: 20),
 
-          // Website
+          // Date of Birth
           _buildInfoItem(
-            icon: Icons.language,
+            icon: Icons.calendar_today,
             label: 'Date of Birth',
-            value: 'January 1, 1990',
-            description: 'Age: 35 yrs 4 months',
+            value: dob,
+            description: 'Age: $age',
           ),
 
           const _ProfileDivider(),
@@ -207,7 +297,7 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
           _buildInfoItem(
             icon: Icons.mail,
             label: 'Email',
-            value: 'sh.agency@gmail.com',
+            value: email,
           ),
 
           const _ProfileDivider(),
@@ -216,8 +306,8 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
           _buildInfoItem(
             icon: Icons.phone,
             label: 'Phone',
-            value: '+62 878 XXX XXX',
-            description: 'Mobile',
+            value: phone,
+            description: phoneType,
           ),
 
           const _ProfileDivider(),
@@ -226,7 +316,7 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
           _buildInfoItem(
             icon: Icons.calendar_today,
             label: 'Joined',
-            value: 'August 2023',
+            value: joined,
           ),
         ],
       ),
@@ -277,90 +367,6 @@ class _DoctorPersonalProfileState extends State<DoctorPersonalProfile> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSkillsSection() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Skills grid
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              _buildSkillChip('Design System'),
-              _buildSkillChip('UI Designer'),
-              _buildSkillChip('UX Researcher'),
-              _buildSkillChip('Product Manager'),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          _buildEditButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSkillChip(String label) {
-    return Chip(
-      label: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
-      ),
-      backgroundColor: grey200,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
-  }
-
-  Widget _buildEditButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          debugPrint('Edit Profile');
-        },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-          backgroundColor: white,
-          foregroundColor: Colors.black87,
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.edit, size: 20),
-            SizedBox(width: 8),
-            Text(
-              'Edit Profile',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
       ),
     );
   }

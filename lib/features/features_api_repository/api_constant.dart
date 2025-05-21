@@ -1,6 +1,10 @@
 //  appointment
 // ignore_for_file: non_constant_identifier_names
 
+//  connect
+final String connect_api =
+    'https://hc28588xe6.execute-api.us-east-1.amazonaws.com/Dev/connect';
+
 //  appointments
 final appointment =
     'https://a7r3s7iyx1.execute-api.us-east-1.amazonaws.com/Dev/appointment';

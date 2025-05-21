@@ -3,11 +3,9 @@ import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/features/features_api_repository/profile/private_profile/get_private_repository.dart';
 import 'package:CuraDocs/features/features_api_repository/profile/private_profile/private_profile_repository.dart'
     as impl;
-import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class PatientEditPrivateProfile extends ConsumerStatefulWidget {

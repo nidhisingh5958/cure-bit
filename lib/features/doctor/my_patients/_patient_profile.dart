@@ -1,9 +1,6 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/pop_up.dart';
-import 'package:CuraDocs/features/features_api_repository/connect/connect_provider.dart';
-import 'package:CuraDocs/features/features_api_repository/connect/connect_provider.dart'
-    as connect;
 import 'package:CuraDocs/features/features_api_repository/profile/doc_public_profile/get/get_doc_public_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
@@ -25,11 +22,12 @@ class DoctorProfile extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<DoctorProfile> createState() => _DoctorProfileState();
+  ConsumerState<DoctorProfile> createState() => _ProfileState();
 }
 
-class _DoctorProfileState extends ConsumerState<DoctorProfile>
+class _ProfileState extends ConsumerState<DoctorProfile>
     with TickerProviderStateMixin {
+  bool isConnected = false;
   bool showConnectionAnimation = false;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -71,17 +69,6 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
 
     // Fetch doctor data when the widget is initialized
     _fetchDoctorData();
-
-    // Check the connection status with this doctor
-    _checkConnectionStatus();
-  }
-
-  Future<void> _checkConnectionStatus() async {
-    if (widget.doctorCin != null) {
-      // Initialize the connection status check
-      final connectionNotifier = ref.read(connectionProvider.notifier);
-      await connectionNotifier.checkConnectionStatus(widget.doctorCin!);
-    }
   }
 
   Future<void> _fetchDoctorData() async {
@@ -146,14 +133,11 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
     // Listen to the doctor profile provider state
     final doctorProfileState = ref.watch(doctorProfileNotifierProvider);
 
-    // Listen to the connection state provider
-    final connectionState = ref.watch(connectionProvider);
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 212, 218, 222),
         appBar: AppHeader(
-          title: 'Doctor Profile',
+          title: 'Patient Profile',
           onBackPressed: () => context.goNamed('home'),
         ),
         body: doctorProfileState.isLoading || _isLoading
@@ -165,7 +149,7 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _buildProfileHeader(context, connectionState),
+                        _buildProfileHeader(context),
                         SizedBox(height: 10),
                         _buildInfoCard(context),
                         SizedBox(height: 5),
@@ -222,8 +206,7 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
     );
   }
 
-  Widget _buildProfileHeader(
-      BuildContext context, connect.ConnectionState connectionState) {
+  Widget _buildProfileHeader(BuildContext context) {
     final doctorData = _getDoctorData();
 
     return Padding(
@@ -350,18 +333,7 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
                         ),
                       ),
                     SizedBox(height: 16),
-                    _buildActionButtons(connectionState),
-                    if (connectionState.error != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          connectionState.error!,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
+                    _buildActionButtons(),
                   ],
                 ),
               ),
@@ -387,10 +359,8 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
         );
   }
 
-  Widget _buildActionButtons(connect.ConnectionState connectionState) {
+  Widget _buildActionButtons() {
     final doctorData = _getDoctorData();
-    final bool isConnected = connectionState.isConnected;
-    final bool isLoading = connectionState.isLoading;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -417,22 +387,19 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
         SizedBox(width: 12),
         Expanded(
           child: ElevatedButton(
-            onPressed: isLoading
-                ? null // Disable the button while loading
-                : () {
-                    if (widget.doctorCin != null) {
-                      final connectionNotifier =
-                          ref.read(connectionProvider.notifier);
-                      connectionNotifier.toggleConnection(widget.doctorCin!);
-
-                      if (!isConnected) {
-                        setState(() {
-                          showConnectionAnimation = true;
-                        });
-                        _animationController.forward();
-                      }
-                    }
-                  },
+            onPressed: () {
+              if (!isConnected) {
+                setState(() {
+                  showConnectionAnimation = true;
+                  isConnected = true;
+                });
+                _animationController.forward();
+              } else {
+                setState(() {
+                  isConnected = false;
+                });
+              }
+            },
             style: ElevatedButton.styleFrom(
               foregroundColor: isConnected ? Colors.white : primaryColor,
               backgroundColor:
@@ -443,54 +410,43 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
               ),
               padding: EdgeInsets.symmetric(vertical: 14),
             ),
-            child: isLoading
-                ? SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isConnected ? Colors.white : primaryColor,
-                      ),
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          return ScaleTransition(
-                            scale: animation,
-                            child: child,
-                          );
-                        },
-                        child: Icon(
-                          isConnected ? Icons.check : MdiIcons.vectorLink,
-                          key: ValueKey<bool>(isConnected),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                        child: Text(
-                          isConnected ? 'Connected' : 'Connect',
-                          key: ValueKey<bool>(isConnected),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: child,
+                    );
+                  },
+                  child: Icon(
+                    isConnected ? Icons.check : MdiIcons.vectorLink,
+                    key: ValueKey<bool>(isConnected),
                   ),
+                ),
+                SizedBox(width: 8),
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                  child: Text(
+                    isConnected ? 'Connected' : 'Connect',
+                    key: ValueKey<bool>(isConnected),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         PopupMenuHelper.buildPopupMenu(
