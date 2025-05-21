@@ -1,19 +1,26 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/profile/private_profile/private_profile_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/profile/private_profile/get_private_repository.dart';
+import 'package:CuraDocs/features/features_api_repository/profile/private_profile/private_profile_repository.dart'
+    as impl;
+import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class EditProfile extends StatefulWidget {
+class PatientEditPrivateProfile extends ConsumerStatefulWidget {
   final String? cin;
-  const EditProfile({super.key, this.cin});
+  const PatientEditPrivateProfile({super.key, this.cin});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  ConsumerState<PatientEditPrivateProfile> createState() =>
+      _PatientEditPrivateProfileState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class _PatientEditPrivateProfileState
+    extends ConsumerState<PatientEditPrivateProfile> {
   // Constants
   static const double profileImageSize = 120.0;
 
@@ -44,18 +51,71 @@ class _EditProfileState extends State<EditProfile> {
   final List<String> _genderOptions = ['Male', 'Female', 'Other'];
   String? _imagePath;
 
-  final PrivateProfileRepository _privateProfileRepository =
-      PrivateProfileRepository();
+  final impl.PrivateProfileRepository _privateProfileRepository =
+      impl.PrivateProfileRepository();
   bool _isLoading = false;
   bool _isPrivateProfileLoaded = false;
-  PrivateProfileData? _privateProfileData;
+  impl.PrivateProfileData? _privateProfileData;
+  String _defaultCin = 'patient_cin_123'; // Default CIN for testing
 
   @override
   void initState() {
     super.initState();
-    if (widget.cin != null) {
-      _cinController.text = widget.cin!;
-      _loadPrivateProfile();
+    // If CIN is provided via parameters, use it; otherwise, use the default
+    final cinToUse = widget.cin ?? _defaultCin;
+    _cinController.text = cinToUse;
+
+    // Fetch profile data on initialization
+    Future.microtask(() => _loadProfileData(cinToUse));
+  }
+
+  Future<void> _loadProfileData(String cin) async {
+    if (cin.isEmpty) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // First try to get profile using Riverpod provider
+      final profileDataAsync =
+          await ref.read(patientProfileDataProvider(cin).future);
+
+      // Parse the profile data from Riverpod
+      if (profileDataAsync is Map<String, dynamic>) {
+        // Extract relevant fields from the response
+        final Map<String, dynamic> profile = profileDataAsync;
+
+        // Populate controllers with data from profile
+        if (profile['name'] != null) {
+          final nameParts = profile['name'].split(' ');
+          if (nameParts.isNotEmpty) {
+            _firstNameController.text = nameParts[0];
+            if (nameParts.length > 1) {
+              _lastNameController.text = nameParts.sublist(1).join(' ');
+            }
+          }
+        }
+
+        if (profile['email'] != null) {
+          _emergencyEmailController.text = profile['email'];
+        }
+
+        if (profile['location'] != null) {
+          _stateController.text = profile['location'];
+        }
+      }
+
+      // Then load private profile data with more detailed information
+      await _loadPrivateProfile();
+    } catch (e) {
+      showSnackBar(
+          context: context,
+          message: 'Error loading profile data: ${e.toString()}');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -70,32 +130,31 @@ class _EditProfileState extends State<EditProfile> {
       _privateProfileData = await _privateProfileRepository
           .getPrivateProfile(_cinController.text);
 
-      // Populate public profile fields from private profile data
-      // _firstNameController.text = _privateProfileData!.firstName ?? '';
-      // _lastNameController.text = _privateProfileData!.lastName ?? '';
+      // Populate public profile fields if they're empty
+      if (_privateProfileData != null) {
+        // Populate private profile fields
+        _dateOfBirthController.text = _privateProfileData!.dateOfBirth;
+        _selectedGender = _privateProfileData!.gender;
+        _stateController.text = _privateProfileData!.state;
+        _cityController.text = _privateProfileData!.city;
+        _homeAddressController.text = _privateProfileData!.homeAddress;
+        _pincodeController.text = _privateProfileData!.pincode;
 
-      // Populate private profile fields
-      _dateOfBirthController.text = _privateProfileData!.dateOfBirth;
-      _selectedGender = _privateProfileData!.gender;
-      _stateController.text = _privateProfileData!.state;
-      _cityController.text = _privateProfileData!.city;
-      _homeAddressController.text = _privateProfileData!.homeAddress;
-      _pincodeController.text = _privateProfileData!.pincode;
-      // _descriptionController.text = _privateProfileData!.description ?? '';
+        // Populate emergency contact fields
+        final emergency = _privateProfileData!.emergencyContactDetails;
+        _emergencyNameController.text = emergency.name;
+        _emergencyEmailController.text = emergency.email;
+        _emergencyPhoneController.text = emergency.phoneNumber;
+        _emergencyCountryCodeController.text = emergency.countryCode;
 
-      // Populate emergency contact fields
-      final emergency = _privateProfileData!.emergencyContactDetails;
-      _emergencyNameController.text = emergency.name;
-      _emergencyEmailController.text = emergency.email;
-      _emergencyPhoneController.text = emergency.phoneNumber;
-      _emergencyCountryCodeController.text = emergency.countryCode;
-
-      setState(() {
-        _isPrivateProfileLoaded = true;
-      });
+        setState(() {
+          _isPrivateProfileLoaded = true;
+        });
+      }
     } catch (e) {
       showSnackBar(
-          context: context, message: 'Error loading profile: ${e.toString()}');
+          context: context,
+          message: 'Error loading private profile: ${e.toString()}');
     } finally {
       setState(() {
         _isLoading = false;
@@ -138,14 +197,14 @@ class _EditProfileState extends State<EditProfile> {
     });
 
     try {
-      final emergencyContact = EmergencyContact(
+      final emergencyContact = impl.EmergencyContact(
         name: _emergencyNameController.text,
         email: _emergencyEmailController.text,
         phoneNumber: _emergencyPhoneController.text,
         countryCode: _emergencyCountryCodeController.text,
       );
 
-      final privateProfileData = PrivateProfileData(
+      final privateProfileData = impl.PrivateProfileData(
         cin: _cinController.text,
         dateOfBirth: _dateOfBirthController.text,
         gender: _selectedGender,
@@ -154,27 +213,36 @@ class _EditProfileState extends State<EditProfile> {
         homeAddress: _homeAddressController.text,
         pincode: _pincodeController.text,
         emergencyContactDetails: emergencyContact,
-        // firstName: _firstNameController.text,
-        // lastName: _lastNameController.text,
-        // description: _descriptionController.text,
       );
 
-      // If profile already exists, update it
-      if (_isPrivateProfileLoaded) {
-        await _privateProfileRepository.updatePrivateProfile(
-            privateProfileData, context);
-      } else {
-        // Create new profile
-        await _privateProfileRepository.updatePrivateProfile(
-            privateProfileData, context);
-        setState(() {
-          _isPrivateProfileLoaded = true;
-        });
-      }
+      // Update the profile
+      final success = await _privateProfileRepository.updatePrivateProfile(
+          privateProfileData, context);
 
-      showSnackBar(context: context, message: 'Profile saved successfully!');
+      if (success) {
+        // Refresh the cache to ensure latest data is displayed on the profile page
+        try {
+          await ref.read(
+              refreshPatientProfileCacheProvider(_cinController.text).future);
+          showSnackBar(
+              context: context,
+              message: 'Profile updated and cache refreshed successfully!');
+        } catch (e) {
+          // Even if cache refresh fails, the update was successful
+          showSnackBar(
+              context: context,
+              message:
+                  'Profile updated successfully, but cache refresh failed.');
+        }
+
+        // Navigate back to the profile page
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      }
     } catch (e) {
-      showSnackBar(context: context, message: 'Error: ${e.toString()}');
+      showSnackBar(
+          context: context, message: 'Error saving profile: ${e.toString()}');
     } finally {
       setState(() {
         _isLoading = false;
@@ -183,9 +251,19 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    // Parse the existing date if available
+    DateTime initialDate;
+    try {
+      initialDate = _dateOfBirthController.text.isNotEmpty
+          ? DateFormat('yyyy-MM-dd').parse(_dateOfBirthController.text)
+          : DateTime.now();
+    } catch (e) {
+      initialDate = DateTime.now();
+    }
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
@@ -732,7 +810,8 @@ class _EditProfileState extends State<EditProfile> {
                   backgroundColor: grey200,
                 )
               : CircleAvatar(
-                  backgroundImage: const AssetImage('assets/images/user.png'),
+                  backgroundImage:
+                      const AssetImage('assets/images/PersonalProfile.png'),
                   backgroundColor: grey200,
                 ),
         ),

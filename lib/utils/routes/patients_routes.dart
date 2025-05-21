@@ -217,7 +217,8 @@ List<RouteBase> get patientRoutes {
                   path: 'edit-profile',
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.editProfile,
-                  builder: (context, state) => const EditProfile(),
+                  builder: (context, state) =>
+                      const PatientEditPrivateProfile(),
                 ),
                 GoRoute(
                   path: 'personal-profile',

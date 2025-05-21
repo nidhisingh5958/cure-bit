@@ -11,12 +11,14 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+.packages
 
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
+*.iml
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -32,6 +34,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 build/
+flutter_*.png
 
 # Symbolication related
 app.*.symbols
@@ -45,7 +48,13 @@ app.*.map.json
 /android/app/release
 
 .vscode/
-.dart_tool/
+.DS_Store
+
 
 # Project related
 lib/features/auth/repository/api_constants.dart
+
+windows
+macOS
+linux
+
