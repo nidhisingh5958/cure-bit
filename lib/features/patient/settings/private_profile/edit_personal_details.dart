@@ -1,12 +1,13 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/profile/private_profile/get_private_repository.dart';
-import 'package:CuraDocs/features/features_api_repository/profile/private_profile/private_profile_repository.dart'
+import 'package:CuraDocs/app/features_api_repository/profile/private_profile/get_private_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/private_profile/private_profile_repository.dart'
     as impl;
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PatientEditPrivateProfile extends ConsumerStatefulWidget {
   final String? cin;
@@ -802,16 +803,32 @@ class _PatientEditPrivateProfileState
               ),
             ],
           ),
-          child: _imagePath != null
-              ? CircleAvatar(
-                  backgroundImage: AssetImage(_imagePath!),
-                  backgroundColor: grey200,
-                )
-              : CircleAvatar(
-                  backgroundImage:
-                      const AssetImage('assets/images/PersonalProfile.png'),
-                  backgroundColor: grey200,
-                ),
+          child: InkWell(
+            onTap: () async {
+              final ImagePicker picker = ImagePicker();
+              final XFile? image = await picker.pickImage(
+                source: ImageSource.gallery,
+                maxWidth: 512,
+                maxHeight: 512,
+              );
+              if (image != null) {
+                setState(() {
+                  _imagePath = image.path;
+                });
+                debugPrint('Picked image path: ${image.path}');
+              }
+            },
+            child: _imagePath != null
+                ? CircleAvatar(
+                    backgroundImage: AssetImage(_imagePath!),
+                    backgroundColor: grey200,
+                  )
+                : CircleAvatar(
+                    backgroundImage:
+                        const AssetImage('assets/images/PersonalProfile.png'),
+                    backgroundColor: grey200,
+                  ),
+          ),
         ),
         // Edit Icon
         Positioned(
@@ -819,7 +836,20 @@ class _PatientEditPrivateProfileState
           right: size * 0.3,
           child: GestureDetector(
             onTap: () {
-              debugPrint('Pick Image');
+              final ImagePicker picker = ImagePicker();
+              picker
+                  .pickImage(
+                source: ImageSource.gallery,
+                maxWidth: 512,
+                maxHeight: 512,
+              )
+                  .then((XFile? image) {
+                if (image != null) {
+                  setState(() {
+                    _imagePath = image.path;
+                  });
+                }
+              });
             },
             child: Container(
               padding: const EdgeInsets.all(8),

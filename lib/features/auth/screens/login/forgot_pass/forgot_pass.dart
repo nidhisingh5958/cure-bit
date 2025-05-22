@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
+import 'package:CuraDocs/app/auth/auth_repository.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 
@@ -123,7 +123,7 @@ class _EnhancedForgotPassFormState
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
+      return 'Please enter a valid email address';
     }
     return null;
   }
@@ -139,12 +139,12 @@ class _EnhancedForgotPassFormState
         // Request password reset and get hashed OTP
         final hashedOtp = await authRepository.requestPasswordReset(
           context,
-          _emailController.text,
+          _emailController.text.trim(),
           widget.role,
         );
 
         if (hashedOtp != null && mounted) {
-          // Store the hashed OTP globally for later verification
+          // Store the hashed OTP for later verification
           await _storeHashedOtp(hashedOtp);
 
           debugPrint('Hashed OTP stored: $hashedOtp');
@@ -155,7 +155,7 @@ class _EnhancedForgotPassFormState
           if (mounted) {
             showSnackBar(
                 context: context,
-                message: 'Failed to get reset token. Please try again.');
+                message: 'Failed to send reset email. Please try again.');
           }
         }
       } catch (e) {
@@ -176,6 +176,7 @@ class _EnhancedForgotPassFormState
   Future<void> _storeHashedOtp(String value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('hashedOtp', value);
+    debugPrint('Stored hashed OTP in SharedPreferences: $value');
   }
 
   void _showOtpBottomSheet() {
@@ -185,26 +186,31 @@ class _EnhancedForgotPassFormState
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      isDismissible: false, // Prevent dismissing by tapping outside
+      enableDrag: false, // Prevent dismissing by dragging
       builder: (BuildContext context) {
-        return OtpEntrySheet(
-          role: widget.role,
-          identifier: _emailController.text,
-          isForgotPassword: true,
-          onVerificationComplete: () async {
-            Navigator.of(context).pop();
+        return WillPopScope(
+          onWillPop: () async => false, // Prevent back button dismissal
+          child: OtpEntrySheet(
+            role: widget.role,
+            identifier: _emailController.text.trim(),
+            isForgotPassword: true,
+            onVerificationComplete: () async {
+              Navigator.of(context).pop();
 
-            if (mounted) {
-              // After OTP is verified, redirect to password reset screen
-              context.goNamed(
-                RouteConstants.passReset,
-                extra: {
-                  'identifier': _emailController.text,
-                  'role': widget.role,
-                  'fromForgotPassword': true,
-                },
-              );
-            }
-          },
+              if (mounted) {
+                // After OTP is verified, redirect to password reset screen
+                context.goNamed(
+                  RouteConstants.passReset,
+                  extra: {
+                    'identifier': _emailController.text.trim(),
+                    'role': widget.role,
+                    'fromForgotPassword': true,
+                  },
+                );
+              }
+            },
+          ),
         );
       },
     );
@@ -222,7 +228,31 @@ class _EnhancedForgotPassFormState
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
             decoration: InputDecoration(
-              hintText: 'Email',
+              hintText: 'Enter your email address',
+              prefixIcon: Icon(
+                Icons.email_outlined,
+                color: grey600,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: grey600),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: grey600),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: color2, width: 2),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.red),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.red, width: 2),
+              ),
             ),
             style: TextStyle(
               fontSize: 14,
@@ -232,14 +262,23 @@ class _EnhancedForgotPassFormState
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _isLoading ? null : _handleSubmit,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             child: _isLoading
                 ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
                   )
                 : const Text(
-                    'Reset Password',
+                    'Send Reset Email',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
           ),
@@ -261,7 +300,7 @@ class _EnhancedForgotPassFormState
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: black.withOpacity(0.8),
+                    color: color2,
                   ),
                 ),
               ),

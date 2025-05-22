@@ -2,7 +2,7 @@ import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/features/auth/repository/auth_repository.dart';
+import 'package:CuraDocs/app/auth/auth_repository.dart';
 
 // login
 final loginControllerProvider = Provider((ref) {

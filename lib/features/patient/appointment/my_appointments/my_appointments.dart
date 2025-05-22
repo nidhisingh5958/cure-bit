@@ -1,12 +1,12 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/features_api_repository/appointment/patient/my_appointments/active_provider.dart';
+import 'package:CuraDocs/app/features_api_repository/appointment/patient/my_appointments/active_provider.dart';
 import 'package:CuraDocs/features/patient/appointment/components/animated_fab.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/active_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/completed_appointments.dart';
 import 'package:CuraDocs/features/patient/appointment/my_appointments/upcoming_appointments.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:CuraDocs/utils/user/user_singleton.dart';
+import 'package:CuraDocs/app/user/user_singleton.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

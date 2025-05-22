@@ -3,7 +3,7 @@ import 'package:CuraDocs/features/doctor/my_patients/all_patients.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_account.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_edit_personal_details.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
+import 'package:CuraDocs/app/auth/auth_middleware.dart';
 import 'package:CuraDocs/features/doctor/appointment/patient_profile.dart';
 import 'package:CuraDocs/features/doctor/appointment/_reschedule_screen.dart';
 import 'package:CuraDocs/features/doctor/appointment/schedule_screen.dart';
@@ -262,7 +262,7 @@ List<RouteBase> get doctorRoutes {
                   builder: (context, state) => AuthMiddleware(
                     requiresAuth: false,
                     child: DoctorEditPublicProfile(
-                      doctorId: 'jfej',
+                      doctorId: state.extra as String,
                     ),
                   ),
                 ),
@@ -316,7 +316,7 @@ List<RouteBase> get doctorRoutes {
       builder: (context, state) => AuthMiddleware(
         requiresAuth: false,
         child: PatientSearch(
-          doctorCIN: '123456789',
+          doctorCIN: state.extra as String,
         ),
       ),
     ),

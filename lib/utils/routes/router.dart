@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:CuraDocs/app/auth/auth_middleware.dart';
 import 'package:CuraDocs/common/contact_us.dart';
 import 'package:CuraDocs/common/scan_qr.dart';
 import 'package:CuraDocs/features/auth/landing/splash/main_splash_screen.dart';
-import 'package:CuraDocs/features/auth/repository/auth_middleware.dart';
 import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass.dart';
 import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
 import 'package:CuraDocs/common/report_a_problem.dart';
@@ -20,21 +20,22 @@ import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
 import 'package:CuraDocs/features/auth/screens/login/login_otp/otp.dart';
 import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 
-const bool isDev = true; // Set to false before release
-
-class AuthState {
-  final bool isAuthenticated;
-  final String? role;
-
-  AuthState({
-    required this.isAuthenticated,
-    this.role,
-  });
-}
+const bool isDev = false; // Set to false before release
 
 class AppRouter {
-  // ignore: deprecated_member_use
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
+    // Wait for auth state to be initialized before creating router
+    final authStateNotifier = ref.read(authStateProvider.notifier);
+
+    // Ensure auth state is initialized
+    int maxWaitTime = 30; // Maximum 3 seconds wait
+    while (!ref.read(authStateProvider).isInitialized && maxWaitTime > 0) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      maxWaitTime--;
+    }
+
+    debugPrint('Router: Auth state initialized, creating router');
+
     return GoRouter(
       navigatorKey: rootNavigatorKey,
       initialLocation: isDev ? '/home' : '/',
@@ -129,59 +130,166 @@ class AppRouter {
         ...patientRoutes,
         ...doctorRoutes,
       ],
-      redirect: (context, state) {
-        if (isDev) {
-          return null;
-        }
-
-        final auth = ref.read(authStateProvider);
-
-        final isGoingToAuthRoute = state.matchedLocation.startsWith('/login') ||
-            state.matchedLocation.startsWith('/sign-up') ||
-            state.matchedLocation.startsWith('/onboarding') ||
-            state.matchedLocation.startsWith('/role');
-
-        // Skip authentication checks for splash screen
-        if (state.matchedLocation == '/') {
-          return null; // Always allow access to splash screen
-        }
-
-        if (auth.isAuthenticated && isGoingToAuthRoute) {
-          return auth.userRole == 'Doctor' ? '/doctor/home' : '/home';
-        }
-
-        if (!auth.isAuthenticated &&
-            !isGoingToAuthRoute &&
-            state.matchedLocation != '/') {
-          return '/role';
-        }
-
-        return null;
-      },
-      refreshListenable: GoRouterRefreshStream(
-        ref.watch(authStateProvider.notifier).stream,
+      redirect: (context, state) => _handleRedirect(context, state, ref),
+      refreshListenable: EnhancedGoRouterRefreshStream(
+        ref.read(authStateProvider.notifier).stream,
       ),
     );
   }
+
+  // Enhanced redirect logic with better authentication handling
+  static String? _handleRedirect(
+    BuildContext context,
+    GoRouterState state,
+    FutureProviderRef<GoRouter> ref,
+  ) {
+    final auth = ref.read(authStateProvider);
+    final currentLocation = state.matchedLocation;
+
+    debugPrint('Router: Redirect check for $currentLocation');
+    debugPrint(
+        'Router: Auth state - isAuthenticated: ${auth.isAuthenticated}, role: ${auth.userRole}, initialized: ${auth.isInitialized}');
+
+    // If in dev mode, allow all navigation
+    if (isDev) {
+      debugPrint('Router: Dev mode - allowing navigation to $currentLocation');
+      return null;
+    }
+
+    // Wait for auth state to be initialized
+    if (!auth.isInitialized) {
+      debugPrint('Router: Auth state not initialized, staying on splash');
+      return currentLocation == '/' ? null : '/';
+    }
+
+    // Define auth-related routes
+    final authRoutes = {
+      '/login',
+      '/sign-up',
+      '/onboarding',
+      '/role',
+    };
+
+    final isGoingToAuthRoute =
+        authRoutes.any((route) => currentLocation.startsWith(route));
+
+    // Allow access to splash screen always
+    if (currentLocation == '/') {
+      debugPrint('Router: Allowing access to splash screen');
+      return null;
+    }
+
+    // Handle authenticated users trying to access auth routes
+    if (auth.isAuthenticated && isGoingToAuthRoute) {
+      final redirectTo = auth.userRole == 'Doctor' ? '/doctor/home' : '/home';
+      debugPrint(
+          'Router: Authenticated user accessing auth route, redirecting to $redirectTo');
+      return redirectTo;
+    }
+
+    // Handle unauthenticated users trying to access protected routes
+    if (!auth.isAuthenticated &&
+        !isGoingToAuthRoute &&
+        currentLocation != '/') {
+      debugPrint(
+          'Router: Unauthenticated user accessing protected route, redirecting to /role');
+      return '/role';
+    }
+
+    // Special handling for role-specific routes
+    if (auth.isAuthenticated && auth.userRole != null) {
+      // Doctors trying to access patient routes
+      if (auth.userRole == 'Doctor' && currentLocation.startsWith('/home')) {
+        debugPrint(
+            'Router: Doctor accessing patient route, redirecting to doctor home');
+        return '/doctor/home';
+      }
+
+      // Patients trying to access doctor routes
+      if (auth.userRole != 'Doctor' && currentLocation.startsWith('/doctor')) {
+        debugPrint(
+            'Router: Patient accessing doctor route, redirecting to patient home');
+        return '/home';
+      }
+    }
+
+    debugPrint('Router: No redirect needed for $currentLocation');
+    return null;
+  }
 }
 
-class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
-    notifyListeners();
-    _subscription = stream.asBroadcastStream().listen(
-          (_) => notifyListeners(),
-        );
-  }
-
+// Enhanced refresh stream with better error handling and logging
+class EnhancedGoRouterRefreshStream extends ChangeNotifier {
   late final StreamSubscription<dynamic> _subscription;
+  bool _disposed = false;
+
+  EnhancedGoRouterRefreshStream(Stream<AuthState> stream) {
+    debugPrint('Router: Setting up auth state listener');
+
+    // Initial notification
+    notifyListeners();
+
+    // Listen to auth state changes
+    _subscription = stream.asBroadcastStream().listen(
+      (authState) {
+        if (!_disposed) {
+          debugPrint('Router: Auth state changed - notifying router');
+          debugPrint(
+              'Router: New auth state - isAuthenticated: ${authState.isAuthenticated}, role: ${authState.userRole}');
+          notifyListeners();
+        }
+      },
+      onError: (error) {
+        debugPrint('Router: Error in auth state stream: $error');
+        if (!_disposed) {
+          notifyListeners(); // Still notify to trigger redirect logic
+        }
+      },
+      onDone: () {
+        debugPrint('Router: Auth state stream closed');
+      },
+    );
+  }
 
   @override
   void dispose() {
-    _subscription.cancel();
-    super.dispose();
+    if (!_disposed) {
+      debugPrint('Router: Disposing auth state listener');
+      _disposed = true;
+      _subscription.cancel();
+      super.dispose();
+    }
   }
 }
 
+// Legacy class for backwards compatibility
+class GoRouterRefreshStream extends EnhancedGoRouterRefreshStream {
+  GoRouterRefreshStream(Stream<dynamic> stream)
+      : super(stream as Stream<AuthState>);
+}
+
+// Enhanced router provider with better error handling
 final routerFutureProvider = FutureProvider<GoRouter>((ref) async {
-  return await AppRouter.initRouter(ref);
+  try {
+    debugPrint('Router: Initializing router...');
+    final router = await AppRouter.initRouter(ref);
+    debugPrint('Router: Router initialized successfully');
+    return router;
+  } catch (e, stackTrace) {
+    debugPrint('Router: Error initializing router: $e');
+    debugPrint('Router: Stack trace: $stackTrace');
+    rethrow;
+  }
+});
+
+// Provider to check if router is ready
+final routerReadyProvider = Provider<bool>((ref) {
+  final routerAsync = ref.watch(routerFutureProvider);
+  return routerAsync.hasValue;
+});
+
+// Provider to get router error if any
+final routerErrorProvider = Provider<String?>((ref) {
+  final routerAsync = ref.watch(routerFutureProvider);
+  return routerAsync.hasError ? routerAsync.error.toString() : null;
 });

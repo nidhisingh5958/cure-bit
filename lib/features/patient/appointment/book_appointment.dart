@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:CuraDocs/features/features_api_repository/appointment/patient/get_patient_repository.dart';
-import 'package:CuraDocs/features/features_api_repository/appointment/patient/get_available_slot_provider.dart';
+import 'package:CuraDocs/app/features_api_repository/appointment/patient/get_patient_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/appointment/patient/get_available_slot_provider.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 
 class BookAppointmentScreen extends ConsumerStatefulWidget {

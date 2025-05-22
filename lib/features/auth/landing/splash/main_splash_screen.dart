@@ -1,5 +1,5 @@
 import 'package:CuraDocs/features/auth/landing/splash/splash_screen_animation.dart';
-import 'package:CuraDocs/features/auth/repository/token/token_repository.dart';
+import 'package:CuraDocs/app/auth/token/token_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

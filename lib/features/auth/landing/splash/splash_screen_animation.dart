@@ -1,4 +1,4 @@
-import 'package:CuraDocs/features/auth/repository/token/token_repository.dart';
+import 'package:CuraDocs/app/auth/token/token_repository.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';

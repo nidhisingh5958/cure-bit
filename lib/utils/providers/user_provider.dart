@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/models/user_model.dart';
+import 'package:CuraDocs/app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Provider that stores the current user
@@ -70,5 +70,9 @@ class UserNotifier extends StateNotifier<UserModel?> {
     // Remove from persistent storage
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('current_user');
+  }
+
+  Future<UserModel?> getUser() async {
+    return state;
   }
 }

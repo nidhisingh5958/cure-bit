@@ -1,7 +1,6 @@
-// File: utils/user_helper.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/models/user_model.dart';
+import 'package:CuraDocs/app/models/user_model.dart';
 import 'package:CuraDocs/utils/providers/user_provider.dart';
 
 /// Helper class to easily access user data throughout the app
