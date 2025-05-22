@@ -1,13 +1,37 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/utils/providers/auth_controllers.dart';
+import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 
-final String name = "John Doe";
-
-class DoctorSideMenu extends StatelessWidget {
+class DoctorSideMenu extends ConsumerStatefulWidget {
   const DoctorSideMenu({super.key});
+
+  @override
+  ConsumerState<DoctorSideMenu> createState() => _DoctorSideMenuState();
+}
+
+class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
+  Future<void> _handleLogOut() async {
+    try {
+      final logOutController = ref.read(logoutControllerProvider);
+
+      await logOutController.logout(
+          context, ref.read(authStateProvider.notifier));
+
+      context.pushReplacementNamed(RouteConstants.login);
+
+      context.goNamed(RouteConstants.login);
+    } catch (e) {
+      print('Login error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +122,7 @@ class DoctorSideMenu extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Dr. $name",
+                  "Dr. ${UserHelper.getUserAttribute<String>(ref, 'name') ?? 'Guest'}",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
@@ -347,7 +371,9 @@ class DoctorSideMenu extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       color: Colors.white,
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () {
+          _handleLogOut();
+        },
         icon: const Icon(Icons.logout, size: 20),
         label: const Text("Log Out"),
         style: ElevatedButton.styleFrom(

@@ -3,9 +3,32 @@ import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:CuraDocs/utils/providers/auth_controllers.dart';
+import 'package:CuraDocs/utils/providers/auth_providers.dart';
 
-class SideMenu extends StatelessWidget {
+class SideMenu extends ConsumerStatefulWidget {
   const SideMenu({super.key});
+
+  @override
+  ConsumerState<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends ConsumerState<SideMenu> {
+  Future<void> _handleLogOut() async {
+    try {
+      final logOutController = ref.read(logoutControllerProvider);
+
+      await logOutController.logout(
+          context, ref.read(authStateProvider.notifier));
+
+      context.pushReplacementNamed(RouteConstants.login);
+
+      context.goNamed(RouteConstants.login);
+    } catch (e) {
+      print('Login error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,10 +277,7 @@ class SideMenu extends StatelessWidget {
           // SizedBox(height: 16),
           InkWell(
             onTap: () {
-              Navigator.pop(context); // Close drawer first
-              // Implement logout feature
-              // context.read(authStateProvider.notifier).signOut(); // Something like this
-              context.go('/role'); // Navigate to role screen after logout
+              _handleLogOut();
             },
             child: Text(
               "Log Out",

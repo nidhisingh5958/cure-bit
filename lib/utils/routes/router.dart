@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, deprecated_member_use
+
 import 'dart:async';
 import 'package:CuraDocs/app/auth/auth_middleware.dart';
 import 'package:CuraDocs/common/contact_us.dart';
@@ -20,7 +22,7 @@ import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
 import 'package:CuraDocs/features/auth/screens/login/login_otp/otp.dart';
 import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 
-const bool isDev = false; // Set to false before release
+const bool isDev = true; // Set to false before release
 
 class AppRouter {
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {

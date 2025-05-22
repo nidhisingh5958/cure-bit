@@ -1,3 +1,4 @@
+import 'package:CuraDocs/app/auth/api_const.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -174,5 +175,21 @@ class ForgotPasswordController {
       role: role,
       notifier: notifier,
     );
+  }
+}
+
+// log out
+final logoutControllerProvider = Provider((ref) {
+  final authRepo = ref.read(authRepositoryProvider);
+  return LogoutController(authRepo);
+});
+
+class LogoutController {
+  final AuthRepository _authRepository;
+
+  LogoutController(this._authRepository);
+
+  Future<void> logout(BuildContext context, AuthStateNotifier notifier) async {
+    await _authRepository.logOut(context, notifier);
   }
 }

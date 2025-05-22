@@ -194,9 +194,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
                   // login settings
-                  _buildSectionHeader('Login'),
-                  _buildAdditionalSettings('Add account', Colors.blue),
-                  _buildAdditionalSettings('Log out', error),
+                  // _buildSectionHeader('Login'),
+                  // _buildAdditionalSettings('Add account', Colors.blue),
+
                   SizedBox(height: 70),
                 ],
               ),

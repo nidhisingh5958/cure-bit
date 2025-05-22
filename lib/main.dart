@@ -5,6 +5,7 @@ import 'package:CuraDocs/utils/routes/router.dart';
 import 'package:CuraDocs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:restart_app/restart_app.dart';
 
 final nameProvider = Provider<String>((ref) => 'Cura Docs');
 
@@ -333,8 +334,12 @@ class AppErrorWidget extends StatelessWidget {
                   ],
                   OutlinedButton.icon(
                     onPressed: () {
-                      // Force app restart - this is a basic implementation
-                      // In a real app, you might want to use a package like restart_app
+                      Restart.restartApp(
+                        notificationTitle: 'Restarting App',
+                        notificationBody:
+                            'Please tap here to open the app again.',
+                      );
+
                       debugPrint('App restart requested by user');
                     },
                     icon: const Icon(Icons.restart_alt),
