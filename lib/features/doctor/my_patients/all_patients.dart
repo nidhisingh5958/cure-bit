@@ -1,6 +1,7 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/app/features_api_repository/appointment/doctor/previous_patients_provider.dart';
+import 'package:CuraDocs/features/doctor/patient_navigation_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -208,14 +209,8 @@ class _AllPatientsScreenState extends ConsumerState<AllPatientsScreen> {
   Widget _buildPatientCard(BuildContext context, PatientData patient) {
     return GestureDetector(
       onTap: () {
-        context.goNamed('patientProfile', extra: {
-          'id': patient.id,
-          'name': patient.name,
-          'symptoms': patient.symptoms,
-          'age': patient.age,
-          'gender': patient.gender,
-          'lastVisit': patient.lastVisit,
-        });
+        // Use the utility function for navigation
+        PatientNavigationUtils.navigateFromPatientData(context, patient);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -236,102 +231,122 @@ class _AllPatientsScreenState extends ConsumerState<AllPatientsScreen> {
             children: [
               Hero(
                 tag: patient.id,
-                child: Container(
-                  width: 75,
-                  height: 75,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                      image: AssetImage(patient.image),
-                      fit: BoxFit.cover,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: .12),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                        offset: Offset(0, 3),
+                child: GestureDetector(
+                  onTap: () {
+                    // Direct navigation when tapping on avatar
+                    PatientNavigationUtils.navigateToPatientProfile(
+                      context,
+                      patientCin: patient.id,
+                      patientName: patient.name,
+                    );
+                  },
+                  child: Container(
+                    width: 75,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      image: DecorationImage(
+                        image: AssetImage(patient.image),
+                        fit: BoxFit.cover,
                       ),
-                    ],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: .12),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            patient.name,
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: black.withValues(alpha: .9),
+                child: GestureDetector(
+                  onTap: () {
+                    // Navigation when tapping on patient details
+                    PatientNavigationUtils.navigateToPatientProfile(
+                      context,
+                      patientCin: patient.id,
+                      patientName: patient.name,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              patient.name,
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: black.withValues(alpha: .9),
+                              ),
                             ),
                           ),
-                        ),
-                        if (patient.isFavorite)
+                          if (patient.isFavorite)
+                            Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 18,
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: .1),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Text(
+                              patient.symptoms,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            '${patient.age} • ${patient.gender}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: grey600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        children: [
                           Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: 18,
+                            Icons.calendar_today,
+                            size: 14,
+                            color: grey600,
                           ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: .1),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text(
-                            patient.symptoms,
+                          SizedBox(width: 6),
+                          Text(
+                            'Last visit: ${patient.lastVisit}',
                             style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 13,
+                              color: grey600,
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '${patient.age} • ${patient.gender}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          size: 14,
-                          color: grey600,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                          'Last visit: ${patient.lastVisit}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               IconButton(

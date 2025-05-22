@@ -1,6 +1,6 @@
+import 'package:CuraDocs/app/auth/auth_repository.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/app/auth/auth_repository.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
@@ -32,7 +32,6 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
   late String _identifier;
   late String _role;
   late bool _fromForgotPassword;
-  String? _resetToken;
 
   @override
   void initState() {
@@ -43,24 +42,16 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
       _identifier = widget.extra!['identifier'] ?? '';
       _role = widget.extra!['role'] ?? 'Patient';
       _fromForgotPassword = widget.extra!['fromForgotPassword'] ?? false;
-      _resetToken = widget.extra!['resetToken'];
     } else {
       _identifier = '';
       _role = 'Patient';
       _fromForgotPassword = false;
     }
 
-    // If resetToken wasn't passed through extra, try to get it from SharedPreferences
-    if (_fromForgotPassword && _resetToken == null) {
-      _loadResetToken();
-    }
-  }
-
-  Future<void> _loadResetToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _resetToken = prefs.getString('resetToken');
-    });
+    debugPrint('PasswordInputScreen initialized:');
+    debugPrint('Identifier: $_identifier');
+    debugPrint('Role: $_role');
+    debugPrint('From Forgot Password: $_fromForgotPassword');
   }
 
   @override
@@ -85,6 +76,23 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
         // Use the Provider to get the AuthRepository instance
         final authRepository = ref.read(authRepositoryProvider);
 
+        // Validate inputs before making API call
+        if (_identifier.isEmpty) {
+          showSnackBar(context: context, message: 'Invalid email address');
+          return;
+        }
+
+        if (_passwordController.text.length < 8) {
+          showSnackBar(
+              context: context,
+              message: 'Password must be at least 8 characters long');
+          return;
+        }
+
+        debugPrint('Calling resetPassword with:');
+        debugPrint('Identifier: $_identifier');
+        debugPrint('Role: $_role');
+
         await authRepository.resetPassword(
           context: context,
           identifier: _identifier,
@@ -93,21 +101,18 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
           notifier: authController,
         );
 
-        if (mounted) {
-          // Clear stored tokens after successful password reset
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('hashedOtp');
-
-          showSnackBar(
-            context: context,
-            message:
-                'Password reset successfully. Please login with your new password.',
-          );
-          context.goNamed(RouteConstants.login);
-        }
+        // Note: The resetPassword method handles navigation to login screen
+        // and clearing of stored tokens internally
+      } else {
+        // Handle regular account creation if needed
+        showSnackBar(
+          context: context,
+          message: 'Account creation flow not implemented yet',
+        );
       }
     } catch (e) {
       if (mounted) {
+        debugPrint('Password reset error: ${e.toString()}');
         showSnackBar(context: context, message: 'Error: ${e.toString()}');
       }
     } finally {
@@ -120,7 +125,13 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
     return Scaffold(
       appBar: AppHeader(
         elevation: 0,
-        onBackPressed: () => Navigator.pop(context),
+        onBackPressed: () {
+          if (_fromForgotPassword) {
+            // Clear stored OTP when going back
+            _clearStoredData();
+          }
+          Navigator.pop(context);
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -145,7 +156,7 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
                     const SizedBox(height: 20),
                     Text(
                       _fromForgotPassword
-                          ? "Please enter your new password below."
+                          ? "Please enter your new password below. Make sure it's strong and secure."
                           : "Fill your information below or register with a social account.",
                       style: TextStyle(
                         fontSize: 14,
@@ -153,6 +164,18 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                    if (_fromForgotPassword && _identifier.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        "Resetting password for: $_identifier",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: color2,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                     const SizedBox(height: 40),
                     Form(
                       key: _formKey,
@@ -160,7 +183,7 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
                         children: [
                           _buildPasswordField(
                             controller: _passwordController,
-                            hint: 'Password',
+                            hint: 'New Password',
                             isVisible: _isPasswordVisible,
                             onVisibilityToggle: () {
                               setState(() =>
@@ -187,14 +210,20 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
                           ElevatedButton(
                             onPressed: _isLoading ? null : _submitForm,
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                             child: _isLoading
                                 ? const SizedBox(
-                                    height: 24,
-                                    width: 24,
+                                    height: 20,
+                                    width: 20,
                                     child: CircularProgressIndicator(
-                                        strokeWidth: 2),
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
                                   )
                                 : Text(
                                     _fromForgotPassword
@@ -205,6 +234,24 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                           ),
+                          if (_fromForgotPassword) ...[
+                            const SizedBox(height: 20),
+                            TextButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () {
+                                      _clearStoredData();
+                                      context.goNamed(RouteConstants.login);
+                                    },
+                              child: Text(
+                                'Cancel and return to login',
+                                style: TextStyle(
+                                  color: grey600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -230,12 +277,36 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
       obscureText: !isVisible,
       decoration: InputDecoration(
         hintText: hint,
+        prefixIcon: Icon(
+          Icons.lock_outline,
+          color: grey600,
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             isVisible ? Icons.visibility : Icons.visibility_off,
-            color: Colors.black.withOpacity(0.8),
+            color: grey600,
           ),
           onPressed: onVisibilityToggle,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: grey600),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: grey600),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: color2, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red, width: 2),
         ),
       ),
       style: const TextStyle(
@@ -253,11 +324,24 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen> {
             if (!RegExp(r'[A-Z]').hasMatch(value)) {
               return 'Password must contain at least one uppercase letter';
             }
+            if (!RegExp(r'[a-z]').hasMatch(value)) {
+              return 'Password must contain at least one lowercase letter';
+            }
             if (!RegExp(r'[0-9]').hasMatch(value)) {
               return 'Password must contain at least one number';
             }
             return null;
           },
     );
+  }
+
+  Future<void> _clearStoredData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('hashedOtp');
+      debugPrint('Cleared stored OTP data');
+    } catch (e) {
+      debugPrint('Error clearing stored data: ${e.toString()}');
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/app/features_api_repository/search/external_search/doctor_search_provider.dart';
+import 'package:CuraDocs/features/patient/doctor_navigation_utility.dart';
 import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
@@ -729,10 +730,8 @@ class _AppointmentHomeState extends ConsumerState<AppointmentHome> {
                           doctor.specialty,
                           doctor.rating.toString(),
                           doctor.location,
-                          onPressed: () {
-                            // Navigate to doctor profile
-                            context.goNamed('doctorProfile', extra: doctor);
-                          },
+                          doctorModel: doctor, // Pass the entire doctor model
+                          doctorCin: doctor.id, // Pass the doctor ID
                         ),
                       );
                     },
@@ -768,9 +767,31 @@ class _AppointmentHomeState extends ConsumerState<AppointmentHome> {
   // build the doctor item
   Widget _buildTopDoctorItem(BuildContext context, String image,
       String doctorName, String category, String rating, String location,
-      {void Function()? onPressed}) {
+      {void Function()? onPressed, String? doctorCin, dynamic doctorModel}) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: onPressed ??
+          () {
+            // Use the navigation utility based on available data
+            if (doctorModel != null) {
+              // If you have the full doctor model/object
+              context.goToDoctorProfileFromModel(doctorModel);
+            } else if (doctorCin != null && doctorCin.isNotEmpty) {
+              // If you have the doctor CIN/ID
+              context.goToDoctorProfileWithInfo(
+                doctorCin,
+                doctorName: doctorName,
+                specialty: category,
+              );
+            } else {
+              // Fallback - try to extract CIN from the doctor model or show error
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Doctor profile information not available'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
+          },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

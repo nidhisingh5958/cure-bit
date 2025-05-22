@@ -1,7 +1,9 @@
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/app/features_api_repository/search/internal_search/patient_search_provider.dart';
 import 'package:CuraDocs/app/features_api_repository/appointment/doctor/previous_patients_provider.dart';
+import 'package:CuraDocs/features/doctor/patient_navigation_utility.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,22 +18,28 @@ class MyPatientsScreen extends ConsumerStatefulWidget {
 }
 
 class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
-  String docName = "John Doe";
-  String specialization = "Cardiologist";
-  String doctorCIN =
-      "DOC123456"; // Add your doctor CIN here or get it from a provider
+  String docName = " ";
+  String specialization = " ";
+  String _docCin = '';
+
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   final int _maxPatientsToShow = 10; // Maximum patients to show on main screen
 
   @override
   void initState() {
+    docName = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
+    specialization =
+        UserHelper.getUserAttribute<String>(ref, 'specialization') ??
+            'General Practitioner';
+    _docCin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
+
     super.initState();
     _searchController.addListener(_onSearchChanged);
 
     // Load patient data on widget initialization
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(previousPatientsProvider(doctorCIN).notifier).loadPatients();
+      ref.read(previousPatientsProvider(_docCin).notifier).loadPatients();
     });
   }
 
@@ -48,7 +56,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
       setState(() {
         _isSearching = true;
       });
-      ref.read(patientSearchProvider(doctorCIN).notifier).searchPatients(query);
+      ref.read(patientSearchProvider(_docCin).notifier).searchPatients(query);
     } else {
       setState(() {
         _isSearching = false;
@@ -58,8 +66,8 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final searchState = ref.watch(patientSearchProvider(doctorCIN));
-    final patientsState = ref.watch(previousPatientsProvider(doctorCIN));
+    final searchState = ref.watch(patientSearchProvider(_docCin));
+    final patientsState = ref.watch(previousPatientsProvider(_docCin));
     final isLoading = patientsState.isLoading;
     final patients = patientsState.patients;
     final hasError = patientsState.errorMessage.isNotEmpty;
@@ -97,7 +105,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
         body: RefreshIndicator(
           onRefresh: () async {
             await ref
-                .read(previousPatientsProvider(doctorCIN).notifier)
+                .read(previousPatientsProvider(_docCin).notifier)
                 .refreshPatients();
           },
           child: SingleChildScrollView(
@@ -115,12 +123,6 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
             ),
           ),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
-        //     context.goNamed(RouteConstants.addPatient);
-        //   },
-        //   backgroundColor: Theme.of(context).colorScheme.primary,
-        //   child: Icon(Icons.add),
       ),
     );
   }
@@ -337,7 +339,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
               ElevatedButton(
                 onPressed: () {
                   ref
-                      .read(patientSearchProvider(doctorCIN).notifier)
+                      .read(patientSearchProvider(_docCin).notifier)
                       .refreshSearchIndex();
                 },
                 child: Text('Retry'),
@@ -422,7 +424,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                 icon: Icon(Icons.refresh),
                 onPressed: () {
                   ref
-                      .read(patientSearchProvider(doctorCIN).notifier)
+                      .read(patientSearchProvider(_docCin).notifier)
                       .refreshSearchIndex();
                 },
                 tooltip: 'Refresh results',
@@ -436,18 +438,30 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
             itemCount: state.searchResults.length,
             itemBuilder: (context, index) {
               final patient = state.searchResults[index];
-              // Adapt this to match your actual data structure
-              return _buildPatientListItem(
-                context,
-                'images/doctor.jpg', // Default image or extract from patient data
-                patient['name'] ?? 'Unknown',
-                patient['symptoms'] ?? 'No symptoms',
-                patient['age']?.toString() ?? 'Unknown',
-                patient['gender'] ?? 'Unknown',
-                patient['lastVisit'] ?? 'Unknown',
-                onPressed: () {
-                  context.goNamed('patientProfile', extra: patient);
-                },
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _buildPatientListItem(
+                  context,
+                  'images/doctor.jpg', // Default image or extract from patient data
+                  patient['name'] ?? 'Unknown',
+                  patient['symptoms'] ?? 'No symptoms',
+                  patient['age']?.toString() ?? 'Unknown',
+                  patient['gender'] ?? 'Unknown',
+                  patient['lastVisit'] ?? 'Unknown',
+                  onPressed: () {
+                    // Use the utility function for search result navigation
+                    PatientNavigationUtils.navigateWithContext(
+                      context,
+                      patientCin: patient['cin'] ?? patient['id'] ?? '',
+                      patientName: patient['name'],
+                      additionalData: {
+                        'source': 'search',
+                        'query': _searchController.text,
+                      },
+                    );
+                  },
+                  patientId: patient['cin'] ?? patient['id'] ?? '',
+                ),
               );
             },
           ),
@@ -646,7 +660,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
               ),
               SizedBox(height: 8),
               Text(
-                ref.read(previousPatientsProvider(doctorCIN)).errorMessage,
+                ref.read(previousPatientsProvider(_docCin)).errorMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey.shade700),
               ),
@@ -654,7 +668,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
               ElevatedButton(
                 onPressed: () {
                   ref
-                      .read(previousPatientsProvider(doctorCIN).notifier)
+                      .read(previousPatientsProvider(_docCin).notifier)
                       .loadPatients();
                 },
                 style: ElevatedButton.styleFrom(
@@ -791,14 +805,9 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                 patient.gender,
                 patient.lastVisit,
                 onPressed: () {
-                  context.goNamed('patientProfile', extra: {
-                    'id': patient.id,
-                    'name': patient.name,
-                    'symptoms': patient.symptoms,
-                    'age': patient.age,
-                    'gender': patient.gender,
-                    'lastVisit': patient.lastVisit,
-                  });
+                  // Use the utility function instead of the existing navigation
+                  PatientNavigationUtils.navigateFromPatientData(
+                      context, patient);
                 },
                 isFavorite: patient.isFavorite,
                 patientId: patient.id,
@@ -823,7 +832,15 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
       bool isFavorite = false,
       String patientId = ''}) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: onPressed ??
+          () {
+            // Use the utility function for navigation
+            PatientNavigationUtils.navigateToPatientProfile(
+              context,
+              patientCin: patientId,
+              patientName: patientName,
+            );
+          },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -843,102 +860,122 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
             children: [
               Hero(
                 tag: patientId.isNotEmpty ? patientId : patientName,
-                child: Container(
-                  width: 75,
-                  height: 75,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                      image: AssetImage(image),
-                      fit: BoxFit.cover,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: .12),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                        offset: Offset(0, 3),
+                child: GestureDetector(
+                  onTap: () {
+                    // Direct navigation when tapping on avatar
+                    PatientNavigationUtils.navigateToPatientProfile(
+                      context,
+                      patientCin: patientId,
+                      patientName: patientName,
+                    );
+                  },
+                  child: Container(
+                    width: 75,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      image: DecorationImage(
+                        image: AssetImage(image),
+                        fit: BoxFit.cover,
                       ),
-                    ],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: .12),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            patientName,
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: black.withValues(alpha: .9),
+                child: GestureDetector(
+                  onTap: () {
+                    // Navigation when tapping on patient details
+                    PatientNavigationUtils.navigateToPatientProfile(
+                      context,
+                      patientCin: patientId,
+                      patientName: patientName,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              patientName,
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: black.withValues(alpha: .9),
+                              ),
                             ),
                           ),
-                        ),
-                        if (isFavorite)
+                          if (isFavorite)
+                            Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 18,
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: .1),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Text(
+                              symptoms,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            '$age • $gender',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: grey600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        children: [
                           Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: 18,
+                            Icons.calendar_today,
+                            size: 14,
+                            color: grey600,
                           ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: .1),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text(
-                            symptoms,
+                          SizedBox(width: 6),
+                          Text(
+                            'Last visit: $lastVisit',
                             style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 13,
+                              color: grey600,
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '$age • $gender',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          size: 14,
-                          color: grey600,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                          'Last visit: $lastVisit',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               patientId.isNotEmpty
@@ -950,7 +987,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                       ),
                       onPressed: () {
                         ref
-                            .read(previousPatientsProvider(doctorCIN).notifier)
+                            .read(previousPatientsProvider(_docCin).notifier)
                             .toggleFavorite(patientId);
                       },
                     )

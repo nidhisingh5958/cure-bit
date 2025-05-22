@@ -1,3 +1,4 @@
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/app/features_api_repository/profile/private_profile/get_private_repository.dart';
@@ -15,11 +16,11 @@ class DoctorPersonalProfile extends ConsumerStatefulWidget {
 }
 
 class _DoctorPersonalProfileState extends ConsumerState<DoctorPersonalProfile> {
-  // Default CIN - In a real app, this would come from user authentication
-  final String _cin = 'doctor_cin_123';
+  late final String _cin;
 
   @override
   void initState() {
+    _cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
     super.initState();
     // Prefetch the doctor profile data when the screen is loaded
     Future.microtask(() => ref.read(doctorProfileDataProvider(_cin).future));

@@ -1,10 +1,10 @@
 import 'package:CuraDocs/features/doctor/home_screen/_search_screen.dart';
 import 'package:CuraDocs/features/doctor/my_patients/all_patients.dart';
+import 'package:CuraDocs/features/doctor/my_patients/patient_profile.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_account.dart';
 import 'package:CuraDocs/features/doctor/settings/private_doc/_edit_personal_details.dart';
 import 'package:flutter/material.dart';
 import 'package:CuraDocs/app/auth/auth_middleware.dart';
-import 'package:CuraDocs/features/doctor/appointment/patient_profile.dart';
 import 'package:CuraDocs/features/doctor/appointment/_reschedule_screen.dart';
 import 'package:CuraDocs/features/doctor/appointment/schedule_screen.dart';
 import 'package:CuraDocs/features/doctor/appointment/scheduling_details.dart';
@@ -68,6 +68,20 @@ List<RouteBase> get doctorRoutes {
           ),
         ),
       ],
+    ),
+
+    GoRoute(
+      name: RouteConstants.doctorPatientProfile,
+      path: '/doctor/patient/profile/:patientCin',
+      builder: (context, state) {
+        final patientCin = state.pathParameters['patientCin'] ?? '';
+        final queryParams = state.uri.queryParameters;
+
+        return PatientProfile(
+          patientCin: patientCin,
+          // additionalData: queryParams,
+        );
+      },
     ),
 
     // Main app shell with bottom navigation
@@ -164,20 +178,6 @@ List<RouteBase> get doctorRoutes {
                   // return DoctorRescheduleAppointment(
                   //   appointment: appointment,
                   // );
-                  // },
-                ),
-                GoRoute(
-                  path: 'patient-profile',
-                  parentNavigatorKey: rootNavigatorKey,
-                  name: RouteConstants.doctorPatientProfile,
-                  builder: (context, state) => AuthMiddleware(
-                    requiresAuth: false,
-                    child: DoctorPatientProfile(),
-                  ),
-
-                  // {
-                  // final patient = state.extra as PatientData;
-                  // return DoctorPatientProfile(patient: patient);
                   // },
                 ),
                 GoRoute(

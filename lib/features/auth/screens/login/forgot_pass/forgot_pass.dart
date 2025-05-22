@@ -1,4 +1,4 @@
-import 'package:CuraDocs/features/auth/screens/login/login_otp/otp_sheet.dart';
+import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass_otp_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

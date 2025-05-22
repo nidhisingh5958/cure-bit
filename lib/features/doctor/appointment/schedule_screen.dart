@@ -2,11 +2,10 @@ import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/pop_up.dart';
 import 'package:CuraDocs/features/doctor/appointment/components/animated_fab.dart';
-import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
 import 'package:CuraDocs/app/features_api_repository/appointment/doctor/get_doctor_repository.dart';
-import 'package:CuraDocs/app/models/user_model.dart';
 import 'package:CuraDocs/app/user/user_singleton.dart';
 import 'package:CuraDocs/app/user/user_synchronization.dart';
+import 'package:CuraDocs/features/doctor/patient_navigation_utility.dart';
 import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +22,7 @@ class Patient {
   final bool isNext;
   final String id;
   final String appointmentDate;
+  final String patientCin;
 
   Patient({
     required this.name,
@@ -32,6 +32,7 @@ class Patient {
     this.isNext = false,
     required this.id,
     required this.appointmentDate,
+    required this.patientCin,
   });
 
   // Factory constructor to create Patient from API response
@@ -54,7 +55,31 @@ class Patient {
       consultationType: consultationType,
       time: time,
       appointmentDate: appointmentDate,
-      isNext: false, // Will be set by the schedule logic
+      patientCin:
+          appointmentData['patient_cin'] ?? appointmentData['patient_id'] ?? '',
+      isNext: false,
+    );
+  }
+
+  Patient copyWith({
+    String? name,
+    String? imagePath,
+    String? consultationType,
+    String? time,
+    bool? isNext,
+    String? id,
+    String? appointmentDate,
+    String? patientCin,
+  }) {
+    return Patient(
+      name: name ?? this.name,
+      imagePath: imagePath ?? this.imagePath,
+      consultationType: consultationType ?? this.consultationType,
+      time: time ?? this.time,
+      isNext: isNext ?? this.isNext,
+      id: id ?? this.id,
+      appointmentDate: appointmentDate ?? this.appointmentDate,
+      patientCin: patientCin ?? this.patientCin,
     );
   }
 }
@@ -104,6 +129,169 @@ class _DoctorScheduleScreenState extends ConsumerState<DoctorScheduleScreen> {
     await UserSynchronizer.initialize(ref);
   }
 
+  // Method to navigate to patient profile using the utility
+  void _navigateToPatientProfile(Patient patient) {
+    // Use the navigation utility instead of custom logic
+    PatientNavigationUtils.navigateFromPatientObject(
+      context,
+      patient,
+      showErrorSnackbar: true,
+    );
+  }
+
+  // Method to show patient options menu
+  void _showPatientOptionsMenu(BuildContext context, Patient patient) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 25,
+                    backgroundImage: patient.imagePath.isNotEmpty
+                        ? AssetImage(patient.imagePath)
+                        : null,
+                    backgroundColor: Colors.grey[300],
+                    child: patient.imagePath.isEmpty
+                        ? Text(
+                            patient.name.isNotEmpty ? patient.name[0] : '?',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          patient.name,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          patient.consultationType,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 25),
+              _buildOptionTile(
+                icon: Icons.person_outline,
+                title: 'View Profile',
+                subtitle: 'View patient\'s complete profile',
+                onTap: () {
+                  Navigator.pop(context);
+                  _navigateToPatientProfile(patient);
+                },
+              ),
+              _buildOptionTile(
+                icon: Icons.message_outlined,
+                title: 'Send Message',
+                subtitle: 'Chat with the patient',
+                onTap: () {
+                  Navigator.pop(context);
+                  context.goNamed(
+                    RouteConstants.doctorChat,
+                    extra: patient,
+                  );
+                },
+              ),
+              if (!_isViewingPreviousAppointments)
+                _buildOptionTile(
+                  icon: Icons.videocam_outlined,
+                  title: 'Start Call',
+                  subtitle: 'Begin video consultation',
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Handle start call
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text('Starting call with ${patient.name}...')),
+                    );
+                  },
+                ),
+              if (_isViewingPreviousAppointments)
+                _buildOptionTile(
+                  icon: Icons.description_outlined,
+                  title: 'Medical Records',
+                  subtitle: 'View consultation notes',
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Handle medical records
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('Viewing records for ${patient.name}')),
+                    );
+                  },
+                ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOptionTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: Colors.grey[700]),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+      ),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
+  }
+
   // Method to load appointments from repository
   Future<void> _loadAppointments() async {
     setState(() {
@@ -143,16 +331,8 @@ class _DoctorScheduleScreenState extends ConsumerState<DoctorScheduleScreen> {
                 patient.appointmentDate, patient.time);
 
             if (appointmentDateTime.isAfter(now)) {
-              // Update a new instance to preserve immutability
-              patientList[i] = Patient(
-                id: patient.id,
-                name: patient.name,
-                imagePath: patient.imagePath,
-                consultationType: patient.consultationType,
-                time: patient.time,
-                appointmentDate: patient.appointmentDate,
-                isNext: true,
-              );
+              // Update using copyWith to preserve immutability
+              patientList[i] = patient.copyWith(isNext: true);
               break;
             }
           }
@@ -553,66 +733,81 @@ class _DoctorScheduleScreenState extends ConsumerState<DoctorScheduleScreen> {
                                           padding: const EdgeInsets.all(16.0),
                                           child: Row(
                                             children: [
-                                              CircleAvatar(
-                                                radius: 24,
-                                                backgroundImage:
-                                                    patient.imagePath.isNotEmpty
-                                                        ? AssetImage(
-                                                            patient.imagePath)
-                                                        : null,
-                                                backgroundColor:
-                                                    Colors.grey[300],
-                                                child: patient.imagePath.isEmpty
-                                                    ? Text(
-                                                        patient.name.isNotEmpty
-                                                            ? patient.name[0]
-                                                            : '?',
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )
-                                                    : null,
+                                              GestureDetector(
+                                                onTap: () =>
+                                                    _navigateToPatientProfile(
+                                                        patient),
+                                                child: CircleAvatar(
+                                                  radius: 24,
+                                                  backgroundImage: patient
+                                                          .imagePath.isNotEmpty
+                                                      ? AssetImage(
+                                                          patient.imagePath)
+                                                      : null,
+                                                  backgroundColor:
+                                                      Colors.grey[300],
+                                                  child: patient
+                                                          .imagePath.isEmpty
+                                                      ? Text(
+                                                          patient.name
+                                                                  .isNotEmpty
+                                                              ? patient.name[0]
+                                                              : '?',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        )
+                                                      : null,
+                                                ),
                                               ),
                                               const SizedBox(width: 16),
                                               Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      patient.name,
-                                                      style: const TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                child: GestureDetector(
+                                                  onTap: () =>
+                                                      _navigateToPatientProfile(
+                                                          patient),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        patient.name,
+                                                        style: const TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Row(
-                                                      children: [
-                                                        Icon(
-                                                          patient.consultationType
-                                                                  .contains(
-                                                                      'Video')
-                                                              ? Icons.videocam
-                                                              : Icons.home_work,
-                                                          size: 20,
-                                                          color: black,
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 8),
-                                                        Text(
-                                                          patient
-                                                              .consultationType,
-                                                          style: TextStyle(
-                                                            color: grey600,
+                                                      const SizedBox(height: 4),
+                                                      Row(
+                                                        children: [
+                                                          Icon(
+                                                            patient.consultationType
+                                                                    .contains(
+                                                                        'Video')
+                                                                ? Icons.videocam
+                                                                : Icons
+                                                                    .home_work,
+                                                            size: 20,
+                                                            color: black,
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Text(
+                                                            patient
+                                                                .consultationType,
+                                                            style: TextStyle(
+                                                              color: grey600,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                               Container(
@@ -703,132 +898,175 @@ class _DoctorScheduleScreenState extends ConsumerState<DoctorScheduleScreen> {
                                 }
 
                                 // Regular appointment item
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.1),
-                                        spreadRadius: 1,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0, horizontal: 16.0),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 70,
-                                          alignment: Alignment.center,
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                patient.time.split(' - ')[0],
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: patient.isNext
-                                                      ? black
-                                                      : grey600,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              if (_isViewingPreviousAppointments)
+                                return GestureDetector(
+                                  onTap: () =>
+                                      _showPatientOptionsMenu(context, patient),
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 1,
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 16.0),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 70,
+                                            alignment: Alignment.center,
+                                            child: Column(
+                                              children: [
                                                 Text(
-                                                  _formatAppointmentDate(
-                                                      patient.appointmentDate),
+                                                  patient.time.split(' - ')[0],
                                                   style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: grey600,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: patient.isNext
+                                                        ? black
+                                                        : grey600,
                                                   ),
+                                                  textAlign: TextAlign.center,
                                                 ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        CircleAvatar(
-                                          radius: 24,
-                                          backgroundImage: patient
-                                                  .imagePath.isNotEmpty
-                                              ? AssetImage(patient.imagePath)
-                                              : null,
-                                          backgroundColor: Colors.grey[300],
-                                          child: patient.imagePath.isEmpty
-                                              ? Text(
-                                                  patient.name.isNotEmpty
-                                                      ? patient.name[0]
-                                                      : '?',
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : null,
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                patient.name,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    patient.consultationType
-                                                            .contains('Video')
-                                                        ? Icons.videocam
-                                                        : Icons.home_work,
-                                                    size: 18,
-                                                    color: patient
-                                                            .consultationType
-                                                            .contains('Video')
-                                                        ? grey600
-                                                        : grey400,
-                                                  ),
-                                                  const SizedBox(width: 8),
+                                                if (_isViewingPreviousAppointments)
                                                   Text(
-                                                    patient.consultationType,
+                                                    _formatAppointmentDate(
+                                                        patient
+                                                            .appointmentDate),
                                                     style: TextStyle(
+                                                      fontSize: 12,
                                                       color: grey600,
-                                                      fontSize: 14,
                                                     ),
                                                   ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 16),
+                                          GestureDetector(
+                                            onTap: () =>
+                                                _navigateToPatientProfile(
+                                                    patient),
+                                            child: CircleAvatar(
+                                              radius: 24,
+                                              backgroundImage:
+                                                  patient.imagePath.isNotEmpty
+                                                      ? AssetImage(
+                                                          patient.imagePath)
+                                                      : null,
+                                              backgroundColor: Colors.grey[300],
+                                              child: patient.imagePath.isEmpty
+                                                  ? Text(
+                                                      patient.name.isNotEmpty
+                                                          ? patient.name[0]
+                                                          : '?',
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    )
+                                                  : null,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 16),
+                                          Expanded(
+                                            child: GestureDetector(
+                                              onTap: () =>
+                                                  _navigateToPatientProfile(
+                                                      patient),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    patient.name,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        patient.consultationType
+                                                                .contains(
+                                                                    'Video')
+                                                            ? Icons.videocam
+                                                            : Icons.home_work,
+                                                        size: 18,
+                                                        color: patient
+                                                                .consultationType
+                                                                .contains(
+                                                                    'Video')
+                                                            ? grey600
+                                                            : grey400,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        patient
+                                                            .consultationType,
+                                                        style: TextStyle(
+                                                          color: grey600,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  // Show patient CIN if available for debugging
+                                                  if (patient
+                                                      .patientCin.isNotEmpty)
+                                                    Text(
+                                                      'ID: ${patient.patientCin}',
+                                                      style: TextStyle(
+                                                        color: grey400,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
                                                 ],
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                        if (_isViewingPreviousAppointments)
-                                          IconButton(
-                                            icon: Icon(
-                                              LucideIcons.fileText,
-                                              color: grey600,
-                                              size: 20,
                                             ),
-                                            onPressed: () {
-                                              // View medical record for this previous appointment
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                    content: Text(
-                                                        'Viewing medical record for ${patient.name}')),
-                                              );
-                                            },
                                           ),
-                                      ],
+                                          if (_isViewingPreviousAppointments)
+                                            IconButton(
+                                              icon: Icon(
+                                                LucideIcons.fileText,
+                                                color: grey600,
+                                                size: 20,
+                                              ),
+                                              onPressed: () {
+                                                // View medical record for this previous appointment
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                      content: Text(
+                                                          'Viewing medical record for ${patient.name}')),
+                                                );
+                                              },
+                                            )
+                                          else
+                                            // Show more options button for current appointments
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.more_vert,
+                                                color: grey600,
+                                                size: 20,
+                                              ),
+                                              onPressed: () =>
+                                                  _showPatientOptionsMenu(
+                                                      context, patient),
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );

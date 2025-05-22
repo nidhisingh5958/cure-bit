@@ -1,5 +1,5 @@
-import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/app/auth/auth_repository.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final primaryColor = grey800;
+final primaryColor = grey600;
 
 // OTP entry bottom sheet
 class OtpEntrySheet extends ConsumerStatefulWidget {
@@ -15,7 +15,7 @@ class OtpEntrySheet extends ConsumerStatefulWidget {
   final VoidCallback onVerificationComplete;
   final String? countryCode;
   final String role;
-  final bool isForgotPassword; // Flag to identify which flow we're in
+  final bool isForgotPassword;
 
   const OtpEntrySheet({
     super.key,
@@ -23,7 +23,7 @@ class OtpEntrySheet extends ConsumerStatefulWidget {
     required this.onVerificationComplete,
     this.countryCode,
     required this.role,
-    this.isForgotPassword = false, // Default is regular OTP login
+    this.isForgotPassword = true,
   });
 
   @override
@@ -274,32 +274,45 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               ),
             ),
           ),
-          const SizedBox(height: 24),
-          Text(
-            widget.isForgotPassword ? "Verify Reset Code" : "Enter OTP",
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          const SizedBox(height: 20),
+          if (!_isResendActive) ...[
+            Center(
+              child: Text(
+                'Resend code in ${_resendTimer}s',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 14,
                 ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          Text(
-            widget.isForgotPassword
-                ? "A 6-digit verification code has been sent to ${widget.identifier}. Please enter it below to reset your password."
-                : "A 6-digit OTP has been sent to ${widget.identifier}. Please enter it below.",
-            style: TextStyle(
-              fontSize: 14,
-              color: grey600,
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 40),
-          _buildOtpFields(),
-          const SizedBox(height: 30),
-          _buildVerifyButton(),
-          const SizedBox(height: 20),
-          _buildResendButton(),
+          ] else ...[
+            TextButton(
+              onPressed: _isLoading ? null : _resendOTP,
+              child: Text(
+                widget.isForgotPassword ? 'Resend Reset Code' : 'Resend Code',
+                style: TextStyle(
+                  color: _isLoading ? grey600.withOpacity(0.5) : color2,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+          if (widget.isForgotPassword) ...[
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: grey600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -307,41 +320,75 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
   Widget _buildOtpFields() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(6, (index) {
-        return SizedBox(
-          width: 40,
-          child: TextField(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(
+        6,
+        (index) => SizedBox(
+          width: 45,
+          height: 60,
+          child: TextFormField(
             controller: _controllers[index],
             focusNode: _focusNodes[index],
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.number,
-            maxLength: 1,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(1),
-            ],
             decoration: InputDecoration(
-              counterText: '',
+              counterText: "",
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.surface,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: grey400),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: grey600,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: color1),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: primaryColor),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: color2,
+                  width: 2,
+                ),
               ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.red),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
             ),
             onChanged: (value) {
-              if (value.length == 1 && index < 5) {
-                _focusNodes[index + 1].requestFocus();
+              if (value.isNotEmpty) {
+                // When a digit is entered
+                if (index < 5) {
+                  // Move to next field if this isn't the last one
+                  _focusNodes[index + 1].requestFocus();
+                } else {
+                  // This is the last field, unfocus to hide keyboard
+                  _focusNodes[index].unfocus();
+                  // Auto-verify when all digits are entered
+                  final otp = _controllers.map((c) => c.text).join();
+                  if (otp.length == 6) {
+                    _verifyOTP();
+                  }
+                }
               } else if (value.isEmpty && index > 0) {
+                // When a digit is deleted, move to previous field
                 _focusNodes[index - 1].requestFocus();
               }
             },
+            style: TextStyle(
+                fontSize: 16, color: color1, fontWeight: FontWeight.bold),
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            showCursor: true, // Show cursor for better visibility
+            cursorColor: grey600,
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(1),
+              FilteringTextInputFormatter.digitsOnly,
+            ],
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 
@@ -349,17 +396,23 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
     return ElevatedButton(
       onPressed: _isLoading ? null : _verifyOTP,
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        backgroundColor: primaryColor,
+        padding: const EdgeInsets.symmetric(vertical: 12),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
       child: _isLoading
-          ? const CircularProgressIndicator(color: Colors.white)
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
           : Text(
-              widget.isForgotPassword ? "Verify" : "Verify OTP",
-              style: const TextStyle(fontSize: 16, color: Colors.white),
+              widget.isForgotPassword ? 'Verify Code' : 'Verify',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
     );
   }

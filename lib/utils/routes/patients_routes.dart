@@ -1,4 +1,4 @@
-import 'package:CuraDocs/app/features_api_repository/profile/doc_public_profile/get/doctor_model.dart'
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doc_public_profile/doctor/get/doctor_model.dart'
     as model;
 import 'package:CuraDocs/features/patient/appointment/my_appointments/reschedule_appointment.dart';
 import 'package:CuraDocs/features/patient/medical_records/basic_medical_info.dart';
@@ -78,17 +78,22 @@ List<RouteBase> get patientRoutes {
     ),
 
     GoRoute(
+      path: '/doctor-profile',
+      name: RouteConstants.doctorProfile,
+      builder: (context, state) {
+        // Get doctorCin from query parameters or path parameters
+        final doctorCin = state.uri.queryParameters['doctorCin'] ??
+            state.pathParameters['doctorCin'];
+
+        return DoctorProfile(doctorCin: doctorCin);
+      },
+    ),
+
+    GoRoute(
       path: '/appointments',
       name: RouteConstants.appointmentHome,
       builder: (context, state) => const AppointmentHome(),
       routes: [
-        GoRoute(
-          // doctor public profile screen
-          path: 'doctor-profile',
-          parentNavigatorKey: rootNavigatorKey,
-          name: RouteConstants.doctorProfile,
-          builder: (context, state) => DoctorProfile(),
-        ),
         GoRoute(
           // Individual doctor booking screen
           path: 'book-appointment',

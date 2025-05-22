@@ -1,23 +1,46 @@
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_provider.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class PatientPublicProfile extends StatefulWidget {
-  const PatientPublicProfile({super.key});
+class PatientPublicProfile extends ConsumerStatefulWidget {
+  final String? cin; // Pass CIN as parameter or get from route
+
+  const PatientPublicProfile({super.key, this.cin});
 
   @override
-  State<PatientPublicProfile> createState() => _PatientPublicProfileState();
+  ConsumerState<PatientPublicProfile> createState() =>
+      _PatientPublicProfileState();
 }
 
-class _PatientPublicProfileState extends State<PatientPublicProfile> {
+class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
+  late String patientCin;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize CIN - you might get this from route parameters, authentication, etc.
+    patientCin = widget.cin ?? 'default_cin';
+
+    // Set the current patient CIN in the provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(currentPatientCinProvider.notifier).state = patientCin;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Get screen size information
     final Size screenSize = MediaQuery.of(context).size;
-    final double profileImageSize =
-        screenSize.width * 0.25; // 25% of screen width
+    final double profileImageSize = screenSize.width * 0.25;
+
+    // Watch the patient profile
+    final profileAsyncValue =
+        ref.watch(patientPublicProfileProvider(patientCin));
 
     return Scaffold(
       appBar: AppHeader(
@@ -32,25 +55,65 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
               context.pushNamed(RouteConstants.editPublicProfile);
             },
           ),
+          // Add refresh button
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => _refreshProfile(),
+          ),
         ],
       ),
       backgroundColor: greyWithGreenTint,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Profile Header with Image
-            _buildProfileHeader(profileImageSize),
-
-            // Information Section
-            _buildInformationSection(),
-          ],
-        ),
+      body: profileAsyncValue.when(
+        data: (profile) => _buildProfileContent(profile, profileImageSize),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => _buildErrorWidget(error),
       ),
     );
   }
 
-  Widget _buildProfileHeader(double imageSize) {
+  Widget _buildProfileContent(
+      PatientPublicProfileModel profile, double profileImageSize) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildProfileHeader(profile, profileImageSize),
+          _buildInformationSection(profile),
+          _buildActionButtons(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(Object error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
+          const SizedBox(height: 16),
+          Text(
+            'Error loading profile',
+            style: TextStyle(fontSize: 18, color: grey600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            error.toString(),
+            style: TextStyle(fontSize: 14, color: grey400),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _refreshProfile,
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader(
+      PatientPublicProfileModel profile, double imageSize) {
     return Container(
       width: double.infinity,
       color: white,
@@ -58,7 +121,6 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Profile Image
           Stack(
             alignment: Alignment.center,
             children: [
@@ -78,16 +140,18 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0), // Border padding
+                  padding: const EdgeInsets.all(3.0),
                   child: CircleAvatar(
-                    backgroundImage: const AssetImage(
-                        'assets/images/PatientPublicProfile.png'),
+                    backgroundImage: profile.profileImageUrl.isNotEmpty
+                        ? NetworkImage(profile.profileImageUrl)
+                        : const AssetImage(
+                                'assets/images/PatientPublicProfile.png')
+                            as ImageProvider,
                     backgroundColor: grey200,
                     radius: imageSize / 2,
                   ),
                 ),
               ),
-              // Edit Icon
               Positioned(
                 bottom: 0,
                 right: imageSize * 0.3,
@@ -107,38 +171,29 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-
-          // PatientPublicProfilename handle
-          const Text(
-            '@livysheleina',
-            style: TextStyle(
+          Text(
+            '@${profile.username}',
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
             ),
           ),
-
           const SizedBox(height: 4),
-
-          // Name
-          const Text(
-            'Livy Sheleina',
-            style: TextStyle(
+          Text(
+            profile.name,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 8),
-
-          // Location and Join date
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'New York',
-                style: TextStyle(
+              Text(
+                profile.location,
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.blue,
                 ),
@@ -153,7 +208,7 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
                 ),
               ),
               Text(
-                'Joined August 2023',
+                'Joined ${profile.joinedDate}',
                 style: TextStyle(
                   fontSize: 14,
                   color: grey600,
@@ -166,7 +221,7 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
     );
   }
 
-  Widget _buildInformationSection() {
+  Widget _buildInformationSection(PatientPublicProfileModel profile) {
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(20),
@@ -192,41 +247,69 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Website
           _buildInfoItem(
             icon: Icons.language,
             label: 'Date of Birth',
-            value: 'January 1, 1990',
-            description: 'Age: 35 yrs 4 months',
+            value: profile.dateOfBirth,
+            description: 'Age: ${profile.age} yrs',
           ),
-
           const _ProfileDivider(),
-
-          // Email
           _buildInfoItem(
             icon: Icons.mail,
             label: 'Email',
-            value: 'sh.agency@gmail.com',
+            value: profile.email,
           ),
-
           const _ProfileDivider(),
-
-          // Phone
           _buildInfoItem(
             icon: Icons.phone,
             label: 'Phone',
-            value: '+62 878 XXX XXX',
+            value: profile.phone,
             description: 'Mobile',
           ),
-
           const _ProfileDivider(),
-
-          // Joined
           _buildInfoItem(
             icon: Icons.calendar_today,
             label: 'Joined',
-            value: 'August 2023',
+            value: profile.joinedDate,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _clearProfile,
+                  icon: const Icon(Icons.clear),
+                  label: const Text('Clear Profile'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _clearCache,
+                  icon: const Icon(Icons.cached),
+                  label: const Text('Clear Cache'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -281,88 +364,61 @@ class _PatientPublicProfileState extends State<PatientPublicProfile> {
     );
   }
 
-  Widget _buildSkillsSection() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Skills grid
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              _buildSkillChip('Design System'),
-              _buildSkillChip('UI Designer'),
-              _buildSkillChip('UX Researcher'),
-              _buildSkillChip('Product Manager'),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          _buildEditButton(),
-        ],
-      ),
-    );
+  // Action methods
+  void _refreshProfile() {
+    ref.invalidate(patientPublicProfileProvider(patientCin));
   }
 
-  Widget _buildSkillChip(String label) {
-    return Chip(
-      label: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
-      ),
-      backgroundColor: grey200,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
+  Future<void> _clearProfile() async {
+    try {
+      final clearAction = ref.read(clearPatientProfileActionProvider);
+      final result = await clearAction(patientCin);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Profile cleared: $result'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error clearing profile: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
-  Widget _buildEditButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          debugPrint('Edit Profile');
-        },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-          backgroundColor: white,
-          foregroundColor: Colors.black87,
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+  Future<void> _clearCache() async {
+    try {
+      final clearCacheAction = ref.read(clearCacheActionProvider);
+      final result = await clearCacheAction(patientCin);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Cache cleared: $result'),
+            backgroundColor: Colors.green,
           ),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.edit, size: 20),
-            SizedBox(width: 8),
-            Text(
-              'Edit Profile',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
-    );
+        );
+        // Refresh the profile after clearing cache
+        _refreshProfile();
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error clearing cache: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
 

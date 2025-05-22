@@ -4,13 +4,13 @@ import 'package:CuraDocs/common/components/pop_up.dart';
 import 'package:CuraDocs/app/features_api_repository/connect/connect_provider.dart';
 import 'package:CuraDocs/app/features_api_repository/connect/connect_provider.dart'
     as connect;
-import 'package:CuraDocs/app/features_api_repository/profile/doc_public_profile/get/get_doc_public_provider.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doc_public_profile/doctor/get/get_doc_public_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/doc_public_profile/get/doctor_model.dart'
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doc_public_profile/doctor/get/doctor_model.dart'
     as model;
 
 Color primaryColor = black;
