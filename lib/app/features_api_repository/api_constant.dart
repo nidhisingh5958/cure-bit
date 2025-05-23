@@ -5,9 +5,19 @@
 final String connect_api =
     'https://hc28588xe6.execute-api.us-east-1.amazonaws.com/Dev/connect';
 
+//  moc trial
+final appointment = 'https://zcqs194p-8010.inc1.devtunnels.ms';
+final privateProfile = 'https://zcqs194p-8030.inc1.devtunnels.ms';
+final String doctorPublicProfile = 'https://zcqs194p-8040.inc1.devtunnels.ms';
+final String patientPublicProfile = 'https://zcqs194p-8050.inc1.devtunnels.ms';
+final timeline = 'https://zcqs194p-8020.inc1.devtunnels.ms';
+final String searchDoctor_api = 'https://zcqs194p-8055.inc1.devtunnels.ms';
+final String searchPatient_api =
+    'https://zcqs194p-8055.inc1.devtunnels.ms/internal';
+
 //  appointments
-final appointment =
-    'https://a7r3s7iyx1.execute-api.us-east-1.amazonaws.com/Dev/appointment';
+// final appointment =
+//     'https://a7r3s7iyx1.execute-api.us-east-1.amazonaws.com/Dev/appointment';
 
 // patinet routes
 final patientBookAppointment = '$appointment/patient/appointment/book';
@@ -25,8 +35,8 @@ final String doctorGetAppointments = '$appointment/doctor';
 final String appointmentDone = '$appointment/doctor/appointment/done';
 
 // profile
-final String privateProfile =
-    'https://g08gqqdfma.execute-api.us-east-1.amazonaws.com/Dev/profile';
+// final String privateProfile =
+//     'https://g08gqqdfma.execute-api.us-east-1.amazonaws.com/Dev/profile';
 
 final String update_private_doc =
     '$privateProfile/update/doctor_private_profile';
@@ -40,15 +50,15 @@ final String refresh_cache_patient =
 
 // patient routes
 
-final String patientPublicProfile =
-    'https://lxvk0bm3k2.execute-api.us-east-1.amazonaws.com/Dev/patient_profile';
+// final String patientPublicProfile =
+//     'https://lxvk0bm3k2.execute-api.us-east-1.amazonaws.com/Dev/patient_profile';
 
 // doctor routes
-final String doctorPublicProfile =
-    'https://1f3ehj2tli.execute-api.us-east-1.amazonaws.com/Dev/doctor_profile';
+// final String doctorPublicProfile =
+//     'https://1f3ehj2tli.execute-api.us-east-1.amazonaws.com/Dev/doctor_profile';
 
 //  search
-final String searchDoctor_api =
-    'https://nf9rfloqn0.execute-api.us-east-1.amazonaws.com/Dev/doctor-search';
-final String searchPatient_api =
-    'https://iylosoz7m1.execute-api.us-east-1.amazonaws.com/Dev/internal';
+// final String searchDoctor_api =
+//     'https://nf9rfloqn0.execute-api.us-east-1.amazonaws.com/Dev/doctor-search';
+// final String searchPatient_api =
+//     'https://iylosoz7m1.execute-api.us-east-1.amazonaws.com/Dev/internal';

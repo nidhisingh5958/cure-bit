@@ -136,7 +136,13 @@ List<RouteBase> get patientRoutes {
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.bookAppointment,
                   builder: (context, state) {
-                    final doctorData = state.extra as model.DoctorProfileModel;
+                    final doctorData = state.extra as model.DoctorProfileModel?;
+
+                    if (doctorData == null) {
+                      // Handle null case - redirect to doctors list or show error
+                      return const HomeScreen();
+                    }
+
                     return BookAppointmentScreen(
                         doctorData: doctorData.toJson());
                   },

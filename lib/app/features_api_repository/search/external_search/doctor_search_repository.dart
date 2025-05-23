@@ -18,7 +18,7 @@ class DoctorSearchService {
       }
 
       // Make GET request to the search endpoint with query parameters
-      final uri = Uri.parse('$searchDoctor_api/internal_search')
+      final uri = Uri.parse('$searchDoctor_api/search')
           .replace(queryParameters: queryParams);
 
       final response = await http.get(

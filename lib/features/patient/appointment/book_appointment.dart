@@ -98,10 +98,14 @@ class BusyDatesNotifier extends StateNotifier<BusyDatesState> {
 class BookAppointmentScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> doctorData;
 
-  const BookAppointmentScreen({
+  BookAppointmentScreen({
     super.key,
     required this.doctorData,
-  });
+  }) {
+    debugPrint('BookAppointmentScreen received doctorData: $doctorData');
+    debugPrint('doctorData type: ${doctorData.runtimeType}');
+    debugPrint('doctorData keys: ${doctorData.keys.toList()}');
+  }
 
   @override
   ConsumerState<BookAppointmentScreen> createState() =>
@@ -126,6 +130,24 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   final TextEditingController _appointmentNoteController =
       TextEditingController();
 
+  // Helper method to safely get string values from doctorData
+  String? _getDoctorDataString(String key) {
+    final value = widget.doctorData[key];
+    return value?.toString();
+  }
+
+  // Helper method to get doctor CIN with null safety
+  String? get _doctorCIN => _getDoctorDataString('cin');
+
+  // Helper method to get doctor name with fallback
+  String get _doctorName => _getDoctorDataString('name') ?? 'string';
+
+  // Helper method to get doctor specialty with fallback
+  String get _doctorSpecialty =>
+      _getDoctorDataString('specialty') ??
+      _getDoctorDataString('specialization') ??
+      'Specialty not specified';
+
   @override
   void initState() {
     super.initState();
@@ -145,10 +167,11 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
 
   // Fetch available slots for the selected date
   void _fetchAvailableSlots(DateTime date) {
-    if (widget.doctorData['cin'] != null) {
+    final doctorCIN = _doctorCIN;
+    if (doctorCIN != null && doctorCIN.isNotEmpty) {
       ref.read(availableSlotsProvider.notifier).fetchAvailableSlots(
             context,
-            widget.doctorData['cin'],
+            doctorCIN,
             date,
           );
     } else {
@@ -161,20 +184,22 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
 
   // Fetch busy dates for the doctor
   void _fetchBusyDates() {
-    if (widget.doctorData['cin'] != null) {
+    final doctorCIN = _doctorCIN;
+    if (doctorCIN != null && doctorCIN.isNotEmpty) {
       ref.read(busyDatesProvider.notifier).fetchBusyDates(
             context,
-            widget.doctorData['cin'],
+            doctorCIN,
           );
     }
   }
 
   // Refresh available slots for the selected date
   void _refreshAvailableSlots() {
-    if (widget.doctorData['cin'] != null) {
+    final doctorCIN = _doctorCIN;
+    if (doctorCIN != null && doctorCIN.isNotEmpty) {
       ref.read(availableSlotsProvider.notifier).refreshAvailableSlots(
             context,
-            widget.doctorData['cin'],
+            doctorCIN,
             _selectedDay,
           );
       // Also refresh busy dates
@@ -302,13 +327,12 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Dr. ${widget.doctorData['name'] ?? 'Unknown Doctor'}',
+                            'Dr. $_doctorName',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.doctorData['specialty'] ??
-                                'Specialty not specified',
+                            _doctorSpecialty,
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ],
@@ -443,9 +467,10 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                                         children: availableSlotsState
                                             .availableSlots
                                             .map((slot) {
-                                          final time = slot['time'] as String;
+                                          final time =
+                                              slot['time']?.toString() ?? '';
                                           final address =
-                                              slot['address'] as String;
+                                              slot['address']?.toString() ?? '';
                                           final isSelected =
                                               _selectedTimeSlot == time &&
                                                   _selectedAddress == address;

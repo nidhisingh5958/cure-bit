@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/pop_up.dart';
@@ -69,18 +71,22 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
       }
     });
 
-    // Fetch doctor data when the widget is initialized
-    _fetchDoctorData();
-
-    // Check the connection status with this doctor
-    _checkConnectionStatus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchDoctorData();
+      _checkConnectionStatus();
+    });
   }
 
   Future<void> _checkConnectionStatus() async {
     if (widget.doctorCin != null) {
-      // Initialize the connection status check
-      final connectionNotifier = ref.read(connectionProvider.notifier);
-      await connectionNotifier.checkConnectionStatus(widget.doctorCin!);
+      try {
+        // Initialize the connection status check
+        final connectionNotifier = ref.read(connectionProvider.notifier);
+        await connectionNotifier.checkConnectionStatus(widget.doctorCin!);
+        // await connectionNotifier.checkConnectionStatus('GAJB8522');
+      } catch (e) {
+        debugPrint('Error checking connection status: $e');
+      }
     }
   }
 
@@ -93,6 +99,13 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
       return;
     }
 
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -102,19 +115,42 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
       final doctorProfileNotifier =
           ref.read(doctorProfileNotifierProvider.notifier);
       await doctorProfileNotifier.getDoctorPublicProfile(widget.doctorCin!);
+      // await doctorProfileNotifier.getDoctorPublicProfile(
+      //   'GAJB8522',
+      // );
 
       final profileState = ref.read(doctorProfileNotifierProvider);
 
       if (profileState is AsyncData && profileState.value != null) {
         try {
-          // Parse the JSON string to create a DoctorProfile object
-          final doctorProfile =
-              model.DoctorProfileModel.fromResponseString(profileState.value!);
-          setState(() {
-            _doctorProfile = doctorProfile;
-            _isLoading = false;
-          });
+          debugPrint('Raw response: ${profileState.value}');
+
+          // Parse JSON directly instead of using fromResponseString
+          final jsonData = json.decode(profileState.value!);
+
+          // Create DoctorProfile with safe null handling
+          final doctorProfile = model.DoctorProfileModel(
+            cin: jsonData['CIN'] as String? ?? 'GAJB8522',
+            name: _buildFullName(jsonData) as String? ?? 'Doctor Name',
+            specialization:
+                jsonData['specialization'] as String? ?? 'General Practitioner',
+            qualification: jsonData['qualification'] as String? ?? 'MBBS',
+            experience: jsonData['year_of_experience'] as String? ?? '0',
+            address: _extractAddress(jsonData['work_address']),
+            bio: jsonData['description'] as String?,
+            workingTime: _extractWorkingTime(jsonData['working_time']),
+            patientsAttended:
+                jsonData['number_of_patient_attended'] as String? ?? '0',
+          );
+
+          if (mounted) {
+            setState(() {
+              _doctorProfile = doctorProfile;
+              _isLoading = false;
+            });
+          }
         } catch (parseError) {
+          debugPrint('Parse error details: $parseError');
           setState(() {
             _isLoading = false;
             _errorMessage = "Failed to parse doctor data: $parseError";
@@ -128,11 +164,68 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
         });
       }
     } catch (e) {
+      debugPrint('General error: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = "Error: ${e.toString()}";
       });
     }
+  }
+
+  // Helper method to build full name safely
+  String _buildFullName(Map<String, dynamic> jsonData) {
+    final firstName = jsonData['first_name'] as String? ?? '';
+    final lastName = jsonData['last_name'] as String? ?? '';
+    final fullName = jsonData['full_name'] as String?;
+
+    // Prioritize full_name, then combine first and last name
+    if (fullName != null && fullName.isNotEmpty && fullName != 'string') {
+      return fullName;
+    } else if (firstName.isNotEmpty && firstName != 'string') {
+      return lastName.isNotEmpty && lastName != 'string'
+          ? '$firstName $lastName'
+          : firstName;
+    } else {
+      return 'Doctor Name';
+    }
+  }
+
+  String _extractAddress(dynamic workAddress) {
+    if (workAddress == null) return 'Address not available';
+
+    if (workAddress is String) {
+      return workAddress.isEmpty || workAddress == 'string'
+          ? 'Address not available'
+          : workAddress;
+    }
+
+    if (workAddress is Map<String, dynamic>) {
+      final address = workAddress['address'] as String?;
+      return address?.isNotEmpty == true && address != 'string'
+          ? address!
+          : 'Address not available';
+    }
+
+    return 'Address not available';
+  }
+
+  String _extractWorkingTime(dynamic workingTime) {
+    if (workingTime == null) return 'Working hours not available';
+
+    if (workingTime is String) {
+      return workingTime.isEmpty || workingTime == 'string'
+          ? 'Working hours not available'
+          : workingTime;
+    }
+
+    if (workingTime is Map<String, dynamic>) {
+      final hours = workingTime['hours'] as String?;
+      return hours?.isNotEmpty == true && hours != 'string'
+          ? hours!
+          : 'Working hours not available';
+    }
+
+    return 'Working hours not available';
   }
 
   @override
@@ -298,7 +391,7 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
                   children: [
                     // Doctor name and details
                     Text(
-                      doctorData.name,
+                      doctorData.name ?? 'Doctor Name',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -309,7 +402,7 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
                     ),
                     SizedBox(height: 6),
                     Text(
-                      doctorData.specialty ?? 'Specialist',
+                      doctorData.specialization ?? 'Specialist',
                       style: TextStyle(
                         color: Colors.grey[700],
                         fontSize: 18,
@@ -382,8 +475,11 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
   model.DoctorProfileModel _getDoctorData() {
     return _doctorProfile ??
         model.DoctorProfileModel(
-          cin: widget.doctorCin ?? 'Unknown',
-          name: 'Dr. Unknown',
+          cin: widget.doctorCin ?? 'GAJB8522',
+          name: 'Loading...', // Better fallback text
+          specialization:
+              'General Practitioner', // Add fallback for specialization
+          address: 'Address not available',
         );
   }
 
@@ -418,12 +514,15 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
         Expanded(
           child: ElevatedButton(
             onPressed: isLoading
-                ? null // Disable the button while loading
+                ? null
                 : () {
                     if (widget.doctorCin != null) {
                       final connectionNotifier =
                           ref.read(connectionProvider.notifier);
                       connectionNotifier.toggleConnection(widget.doctorCin!);
+                      // connectionNotifier.toggleConnection(
+                      //   'GAJB8522',
+                      // );
 
                       if (!isConnected) {
                         setState(() {
@@ -501,9 +600,9 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
               context.goNamed(
                 RouteConstants.bookAppointment,
                 queryParameters: {
-                  'doctorCin': doctorData.cin,
-                  'doctorName': doctorData.name,
-                  'doctorSpecialty': doctorData.specialty ?? '',
+                  'doctorCin': doctorData.cin ?? '',
+                  'doctorName': doctorData.name ?? '',
+                  'doctorSpecialty': doctorData.specialization ?? '',
                 },
               );
             } else if (value == 'doctorQR') {
@@ -610,19 +709,16 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
   Widget _buildInfoSection(model.DoctorProfileModel doctorData) {
     return Column(
       children: [
-        _buildInfoRow('Specialisation', doctorData.specialty ?? 'N/A'),
+        _buildInfoRow('Specialisation', doctorData.specialization ?? 'N/A'),
         SizedBox(height: 12),
-        _buildInfoRow('Qualification',
-            'MBBS, MD'), // Replace with actual data when available
+        _buildInfoRow('Qualification', doctorData.qualification ?? 'MBBS, MD'),
+        SizedBox(height: 12),
+        _buildInfoRow('Rating', '4.8'),
+        SizedBox(height: 12),
+        _buildInfoRow('Years of experience', doctorData.experience ?? '8 +'),
         SizedBox(height: 12),
         _buildInfoRow(
-            'Rating', '4.8'), // Replace with actual data when available
-        SizedBox(height: 12),
-        _buildInfoRow('Years of experience',
-            '8 +'), // Replace with actual data when available
-        SizedBox(height: 12),
-        _buildInfoRow('Patients attended',
-            '2.4K +'), // Replace with actual data when available
+            'Patients attended', doctorData.patientsAttended ?? '2.4K +'),
       ],
     );
   }
@@ -705,17 +801,18 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
   }
 
   Widget _buildLocationSection(model.DoctorProfileModel doctorData) {
+    final address = doctorData.address ?? 'Address not available';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLocationCard(
           '09:00 am - 02:00 pm',
-          doctorData.address ?? 'Address not available',
+          address,
         ),
         SizedBox(height: 16),
         _buildLocationCard(
           '03:00 pm - 08:00 pm',
-          doctorData.address ?? 'Address not available',
+          address,
         ),
       ],
     );

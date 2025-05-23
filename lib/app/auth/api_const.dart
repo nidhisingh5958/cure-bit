@@ -1,7 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, prefer_function_declarations_over_variables
 
+// mock trial
+final auth = 'https://zcqs194p-8060.inc1.devtunnels.ms';
 //  auth
-final auth = 'https://5waijy29ki.execute-api.us-east-1.amazonaws.com/Dev/auth';
+// final auth = 'https://5waijy29ki.execute-api.us-east-1.amazonaws.com/Dev/auth';
 
 // Refresh token endpoint
 final String refresh_token_doc = '$auth/doctor/refresh_token';
