@@ -1017,13 +1017,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildFeaturesGrid(BuildContext context, bool isSmallScreen) {
     final categories = [
       {
-        'icon': Icons.calendar_today,
-        'label': 'Booking',
-        'onTap': () {
-          context.goNamed(RouteConstants.appointmentHome);
-        }
-      },
-      {
         'icon': MdiIcons.pill,
         'label': 'Medicines',
         'onTap': () {
@@ -1042,6 +1035,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         'label': 'My Appointments',
         'onTap': () {
           context.goNamed(RouteConstants.bookedAppointments);
+        }
+      },
+      {
+        'icon': MdiIcons.qrcodeScan,
+        'label': 'QR Scan',
+        'onTap': () {
+          context.goNamed(RouteConstants.qrScan);
         }
       },
     ];

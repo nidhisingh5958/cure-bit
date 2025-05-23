@@ -202,36 +202,36 @@ List<RouteBase> get doctorRoutes {
         ),
 
         // Chat Branch
-        StatefulShellBranch(
-          navigatorKey: doctorChatNavigatorKey,
-          routes: [
-            GoRoute(
-              path: '/doctor/chat',
-              name: RouteConstants.doctorChat,
-              builder: (context, state) => AuthMiddleware(
-                requiresAuth: false,
-                child: const DoctorChatListScreen(),
-              ),
-              routes: [
-                GoRoute(
-                  // Individual Chat Screen
-                  path: 'chat-screen',
-                  parentNavigatorKey: rootNavigatorKey,
-                  name: RouteConstants.doctorChatScreen,
-                  builder: (context, state) => AuthMiddleware(
-                    requiresAuth: false,
-                    child: Builder(
-                      builder: (context) {
-                        final chat = state.extra as DocChatData;
-                        return DoctorChatScreen(chat: chat);
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+        // StatefulShellBranch(
+        //   navigatorKey: doctorChatNavigatorKey,
+        //   routes: [
+        //     GoRoute(
+        //       path: '/doctor/chat',
+        //       name: RouteConstants.doctorChat,
+        //       builder: (context, state) => AuthMiddleware(
+        //         requiresAuth: false,
+        //         child: const DoctorChatListScreen(),
+        //       ),
+        //       routes: [
+        //         GoRoute(
+        //           // Individual Chat Screen
+        //           path: 'chat-screen',
+        //           parentNavigatorKey: rootNavigatorKey,
+        //           name: RouteConstants.doctorChatScreen,
+        //           builder: (context, state) => AuthMiddleware(
+        //             requiresAuth: false,
+        //             child: Builder(
+        //               builder: (context) {
+        //                 final chat = state.extra as DocChatData;
+        //                 return DoctorChatScreen(chat: chat);
+        //               },
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
 
         // My patients of doctor side
         StatefulShellBranch(

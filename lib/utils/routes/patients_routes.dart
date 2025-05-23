@@ -89,44 +89,6 @@ List<RouteBase> get patientRoutes {
       },
     ),
 
-    GoRoute(
-      path: '/appointments',
-      name: RouteConstants.appointmentHome,
-      builder: (context, state) => const AppointmentHome(),
-      routes: [
-        GoRoute(
-          // Individual doctor booking screen
-          path: 'book-appointment',
-          parentNavigatorKey: rootNavigatorKey,
-          name: RouteConstants.bookAppointment,
-          builder: (context, state) {
-            final doctorData = state.extra as model.DoctorProfileModel;
-            return BookAppointmentScreen(doctorData: doctorData.toJson());
-          },
-        ),
-        GoRoute(
-          path: 'booked-appointments',
-          parentNavigatorKey: rootNavigatorKey,
-          name: RouteConstants.bookedAppointments,
-          builder: (context, state) => const MyAppointments(),
-        ),
-        GoRoute(
-            path: 'schedule-appointment',
-            parentNavigatorKey: rootNavigatorKey,
-            name: RouteConstants.rescheduleAppointment,
-            builder: (context, state) {
-              // final appointment = state.extra as AppointmentData;
-              return PatientRescheduleAppointment();
-            }),
-        GoRoute(
-          path: 'favourites',
-          parentNavigatorKey: rootNavigatorKey,
-          name: RouteConstants.favouriteDoctors,
-          builder: (context, state) => FavouritesPage(),
-        ),
-      ],
-    ),
-
     // Main app shell with bottom navigation
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -159,29 +121,74 @@ List<RouteBase> get patientRoutes {
           ],
         ),
 
-        // Chat Branch
+        // Appointments
         StatefulShellBranch(
-          navigatorKey: chatNavigatorKey,
+          navigatorKey: appointmentsNavigationKey,
           routes: [
             GoRoute(
-              path: '/chat',
-              name: RouteConstants.chat,
-              builder: (context, state) => const ChatListScreen(),
+              path: '/appointments',
+              name: RouteConstants.appointmentHome,
+              builder: (context, state) => const AppointmentHome(),
               routes: [
                 GoRoute(
-                  // Individual Chat Screen
-                  path: 'chat-screen',
+                  // Individual doctor booking screen
+                  path: 'book-appointment',
                   parentNavigatorKey: rootNavigatorKey,
-                  name: RouteConstants.chatScreen,
+                  name: RouteConstants.bookAppointment,
                   builder: (context, state) {
-                    final chat = state.extra as ChatData;
-                    return ChatScreen(chat: chat);
+                    final doctorData = state.extra as model.DoctorProfileModel;
+                    return BookAppointmentScreen(
+                        doctorData: doctorData.toJson());
                   },
+                ),
+                GoRoute(
+                  path: 'booked-appointments',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.bookedAppointments,
+                  builder: (context, state) => const MyAppointments(),
+                ),
+                GoRoute(
+                    path: 'schedule-appointment',
+                    parentNavigatorKey: rootNavigatorKey,
+                    name: RouteConstants.rescheduleAppointment,
+                    builder: (context, state) {
+                      // final appointment = state.extra as AppointmentData;
+                      return PatientRescheduleAppointment();
+                    }),
+                GoRoute(
+                  path: 'favourites',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.favouriteDoctors,
+                  builder: (context, state) => FavouritesPage(),
                 ),
               ],
             ),
           ],
         ),
+
+        // Chat Branch
+        // StatefulShellBranch(
+        //   navigatorKey: chatNavigatorKey,
+        //   routes: [
+        //     GoRoute(
+        //       path: '/chat',
+        //       name: RouteConstants.chat,
+        //       builder: (context, state) => const ChatListScreen(),
+        //       routes: [
+        //         GoRoute(
+        //           // Individual Chat Screen
+        //           path: 'chat-screen',
+        //           parentNavigatorKey: rootNavigatorKey,
+        //           name: RouteConstants.chatScreen,
+        //           builder: (context, state) {
+        //             final chat = state.extra as ChatData;
+        //             return ChatScreen(chat: chat);
+        //           },
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
 
         // Medical Records Branch
         StatefulShellBranch(
