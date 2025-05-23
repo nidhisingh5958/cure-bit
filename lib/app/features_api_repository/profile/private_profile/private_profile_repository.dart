@@ -170,10 +170,14 @@ class PrivateProfileRepository {
   Future<bool> updatePrivateProfile(
     PrivateProfileData profile,
     BuildContext context,
+    String role,
   ) async {
     try {
+      final String api_endpoint =
+          role == 'Doctor' ? update_private_doc : update_private_patient;
+
       http.Response response = await http.post(
-        Uri.parse('$privateProfile/${profile.cin}'),
+        Uri.parse(api_endpoint),
         body: jsonEncode(profile.toJson()),
         headers: {
           'Content-Type': 'application/json',
@@ -195,40 +199,41 @@ class PrivateProfileRepository {
     }
   }
 
-  Future<bool> updateEmergencyContact(
-    String cin,
-    EmergencyContact contact,
-    BuildContext context,
-  ) async {
-    try {
-      http.Response response = await http.post(
-        Uri.parse('$updateEmergencyContactDetails/$cin'),
-        body: jsonEncode(contact.toJson()),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
+  // Future<bool> updateEmergencyContact(
+  //   String cin,
+  //   EmergencyContact contact,
+  //   BuildContext context,
+  // ) async {
+  //   try {
+  //     http.Response response = await http.post(
+  //       Uri.parse('$updateEmergencyContactDetails/$cin'),
+  //       body: jsonEncode(contact.toJson()),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     );
 
-      if (response.statusCode == 200 || response.statusCode == 302) {
-        showSnackBar(
-            context: context,
-            message: 'Emergency contact updated successfully');
-        return true;
-      } else {
-        throw Exception(
-            'Failed to update emergency contact: ${response.statusCode}');
-      }
-    } catch (e) {
-      showSnackBar(
-          context: context, message: 'Error updating emergency contact: $e');
-      throw Exception('Error updating emergency contact: $e');
-    }
-  }
+  //     if (response.statusCode == 200 || response.statusCode == 302) {
+  //       showSnackBar(
+  //           context: context,
+  //           message: 'Emergency contact updated successfully');
+  //       return true;
+  //     } else {
+  //       throw Exception(
+  //           'Failed to update emergency contact: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     showSnackBar(
+  //         context: context, message: 'Error updating emergency contact: $e');
+  //     throw Exception('Error updating emergency contact: $e');
+  //   }
+  // }
 
   Future<bool> requestEmailUpdate(
     String cin,
     String newEmail,
     BuildContext context,
+    String role,
   ) async {
     try {
       final data = {
@@ -237,7 +242,7 @@ class PrivateProfileRepository {
       };
 
       http.Response response = await http.post(
-        Uri.parse('$requestEmailChange'),
+        Uri.parse('$privateProfile/$role/update_phone_number_email'),
         body: jsonEncode(data),
         headers: {
           'Content-Type': 'application/json',
@@ -262,10 +267,11 @@ class PrivateProfileRepository {
   Future<bool> verifyEmailOtp(
     OtpEmail otpData,
     BuildContext context,
+    String role,
   ) async {
     try {
       http.Response response = await http.post(
-        Uri.parse('$verifyEmailOtp'),
+        Uri.parse('$privateProfile/$role/verify_email_otp'),
         body: jsonEncode(otpData.toJson()),
         headers: {
           'Content-Type': 'application/json',
@@ -289,6 +295,7 @@ class PrivateProfileRepository {
     String newPhoneNumber,
     String countryCode,
     BuildContext context,
+    String role,
   ) async {
     try {
       final data = {
@@ -298,7 +305,7 @@ class PrivateProfileRepository {
       };
 
       http.Response response = await http.post(
-        Uri.parse('$requestPhoneChange'),
+        Uri.parse('$privateProfile/$role/update_phone_number_email'),
         body: jsonEncode(data),
         headers: {
           'Content-Type': 'application/json',
@@ -324,10 +331,11 @@ class PrivateProfileRepository {
   Future<bool> verifyPhoneOtp(
     OtpPhone otpData,
     BuildContext context,
+    String role,
   ) async {
     try {
       http.Response response = await http.post(
-        Uri.parse('$verifyPhoneOtp'),
+        Uri.parse('$privateProfile/$role/verify_otp_phone'),
         body: jsonEncode(otpData.toJson()),
         headers: {
           'Content-Type': 'application/json',
@@ -347,10 +355,10 @@ class PrivateProfileRepository {
     }
   }
 
-  Future<PrivateProfileData> getPrivateProfile(String cin) async {
+  Future<PrivateProfileData> getPrivateProfile(String cin, String role) async {
     try {
       http.Response response = await http.get(
-        Uri.parse('$getPatientPrivateProfile/$cin'),
+        Uri.parse('$privateProfile/$role/get_profile_profile_data/$cin'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -365,6 +373,78 @@ class PrivateProfileRepository {
       }
     } catch (e) {
       throw Exception('Error getting private profile: $e');
+    }
+  }
+
+  Future<bool> refreshCache(
+    String cin,
+    BuildContext context,
+    String role,
+  ) async {
+    try {
+      String apiEndpoint;
+      if (role.toLowerCase() == 'doctor') {
+        apiEndpoint = '/refresh_cache/private_doctor_profile_data';
+      } else if (role.toLowerCase() == 'patient') {
+        apiEndpoint = '/refresh_cache/private_patient_profile_data';
+      } else {
+        throw Exception('Invalid role: $role. Expected "Doctor" or "Patient"');
+      }
+
+      final uri = Uri.parse('$privateProfile$apiEndpoint').replace(
+        queryParameters: {'CIN': cin},
+      );
+
+      http.Response response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        showSnackBar(context: context, message: 'Cache refreshed successfully');
+        return true;
+      } else {
+        final errorMessage = response.statusCode == 422
+            ? 'Validation error: Please check the CIN format'
+            : 'Failed to refresh cache: ${response.statusCode}';
+
+        showSnackBar(context: context, message: errorMessage);
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      final errorMessage = 'Error refreshing cache: $e';
+      showSnackBar(context: context, message: errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<bool> refreshCacheSilent(String cin, String role) async {
+    try {
+      String apiEndpoint;
+      if (role.toLowerCase() == 'doctor') {
+        apiEndpoint = '/refresh_cache/private_doctor_profile_data';
+      } else if (role.toLowerCase() == 'patient') {
+        apiEndpoint = '/refresh_cache/private_patient_profile_data';
+      } else {
+        throw Exception('Invalid role: $role. Expected "Doctor" or "Patient"');
+      }
+
+      final uri = Uri.parse('$privateProfile$apiEndpoint').replace(
+        queryParameters: {'CIN': cin},
+      );
+
+      http.Response response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
     }
   }
 }

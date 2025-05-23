@@ -1,19 +1,22 @@
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/patient_profile_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_provider.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class EditPublicProfile extends StatefulWidget {
+class EditPublicProfile extends ConsumerStatefulWidget {
   final String? cin;
   const EditPublicProfile({super.key, this.cin});
 
   @override
-  State<EditPublicProfile> createState() => _EditProfileState();
+  ConsumerState<EditPublicProfile> createState() => _EditProfileState();
 }
 
-class _EditProfileState extends State<EditPublicProfile> {
+class _EditProfileState extends ConsumerState<EditPublicProfile> {
   // Constants
   final double profileImageSize = 120.0;
 
@@ -48,11 +51,68 @@ class _EditProfileState extends State<EditPublicProfile> {
   bool _isLoading = false;
   bool _isProfileLoaded = false;
   String? _imagePath;
+  PatientPublicProfileModel? _currentProfile;
 
   Future<void> _loadProfileData() async {
+    if (widget.cin == null) return;
+
     setState(() {
-      _isProfileLoaded = true;
+      _isLoading = true;
     });
+
+    try {
+      // Get profile data from Riverpod provider
+      final profileAsyncValue =
+          ref.read(patientPublicProfileProvider(widget.cin!));
+
+      profileAsyncValue.when(
+        data: (profile) {
+          if (profile != null) {
+            _populateFields(profile);
+            setState(() {
+              _currentProfile = profile;
+              _isProfileLoaded = true;
+            });
+          }
+        },
+        loading: () {
+          // Keep loading state
+        },
+        error: (error, stackTrace) {
+          showSnackBar(
+              context: context,
+              message: 'Error loading profile: ${error.toString()}');
+        },
+      );
+    } catch (e) {
+      showSnackBar(
+          context: context, message: 'Error loading profile: ${e.toString()}');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _populateFields(PatientPublicProfileModel profile) {
+    // Split name into first and last name
+    final nameParts = profile.name.split(' ');
+    if (nameParts.isNotEmpty) {
+      _firstNameController.text = nameParts.first;
+      if (nameParts.length > 1) {
+        _lastNameController.text = nameParts.sublist(1).join(' ');
+      }
+    }
+
+    _cinController.text = profile.cin;
+    _stateController.text = profile.location;
+    // Note: description field doesn't exist in the model, so we leave it empty
+    // If you have a description field in your API, add it to the model
+
+    // Set profile image if available
+    if (profile.profileImageUrl.isNotEmpty) {
+      _imagePath = profile.profileImageUrl;
+    }
   }
 
   @override
@@ -60,7 +120,10 @@ class _EditProfileState extends State<EditPublicProfile> {
     super.initState();
     if (widget.cin != null) {
       _cinController.text = widget.cin!;
-      _loadProfileData();
+      // Load profile data after the widget is built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadProfileData();
+      });
     }
   }
 
@@ -115,9 +178,18 @@ class _EditProfileState extends State<EditPublicProfile> {
       );
 
       if (success) {
+        // Invalidate the provider to refresh data
+        ref.invalidate(patientPublicProfileProvider(widget.cin!));
+
         setState(() {
           _isProfileLoaded = true;
         });
+
+        showSnackBar(
+            context: context, message: 'Profile updated successfully!');
+
+        // Navigate back
+        Navigator.pop(context);
       }
     } catch (e) {
       showSnackBar(context: context, message: 'Error: ${e.toString()}');
@@ -144,6 +216,11 @@ class _EditProfileState extends State<EditPublicProfile> {
 
   @override
   Widget build(BuildContext context) {
+    // Watch the profile provider to get real-time updates
+    final profileAsyncValue = widget.cin != null
+        ? ref.watch(patientPublicProfileProvider(widget.cin!))
+        : null;
+
     return Scaffold(
       appBar: AppHeader(
         onBackPressed: () {
@@ -152,108 +229,12 @@ class _EditProfileState extends State<EditPublicProfile> {
         title: 'Edit Public Profile',
       ),
       backgroundColor: white,
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          grey600.withValues(alpha: .05),
-                          white,
-                        ],
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 25),
-                        // Profile Image Section
-                        _buildProfileImageSection(profileImageSize),
-                        const SizedBox(height: 15),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20),
-                        _buildSectionHeader(
-                            'Personal Information', Icons.person),
-                        const SizedBox(height: 15),
-
-                        // First name field
-                        buildProfileInfoField(
-                          title: 'First Name',
-                          controller: _firstNameController,
-                          keyboardType: TextInputType.name,
-                          prefixIcon: const Icon(Icons.person_outline,
-                              color: Colors.grey),
-                        ),
-
-                        // Last name field
-                        buildProfileInfoField(
-                          title: 'Last Name',
-                          controller: _lastNameController,
-                          keyboardType: TextInputType.name,
-                          prefixIcon: const Icon(Icons.person_outline,
-                              color: Colors.grey),
-                        ),
-
-                        // CIN field
-                        buildProfileInfoField(
-                          title: 'CIN (ID Number)',
-                          controller: _cinController,
-                          keyboardType: TextInputType.text,
-                          prefixIcon:
-                              const Icon(Icons.credit_card, color: Colors.grey),
-                          readOnly:
-                              _isProfileLoaded, // Make CIN read-only if profile is loaded
-                        ),
-
-                        // State field
-                        buildProfileInfoField(
-                          title: 'State',
-                          controller: _stateController,
-                          keyboardType: TextInputType.text,
-                          prefixIcon:
-                              const Icon(Icons.location_on, color: Colors.grey),
-                        ),
-
-                        const SizedBox(height: 25),
-                        _buildSectionHeader('About You', Icons.info_outline),
-                        const SizedBox(height: 15),
-
-                        // Description field
-                        buildDescriptionField(
-                          title: 'Description',
-                          controller: _descriptionController,
-                          maxLines: 5,
-                        ),
-
-                        const SizedBox(height: 25),
-                        const Divider(),
-                        const SizedBox(height: 10),
-                        const Text(
-                          "Note: Private information and emergency contacts are managed separately.",
-                          style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      body: profileAsyncValue?.when(
+            data: (profile) => _buildContent(profile),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => _buildErrorContent(error),
+          ) ??
+          _buildContent(null),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ElevatedButton(
@@ -284,6 +265,143 @@ class _EditProfileState extends State<EditPublicProfile> {
                   ),
                 ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildContent(PatientPublicProfileModel? profile) {
+    // Update fields if profile data is loaded for the first time
+    if (profile != null && _currentProfile?.cin != profile.cin) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _populateFields(profile);
+        setState(() {
+          _currentProfile = profile;
+          _isProfileLoaded = true;
+        });
+      });
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  grey600.withValues(alpha: .05),
+                  white,
+                ],
+              ),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 25),
+                // Profile Image Section
+                _buildProfileImageSection(profileImageSize),
+                const SizedBox(height: 15),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                _buildSectionHeader('Personal Information', Icons.person),
+                const SizedBox(height: 15),
+
+                // First name field
+                buildProfileInfoField(
+                  title: 'First Name',
+                  controller: _firstNameController,
+                  keyboardType: TextInputType.name,
+                  prefixIcon:
+                      const Icon(Icons.person_outline, color: Colors.grey),
+                ),
+
+                // Last name field
+                buildProfileInfoField(
+                  title: 'Last Name',
+                  controller: _lastNameController,
+                  keyboardType: TextInputType.name,
+                  prefixIcon:
+                      const Icon(Icons.person_outline, color: Colors.grey),
+                ),
+
+                // CIN field
+                buildProfileInfoField(
+                  title: 'CIN (ID Number)',
+                  controller: _cinController,
+                  keyboardType: TextInputType.text,
+                  prefixIcon: const Icon(Icons.credit_card, color: Colors.grey),
+                  readOnly: _isProfileLoaded,
+                ),
+
+                // State field
+                buildProfileInfoField(
+                  title: 'State',
+                  controller: _stateController,
+                  keyboardType: TextInputType.text,
+                  prefixIcon: const Icon(Icons.location_on, color: Colors.grey),
+                ),
+
+                const SizedBox(height: 25),
+                _buildSectionHeader('About You', Icons.info_outline),
+                const SizedBox(height: 15),
+
+                // Description field
+                buildDescriptionField(
+                  title: 'Description',
+                  controller: _descriptionController,
+                  maxLines: 5,
+                ),
+
+                const SizedBox(height: 25),
+                const Divider(),
+                const SizedBox(height: 10),
+                const Text(
+                  "Note: Private information and emergency contacts are managed separately.",
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorContent(Object error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
+          const SizedBox(height: 16),
+          Text(
+            'Error loading profile data',
+            style: TextStyle(fontSize: 18, color: grey600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            error.toString(),
+            style: TextStyle(fontSize: 14, color: grey400),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => _loadProfileData(),
+            child: const Text('Retry'),
+          ),
+        ],
       ),
     );
   }
@@ -453,7 +571,9 @@ class _EditProfileState extends State<EditPublicProfile> {
           ),
           child: _imagePath != null
               ? CircleAvatar(
-                  backgroundImage: AssetImage(_imagePath!),
+                  backgroundImage: _imagePath!.startsWith('http')
+                      ? NetworkImage(_imagePath!)
+                      : AssetImage(_imagePath!) as ImageProvider,
                   backgroundColor: grey200,
                 )
               : CircleAvatar(

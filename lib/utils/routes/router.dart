@@ -22,7 +22,7 @@ import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
 import 'package:CuraDocs/features/auth/screens/login/login_otp/otp.dart';
 import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
 
-const bool isDev = false; // Set to false before release
+const bool isDev = true; // Set to false before release
 
 class AppRouter {
   static Future<GoRouter> initRouter(FutureProviderRef<GoRouter> ref) async {
@@ -37,7 +37,7 @@ class AppRouter {
     }
 
     debugPrint('Router: Auth state initialized, creating router');
-
+// /doctor/home
     return GoRouter(
       navigatorKey: rootNavigatorKey,
       initialLocation: isDev ? '/home' : '/',

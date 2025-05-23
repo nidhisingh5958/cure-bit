@@ -19,7 +19,6 @@ class DoctorHomeScreen extends ConsumerStatefulWidget {
 
 class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
     with SingleTickerProviderStateMixin {
-  late String name;
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -115,7 +114,6 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
 
   @override
   void initState() {
-    name = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
     super.initState();
     _selectedDay = _focusedDay;
     _tabController = TabController(length: 3, vsync: this);
@@ -129,6 +127,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final name = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
     // Get screen size for responsive adjustments
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 360;
@@ -180,7 +179,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
             child: Column(
               children: [
                 SizedBox(height: 16),
-                _buildWelcomeSection(),
+                _buildWelcomeSection(name),
                 _buildQuickActionsBar(),
                 Container(
                   margin: const EdgeInsets.only(top: 24),
@@ -263,7 +262,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
     );
   }
 
-  Widget _buildWelcomeSection() {
+  Widget _buildWelcomeSection(String name) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       child: Column(

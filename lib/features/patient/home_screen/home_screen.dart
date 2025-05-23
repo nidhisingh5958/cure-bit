@@ -16,17 +16,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  late String name;
-
-  @override
-  void initState() {
-    name = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
-    super.initState();
-    // Initialize any necessary data or state here
-  }
-
   @override
   Widget build(BuildContext context) {
+    final name = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
     // Get screen size for responsive adjustments
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 360;
@@ -75,7 +67,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               children: [
                 SizedBox(height: 16),
-                _buildWelcomeSection(),
+                _buildWelcomeSection(name),
                 Container(
                   margin: const EdgeInsets.only(top: 24),
                   decoration: const BoxDecoration(
@@ -984,7 +976,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildWelcomeSection() {
+  Widget _buildWelcomeSection(String name) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       child: Column(

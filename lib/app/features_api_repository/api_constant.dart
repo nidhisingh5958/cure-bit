@@ -28,12 +28,15 @@ final String appointmentDone = '$appointment/doctor/appointment/done';
 final String privateProfile =
     'https://g08gqqdfma.execute-api.us-east-1.amazonaws.com/Dev/profile';
 
-final String updateEmergencyContactDetails = '';
-final String requestEmailChange = '';
-final String requestPhoneChange = '';
-final String updatePhoneNumber = '';
+final String update_private_doc =
+    '$privateProfile/update/doctor_private_profile';
+final String update_private_patient =
+    '$privateProfile/update/patient_private_profile';
 
-final String getPatientPrivateProfile = '';
+final String refresh_cache_doc =
+    '$privateProfile/refresh_cache/private_doctor_profile_data';
+final String refresh_cache_patient =
+    '$privateProfile/refresh_cache/private_patient_profile_data';
 
 // patient routes
 

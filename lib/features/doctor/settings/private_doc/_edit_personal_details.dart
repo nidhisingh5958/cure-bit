@@ -1,3 +1,4 @@
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/app/features_api_repository/profile/private_profile/get_private_repository.dart';
@@ -55,12 +56,15 @@ class _DoctorEditPrivateProfileState
   bool _isPrivateProfileLoaded = false;
   impl.PrivateProfileData? _privateProfileData;
   final _defaultCin = 'NotFound'; // Default CIN for testing'';
+  late String role;
 
   @override
   void initState() {
     super.initState();
     // If CIN is provided via parameters, use it; otherwise, use the default
     final cinToUse = widget.cin ?? _defaultCin;
+    role = UserHelper.getUserAttribute<String>(ref, 'role') ?? '';
+
     _cinController.text = cinToUse;
 
     // Fetch profile data on initialization
@@ -123,8 +127,8 @@ class _DoctorEditPrivateProfileState
     });
 
     try {
-      _privateProfileData = await _privateProfileRepository
-          .getPrivateProfile(_cinController.text);
+      _privateProfileData = await _privateProfileRepository.getPrivateProfile(
+          _cinController.text, role);
 
       // Populate public profile fields if they're empty
       if (_privateProfileData != null) {
@@ -213,23 +217,11 @@ class _DoctorEditPrivateProfileState
 
       // Update the profile
       final success = await _privateProfileRepository.updatePrivateProfile(
-          privateProfileData, context);
+          privateProfileData, context, role);
 
       if (success) {
         // Refresh the cache to ensure latest data is displayed on the profile page
-        try {
-          await ref.read(
-              refreshPatientProfileCacheProvider(_cinController.text).future);
-          showSnackBar(
-              context: context,
-              message: 'Profile updated and cache refreshed successfully!');
-        } catch (e) {
-          // Even if cache refresh fails, the update was successful
-          showSnackBar(
-              context: context,
-              message:
-                  'Profile updated successfully, but cache refresh failed.');
-        }
+        await _refreshCache();
 
         // Navigate back to the profile page
         if (mounted) {
@@ -243,6 +235,33 @@ class _DoctorEditPrivateProfileState
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  /// Refresh cache after profile update
+  Future<void> _refreshCache() async {
+    try {
+      // First try to refresh using the PrivateProfileRepository
+      final cacheRefreshed = await _privateProfileRepository.refreshCache(
+          _cinController.text, context, role);
+
+      if (cacheRefreshed) {
+        // Also try to refresh the Riverpod provider cache if available
+        try {
+          await ref.read(
+              refreshPatientProfileCacheProvider(_cinController.text).future);
+        } catch (e) {
+          // Silently handle provider cache refresh failure
+          // as the main cache refresh was successful
+          debugPrint('Provider cache refresh failed: $e');
+        }
+      }
+    } catch (e) {
+      // Handle cache refresh failure gracefully
+      showSnackBar(
+          context: context,
+          message: 'Profile updated successfully, but cache refresh failed.');
+      debugPrint('Cache refresh error: $e');
     }
   }
 

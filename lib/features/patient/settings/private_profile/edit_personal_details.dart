@@ -1,3 +1,4 @@
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/app/features_api_repository/profile/private_profile/get_private_repository.dart';
@@ -56,6 +57,7 @@ class _PatientEditPrivateProfileState
   bool _isPrivateProfileLoaded = false;
   impl.PrivateProfileData? _privateProfileData;
   String _defaultCin = 'NotFound'; // Default CIN for testing
+  late String role;
 
   @override
   void initState() {
@@ -63,6 +65,8 @@ class _PatientEditPrivateProfileState
     // If CIN is provided via parameters, use it; otherwise, use the default
     final cinToUse = widget.cin ?? _defaultCin;
     _cinController.text = cinToUse;
+
+    role = UserHelper.getUserAttribute<String>(ref, 'role') ?? '';
 
     // Fetch profile data on initialization
     Future.microtask(() => _loadProfileData(cinToUse));
@@ -126,8 +130,8 @@ class _PatientEditPrivateProfileState
     });
 
     try {
-      _privateProfileData = await _privateProfileRepository
-          .getPrivateProfile(_cinController.text);
+      _privateProfileData = await _privateProfileRepository.getPrivateProfile(
+          _cinController.text, role);
 
       // Populate public profile fields if they're empty
       if (_privateProfileData != null) {
@@ -216,22 +220,32 @@ class _PatientEditPrivateProfileState
 
       // Update the profile
       final success = await _privateProfileRepository.updatePrivateProfile(
-          privateProfileData, context);
+          privateProfileData, context, role);
 
       if (success) {
-        // Refresh the cache to ensure latest data is displayed on the profile page
+        // Refresh the cache using the repository method
         try {
-          await ref.read(
-              refreshPatientProfileCacheProvider(_cinController.text).future);
+          await _privateProfileRepository.refreshCache(
+              _cinController.text, context, role);
+
+          // Also refresh the Riverpod cache if the provider exists
+          try {
+            await ref.read(
+                refreshPatientProfileCacheProvider(_cinController.text).future);
+          } catch (e) {
+            // If Riverpod cache refresh fails, it's not critical
+            debugPrint('Riverpod cache refresh failed: $e');
+          }
+
           showSnackBar(
               context: context,
               message: 'Profile updated and cache refreshed successfully!');
-        } catch (e) {
+        } catch (cacheError) {
           // Even if cache refresh fails, the update was successful
           showSnackBar(
               context: context,
               message:
-                  'Profile updated successfully, but cache refresh failed.');
+                  'Profile updated successfully, but cache refresh failed: ${cacheError.toString()}');
         }
 
         // Navigate back to the profile page
@@ -242,6 +256,40 @@ class _PatientEditPrivateProfileState
     } catch (e) {
       showSnackBar(
           context: context, message: 'Error saving profile: ${e.toString()}');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Manual refresh cache method that can be called independently
+  Future<void> _refreshCacheManually() async {
+    if (_cinController.text.isEmpty) {
+      showSnackBar(context: context, message: 'Please enter CIN first');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Use the silent version to avoid duplicate snackbars
+      final success = await _privateProfileRepository.refreshCacheSilent(
+          _cinController.text, role);
+
+      if (success) {
+        showSnackBar(context: context, message: 'Cache refreshed successfully');
+
+        // Reload the profile data after cache refresh
+        await _loadPrivateProfile();
+      } else {
+        showSnackBar(context: context, message: 'Failed to refresh cache');
+      }
+    } catch (e) {
+      showSnackBar(
+          context: context, message: 'Error refreshing cache: ${e.toString()}');
     } finally {
       setState(() {
         _isLoading = false;
@@ -281,6 +329,14 @@ class _PatientEditPrivateProfileState
           Navigator.pop(context);
         },
         title: 'Edit Account Details',
+        // Add a refresh button to the app bar
+        actions: [
+          IconButton(
+            onPressed: _isLoading ? null : _refreshCacheManually,
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh Cache',
+          ),
+        ],
       ),
       backgroundColor: white,
       body: _isLoading
