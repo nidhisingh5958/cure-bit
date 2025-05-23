@@ -1,5 +1,6 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/app/features_api_repository/appointment/doctor/post_doctor_repository.dart';
+import 'package:CuraDocs/features/patient/appointment/my_appointments/reschedule_appointment.dart';
 import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,10 +9,12 @@ import 'package:flutter/services.dart';
 
 class DoctorRescheduleAppointment extends ConsumerStatefulWidget {
   final Map<String, dynamic>? appointment;
+  final String? doctorCIN; // Add doctorCIN parameter
 
   const DoctorRescheduleAppointment({
     super.key,
     this.appointment,
+    this.doctorCIN,
   });
 
   @override
@@ -22,14 +25,10 @@ class DoctorRescheduleAppointment extends ConsumerStatefulWidget {
 class _DoctorRescheduleAppointmentState
     extends ConsumerState<DoctorRescheduleAppointment> {
   late TextEditingController titleController;
-
   late TextEditingController startTimeController;
-
   late TextEditingController dateController;
-
-  // API required controllers
   late TextEditingController reasonController;
-  // String appointmentId = '';
+
   String appointmentId = 'ghsdjhgs24';
   Color selectedColor = Colors.blue;
   DateTime selectedDate = DateTime.now();
@@ -43,7 +42,7 @@ class _DoctorRescheduleAppointmentState
 
   List<Map<String, dynamic>> appointments = [];
   bool isLoading = false;
-  bool isSubmitting = false; // Track submission state
+  bool isSubmitting = false;
   final _formKey = GlobalKey<FormState>();
 
   // Instance of DoctorAppointmentRepository
@@ -56,22 +55,16 @@ class _DoctorRescheduleAppointmentState
 
     // Initialize all controllers first
     titleController = TextEditingController();
-
     startTimeController = TextEditingController();
-
-    reasonController = TextEditingController(); // Initialize reason controller
+    reasonController = TextEditingController();
     dateController = TextEditingController(
         text: DateFormat('MMMM d, yyyy').format(selectedDate));
 
     // Then populate with appointment data if available
     if (widget.appointment != null) {
       final appointment = widget.appointment!;
-
-      // appointmentId = appointment['id'] ?? '';
       appointmentId = 'ghsdjhgs24';
-
       titleController.text = appointment['title'] ?? '';
-
       startTimeController.text = appointment['startTime'] ?? '';
 
       if (appointment['date'] != null) {
@@ -88,26 +81,36 @@ class _DoctorRescheduleAppointmentState
       }
     }
 
-    // Load appointments (would typically come from a service or provider)
+    // Load appointments and busy dates
     _loadAppointments();
+    _loadBusyDates();
   }
 
   void _loadAppointments() {
-    // Simulate loading appointments from a data source
     setState(() {
       isLoading = true;
     });
 
-    // Here you would typically fetch from API or local storage
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
-        // Mock data - in a real app this would come from a data source
         if (appointments.isEmpty) {
           appointments = [];
         }
         isLoading = false;
       });
     });
+  }
+
+  void _loadBusyDates() {
+    // Load busy dates using the provider
+    if (widget.doctorCIN != null && widget.doctorCIN!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(busyDatesProvider.notifier).fetchBusyDates(
+              context,
+              widget.doctorCIN!,
+            );
+      });
+    }
   }
 
   @override
@@ -120,11 +123,27 @@ class _DoctorRescheduleAppointmentState
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final busyDatesState = ref.read(busyDatesProvider);
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
+      selectableDayPredicate: (DateTime date) {
+        // Disable past dates
+        if (date.isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+          return false;
+        }
+
+        // Disable busy dates
+        final busyDatesNotifier = ref.read(busyDatesProvider.notifier);
+        if (busyDatesNotifier.isBusyDate(date)) {
+          return false;
+        }
+
+        return true;
+      },
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -139,7 +158,26 @@ class _DoctorRescheduleAppointmentState
         );
       },
     );
+
     if (picked != null && picked != selectedDate) {
+      // Double-check that the selected date is not busy
+      final busyDatesNotifier = ref.read(busyDatesProvider.notifier);
+      if (busyDatesNotifier.isBusyDate(picked)) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+                'Selected date is not available. Please choose another date.'),
+            backgroundColor: Colors.red[700],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+        return;
+      }
+
       setState(() {
         selectedDate = picked;
         dateController.text = DateFormat('MMMM d, yyyy').format(selectedDate);
@@ -200,6 +238,23 @@ class _DoctorRescheduleAppointmentState
 
   void _saveAppointment() async {
     if (_formKey.currentState!.validate()) {
+      // Check if selected date is busy before submitting
+      final busyDatesNotifier = ref.read(busyDatesProvider.notifier);
+      if (busyDatesNotifier.isBusyDate(selectedDate)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+                'Selected date is not available. Please choose another date.'),
+            backgroundColor: Colors.red[700],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+        return;
+      }
+
       // Provide haptic feedback
       HapticFeedback.lightImpact();
 
@@ -232,6 +287,7 @@ class _DoctorRescheduleAppointmentState
           apiTimeFormat = startTimeController.text;
         }
       }
+
       // Check if appointment ID is available
       if (appointmentId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -277,6 +333,14 @@ class _DoctorRescheduleAppointmentState
               appointments[index] = appointmentData;
             });
           }
+        }
+
+        // Refresh busy dates after successful rescheduling
+        if (widget.doctorCIN != null && widget.doctorCIN!.isNotEmpty) {
+          ref.read(busyDatesProvider.notifier).refreshBusyDates(
+                context,
+                widget.doctorCIN!,
+              );
         }
 
         // Navigate back with success result
@@ -356,6 +420,14 @@ class _DoctorRescheduleAppointmentState
                   duration: const Duration(seconds: 2),
                 ));
 
+                // Refresh busy dates after deletion
+                if (widget.doctorCIN != null && widget.doctorCIN!.isNotEmpty) {
+                  ref.read(busyDatesProvider.notifier).refreshBusyDates(
+                        context,
+                        widget.doctorCIN!,
+                      );
+                }
+
                 Future.delayed(const Duration(milliseconds: 300), () {
                   Navigator.of(context).pop(true); // Return to previous screen
                 });
@@ -369,6 +441,9 @@ class _DoctorRescheduleAppointmentState
 
   @override
   Widget build(BuildContext context) {
+    // Watch the busy dates state
+    final busyDatesState = ref.watch(busyDatesProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -395,10 +470,25 @@ class _DoctorRescheduleAppointmentState
         ],
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      body: isLoading
+      body: isLoading || busyDatesState.isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    busyDatesState.isLoading
+                        ? 'Loading available dates...'
+                        : 'Loading...',
+                    style: TextStyle(
+                      color: secondaryTextColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             )
           : SafeArea(
@@ -427,6 +517,34 @@ class _DoctorRescheduleAppointmentState
                         ),
                       ),
                       const SizedBox(height: 24),
+
+                      // Show error message if busy dates failed to load
+                      if (busyDatesState.errorMessage != null)
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.orange[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.orange[200]!),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.warning_rounded,
+                                  color: Colors.orange[700], size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Could not load busy dates. Some dates may not be available.',
+                                  style: TextStyle(
+                                    color: Colors.orange[700],
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
                       // Title field
                       _buildFormLabel('Appointment Title'),
@@ -493,12 +611,28 @@ class _DoctorRescheduleAppointmentState
                               ),
                               const SizedBox(width: 12),
                               Expanded(
-                                child: Text(
-                                  dateController.text,
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 10,
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      dateController.text,
+                                      style: TextStyle(
+                                        color: textColor,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    // Show if current date is busy
+                                    if (ref
+                                        .read(busyDatesProvider.notifier)
+                                        .isBusyDate(selectedDate))
+                                      Text(
+                                        'Selected date is not available',
+                                        style: TextStyle(
+                                          color: Colors.red[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                               Icon(Icons.calendar_today,
@@ -508,6 +642,7 @@ class _DoctorRescheduleAppointmentState
                         ),
                       ),
                       const SizedBox(height: 20),
+
                       // Start Time field
                       _buildFormLabel('Start Time'),
                       const SizedBox(height: 8),
@@ -528,7 +663,7 @@ class _DoctorRescheduleAppointmentState
                       const SizedBox(height: 20),
 
                       // Reason for rescheduling
-                      _buildFormLabel('Reason for Rescheduling '),
+                      _buildFormLabel('Reason for Rescheduling'),
                       const SizedBox(height: 8),
                       _buildTextFormField(
                         controller: reasonController,

@@ -2,7 +2,7 @@ import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/common/components/pop_up.dart';
 import 'package:CuraDocs/features/doctor/appointment/components/animated_fab.dart';
-import 'package:CuraDocs/app/features_api_repository/appointment/doctor/get_doctor_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/appointment/doctor/get/get_doctor_repository.dart';
 import 'package:CuraDocs/app/user/user_singleton.dart';
 import 'package:CuraDocs/app/user/user_synchronization.dart';
 import 'package:CuraDocs/features/doctor/patient_navigation_utility.dart';

@@ -1,8 +1,99 @@
+import 'package:CuraDocs/app/features_api_repository/appointment/patient/get/get_patient_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:CuraDocs/app/features_api_repository/appointment/patient/get_available_slot_provider.dart';
+import 'package:CuraDocs/app/features_api_repository/appointment/patient/get/available_slot_provider.dart';
 import 'package:CuraDocs/utils/snackbar.dart';
+
+// Import the busy dates provider
+final busyDatesProvider =
+    StateNotifierProvider<BusyDatesNotifier, BusyDatesState>((ref) {
+  return BusyDatesNotifier(GetPatientRepository());
+});
+
+class BusyDatesState {
+  final bool isLoading;
+  final List<DateTime> busyDates;
+  final String? errorMessage;
+
+  const BusyDatesState({
+    this.isLoading = false,
+    this.busyDates = const [],
+    this.errorMessage,
+  });
+
+  BusyDatesState copyWith({
+    bool? isLoading,
+    List<DateTime>? busyDates,
+    String? errorMessage,
+  }) {
+    return BusyDatesState(
+      isLoading: isLoading ?? this.isLoading,
+      busyDates: busyDates ?? this.busyDates,
+      errorMessage: errorMessage,
+    );
+  }
+}
+
+class BusyDatesNotifier extends StateNotifier<BusyDatesState> {
+  final GetPatientRepository _repository;
+
+  BusyDatesNotifier(this._repository) : super(const BusyDatesState());
+
+  Future<void> fetchBusyDates(
+    BuildContext context,
+    String doctorCIN,
+  ) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      final busyDatesStrings = await _repository.getBusyDates(
+        context,
+        doctorCIN,
+      );
+
+      if (busyDatesStrings.isNotEmpty) {
+        final List<DateTime> parsedBusyDates = [];
+
+        for (String dateStr in busyDatesStrings) {
+          try {
+            final DateTime parsedDate = DateTime.parse(dateStr);
+            parsedBusyDates.add(parsedDate);
+          } catch (e) {
+            debugPrint("Error parsing date '$dateStr': ${e.toString()}");
+          }
+        }
+
+        state = state.copyWith(
+          isLoading: false,
+          busyDates: parsedBusyDates,
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          busyDates: [],
+        );
+      }
+    } catch (e) {
+      debugPrint("Error in fetchBusyDates: ${e.toString()}");
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to fetch busy dates',
+      );
+    }
+  }
+
+  bool isBusyDate(DateTime date) {
+    return state.busyDates.any((busyDate) =>
+        busyDate.year == date.year &&
+        busyDate.month == date.month &&
+        busyDate.day == date.day);
+  }
+
+  void clearBusyDates() {
+    state = const BusyDatesState();
+  }
+}
 
 class BookAppointmentScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> doctorData;
@@ -39,9 +130,10 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   void initState() {
     super.initState();
 
-    // Initialize by fetching available slots for today
+    // Initialize by fetching available slots and busy dates for today
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchAvailableSlots(_selectedDay);
+      _fetchBusyDates();
     });
   }
 
@@ -67,6 +159,16 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
     }
   }
 
+  // Fetch busy dates for the doctor
+  void _fetchBusyDates() {
+    if (widget.doctorData['cin'] != null) {
+      ref.read(busyDatesProvider.notifier).fetchBusyDates(
+            context,
+            widget.doctorData['cin'],
+          );
+    }
+  }
+
   // Refresh available slots for the selected date
   void _refreshAvailableSlots() {
     if (widget.doctorData['cin'] != null) {
@@ -75,6 +177,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
             widget.doctorData['cin'],
             _selectedDay,
           );
+      // Also refresh busy dates
+      _fetchBusyDates();
     }
   }
 
@@ -151,7 +255,13 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       return true;
     }
 
-    // Check if it's a non-working day using the provider
+    // Check if it's a busy date
+    final busyDatesState = ref.watch(busyDatesProvider);
+    if (ref.read(busyDatesProvider.notifier).isBusyDate(day)) {
+      return true;
+    }
+
+    // Check if it's a non-working day using the existing provider
     return ref.read(availableSlotsProvider.notifier).isNonWorkingDay(day);
   }
 
@@ -159,6 +269,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   Widget build(BuildContext context) {
     // Listen to the available slots state
     final availableSlotsState = ref.watch(availableSlotsProvider);
+    final busyDatesState = ref.watch(busyDatesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -168,12 +279,15 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed:
-                availableSlotsState.isLoading ? null : _refreshAvailableSlots,
+                (availableSlotsState.isLoading || busyDatesState.isLoading)
+                    ? null
+                    : _refreshAvailableSlots,
           ),
         ],
       ),
-      body: availableSlotsState.isLoading &&
-              availableSlotsState.availableSlots.isEmpty
+      body: (availableSlotsState.isLoading &&
+                  availableSlotsState.availableSlots.isEmpty) ||
+              (busyDatesState.isLoading && busyDatesState.busyDates.isEmpty)
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -234,7 +348,41 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                               formatButtonVisible: false,
                               titleCentered: true,
                             ),
+                            calendarStyle: CalendarStyle(
+                              // Style for busy dates that are disabled
+                              disabledDecoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.3),
+                                shape: BoxShape.circle,
+                              ),
+                              disabledTextStyle: const TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
+                          // Legend for busy dates
+                          if (busyDatesState.busyDates.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withOpacity(0.3),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Busy dates (unavailable)',
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -249,6 +397,16 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
                           availableSlotsState.errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    )
+                  else if (busyDatesState.errorMessage != null)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          busyDatesState.errorMessage!,
                           style: const TextStyle(color: Colors.red),
                         ),
                       ),
@@ -268,10 +426,17 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                             availableSlotsState.isLoading
                                 ? const Center(
                                     child: CircularProgressIndicator())
-                                : availableSlotsState.availableSlots.isEmpty
-                                    ? const Center(
-                                        child: Text(
-                                            'No available slots for selected date'))
+                                : availableSlotsState.availableSlots.isEmpty ||
+                                        ref
+                                            .read(busyDatesProvider.notifier)
+                                            .isBusyDate(_selectedDay)
+                                    ? Center(
+                                        child: Text(ref
+                                                .read(
+                                                    busyDatesProvider.notifier)
+                                                .isBusyDate(_selectedDay)
+                                            ? 'Selected date is not available'
+                                            : 'No available slots for selected date'))
                                     : Wrap(
                                         spacing: 8.0,
                                         runSpacing: 8.0,

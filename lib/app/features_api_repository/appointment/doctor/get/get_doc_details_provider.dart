@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/app/features_api_repository/appointment/doctor/get_doctor_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/appointment/doctor/get/get_doctor_repository.dart';
 import 'package:CuraDocs/app/user/user_singleton.dart';
 import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:http/http.dart' as http;

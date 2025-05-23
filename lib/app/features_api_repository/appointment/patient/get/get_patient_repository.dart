@@ -276,4 +276,100 @@ class GetPatientRepository {
       return false;
     }
   }
+
+  // Get busy dates for a doctor
+  Future<List<String>> getBusyDates(
+    BuildContext context,
+    String doctorCIN,
+  ) async {
+    final String apiEndpoint = '$appointment/patient/get/busy_date/$doctorCIN';
+
+    debugPrint('Fetching busy dates for doctor: $doctorCIN');
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiEndpoint),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        // Handle different response formats
+        List<String> busyDatesList = [];
+        if (responseData is List) {
+          busyDatesList = responseData.cast<String>();
+        } else if (responseData is String) {
+          // If single string response, add it to list
+          busyDatesList = [responseData];
+        } else if (responseData is Map &&
+            responseData.containsKey('busy_dates')) {
+          // If response contains busy_dates key
+          final List<dynamic> dates = responseData['busy_dates'] ?? [];
+          busyDatesList = dates.cast<String>();
+        }
+
+        debugPrint('Successfully fetched ${busyDatesList.length} busy dates');
+        return busyDatesList;
+      } else {
+        debugPrint('Error: ${response.statusCode}, ${response.body}');
+        showSnackBar(
+            context: context,
+            message:
+                'Failed to fetch busy dates: ${jsonDecode(response.body)['message'] ?? 'Unknown error'}');
+        return [];
+      }
+    } catch (e) {
+      debugPrint("Error fetching busy dates: ${e.toString()}");
+      showSnackBar(
+          context: context,
+          message:
+              'Network error. Please check your connection and try again.');
+      return [];
+    }
+  }
+
+  // Refresh busy dates for a doctor
+  Future<bool> refreshBusyDates(
+    BuildContext context,
+    String doctorCIN,
+  ) async {
+    final String apiEndpoint = '$appointment/refresh/get_busy_date/$doctorCIN';
+
+    debugPrint('Refreshing busy dates for doctor: $doctorCIN');
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiEndpoint),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        debugPrint(
+            'Successfully refreshed busy dates: ${responseData.toString()}');
+        showSnackBar(
+            context: context, message: 'Busy dates refreshed successfully');
+        return true;
+      } else {
+        debugPrint('Error: ${response.statusCode}, ${response.body}');
+        showSnackBar(
+            context: context,
+            message:
+                'Failed to refresh busy dates: ${jsonDecode(response.body)['message'] ?? 'Unknown error'}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Error refreshing busy dates: ${e.toString()}");
+      showSnackBar(
+          context: context,
+          message:
+              'Network error. Please check your connection and try again.');
+      return false;
+    }
+  }
 }

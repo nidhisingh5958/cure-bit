@@ -1,10 +1,124 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/app/features_api_repository/appointment/patient/post_patient_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/appointment/patient/get/get_patient_repository.dart';
 import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+
+class BusyDatesState {
+  final bool isLoading;
+  final List<DateTime> busyDates;
+  final String? errorMessage;
+
+  const BusyDatesState({
+    this.isLoading = false,
+    this.busyDates = const [],
+    this.errorMessage,
+  });
+
+  BusyDatesState copyWith({
+    bool? isLoading,
+    List<DateTime>? busyDates,
+    String? errorMessage,
+  }) {
+    return BusyDatesState(
+      isLoading: isLoading ?? this.isLoading,
+      busyDates: busyDates ?? this.busyDates,
+      errorMessage: errorMessage,
+    );
+  }
+}
+
+class BusyDatesNotifier extends StateNotifier<BusyDatesState> {
+  final GetPatientRepository _repository;
+
+  BusyDatesNotifier(this._repository) : super(const BusyDatesState());
+
+  Future<void> fetchBusyDates(
+    BuildContext context,
+    String doctorCIN,
+  ) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final busyDatesStrings = await _repository.getBusyDates(
+        context,
+        doctorCIN,
+      );
+      if (busyDatesStrings.isNotEmpty) {
+        final List<DateTime> parsedBusyDates = [];
+        for (String dateStr in busyDatesStrings) {
+          try {
+            final DateTime parsedDate = DateTime.parse(dateStr);
+            parsedBusyDates.add(parsedDate);
+          } catch (e) {
+            debugPrint("Error parsing date '$dateStr': ${e.toString()}");
+          }
+        }
+        state = state.copyWith(
+          isLoading: false,
+          busyDates: parsedBusyDates,
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          busyDates: [],
+        );
+      }
+    } catch (e) {
+      debugPrint("Error in fetchBusyDates: ${e.toString()}");
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to fetch busy dates',
+      );
+    }
+  }
+
+  Future<void> refreshBusyDates(
+    BuildContext context,
+    String doctorCIN,
+  ) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final success = await _repository.refreshBusyDates(
+        context,
+        doctorCIN,
+      );
+      if (success) {
+        await fetchBusyDates(context, doctorCIN);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to refresh busy dates',
+        );
+      }
+    } catch (e) {
+      debugPrint("Error in refreshBusyDates: ${e.toString()}");
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Error refreshing busy dates',
+      );
+    }
+  }
+
+  bool isBusyDate(DateTime date) {
+    return state.busyDates.any((busyDate) =>
+        busyDate.year == date.year &&
+        busyDate.month == date.month &&
+        busyDate.day == date.day);
+  }
+
+  void clearBusyDates() {
+    state = const BusyDatesState();
+  }
+}
+
+// Create the provider
+final busyDatesProvider =
+    StateNotifierProvider<BusyDatesNotifier, BusyDatesState>((ref) {
+  return BusyDatesNotifier(GetPatientRepository());
+});
 
 class PatientRescheduleAppointment extends ConsumerStatefulWidget {
   final Map<String, dynamic>? appointment;
@@ -22,15 +136,12 @@ class PatientRescheduleAppointment extends ConsumerStatefulWidget {
 class _PatientRescheduleAppointmentState
     extends ConsumerState<PatientRescheduleAppointment> {
   late TextEditingController titleController;
-
   late TextEditingController startTimeController;
-
   late TextEditingController dateController;
-
-  // API required controllers
   late TextEditingController reasonController;
-  // String appointmentId = '';
+
   String appointmentId = 'ghsdjhgs24';
+  String? doctorCIN; // To store doctor's CIN for busy dates
   Color selectedColor = Colors.blue;
   DateTime selectedDate = DateTime.now();
 
@@ -43,7 +154,7 @@ class _PatientRescheduleAppointmentState
 
   List<Map<String, dynamic>> appointments = [];
   bool isLoading = false;
-  bool isSubmitting = false; // Track submission state
+  bool isSubmitting = false;
   final _formKey = GlobalKey<FormState>();
 
   // Instance of PatientAppointmentRepository
@@ -53,25 +164,20 @@ class _PatientRescheduleAppointmentState
   @override
   void initState() {
     super.initState();
-
     // Initialize all controllers first
     titleController = TextEditingController();
-
     startTimeController = TextEditingController();
-
-    reasonController = TextEditingController(); // Initialize reason controller
+    reasonController = TextEditingController();
     dateController = TextEditingController(
         text: DateFormat('MMMM d, yyyy').format(selectedDate));
 
     // Then populate with appointment data if available
     if (widget.appointment != null) {
       final appointment = widget.appointment!;
-
-      // appointmentId = appointment['id'] ?? '';
       appointmentId = 'ghsdjhgs24';
-
+      doctorCIN = appointment['doctorCIN'] ??
+          appointment['doctor_cin']; // Get doctor CIN
       titleController.text = appointment['title'] ?? '';
-
       startTimeController.text = appointment['startTime'] ?? '';
 
       if (appointment['date'] != null) {
@@ -88,20 +194,33 @@ class _PatientRescheduleAppointmentState
       }
     }
 
-    // Load appointments (would typically come from a service or provider)
+    // Load appointments and busy dates
     _loadAppointments();
+
+    // Fetch busy dates if doctor CIN is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (doctorCIN != null && doctorCIN!.isNotEmpty) {
+        _fetchBusyDates();
+      }
+    });
+  }
+
+  void _fetchBusyDates() {
+    if (doctorCIN != null && doctorCIN!.isNotEmpty) {
+      ref.read(busyDatesProvider.notifier).fetchBusyDates(
+            context,
+            doctorCIN!,
+          );
+    }
   }
 
   void _loadAppointments() {
-    // Simulate loading appointments from a data source
     setState(() {
       isLoading = true;
     });
 
-    // Here you would typically fetch from API or local storage
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
-        // Mock data - in a real app this would come from a data source
         if (appointments.isEmpty) {
           appointments = [];
         }
@@ -119,12 +238,28 @@ class _PatientRescheduleAppointmentState
     super.dispose();
   }
 
+  // Check if a date should be disabled (past dates or busy dates)
+  bool _isDateDisabled(DateTime date) {
+    // Disable past dates (except today)
+    if (date.isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+      return true;
+    }
+    // Check if it's a busy date
+    final busyDatesState = ref.watch(busyDatesProvider);
+    return ref.read(busyDatesProvider.notifier).isBusyDate(date);
+  }
+
   Future<void> _selectDate(BuildContext context) async {
+    final busyDatesState = ref.watch(busyDatesProvider);
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
+      selectableDayPredicate: (DateTime day) {
+        return !_isDateDisabled(day);
+      },
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -139,11 +274,25 @@ class _PatientRescheduleAppointmentState
         );
       },
     );
+
     if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        dateController.text = DateFormat('MMMM d, yyyy').format(selectedDate);
-      });
+      // Double-check if the selected date is not busy
+      if (!ref.read(busyDatesProvider.notifier).isBusyDate(picked)) {
+        setState(() {
+          selectedDate = picked;
+          dateController.text = DateFormat('MMMM d, yyyy').format(selectedDate);
+        });
+      } else {
+        // Show message if somehow a busy date was selected
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+                'Selected date is not available. Please choose another date.'),
+            backgroundColor: Colors.red[700],
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 
@@ -200,6 +349,19 @@ class _PatientRescheduleAppointmentState
 
   void _saveAppointment() async {
     if (_formKey.currentState!.validate()) {
+      // Check if selected date is busy before saving
+      if (ref.read(busyDatesProvider.notifier).isBusyDate(selectedDate)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+                'Selected date is not available. Please choose another date.'),
+            backgroundColor: Colors.red[700],
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+
       // Provide haptic feedback
       HapticFeedback.lightImpact();
 
@@ -211,188 +373,121 @@ class _PatientRescheduleAppointmentState
       // Format date for API (YYYY-MM-DD)
       final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
 
-      // Format time for API (HH:MM) - 24-hour format
-      String apiTimeFormat = '';
-      if (startTimeController.text.isNotEmpty) {
-        try {
-          final timeParts = startTimeController.text.split(':');
-          int hour = int.parse(timeParts[0]);
-          int minute = int.parse(timeParts[1].split(' ')[0]);
-          String period = timeParts[1].split(' ')[1].toUpperCase();
+      try {
+        // Get user info from provider
+        final userInfo = ref.read(userProvider);
+        final patientCIN = userInfo?.cin ?? '';
 
-          // Convert to 24-hour format
-          if (period == 'PM' && hour < 12) hour += 12;
-          if (period == 'AM' && hour == 12) hour = 0;
-
-          apiTimeFormat =
-              '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-        } catch (e) {
-          // Fallback to original format if parsing fails
-          debugPrint('Error parsing time: ${e.toString()}');
-          apiTimeFormat = startTimeController.text;
-        }
-      }
-      // Check if appointment ID is available
-      if (appointmentId.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text('Cannot reschedule: Missing appointment ID'),
-          backgroundColor: Colors.red[700],
-          behavior: SnackBarBehavior.floating,
-        ));
-        setState(() {
-          isSubmitting = false;
-        });
-        return;
-      }
-
-      final success = await _PatientappointmentRepository.rescheduleAppointment(
-        context,
-        appointmentId = '13456fAS',
-        formattedDate,
-        apiTimeFormat,
-        reasonController.text.trim(),
-        ref.read(userProvider)?.role ?? '',
-      );
-
-      setState(() {
-        isSubmitting = false;
-      });
-
-      if (success) {
+        // Prepare appointment data
         final appointmentData = {
-          'id': appointmentId,
-          'title': titleController.text,
-          'startTime': startTimeController.text,
-          'date': dateController.text,
-          'color': selectedColor,
+          'appointmentId': appointmentId,
+          'title': titleController.text.trim(),
+          'date': formattedDate,
+          'startTime': startTimeController.text.trim(),
+          'reason': reasonController.text.trim(),
+          'doctorCIN': doctorCIN ?? '',
+          'patientCIN': patientCIN,
         };
 
-        // Update local state if needed
-        if (widget.appointment != null) {
-          final index =
-              appointments.indexWhere((a) => a['id'] == appointmentData['id']);
-          if (index != -1) {
-            setState(() {
-              appointments[index] = appointmentData;
-            });
-          }
-        }
+        // Call the API to reschedule appointment
+        final success =
+            await _PatientappointmentRepository.rescheduleAppointment(
+          context,
+          appointmentData['appointmentId'] ?? '',
+          appointmentData['title'] ?? '',
+          appointmentData['date'] ?? '',
+          appointmentData['startTime'] ?? '',
+          appointmentData['reason'] ?? '',
+        );
 
-        // Navigate back with success result
-        Future.delayed(const Duration(milliseconds: 300), () {
+        if (success) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Appointment rescheduled successfully!'),
+              backgroundColor: Colors.green[700],
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+
+          // Refresh busy dates to reflect the change
+          if (doctorCIN != null && doctorCIN!.isNotEmpty) {
+            await ref.read(busyDatesProvider.notifier).refreshBusyDates(
+                  context,
+                  doctorCIN!,
+                );
+          }
+
+          // Navigate back with success result
           Navigator.of(context).pop(true);
+        } else {
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                  'Failed to reschedule appointment. Please try again.'),
+              backgroundColor: Colors.red[700],
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error rescheduling appointment: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('An error occurred. Please try again.'),
+            backgroundColor: Colors.red[700],
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      } finally {
+        setState(() {
+          isSubmitting = false;
         });
       }
     }
   }
 
-  void _deleteAppointment() {
-    if (widget.appointment == null) return;
-
-    // Provide haptic feedback
-    HapticFeedback.mediumImpact();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Row(
-            children: [
-              Icon(Icons.warning_amber_rounded,
-                  color: Colors.red[700], size: 28),
-              const SizedBox(width: 8),
-              const Text('Delete Appointment'),
-            ],
-          ),
-          content: const Text(
-            'Are you sure you want to delete this appointment? This action cannot be undone.',
-            style: TextStyle(fontSize: 15),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: TextButton.styleFrom(
-                foregroundColor: secondaryTextColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              ),
-              child: const Text('Cancel', style: TextStyle(fontSize: 15)),
-            ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.delete_outline, size: 18),
-              label: const Text('Delete', style: TextStyle(fontSize: 15)),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.red[700],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              ),
-              onPressed: () {
-                setState(() {
-                  appointments
-                      .removeWhere((a) => a['id'] == widget.appointment!['id']);
-                });
-
-                Navigator.of(context).pop(); // Close dialog
-
-                // Show deletion confirmation
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: const Text('Appointment deleted'),
-                  backgroundColor: Colors.red[700],
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  duration: const Duration(seconds: 2),
-                ));
-
-                Future.delayed(const Duration(milliseconds: 300), () {
-                  Navigator.of(context).pop(true); // Return to previous screen
-                });
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final busyDatesState = ref.watch(busyDatesProvider);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: surfaceColor,
       appBar: AppBar(
+        backgroundColor: surfaceColor,
         elevation: 0,
-        backgroundColor: Colors.white,
-        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: textColor,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text(
           'Reschedule Appointment',
           style: TextStyle(
             color: textColor,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
-            fontSize: 16,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: textColor, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(Icons.delete_outline, color: Colors.red[700], size: 24),
-            onPressed: _deleteAppointment,
-          ),
+          if (busyDatesState.isLoading)
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                ),
+              ),
+            ),
         ],
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: isLoading
           ? Center(
@@ -400,238 +495,390 @@ class _PatientRescheduleAppointmentState
                 valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
               ),
             )
-          : SafeArea(
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
               child: Form(
                 key: _formKey,
-                child: SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Header image or icon
-                      Center(
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.edit_calendar_rounded,
-                            size: 48,
-                            color: primaryColor,
-                          ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Original Appointment Info Card
+                    if (widget.appointment != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey[200]!),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Current Appointment',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${widget.appointment!['title'] ?? 'N/A'}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                            Text(
+                              '${widget.appointment!['date'] ?? 'N/A'} at ${widget.appointment!['startTime'] ?? 'N/A'}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 24),
+                    ],
 
-                      // Title field
-                      _buildFormLabel('Appointment Title'),
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: titleController,
-                        hintText: 'Enter appointment title',
-                        prefixIcon: Icons.event_note,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter a title';
-                          }
-                          return null;
-                        },
+                    // Title Field
+                    Text(
+                      'Appointment Title',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
                       ),
-                      const SizedBox(height: 20),
-
-                      // Date field with calendar
-                      _buildFormLabel('Date'),
-                      const SizedBox(height: 8),
-                      InkWell(
-                        onTap: () => _selectDate(context),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              // Calendar Preview
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: primaryColor.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      DateFormat('MMM')
-                                          .format(selectedDate)
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                        color: primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      DateFormat('dd').format(selectedDate),
-                                      style: TextStyle(
-                                        color: primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  dateController.text,
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ),
-                              Icon(Icons.calendar_today,
-                                  color: black.withOpacity(0.5)),
-                            ],
-                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: titleController,
+                      style: TextStyle(color: textColor),
+                      decoration: InputDecoration(
+                        hintText: 'Enter appointment title',
+                        hintStyle: TextStyle(color: secondaryTextColor),
+                        filled: true,
+                        fillColor: surfaceColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: primaryColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      // Start Time field
-                      _buildFormLabel('Start Time'),
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: startTimeController,
-                        hintText: 'Select start time',
-                        prefixIcon: Icons.access_time,
-                        readOnly: true,
-                        onTap: () => _selectTime(context, startTimeController),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please select a start time';
-                          }
-                          return null;
-                        },
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter appointment title';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Date Field
+                    Text(
+                      'Date',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
                       ),
-
-                      const SizedBox(height: 20),
-
-                      // Reason for rescheduling
-                      _buildFormLabel('Reason for Rescheduling '),
-                      const SizedBox(height: 8),
-                      _buildTextFormField(
-                        controller: reasonController,
-                        hintText: 'Why are you rescheduling this appointment?',
-                        prefixIcon: Icons.question_answer_outlined,
-                        maxLines: 2,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please provide a reason for rescheduling';
-                          }
-                          return null;
-                        },
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: dateController,
+                      readOnly: true,
+                      style: TextStyle(color: textColor),
+                      decoration: InputDecoration(
+                        hintText: 'Select date',
+                        hintStyle: TextStyle(color: secondaryTextColor),
+                        filled: true,
+                        fillColor: surfaceColor,
+                        suffixIcon: Icon(
+                          Icons.calendar_today,
+                          color: primaryColor,
+                          size: 20,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: primaryColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                       ),
-                      const SizedBox(height: 20),
+                      onTap: () => _selectDate(context),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please select a date';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
 
-                      // Save button
-                      ElevatedButton(
+                    // Time Field
+                    Text(
+                      'Time',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: startTimeController,
+                      readOnly: true,
+                      style: TextStyle(color: textColor),
+                      decoration: InputDecoration(
+                        hintText: 'Select time',
+                        hintStyle: TextStyle(color: secondaryTextColor),
+                        filled: true,
+                        fillColor: surfaceColor,
+                        suffixIcon: Icon(
+                          Icons.access_time,
+                          color: primaryColor,
+                          size: 20,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: primaryColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                      ),
+                      onTap: () => _selectTime(context, startTimeController),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please select a time';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Reason Field
+                    Text(
+                      'Reason for Rescheduling',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: reasonController,
+                      maxLines: 3,
+                      style: TextStyle(color: textColor),
+                      decoration: InputDecoration(
+                        hintText: 'Enter reason for rescheduling (optional)',
+                        hintStyle: TextStyle(color: secondaryTextColor),
+                        filled: true,
+                        fillColor: surfaceColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: primaryColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Save Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
                         onPressed: isSubmitting ? null : _saveAppointment,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          disabledBackgroundColor: Colors.grey,
+                          elevation: 0,
                         ),
                         child: isSubmitting
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
-                                  color: Colors.white,
                                   strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 ),
                               )
                             : Text(
                                 'Reschedule Appointment',
-                                style: const TextStyle(
-                                    fontSize: 16, color: Colors.white),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                       ),
-                      const SizedBox(height: 20),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Busy dates info
+                    if (busyDatesState.busyDates.isNotEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.orange[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.orange[200]!),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  color: Colors.orange[700],
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Doctor\'s Busy Dates',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.orange[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'The following dates are not available for booking:',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.orange[600],
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              children: busyDatesState.busyDates
+                                  .take(5) // Show only first 5 dates
+                                  .map((date) => Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange[100],
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          DateFormat('MMM d').format(date),
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.orange[700],
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                            ),
+                            if (busyDatesState.busyDates.length > 5)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  '+ ${busyDatesState.busyDates.length - 5} more dates',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.orange[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     ],
-                  ),
+
+                    // Error message for busy dates
+                    if (busyDatesState.errorMessage != null) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.red[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.red[200]!),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.red[700],
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                busyDatesState.errorMessage!,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.red[700],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
-    );
-  }
-
-  Widget _buildFormLabel(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: textColor,
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-  }
-
-  Widget _buildTextFormField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData prefixIcon,
-    bool readOnly = false,
-    Function()? onTap,
-    String? Function(String?)? validator,
-    int maxLines = 1,
-  }) {
-    return TextFormField(
-      controller: controller,
-      readOnly: readOnly,
-      onTap: onTap,
-      maxLines: maxLines,
-      validator: validator,
-      decoration: InputDecoration(
-        hintText: hintText,
-        prefixIcon: Icon(prefixIcon, color: primaryColor),
-        filled: true,
-        fillColor: Colors.grey[50],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primaryColor),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.red[400]!),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-      style: TextStyle(
-        color: textColor,
-        fontSize: 14,
-      ),
     );
   }
 }
