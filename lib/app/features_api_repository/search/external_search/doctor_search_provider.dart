@@ -4,7 +4,7 @@ import 'package:CuraDocs/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 
 final class Doctor {
-  final String id;
+  final String cin;
   final String name;
   final String specialty;
   final String location;
@@ -17,7 +17,7 @@ final class Doctor {
   final double fee;
 
   Doctor({
-    required this.id,
+    required this.cin,
     required this.name,
     required this.specialty,
     required this.location,
@@ -32,7 +32,7 @@ final class Doctor {
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
-      id: json['id']?.toString() ?? '',
+      cin: json['cin']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       specialty: json['specialty']?.toString() ??
           json['specialization']?.toString() ??
@@ -241,7 +241,7 @@ class DoctorSearchNotifier extends StateNotifier<DoctorSearchState> {
   List<Doctor> _getMockDoctors() {
     return [
       Doctor(
-        id: '1',
+        cin: '1AS47',
         name: 'Dr. John Doe',
         specialty: 'Dentist',
         location: 'Delhi, India',
@@ -254,7 +254,7 @@ class DoctorSearchNotifier extends StateNotifier<DoctorSearchState> {
         fee: 1500,
       ),
       Doctor(
-        id: '2',
+        cin: '2AFG#%',
         name: 'Dr. Jane Smith',
         specialty: 'Cardiologist',
         location: 'Mumbai, India',

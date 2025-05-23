@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
 import 'package:http/http.dart' as http;
 
 class PatientSearchRepository {
-  final String baseUrl = 'http://127.0.0.1';
+  final String baseUrl = searchPatient_api;
 
   /// Search for patients based on query and doctor's CIN
   ///

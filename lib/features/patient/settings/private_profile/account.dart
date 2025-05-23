@@ -129,7 +129,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
   }
 
   Widget _buildProfileHeader(double imageSize, Map<String, dynamic> profile) {
-    final String username = profile['username'] ?? '@livysheleina';
+    final String cin = profile['cin'] ?? '@livysheleina';
     final String name = profile['name'] ?? 'Livy Sheleina';
     final String location = profile['location'] ?? 'New York';
     final String joinDate = profile['joined_date'] ?? 'August 2023';
@@ -195,7 +195,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
 
           // PersonalProfilename handle
           Text(
-            username,
+            cin,
             style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,

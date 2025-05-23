@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -94,7 +96,7 @@ final doctorCINProvider = Provider<String>((ref) {
 
 // Repository for fetching previous patients data
 class DoctorPreviousPatientsRepository {
-  final String baseUrl = 'https://api.curadocs.com/api/v1';
+  final String baseUrl = 'appointment_api'; // Replace with actual base URL
 
   // Fetch previous patients with pagination
   Future<Map<String, dynamic>> getPreviousPatients(
@@ -108,39 +110,38 @@ class DoctorPreviousPatientsRepository {
       await Future.delayed(Duration(seconds: 1)); // Simulate network delay
 
       // This is a mock response - replace with actual API integration
-      final mockPatients = List.generate(
-        page == 1 ? 10 : (page == 2 ? 10 : 5), // Total 25 mock patients
-        (index) {
-          final actualIndex = (page - 1) * limit + index;
-          return {
-            'id': 'PATIENT${100 + actualIndex}',
-            'name': 'Patient ${actualIndex + 1}',
-            'image': 'images/doctor.jpg',
-            'symptoms': actualIndex % 3 == 0
-                ? 'Fever'
-                : (actualIndex % 3 == 1 ? 'Headache' : 'Cold'),
-            'age': '${20 + (actualIndex % 60)}',
-            'gender': actualIndex % 2 == 0 ? 'Male' : 'Female',
-            'lastVisit': actualIndex % 4 == 0
-                ? 'Today'
-                : (actualIndex % 4 == 1
-                    ? 'Yesterday'
-                    : (actualIndex % 4 == 2 ? '2 days ago' : '1 week ago')),
-            'isFavorite': actualIndex % 5 == 0,
-          };
-        },
-      );
+      // final mockPatients = List.generate(
+      //   page == 1 ? 10 : (page == 2 ? 10 : 5), // Total 25 mock patients
+      //   (index) {
+      //     final actualIndex = (page - 1) * limit + index;
+      //     return {
+      //       'id': 'PATIENT${100 + actualIndex}',
+      //       'name': 'Patient ${actualIndex + 1}',
+      //       'image': 'images/doctor.jpg',
+      //       'symptoms': actualIndex % 3 == 0
+      //           ? 'Fever'
+      //           : (actualIndex % 3 == 1 ? 'Headache' : 'Cold'),
+      //       'age': '${20 + (actualIndex % 60)}',
+      //       'gender': actualIndex % 2 == 0 ? 'Male' : 'Female',
+      //       'lastVisit': actualIndex % 4 == 0
+      //           ? 'Today'
+      //           : (actualIndex % 4 == 1
+      //               ? 'Yesterday'
+      //               : (actualIndex % 4 == 2 ? '2 days ago' : '1 week ago')),
+      //       'isFavorite': actualIndex % 5 == 0,
+      //     };
+      //   },
+      // );
 
-      return {
-        'success': true,
-        'data': mockPatients,
-        'hasMore': page < 3, // Mock only has 3 pages
-      };
+      // return {
+      //   'success': true,
+      //   'data': mockPatients,
+      //   'hasMore': page < 3, // Mock only has 3 pages
+      // };
 
-      // Actual API implementation would look like:
-      /*
       final response = await http.get(
-        Uri.parse('$baseUrl/doctors/$doctorCIN/patients?page=$page&limit=$limit'),
+        Uri.parse(
+            '$baseUrl/doctors/$doctorCIN/patients?page=$page&limit=$limit'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -153,7 +154,6 @@ class DoctorPreviousPatientsRepository {
           'message': 'Failed to load patients: ${response.statusCode}',
         };
       }
-      */
     } catch (e) {
       return {
         'success': false,
@@ -166,18 +166,15 @@ class DoctorPreviousPatientsRepository {
   Future<bool> refreshPatientCache(String doctorCIN) async {
     try {
       // Mock implementation
-      await Future.delayed(Duration(seconds: 1));
-      return true;
+      // await Future.delayed(Duration(seconds: 1));
+      // return true;
 
-      // Actual implementation would be:
-      /*
       final response = await http.post(
         Uri.parse('$baseUrl/doctors/$doctorCIN/patients/refresh'),
         headers: {'Content-Type': 'application/json'},
       );
-      
+
       return response.statusCode == 200;
-      */
     } catch (e) {
       debugPrint('Error refreshing patient cache: $e');
       return false;

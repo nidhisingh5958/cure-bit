@@ -49,13 +49,18 @@ class _EditProfileState extends State<EditPublicProfile> {
   bool _isProfileLoaded = false;
   String? _imagePath;
 
+  Future<void> _loadProfileData() async {
+    setState(() {
+      _isProfileLoaded = true;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     if (widget.cin != null) {
       _cinController.text = widget.cin!;
-      // We're not loading the profile data since the repository doesn't provide
-      // a method to fetch the profile
+      _loadProfileData();
     }
   }
 

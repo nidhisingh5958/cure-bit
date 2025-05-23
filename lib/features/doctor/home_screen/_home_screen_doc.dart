@@ -1,22 +1,25 @@
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
-class DoctorHomeScreen extends StatefulWidget {
+class DoctorHomeScreen extends ConsumerStatefulWidget {
   const DoctorHomeScreen({super.key});
 
   @override
-  State<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
+  ConsumerState<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
 }
 
-class _DoctorHomeScreenState extends State<DoctorHomeScreen>
+class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
     with SingleTickerProviderStateMixin {
+  late String name;
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -112,6 +115,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
 
   @override
   void initState() {
+    name = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
     super.initState();
     _selectedDay = _focusedDay;
     _tabController = TabController(length: 3, vsync: this);
@@ -273,7 +277,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -284,7 +288,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                         children: [
                           TextSpan(text: 'Hello, '),
                           TextSpan(
-                            text: 'Dr. Sahil',
+                            text: 'Dr. $name',
                             style: TextStyle(
                                 fontWeight: FontWeight.normal, color: black),
                           ),

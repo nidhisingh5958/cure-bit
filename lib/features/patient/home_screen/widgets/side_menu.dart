@@ -1,4 +1,5 @@
 import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,17 @@ class SideMenu extends ConsumerStatefulWidget {
 }
 
 class _SideMenuState extends ConsumerState<SideMenu> {
+  late String name;
+  late String email;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(userProvider);
+    name = user?.name ?? '';
+    email = user?.email ?? '';
+  }
+
   Future<void> _handleLogOut() async {
     try {
       final logOutController = ref.read(logoutControllerProvider);
@@ -78,8 +90,8 @@ class _SideMenuState extends ConsumerState<SideMenu> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "User",
+              Text(
+                "$name",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 22,
@@ -87,7 +99,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
                 ),
               ),
               Text(
-                "user@gmail.com",
+                "$email",
                 style: TextStyle(
                   fontSize: 14,
                   color: grey600,

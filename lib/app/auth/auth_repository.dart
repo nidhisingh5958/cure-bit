@@ -119,7 +119,7 @@ class AuthRepository {
     }
   }
 
-  // sign in with password
+// sign in with password
   Future<void> signInWithPass(
     BuildContext context,
     String input,
@@ -236,6 +236,7 @@ class AuthRepository {
     }
   }
 
+// sign in with OTP
   // send OTP with retry logic
   Future<void> sendOtp(
     BuildContext context,
@@ -408,7 +409,6 @@ class AuthRepository {
       // First check if we have the hashed OTP to verify against
       if (hashedOtp.isEmpty) {
         debugPrint("No hashed OTP found, falling back to API verification");
-
         await _verifyOtpWithApi(context, identifier, otp, role, notifier);
         return;
       }
@@ -418,29 +418,8 @@ class AuthRepository {
       debugPrint('OTP verification result: $isMatch');
 
       if (isMatch) {
-        notifier.setAuthenticated(true, role);
-
-        final UserModel user = UserModel(
-          cin: '',
-          name: '',
-          email: _isValidEmail(identifier) ? identifier : '',
-          token: '',
-          role: role,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-
-        // Save the user data
-        await _userNotifier.setUser(user);
-
-        showSnackBar(context: context, message: 'Login successful');
-
-        // Router will redirect to appropriate home screen based on role
-        if (role == 'Doctor') {
-          context.goNamed(RouteConstants.doctorHome);
-        } else {
-          context.goNamed(RouteConstants.home);
-        }
+        // Instead of just setting auth state, make API call to get tokens
+        await _loginWithVerifiedOtp(context, identifier, otp, role, notifier);
       } else {
         showSnackBar(context: context, message: 'Invalid or expired OTP');
       }
@@ -617,49 +596,161 @@ class AuthRepository {
     return false;
   }
 
-  // Future<bool> verifyResetOtp(
-  //   BuildContext context,
-  //   String identifier,
-  //   String plainOtp,
-  // ) async {
-  //   try {
-  //     debugPrint('Verifying reset OTP for: $identifier');
-  //     debugPrint('Plain OTP: $plainOtp');
+  Future<void> _loginWithVerifiedOtp(
+    BuildContext context,
+    String identifier,
+    String otp,
+    String role,
+    AuthStateNotifier notifier,
+  ) async {
+    try {
+      final String apiEndpoint = role == 'Doctor'
+          ? (_isValidEmail(identifier)
+              ? verifyLoginWithOtp_api_email_doc
+              : verifyLoginWithOtp_api_phone_doc)
+          : (_isValidEmail(identifier)
+              ? verifyLoginWithOtp_api_email
+              : verifyLoginWithOtp_api_phone);
 
-  //     // Retrieve the stored hashed OTP
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final storedHashedOtp = prefs.getString('hashedOtp') ?? '';
+      Map<String, dynamic> loginPayload = {};
 
-  //     if (storedHashedOtp.isEmpty) {
-  //       showSnackBar(
-  //           context: context,
-  //           message: 'No OTP was sent. Please request OTP first');
-  //       return false;
-  //     }
+      if (_isValidEmail(identifier)) {
+        loginPayload = {
+          'email': identifier,
+          'otp': otp,
+        };
+      } else if (_isValidPhoneNumber(identifier)) {
+        loginPayload = {
+          'phone_number': identifier,
+          'otp': otp,
+        };
+      }
 
-  //     debugPrint('Stored hashed OTP: $storedHashedOtp');
+      Response response = await post(
+        Uri.parse(apiEndpoint),
+        body: jsonEncode(loginPayload),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 10));
 
-  //     // Use the verify function to check the OTP
-  //     bool isMatch = await verify(storedHashedOtp, plainOtp);
-  //     debugPrint('OTP match result: $isMatch');
+      debugPrint('OTP Login response: ${response.statusCode}');
+      debugPrint('Response body: ${response.body}');
 
-  //     if (isMatch) {
-  //       debugPrint('OTP verified successfully');
-  //       showSnackBar(context: context, message: 'OTP verified successfully');
-  //       return true;
-  //     } else {
-  //       showSnackBar(context: context, message: 'Invalid OTP');
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Verify reset OTP error: ${e.toString()}");
-  //     showSnackBar(
-  //         context: context, message: 'Verification failed. Please try again.');
-  //     return false;
-  //   }
-  // }
+      if (response.statusCode == 200) {
+        try {
+          Map<String, dynamic> responseData = jsonDecode(response.body);
 
-  // normal sign up
+          if (responseData.containsKey('error')) {
+            showSnackBar(context: context, message: responseData['error']);
+            return;
+          }
+
+          // Extract tokens from response
+          final String? accessToken = responseData['access_token'];
+          final String? refreshToken = responseData['refresh_token'];
+          final int? expiresIn = responseData['expires_in'];
+
+          if (accessToken != null && refreshToken != null) {
+            // Save tokens properly
+            await _tokenRepository.saveTokens(
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              accessTokenDuration: Duration(seconds: expiresIn ?? 3600),
+              userRole: role,
+            );
+
+            // Create and store user model
+            UserModel user;
+            if (responseData.containsKey('user')) {
+              final userData = responseData['user'];
+              user = UserModel(
+                cin: userData['cin'] ?? '',
+                name: userData['name'] ??
+                    '${userData['first_name'] ?? ''} ${userData['last_name'] ?? ''}'
+                        .trim(),
+                email: userData['email'] ??
+                    (_isValidEmail(identifier) ? identifier : ''),
+                token: accessToken,
+                role: role,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              );
+            } else {
+              // Create minimal user model
+              user = UserModel(
+                cin: '',
+                name: 'User',
+                email: _isValidEmail(identifier) ? identifier : '',
+                token: accessToken,
+                role: role,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              );
+            }
+
+            // Save user data
+            await _userNotifier.setUser(user);
+
+            // Set authentication state
+            notifier.setAuthenticated(true, role);
+            notifier.setAuthToken(accessToken);
+
+            showSnackBar(context: context, message: 'Login successful');
+
+            // Navigate based on role
+            if (role == 'Doctor') {
+              context.goNamed(RouteConstants.doctorHome);
+            } else {
+              context.goNamed(RouteConstants.home);
+            }
+          } else {
+            // Fallback for responses without tokens (older API versions)
+            _handleLegacyOtpLogin(context, identifier, role, notifier);
+          }
+        } catch (e) {
+          showSnackBar(
+              context: context, message: 'Invalid response from server');
+        }
+      } else {
+        showSnackBar(context: context, message: 'Invalid or expired OTP');
+      }
+    } catch (e) {
+      debugPrint("OTP login error: ${e.toString()}");
+      showSnackBar(
+          context: context, message: 'Login failed. Please try again.');
+    }
+  }
+
+// Handle legacy OTP login (for backwards compatibility)
+  void _handleLegacyOtpLogin(
+    BuildContext context,
+    String identifier,
+    String role,
+    AuthStateNotifier notifier,
+  ) async {
+    // Create minimal user model for legacy systems
+    final user = UserModel(
+      cin: '',
+      name: 'User',
+      email: _isValidEmail(identifier) ? identifier : '',
+      token: '',
+      role: role,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    await _userNotifier.setUser(user);
+    notifier.setAuthenticated(true, role);
+
+    showSnackBar(context: context, message: 'Login successful');
+
+    if (role == 'Doctor') {
+      context.goNamed(RouteConstants.doctorHome);
+    } else {
+      context.goNamed(RouteConstants.home);
+    }
+  }
+
+// normal sign up
   Future<UserModel> signUp(
     BuildContext context,
     String firstName,
@@ -677,10 +768,9 @@ class AuthRepository {
     debugPrint('Email: $email');
     debugPrint('Country Code: $countrycode');
     debugPrint('Phone Number: $phonenumber');
-    debugPrint('Password: $password');
     debugPrint('Role: $role');
+
     try {
-      // Select the appropriate API endpoint based on role
       final String apiEndpoint = role == 'Doctor' ? signup_api_doc : signup_api;
 
       final Map<String, dynamic> payload = {
@@ -692,7 +782,6 @@ class AuthRepository {
         'password': password,
       };
 
-      // API request
       final response = await post(
         Uri.parse(apiEndpoint),
         headers: {
@@ -702,54 +791,75 @@ class AuthRepository {
         body: jsonEncode(payload),
       );
 
-      debugPrint('Response Status Code: ${response.statusCode}');
-      debugPrint('Response Body: ${response.body}');
+      debugPrint('Signup response: ${response.statusCode}');
+      debugPrint('Response body: ${response.body}');
 
-      if (response.statusCode != 201) {
-        throw jsonDecode(response.body)['error'] ?? 'Unknown error';
-      } else {
-        // Parse the response and create user model
+      if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
-        final String? token = responseData['token'] ?? '';
 
-        // Create UserModel
-        final UserModel user = UserModel(
-          cin: responseData['cin'] ?? '',
-          name: '$firstName $lastName',
-          email: email,
-          token: token ?? '',
-          role: role, // Store the role
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
+        // Extract tokens if available
+        final String? accessToken = responseData['access_token'];
+        final String? refreshToken = responseData['refresh_token'];
+        final int? expiresIn = responseData['expires_in'];
 
-        // Save the user data
+        UserModel user;
+
+        if (accessToken != null && refreshToken != null) {
+          // Save tokens for automatic login after signup
+          await _tokenRepository.saveTokens(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            accessTokenDuration: Duration(seconds: expiresIn ?? 3600),
+            userRole: role,
+          );
+
+          // Create user model with token
+          user = UserModel(
+            cin: responseData['cin'] ?? responseData['user']?['cin'] ?? '',
+            name: '$firstName $lastName',
+            email: email,
+            token: accessToken,
+            role: role,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+
+          // Set authentication state immediately
+          notifier.setAuthenticated(true, role);
+          notifier.setAuthToken(accessToken);
+        } else {
+          // Legacy signup without tokens
+          user = UserModel(
+            cin: responseData['cin'] ?? '',
+            name: '$firstName $lastName',
+            email: email,
+            token: responseData['token'] ?? '',
+            role: role,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+
+          // Set authentication state
+          notifier.setAuthenticated(true, role);
+        }
+
+        // Save user data
         await _userNotifier.setUser(user);
-        // Set user as authenticated with the specific role
-        notifier.setAuthenticated(true, role);
 
         showSnackBar(context: context, message: 'Sign up successful');
 
-        // Router will redirect to appropriate home screen based on role
+        // Navigate based on role
         if (role == 'Doctor') {
           context.goNamed(RouteConstants.doctorHome);
         } else {
           context.goNamed(RouteConstants.home);
         }
+
         return user;
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw errorData['error'] ?? 'Unknown error';
       }
-    } on FormatException {
-      debugPrint(email);
-      showSnackBar(
-        context: context,
-        message: 'Invalid response format',
-      );
-      throw Exception('Invalid response format');
-    } on TimeoutException {
-      showSnackBar(
-          context: context,
-          message: 'Connection timeout. Please check your internet');
-      throw Exception('Connection timeout');
     } catch (e) {
       debugPrint("Signup error: ${e.toString()}");
       showSnackBar(
@@ -901,7 +1011,7 @@ class AuthRepository {
     }
   }
 
-  // forgot password method
+// forgot password method
   Future<String?> requestPasswordReset(
     BuildContext context,
     String email,
@@ -1188,7 +1298,7 @@ class AuthRepository {
     }
   }
 
-  // log out method
+// log out method
   Future<void> logOut(
     BuildContext context,
     AuthStateNotifier notifier,

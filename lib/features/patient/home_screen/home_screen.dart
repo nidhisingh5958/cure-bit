@@ -1,13 +1,29 @@
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late String name;
+
+  @override
+  void initState() {
+    name = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
+    super.initState();
+    // Initialize any necessary data or state here
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -975,7 +991,7 @@ class HomeScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(
-            text: const TextSpan(
+            text: TextSpan(
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -986,7 +1002,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 TextSpan(text: 'Hello, '),
                 TextSpan(
-                  text: 'Random',
+                  text: '$name',
                   style: TextStyle(fontWeight: FontWeight.normal, color: black),
                 ),
               ],

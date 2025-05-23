@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class PatientPublicProfile extends ConsumerStatefulWidget {
-  final String? cin; // Pass CIN as parameter or get from route
+  final String? cin;
 
   const PatientPublicProfile({super.key, this.cin});
 
@@ -24,7 +24,6 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
   @override
   void initState() {
     super.initState();
-    // Initialize CIN - you might get this from route parameters, authentication, etc.
     patientCin = widget.cin ?? 'default_cin';
 
     // Set the current patient CIN in the provider
@@ -173,7 +172,7 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
           ),
           const SizedBox(height: 8),
           Text(
-            '@${profile.username}',
+            '${profile.cin}',
             style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,

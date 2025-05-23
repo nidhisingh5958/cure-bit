@@ -108,7 +108,7 @@ class DoctorNavigationUtil {
     }
 
     if (doctorCin == null || doctorCin.isEmpty) {
-      _showErrorSnackBar(context, 'Doctor ID not found');
+      _showErrorSnackBar(context, 'Doctor CIN not found');
       return;
     }
 

@@ -54,7 +54,7 @@ class _DoctorEditPrivateProfileState
   bool _isLoading = false;
   bool _isPrivateProfileLoaded = false;
   impl.PrivateProfileData? _privateProfileData;
-  final _defaultCin = '1234567890'; // Default CIN for testing'';
+  final _defaultCin = 'NotFound'; // Default CIN for testing'';
 
   @override
   void initState() {
@@ -79,9 +79,7 @@ class _DoctorEditPrivateProfileState
       final profileDataAsync =
           await ref.read(doctorProfileDataProvider(cin).future);
 
-      // Parse the profile data from Riverpod
       if (profileDataAsync is Map<String, dynamic>) {
-        // Extract relevant fields from the response
         final Map<String, dynamic> profile = profileDataAsync;
 
         // Populate controllers with data from profile

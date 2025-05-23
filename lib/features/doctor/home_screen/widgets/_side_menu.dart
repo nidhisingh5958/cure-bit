@@ -3,8 +3,8 @@
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/providers/auth_controllers.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
+import 'package:CuraDocs/utils/providers/user_provider.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,6 +18,17 @@ class DoctorSideMenu extends ConsumerStatefulWidget {
 }
 
 class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
+  late String name;
+  late String email;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(userProvider);
+    name = user?.name ?? '';
+    email = user?.email ?? '';
+  }
+
   Future<void> _handleLogOut() async {
     try {
       final logOutController = ref.read(logoutControllerProvider);
@@ -122,7 +133,7 @@ class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Dr. ${UserHelper.getUserAttribute<String>(ref, 'name') ?? 'Guest'}",
+                  "Dr. $name",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
@@ -131,7 +142,7 @@ class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "user@gmail.com",
+                  "$email",
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white.withOpacity(0.8),

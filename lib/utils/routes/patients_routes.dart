@@ -1,4 +1,4 @@
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doc_public_profile/doctor/get/doctor_model.dart'
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart'
     as model;
 import 'package:CuraDocs/features/patient/appointment/my_appointments/reschedule_appointment.dart';
 import 'package:CuraDocs/features/patient/medical_records/basic_medical_info.dart';

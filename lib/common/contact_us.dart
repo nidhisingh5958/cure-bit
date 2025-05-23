@@ -190,7 +190,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     padding: const EdgeInsets.only(top: 16, bottom: 24),
                     child: Image.asset(
                       'assets/images/logo_icon.png',
-                      height: 90,
+                      height: 60,
                     ),
                   ),
                   // Description text with better styling

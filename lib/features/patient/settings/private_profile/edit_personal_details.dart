@@ -55,7 +55,7 @@ class _PatientEditPrivateProfileState
   bool _isLoading = false;
   bool _isPrivateProfileLoaded = false;
   impl.PrivateProfileData? _privateProfileData;
-  String _defaultCin = 'patient_cin_123'; // Default CIN for testing
+  String _defaultCin = 'NotFound'; // Default CIN for testing
 
   @override
   void initState() {

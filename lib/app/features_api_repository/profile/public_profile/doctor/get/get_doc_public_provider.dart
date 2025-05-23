@@ -1,19 +1,18 @@
 import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doc_public_profile/doctor/get/get_doctor_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/doctor_profile_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/get_doctor_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider for the DoctorRepository
 final doctorRepositoryProvider = Provider<GetDoctorProfileRepository>((ref) {
-  final repository = GetDoctorProfileRepository(
-    baseUrl: doctorPublicProfile,
-  );
+  return GetDoctorProfileRepository(baseUrl: doctorPublicProfile);
 
-  // Make sure to dispose of the repository when the provider is disposed
-  ref.onDispose(() {
-    repository.dispose();
-  });
+  // // Make sure to dispose of the repository when the provider is disposed
+  // ref.onDispose(() {
+  //   repository.dispose();
+  // });
 
-  return repository;
+  // return repository;
 });
 
 /// Provider for fetching doctor public profile data
@@ -79,4 +78,9 @@ final doctorProfileNotifierProvider =
     StateNotifierProvider<DoctorProfileNotifier, AsyncValue<String?>>((ref) {
   final repository = ref.watch(doctorRepositoryProvider);
   return DoctorProfileNotifier(repository);
+});
+
+final doctorProfileRepositoryProvider =
+    Provider<DoctorProfileRepository>((ref) {
+  return DoctorProfileRepository();
 });

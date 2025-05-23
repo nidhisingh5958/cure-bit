@@ -731,7 +731,7 @@ class _AppointmentHomeState extends ConsumerState<AppointmentHome> {
                           doctor.rating.toString(),
                           doctor.location,
                           doctorModel: doctor, // Pass the entire doctor model
-                          doctorCin: doctor.id, // Pass the doctor ID
+                          doctorCin: doctor.cin, // Pass the doctor cin
                         ),
                       );
                     },

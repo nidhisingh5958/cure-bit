@@ -1,23 +1,33 @@
+import 'package:CuraDocs/app/user/user_helper.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-class DoctorProfileSettings extends StatefulWidget {
+class DoctorProfileSettings extends ConsumerStatefulWidget {
   const DoctorProfileSettings({super.key});
 
   @override
-  State<DoctorProfileSettings> createState() => _ProfileScreenState();
+  ConsumerState<DoctorProfileSettings> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<DoctorProfileSettings> {
-  String name = '';
-  String cin = '';
+class _ProfileScreenState extends ConsumerState<DoctorProfileSettings> {
+  late final String cin;
+  late final String name;
+
   bool _medicineModeReminder = true;
   bool _manuallyAddReminders = true;
+
+  @override
+  void initState() {
+    name = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
+    cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +58,7 @@ class _ProfileScreenState extends State<DoctorProfileSettings> {
                 children: [
                   _buildProfileHeader(),
                   SizedBox(height: 10),
-                  _buildProfileHeaderTitle(
-                      name: 'John Doe', cin: 'CIN: 345AS34'),
+                  _buildProfileHeaderTitle(name: name, cin: cin),
                 ],
               ),
             ),

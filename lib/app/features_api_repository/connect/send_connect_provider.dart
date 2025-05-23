@@ -90,7 +90,7 @@ class ConnectionNotifier extends StateNotifier<ConnectionState> {
       // Create the connection request
       final request = ConnectionRequestModel(
         requestSentTo: doctorId,
-        requestSentFrom: currentUser.cin!,
+        requestSentFrom: currentUser.cin,
         timestamp: DateTime.now().toUtc().toIso8601String(),
         connectionType: 'doctor_patient', // Default type for this app
       );
