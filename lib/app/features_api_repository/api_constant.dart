@@ -10,7 +10,7 @@ final appointment = 'https://zcqs194p-8010.inc1.devtunnels.ms';
 final privateProfile = 'https://zcqs194p-8030.inc1.devtunnels.ms';
 final String doctorPublicProfile = 'https://zcqs194p-8040.inc1.devtunnels.ms';
 final String patientPublicProfile = 'https://zcqs194p-8050.inc1.devtunnels.ms';
-final timeline = 'https://zcqs194p-8020.inc1.devtunnels.ms';
+final timeline = 'https://zcqs194p-8090.inc1.devtunnels.ms';
 final String searchDoctor_api = 'https://zcqs194p-8055.inc1.devtunnels.ms';
 final String searchPatient_api =
     'https://zcqs194p-8055.inc1.devtunnels.ms/internal';

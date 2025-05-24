@@ -131,7 +131,6 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
           // Just verify the OTP matches what we expect
           bool isVerified = await authRepository.verifyResetOtp(
             context,
-            widget.identifier,
             otp,
           );
 
@@ -151,6 +150,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
             widget.identifier,
             otp,
             widget.role,
+            widget.countryCode,
             ref.read(authStateProvider.notifier),
           );
 
@@ -200,14 +200,14 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
         top: 24,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: black.withOpacity(0.1),
             blurRadius: 10,
             offset: Offset(0, -5),
           ),
@@ -223,7 +223,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: grey400,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -256,7 +256,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               child: Text(
                 'Resend code in ${_resendTimer}s',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: grey800,
                   fontSize: 14,
                 ),
               ),
@@ -302,12 +302,12 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: color1),
+                borderSide: BorderSide(color: black),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: color2,
+                  color: grey800,
                   width: 2,
                 ),
               ),
@@ -334,7 +334,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               }
             },
             style: TextStyle(
-                fontSize: 16, color: color1, fontWeight: FontWeight.bold),
+                fontSize: 16, color: grey800, fontWeight: FontWeight.bold),
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             showCursor: true, // Show cursor for better visibility

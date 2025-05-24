@@ -30,9 +30,10 @@ class _SideMenuState extends ConsumerState<SideMenu> {
   Future<void> _handleLogOut() async {
     try {
       final logOutController = ref.read(logoutControllerProvider);
+      final user = ref.read(userProvider);
 
       await logOutController.logout(
-          context, ref.read(authStateProvider.notifier));
+          context, ref.read(authStateProvider.notifier), user?.role ?? '');
 
       context.pushReplacementNamed(RouteConstants.login);
 

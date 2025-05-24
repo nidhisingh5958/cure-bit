@@ -83,7 +83,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                EnhancedForgotPassForm(role: _role, ref: ref),
+                EnhancedForgotPassForm(role: _role),
               ],
             ),
           ),
@@ -95,10 +95,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
 class EnhancedForgotPassForm extends ConsumerStatefulWidget {
   final String role;
-  final WidgetRef ref;
 
-  const EnhancedForgotPassForm(
-      {super.key, required this.role, required this.ref});
+  const EnhancedForgotPassForm({super.key, required this.role});
 
   @override
   ConsumerState<EnhancedForgotPassForm> createState() =>
@@ -129,91 +127,131 @@ class _EnhancedForgotPassFormState
   }
 
   Future<void> _handleSubmit() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+    if (!_formKey.currentState!.validate()) return;
 
-      try {
-        // Use the Provider to get the AuthRepository instance
-        final authRepository = ref.read(authRepositoryProvider);
+    setState(() => _isLoading = true);
 
-        // Request password reset and get hashed OTP
-        final hashedOtp = await authRepository.requestPasswordReset(
-          context,
-          _emailController.text.trim(),
-          widget.role,
-        );
+    try {
+      // Use the Provider to get the AuthRepository instance
+      final authRepository = ref.read(authRepositoryProvider);
 
-        if (hashedOtp != null && mounted) {
-          // Store the hashed OTP for later verification
-          await _storeHashedOtp(hashedOtp);
+      debugPrint('=== PASSWORD RESET FLOW START ===');
+      debugPrint('Email: ${_emailController.text.trim()}');
+      debugPrint('Role: ${widget.role}');
 
-          debugPrint('Hashed OTP stored: $hashedOtp');
+      // Request password reset
+      final success = await authRepository.requestPasswordReset(
+        context,
+        _emailController.text.trim(),
+        widget.role,
+      );
 
-          // Show the OTP entry bottom sheet
-          _showOtpBottomSheet();
-        } else {
-          if (mounted) {
-            showSnackBar(
-                context: context,
-                message: 'Failed to send reset email. Please try again.');
-          }
-        }
-      } catch (e) {
+      debugPrint('Password reset request result: $success');
+
+      if (success && mounted) {
+        debugPrint('SUCCESS: About to show OTP bottom sheet');
+
+        // Add a small delay to ensure the snackbar is dismissed
+        await Future.delayed(Duration(milliseconds: 500));
+
         if (mounted) {
-          debugPrint('Password reset request error: ${e.toString()}');
+          _showOtpBottomSheet();
+        }
+      } else {
+        debugPrint('FAILED: Password reset request unsuccessful');
+        if (mounted) {
           showSnackBar(
               context: context,
-              message:
-                  'Failed to send password reset request. Please try again.');
+              message: 'Failed to send reset email. Please try again.');
         }
-      } finally {
-        if (mounted) setState(() => _isLoading = false);
       }
+    } catch (e) {
+      debugPrint('ERROR in _handleSubmit: ${e.toString()}');
+      if (mounted) {
+        showSnackBar(
+            context: context,
+            message:
+                'Failed to send password reset request. Please try again.');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  // Store hashed OTP separately for verification
-  Future<void> _storeHashedOtp(String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('hashedOtp', value);
-    debugPrint('Stored hashed OTP in SharedPreferences: $value');
-  }
-
   void _showOtpBottomSheet() {
-    if (!mounted) return;
+    if (!mounted) {
+      debugPrint('Widget not mounted, cannot show bottom sheet');
+      return;
+    }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      isDismissible: false, // Prevent dismissing by tapping outside
-      enableDrag: false, // Prevent dismissing by dragging
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false, // Prevent back button dismissal
-          child: OtpEntrySheet(
-            role: widget.role,
-            identifier: _emailController.text.trim(),
-            isForgotPassword: true,
-            onVerificationComplete: () async {
-              Navigator.of(context).pop();
+    debugPrint('=== SHOWING OTP BOTTOM SHEET ===');
+    debugPrint('Context mounted: ${context.mounted}');
+    debugPrint('Role: ${widget.role}');
+    debugPrint('Email: ${_emailController.text.trim()}');
 
-              if (mounted) {
-                // After OTP is verified, redirect to password reset screen
-                context.goNamed(
-                  RouteConstants.passReset,
-                  extra: {
-                    'identifier': _emailController.text.trim(),
-                    'role': widget.role,
-                    'fromForgotPassword': true,
+    try {
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        isDismissible: true,
+        enableDrag: true,
+        useSafeArea: true, // Add this for better safe area handling
+        builder: (BuildContext bottomSheetContext) {
+          debugPrint('Bottom sheet builder executing');
+
+          return DraggableScrollableSheet(
+            initialChildSize: 0.7,
+            minChildSize: 0.5,
+            maxChildSize: 0.9,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: OtpEntrySheet(
+                  identifier: _emailController.text.trim(),
+                  onVerificationComplete: () async {
+                    debugPrint('OTP verification completed successfully');
+
+                    // Close the bottom sheet
+                    if (Navigator.canPop(bottomSheetContext)) {
+                      Navigator.of(bottomSheetContext).pop();
+                    }
+
+                    // Navigate to password reset screen
+                    if (mounted) {
+                      context.goNamed(
+                        RouteConstants.passReset,
+                        extra: {
+                          'identifier': _emailController.text.trim(),
+                          'role': widget.role,
+                          'fromForgotPassword': true,
+                        },
+                      );
+                    }
                   },
-                );
-              }
+                  role: widget.role,
+                  isForgotPassword: true,
+                ),
+              );
             },
-          ),
-        );
-      },
-    );
+          );
+        },
+      ).then((_) {
+        debugPrint('Bottom sheet dismissed');
+      }).catchError((error, stackTrace) {
+        debugPrint('Error showing bottom sheet: $error');
+        debugPrint('Stack trace: $stackTrace');
+      });
+    } catch (e, stackTrace) {
+      debugPrint('Exception in _showOtpBottomSheet: $e');
+      debugPrint('Stack trace: $stackTrace');
+    }
   }
 
   @override

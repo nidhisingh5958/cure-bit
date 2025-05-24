@@ -99,7 +99,7 @@ class AuthRepository {
         // Create a minimal user model
         final user = UserModel(
           cin: '',
-          name: 'User',
+          name: '',
           email: '',
           token: accessToken,
           role: userRole,
@@ -169,11 +169,17 @@ class AuthRepository {
             return;
           }
 
+          debugPrint('Response Body: ${response.body}');
+
           final String? accessToken = responseData['access_token'];
           final String? refreshToken = responseData['refresh_token'];
           final int? expiresIn = responseData['expires_in'];
 
           if (accessToken != null && refreshToken != null) {
+            debugPrint('Access Token: $accessToken');
+            debugPrint('Refresh Token: $refreshToken');
+            debugPrint('Expires In: $expiresIn');
+
             // Save tokens with proper expiry time
             await _tokenRepository.saveTokens(
               accessToken: accessToken,
@@ -184,6 +190,7 @@ class AuthRepository {
 
             // Create and store user model
             if (responseData.containsKey('user')) {
+              debugPrint('User data found in response');
               final userData = responseData['user'];
               final UserModel user = UserModel(
                 cin: userData['cin'] ?? '',
@@ -208,11 +215,14 @@ class AuthRepository {
 
             // Navigate based on role
             if (role == 'Doctor') {
+              debugPrint('Navigating to Doctor Home');
               context.goNamed(RouteConstants.doctorHome);
             } else {
+              debugPrint('aaji gaali de raha hai');
               context.goNamed(RouteConstants.home);
             }
           } else {
+            debugPrint('bachencod bol raha hai');
             showSnackBar(
                 context: context, message: 'Invalid authentication response');
           }
@@ -238,7 +248,7 @@ class AuthRepository {
 
 // sign in with OTP
   // send OTP with retry logic
-  Future<void> sendOtp(
+  Future<bool> sendOtp(
     BuildContext context,
     String identifier,
     String role, {
@@ -246,10 +256,6 @@ class AuthRepository {
   }) async {
     int retryCount = 0;
     bool success = false;
-
-    // Create a mock OTP for testing/development if needed
-    final mockOtp = '123456';
-    final mockHashedOtp = BCrypt.hashpw(mockOtp, BCrypt.gensalt());
 
     while (!success && retryCount < maxRetries) {
       try {
@@ -260,38 +266,41 @@ class AuthRepository {
             'Sending OTP to $identifier with role $role and country code $countryCode');
         debugPrint('Try #${retryCount + 1}');
 
-        Map<String, dynamic> loginPayload = {};
+        debugPrint('Sending OTP to $identifier with country code $countryCode');
+        debugPrint('API Endpoint: $apiEndpoint');
+
+        // Initialize an empty map to hold payload
+        Map<String, dynamic> payload = {};
 
         if (_isValidEmail(identifier)) {
-          // Email login
-          loginPayload = {
+          // Email payload
+          payload = {
             'email': identifier,
           };
+          debugPrint('Sending email OTP request with payload: $payload');
         } else if (_isValidPhoneNumber(identifier)) {
-          loginPayload = {
+          // Phone number payload - Make sure country code is included
+          payload = {
+            'phone_number': identifier,
             'country_code': countryCode ?? '+91',
-            'phone_number': identifier.trim(), // Remove any whitespace
           };
+          debugPrint('Sending phone OTP request with payload: $payload');
         } else {
-          showSnackBar(context: context, message: 'Invalid $identifier');
-          return;
+          showSnackBar(
+              context: context, message: 'Invalid email or phone number');
         }
 
-        final headers = {
-          'Content-Type': 'application/json',
-        };
-
-        debugPrint('Request payload: ${jsonEncode(loginPayload)}');
-
+        // API request with proper headers
         Response response = await post(
           Uri.parse(apiEndpoint),
-          body: jsonEncode(loginPayload),
-          headers: headers,
-        ).timeout(const Duration(seconds: 10));
+          body: jsonEncode(payload),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
 
         debugPrint('Response Status Code: ${response.statusCode}');
         debugPrint('Response Body: ${response.body}');
-        debugPrint('API Endpoint: $apiEndpoint');
 
         // Parse response
         if (response.statusCode == 200) {
@@ -300,7 +309,8 @@ class AuthRepository {
             Map<String, dynamic> responseData = jsonDecode(response.body);
             if (responseData.containsKey('otp')) {
               hashedOtp = responseData['otp'];
-              debugPrint('Received hashed OTP: $hashedOtp');
+              showSnackBar(context: context, message: 'OTP sent successfully');
+              return true;
             }
           } catch (e) {
             debugPrint('Error parsing response: ${e.toString()}');
@@ -317,11 +327,7 @@ class AuthRepository {
             await Future.delayed(retryDelay);
             continue;
           } else {
-            // If we've exhausted retries, use mock OTP for development
-            debugPrint('Using fallback OTP method');
-            hashedOtp = mockHashedOtp;
             showSnackBar(context: context, message: 'OTP sent successfully');
-            debugPrint('Fallback OTP: $mockOtp (for development only)');
             success = true;
             break;
           }
@@ -387,46 +393,54 @@ class AuthRepository {
 
     // If all retries failed but we didn't use fallback yet
     if (!success && hashedOtp.isEmpty) {
-      hashedOtp = mockHashedOtp;
-      debugPrint('Using fallback OTP after all retries failed');
-      debugPrint('Fallback OTP: $mockOtp (for development only)');
       showSnackBar(context: context, message: 'OTP sent successfully');
     }
+    return success;
   }
 
-  Future<void> verifyOtp(
+  Future<bool> verifyOtp(
     BuildContext context,
     String identifier,
-    String otp,
     String role,
+    String plainOtp,
+    String? countryCode,
     AuthStateNotifier notifier,
   ) async {
     try {
-      debugPrint('Verifying OTP for $identifier with role $role');
-      debugPrint('Entered OTP: $otp');
-      debugPrint('Stored hashed OTP: $hashedOtp');
+      debugPrint('Verifying OTP for: $identifier');
+      debugPrint('Role: $role');
+      debugPrint('Hashed OTP: $hashedOtp');
 
-      // First check if we have the hashed OTP to verify against
       if (hashedOtp.isEmpty) {
-        debugPrint("No hashed OTP found, falling back to API verification");
-        await _verifyOtpWithApi(context, identifier, otp, role, notifier);
-        return;
+        showSnackBar(
+            context: context,
+            message: 'No OTP was sent. Please request OTP first');
+        return false;
       }
 
-      // Verify the OTP using BCrypt
-      bool isMatch = await verify(hashedOtp, otp);
-      debugPrint('OTP verification result: $isMatch');
+      if (!_isValidEmail(identifier) && !_isValidPhoneNumber(identifier)) {
+        showSnackBar(
+            context: context, message: 'Invalid email or phone number');
+        return false;
+      }
+
+      // Use the verify function to check the OTP
+      bool isMatch = await verify(hashedOtp, plainOtp);
+      debugPrint('OTP match result: $isMatch');
 
       if (isMatch) {
-        // Instead of just setting auth state, make API call to get tokens
-        await _loginWithVerifiedOtp(context, identifier, otp, role, notifier);
+        debugPrint('OTP verified successfully');
+        showSnackBar(context: context, message: 'OTP verified successfully');
+        return true;
       } else {
-        showSnackBar(context: context, message: 'Invalid or expired OTP');
+        showSnackBar(context: context, message: 'Invalid OTP');
+        return false;
       }
     } catch (e) {
-      debugPrint("OTP verification error: ${e.toString()}");
+      debugPrint("Verify OTP error: ${e.toString()}");
       showSnackBar(
           context: context, message: 'Verification failed. Please try again.');
+      return false;
     }
   }
 
@@ -730,7 +744,7 @@ class AuthRepository {
     // Create minimal user model for legacy systems
     final user = UserModel(
       cin: '',
-      name: 'User',
+      name: '',
       email: _isValidEmail(identifier) ? identifier : '',
       token: '',
       role: role,
@@ -1012,7 +1026,7 @@ class AuthRepository {
   }
 
 // forgot password method
-  Future<String?> requestPasswordReset(
+  Future<bool> requestPasswordReset(
     BuildContext context,
     String email,
     String role,
@@ -1029,7 +1043,7 @@ class AuthRepository {
       if (!_isValidEmail(email)) {
         showSnackBar(
             context: context, message: 'Please enter a valid email address');
-        return null;
+        return false;
       }
 
       // Create the payload
@@ -1069,41 +1083,57 @@ class AuthRepository {
 
           if (hashedOtpValue != null && hashedOtpValue.isNotEmpty) {
             debugPrint('Received hashed OTP: $hashedOtpValue');
+
+            // Store the hashed OTP in SharedPreferences for verification
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('passwordResetHashedOtp', hashedOtpValue);
+            await prefs.setString('passwordResetEmail', email);
+            await prefs.setString('passwordResetRole', role);
+
             showSnackBar(
                 context: context,
                 message: 'Password reset OTP sent to your email');
-            return hashedOtpValue;
+            return true;
           } else {
             // If no hashed OTP in response, create a mock one for development
-            debugPrint('No hashed OTP in response, creating mock OTP');
+            debugPrint(
+                'No hashed OTP in response, creating mock OTP for development');
             final mockOtp = '123456';
             final mockHashedOtp = BCrypt.hashpw(mockOtp, BCrypt.gensalt());
             debugPrint('Mock OTP for development: $mockOtp');
+
+            // Store the mock hashed OTP
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('passwordResetHashedOtp', mockHashedOtp);
+            await prefs.setString('passwordResetEmail', email);
+            await prefs.setString('passwordResetRole', role);
+
             showSnackBar(
                 context: context,
-                message: 'Password reset OTP sent to your email');
-            return mockHashedOtp;
+                message:
+                    'Password reset OTP sent to your email (Development: Use 123456)');
+            return true;
           }
         } catch (e) {
           debugPrint('Error parsing response: ${e.toString()}');
           showSnackBar(
               context: context, message: 'Invalid response from server');
-          return null;
+          return false;
         }
       } else if (response.statusCode == 404) {
         showSnackBar(
             context: context,
             message: 'Email address not found. Please check and try again.');
-        return null;
+        return false;
       } else if (response.statusCode == 400) {
         showSnackBar(
             context: context,
             message: 'Invalid email format. Please enter a valid email.');
-        return null;
+        return false;
       } else if (response.statusCode >= 500) {
         showSnackBar(
             context: context, message: 'Server error. Please try again later');
-        return null;
+        return false;
       } else {
         // Try to parse error message from response
         try {
@@ -1117,78 +1147,90 @@ class AuthRepository {
               context: context,
               message: 'Failed to send reset email. Please try again.');
         }
-        return null;
+        return false;
       }
     } on TimeoutException {
       debugPrint('Request timeout');
       showSnackBar(
           context: context,
           message: 'Request timeout. Please check your internet connection.');
-      return null;
+      return false;
     } on SocketException {
       debugPrint('Network error');
       showSnackBar(
           context: context,
           message: 'Network error. Please check your internet connection.');
-      return null;
+      return false;
     } catch (e) {
       debugPrint("Password reset request error: ${e.toString()}");
       showSnackBar(
           context: context,
           message: 'Failed to send reset email. Please try again.');
-      return null;
+      return false;
     }
   }
 
   // Verify reset OTP - updated to work with the new flow
   Future<bool> verifyResetOtp(
     BuildContext context,
-    String identifier,
     String plainOtp,
   ) async {
     try {
-      debugPrint('Verifying reset OTP for: $identifier');
+      debugPrint('=== VERIFYING PASSWORD RESET OTP ===');
       debugPrint('Plain OTP: $plainOtp');
 
-      // Validate email format
-      if (!_isValidEmail(identifier)) {
-        showSnackBar(context: context, message: 'Invalid email address');
-        return false;
-      }
-
-      // Retrieve the stored hashed OTP
+      // Retrieve the stored hashed OTP and email
       final prefs = await SharedPreferences.getInstance();
-      final storedHashedOtp = prefs.getString('hashedOtp') ?? '';
+      final storedHashedOtp = prefs.getString('passwordResetHashedOtp') ?? '';
+      final storedEmail = prefs.getString('passwordResetEmail') ?? '';
+
+      debugPrint('Stored hashed OTP: $storedHashedOtp');
+      debugPrint('Stored email: $storedEmail');
 
       if (storedHashedOtp.isEmpty) {
+        debugPrint('ERROR: No stored hashed OTP found');
         showSnackBar(
             context: context,
             message: 'No OTP found. Please request password reset again.');
         return false;
       }
 
-      debugPrint('Stored hashed OTP: $storedHashedOtp');
+      if (storedEmail.isEmpty) {
+        debugPrint('ERROR: No stored email found');
+        showSnackBar(
+            context: context,
+            message: 'Session expired. Please request password reset again.');
+        return false;
+      }
 
       // Use the verify function to check the OTP
       bool isMatch = await verify(storedHashedOtp, plainOtp);
       debugPrint('OTP match result: $isMatch');
 
       if (isMatch) {
-        debugPrint('Reset OTP verified successfully');
+        debugPrint('SUCCESS: Password reset OTP verified successfully');
+
+        // Mark OTP as verified by storing a verification flag
+        await prefs.setBool('passwordResetOtpVerified', true);
+        await prefs.setInt('passwordResetOtpVerifiedTime',
+            DateTime.now().millisecondsSinceEpoch);
+
+        showSnackBar(context: context, message: 'OTP verified successfully');
         return true;
       } else {
+        debugPrint('FAILED: OTP verification failed');
         showSnackBar(context: context, message: 'Invalid or expired OTP');
         return false;
       }
     } catch (e) {
-      debugPrint("Verify reset OTP error: ${e.toString()}");
+      debugPrint("ERROR: Verify password reset OTP error: ${e.toString()}");
       showSnackBar(
           context: context, message: 'Verification failed. Please try again.');
       return false;
     }
   }
 
-  // Reset password method - updated to work properly
+  // Reset password method - updated to work properlys
   Future<void> resetPassword({
     required BuildContext context,
     required String identifier,
@@ -1197,10 +1239,56 @@ class AuthRepository {
     required AuthStateNotifier notifier,
   }) async {
     try {
+      debugPrint('Resetting password for $identifier with role $role');
+
+      // Check if OTP was verified recently (within 10 minutes)
+      final prefs = await SharedPreferences.getInstance();
+      final isOtpVerified = prefs.getBool('passwordResetOtpVerified') ?? false;
+      final verificationTime =
+          prefs.getInt('passwordResetOtpVerifiedTime') ?? 0;
+      final storedEmail = prefs.getString('passwordResetEmail') ?? '';
+      final storedRole = prefs.getString('passwordResetRole') ?? '';
+
+      if (!isOtpVerified || verificationTime == 0) {
+        showSnackBar(
+            context: context,
+            message: 'Please verify OTP before resetting password.');
+        return;
+      }
+
+      // Check if verification is still valid (10 minutes)
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final timeDifference = currentTime - verificationTime;
+      final tenMinutesInMs = 10 * 60 * 1000;
+
+      if (timeDifference > tenMinutesInMs) {
+        // Clear expired verification
+        await clearPasswordResetData();
+        showSnackBar(
+            context: context,
+            message: 'OTP verification expired. Please start over.');
+        return;
+      }
+
+      // Validate that the identifier matches the stored email
+      if (identifier != storedEmail) {
+        showSnackBar(
+            context: context,
+            message: 'Invalid session. Please start password reset again.');
+        return;
+      }
+
+      // Validate that the role matches
+      if (role != storedRole) {
+        showSnackBar(
+            context: context,
+            message: 'Invalid session. Please start password reset again.');
+        return;
+      }
+
       final String apiEndpoint =
           role == 'Doctor' ? createNewPassword_api_doc : createNewPassword_api;
 
-      debugPrint('Resetting password for $identifier with role $role');
       debugPrint('API Endpoint: $apiEndpoint');
 
       // Validate email format
@@ -1224,6 +1312,8 @@ class AuthRepository {
         'confirm_password': password,
       };
 
+      debugPrint('Payload: $payload');
+
       // API request
       Response response = await post(
         Uri.parse(apiEndpoint),
@@ -1238,10 +1328,9 @@ class AuthRepository {
       debugPrint('Response Body: ${response.body}');
 
       // Parse response
-      if (response.statusCode == 200) {
-        // Clear stored hashed OTP after successful password reset
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.remove('hashedOtp');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Clear all password reset data after successful reset
+        await clearPasswordResetData();
 
         showSnackBar(
             context: context,
@@ -1256,45 +1345,114 @@ class AuthRepository {
           String errorMessage = errorData['error'] ??
               errorData['message'] ??
               'Invalid input data';
-          showSnackBar(context: context, message: errorMessage);
+          if (context.mounted) {
+            showSnackBar(context: context, message: errorMessage);
+          }
         } catch (e) {
-          showSnackBar(context: context, message: 'Invalid input data');
+          if (context.mounted) {
+            showSnackBar(context: context, message: 'Invalid input data');
+          }
         }
       } else if (response.statusCode == 401) {
-        showSnackBar(
-            context: context,
-            message: 'Session expired. Please request password reset again.');
+        if (context.mounted) {
+          showSnackBar(
+              context: context,
+              message: 'Session expired. Please request password reset again.');
+        }
       } else if (response.statusCode >= 500) {
-        showSnackBar(
-            context: context, message: 'Server error. Please try again later');
+        if (context.mounted) {
+          showSnackBar(
+              context: context,
+              message: 'Server error. Please try again later');
+        }
       } else {
         try {
           Map<String, dynamic> errorData = jsonDecode(response.body);
           String errorMessage = errorData['error'] ??
               errorData['message'] ??
               'Failed to reset password';
-          showSnackBar(context: context, message: errorMessage);
+          if (context.mounted) {
+            showSnackBar(context: context, message: errorMessage);
+          }
         } catch (e) {
-          showSnackBar(
-              context: context,
-              message: 'Failed to reset password. Please try again.');
+          if (context.mounted) {
+            showSnackBar(
+                context: context,
+                message: 'Failed to reset password. Please try again.');
+          }
         }
       }
     } on TimeoutException {
       debugPrint('Request timeout');
-      showSnackBar(
-          context: context,
-          message: 'Request timeout. Please check your internet connection.');
+      if (context.mounted) {
+        showSnackBar(
+            context: context,
+            message: 'Request timeout. Please check your internet connection.');
+      }
     } on SocketException {
       debugPrint('Network error');
-      showSnackBar(
-          context: context,
-          message: 'Network error. Please check your internet connection.');
+      if (context.mounted) {
+        showSnackBar(
+            context: context,
+            message: 'Network error. Please check your internet connection.');
+      }
     } catch (e) {
       debugPrint("Password reset error: ${e.toString()}");
-      showSnackBar(
-          context: context,
-          message: 'Failed to reset password. Please try again.');
+      if (context.mounted) {
+        showSnackBar(
+            context: context,
+            message: 'Failed to reset password. Please try again.');
+      }
+    }
+  }
+
+  // Helper method to clear password reset data
+  Future<void> clearPasswordResetData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('passwordResetHashedOtp');
+      await prefs.remove('passwordResetEmail');
+      await prefs.remove('passwordResetRole');
+      await prefs.remove('passwordResetOtpVerified');
+      await prefs.remove('passwordResetOtpVerifiedTime');
+      debugPrint('Cleared password reset data');
+    } catch (e) {
+      debugPrint('Error clearing password reset data: ${e.toString()}');
+    }
+  }
+
+  // Get stored password reset data for PasswordInputScreen
+  Future<Map<String, String>?> getPasswordResetData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isOtpVerified = prefs.getBool('passwordResetOtpVerified') ?? false;
+      final verificationTime =
+          prefs.getInt('passwordResetOtpVerifiedTime') ?? 0;
+      final storedEmail = prefs.getString('passwordResetEmail') ?? '';
+      final storedRole = prefs.getString('passwordResetRole') ?? '';
+
+      if (!isOtpVerified || verificationTime == 0 || storedEmail.isEmpty) {
+        return null;
+      }
+
+      // Check if verification is still valid (10 minutes)
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final timeDifference = currentTime - verificationTime;
+      final tenMinutesInMs = 10 * 60 * 1000;
+
+      if (timeDifference > tenMinutesInMs) {
+        // Clear expired verification
+        await clearPasswordResetData();
+        return null;
+      }
+
+      return {
+        'identifier': storedEmail,
+        'role': storedRole,
+      };
+    } catch (e) {
+      debugPrint('Error getting password reset data: ${e.toString()}');
+      return null;
     }
   }
 
@@ -1302,12 +1460,12 @@ class AuthRepository {
   Future<void> logOut(
     BuildContext context,
     AuthStateNotifier notifier,
+    String role,
   ) async {
     try {
       debugPrint('Logging out user...');
 
-      // Optional: Call logout API endpoint to invalidate tokens on server
-      await _performServerLogout();
+      await _performServerLogout(role);
 
       // Clear tokens from storage
       await _tokenRepository.clearTokens();
@@ -1315,13 +1473,15 @@ class AuthRepository {
       // Clear user data
       await _userNotifier.clearUser();
 
+      await clearPasswordResetData();
+
       // Clear authentication state
       notifier.logout();
 
       showSnackBar(context: context, message: 'Logged out successfully');
 
       // Navigate to login screen
-      context.goNamed(RouteConstants.login);
+      context.goNamed(RouteConstants.role);
 
       debugPrint('User logged out successfully');
     } catch (e) {
@@ -1340,12 +1500,16 @@ class AuthRepository {
   }
 
   // Optional: Server-side logout
-  Future<void> _performServerLogout() async {
+  Future<void> _performServerLogout(
+    String role,
+  ) async {
     try {
+      final String apiEndpoint = role == 'Doctor' ? logout_api_doc : logout_api;
+
       final accessToken = await _tokenRepository.getAccessToken();
       if (accessToken != null) {
-        // Implement logout API call if your backend supports it
-        // await post(Uri.parse(logout_api), headers: {'Authorization': 'Bearer $accessToken'});
+        await post(Uri.parse(apiEndpoint),
+            headers: {'Authorization': 'Bearer $accessToken'});
         debugPrint('Server logout would be called here');
       }
     } catch (e) {

@@ -115,12 +115,14 @@ class OtpController {
     required String otp,
     required String role,
     required AuthStateNotifier notifier,
+    String? countryCode,
   }) async {
     await _authRepo.verifyOtp(
       context,
       identifier,
       otp,
       role,
+      countryCode,
       notifier,
     );
   }
@@ -134,12 +136,13 @@ final forgotPasswordControllerProvider = Provider((ref) {
 
 class ForgotPasswordController {
   final AuthRepository _authRepository;
+  bool _resetRequested = false;
   String? _resetToken;
 
   ForgotPasswordController(this._authRepository);
 
-  // Getter for the reset token
-  String? get resetToken => _resetToken;
+  // Getter for the reset status
+  bool get resetRequested => _resetRequested;
 
   // Request password reset and get token
   Future<bool> requestPasswordReset({
@@ -147,9 +150,9 @@ class ForgotPasswordController {
     required String email,
     required String role,
   }) async {
-    _resetToken =
+    _resetRequested =
         await _authRepository.requestPasswordReset(context, email, role);
-    return _resetToken != null;
+    return _resetRequested;
   }
 
   // Complete the password reset with the new password
@@ -189,7 +192,8 @@ class LogoutController {
 
   LogoutController(this._authRepository);
 
-  Future<void> logout(BuildContext context, AuthStateNotifier notifier) async {
-    await _authRepository.logOut(context, notifier);
+  Future<void> logout(
+      BuildContext context, AuthStateNotifier notifier, String role) async {
+    await _authRepository.logOut(context, notifier, role);
   }
 }

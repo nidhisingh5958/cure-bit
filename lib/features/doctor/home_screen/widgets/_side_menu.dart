@@ -33,8 +33,9 @@ class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
     try {
       final logOutController = ref.read(logoutControllerProvider);
 
+      final user = ref.read(userProvider);
       await logOutController.logout(
-          context, ref.read(authStateProvider.notifier));
+          context, ref.read(authStateProvider.notifier), user?.role ?? '');
 
       context.pushReplacementNamed(RouteConstants.login);
 

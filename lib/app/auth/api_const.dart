@@ -51,3 +51,7 @@ final verifyLoginWithOtp_api_phone_doc = '$auth/doctor/verify_otp_login_phone';
 // forgot password api
 final resetPassword_api_doc = '$auth/doctor/reset_password';
 final createNewPassword_api_doc = '$auth/doctor/create_new_password';
+
+// log out
+final String logout_api = '$auth/patient/logout';
+final String logout_api_doc = '$auth/doctor/logout';

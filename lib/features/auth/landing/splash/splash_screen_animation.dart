@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CuraDocs/app/auth/token/token_repository.dart';
+import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/providers/auth_providers.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
@@ -95,8 +98,6 @@ class _AnimatedSplashWidgetState extends ConsumerState<AnimatedSplashWidget> {
           debugPrint("Token refresh result: $isValidToken");
 
           if (isValidToken) {
-            // Token is valid, check if user role is set
-            // Re-read auth state as it might have been updated
             final updatedAuthState = ref.read(authStateProvider);
 
             if (updatedAuthState.isAuthenticated &&
@@ -105,7 +106,7 @@ class _AnimatedSplashWidgetState extends ConsumerState<AnimatedSplashWidget> {
                   "User authenticated as ${updatedAuthState.userRole}, navigating to home");
 
               // Use a small delay to ensure all state updates are processed
-              await Future.delayed(const Duration(milliseconds: 100));
+              await Future.delayed(const Duration(milliseconds: 60));
 
               if (mounted) {
                 if (updatedAuthState.userRole == 'Doctor') {
@@ -174,7 +175,7 @@ class _AnimatedSplashWidgetState extends ConsumerState<AnimatedSplashWidget> {
                 ),
                 const SizedBox(height: 40),
                 const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(transparent),
                 )
               ],
             ),

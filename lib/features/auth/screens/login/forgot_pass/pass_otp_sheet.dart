@@ -96,42 +96,24 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
     try {
       final authRepository = ref.read(authRepositoryProvider);
 
-      if (widget.isForgotPassword) {
-        // For forgot password flow, request password reset again
-        final hashedOtp = await authRepository.requestPasswordReset(
-          context,
-          widget.identifier,
-          widget.role,
-        );
+      final success = await authRepository.requestPasswordReset(
+        context,
+        widget.identifier,
+        widget.role,
+      );
 
-        if (hashedOtp != null && mounted) {
-          // Store the new hashed OTP
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('hashedOtp', hashedOtp);
-
-          // Start the timer again
-          _startResendTimer();
-
-          showSnackBar(
-              context: context, message: 'Reset OTP sent to your email');
-        } else {
-          showSnackBar(
-              context: context,
-              message: 'Failed to resend OTP. Please try again.');
-        }
-      } else {
-        // Regular OTP login flow
-        await authRepository.sendOtp(
-          context,
-          widget.identifier,
-          widget.role,
-          countryCode: widget.countryCode,
-        );
+      if (success && mounted) {
+        // Request was successful
+        final prefs = await SharedPreferences.getInstance();
 
         // Start the timer again
         _startResendTimer();
 
-        showSnackBar(context: context, message: 'OTP sent successfully');
+        showSnackBar(context: context, message: 'Reset OTP sent to your email');
+      } else {
+        showSnackBar(
+            context: context,
+            message: 'Failed to resend OTP. Please try again.');
       }
     } catch (e) {
       showSnackBar(
@@ -152,52 +134,33 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
         // Call verification API
         final authRepository = ref.read(authRepositoryProvider);
 
-        // For forgot password flow, we just need to verify the OTP is correct
-        // We don't need to authenticate the user yet
-        if (widget.isForgotPassword) {
-          // Just verify the OTP matches what we expect
-          bool isVerified = await authRepository.verifyResetOtp(
-            context,
-            widget.identifier,
-            otp,
-          );
+        // Verify the OTP
+        bool isVerified = await authRepository.verifyResetOtp(
+          context,
+          otp,
+        );
 
-          if (isVerified) {
-            // Clear all OTP fields
-            for (var controller in _controllers) {
-              controller.clear();
-            }
-
-            // OTP verification successful, call the callback to redirect to password reset screen
-            widget.onVerificationComplete();
-          } else {
-            // Clear OTP fields on failure
-            for (var controller in _controllers) {
-              controller.clear();
-            }
-            _focusNodes[0].requestFocus();
-
-            showSnackBar(
-              context: context,
-              message: 'Invalid OTP. Please try again.',
-            );
+        if (isVerified) {
+          // Clear all OTP fields
+          for (var controller in _controllers) {
+            controller.clear();
           }
-        } else {
-          // Regular login flow
-          await authRepository.verifyOtp(
-            context,
-            widget.identifier,
-            otp,
-            widget.role,
-            ref.read(authStateProvider.notifier),
-          );
 
-          // Call the callback to notify parent
+          // OTP verification successful, call the callback to redirect to password reset screen
           widget.onVerificationComplete();
+        } else {
+          // Clear OTP fields on failure
+          for (var controller in _controllers) {
+            controller.clear();
+          }
+          _focusNodes[0].requestFocus();
+
+          showSnackBar(
+            context: context,
+            message: 'Invalid OTP. Please try again.',
+          );
         }
       } catch (e) {
-        debugPrint('OTP verification error: ${e.toString()}');
-
         // Clear OTP fields on error
         for (var controller in _controllers) {
           controller.clear();
@@ -209,7 +172,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
           message: 'OTP verification failed. Please try again.',
         );
       } finally {
-        setState(() => _isLoading = false);
+        if (mounted) setState(() => _isLoading = false);
       }
     } else {
       // Show error
@@ -269,11 +232,23 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: grey600,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
+          const SizedBox(height: 50),
+          Center(
+            child: Text(
+              'Enter the OTP sent to your email',
+              style: TextStyle(
+                fontSize: 18,
+                color: grey800,
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          _buildOtpFields(),
           const SizedBox(height: 20),
           if (!_isResendActive) ...[
             Center(
@@ -289,30 +264,29 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
             TextButton(
               onPressed: _isLoading ? null : _resendOTP,
               child: Text(
-                widget.isForgotPassword ? 'Resend Reset Code' : 'Resend Code',
+                'Resend Reset Code',
                 style: TextStyle(
-                  color: _isLoading ? grey600.withOpacity(0.5) : color2,
+                  color: _isLoading ? black.withOpacity(0.5) : grey800,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
-          if (widget.isForgotPassword) ...[
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  color: grey600,
-                  fontSize: 14,
-                ),
+
+          const SizedBox(height: 10),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: grey600,
+                fontSize: 14,
               ),
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -341,12 +315,12 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: color1),
+                borderSide: BorderSide(color: black),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: color2,
+                  color: grey600,
                   width: 2,
                 ),
               ),
@@ -377,7 +351,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               }
             },
             style: TextStyle(
-                fontSize: 16, color: color1, fontWeight: FontWeight.bold),
+                fontSize: 16, color: black, fontWeight: FontWeight.bold),
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             showCursor: true, // Show cursor for better visibility
@@ -411,7 +385,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               ),
             )
           : Text(
-              widget.isForgotPassword ? 'Verify Code' : 'Verify',
+              'Verify Code',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
     );
