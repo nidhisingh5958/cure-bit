@@ -1,9 +1,12 @@
+// ignore_for_file: unnecessary_string_interpolations
+
 import 'dart:convert';
+import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 // Base URL for the API
-const String baseUrl = 'privateProfile';
+final String baseUrl = '$privateProfile';
 
 // Exception class for API errors
 class ApiException implements Exception {

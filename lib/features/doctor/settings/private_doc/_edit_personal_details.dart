@@ -59,8 +59,8 @@ class _DoctorEditPrivateProfileState
   late String role;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     // If CIN is provided via parameters, use it; otherwise, use the default
     final cinToUse = widget.cin ?? _defaultCin;
     role = UserHelper.getUserAttribute<String>(ref, 'role') ?? '';

@@ -40,8 +40,8 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
   String? _errorMessage;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 1500),

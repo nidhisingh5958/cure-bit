@@ -56,12 +56,12 @@ class _PatientEditPrivateProfileState
   bool _isLoading = false;
   bool _isPrivateProfileLoaded = false;
   impl.PrivateProfileData? _privateProfileData;
-  String _defaultCin = 'NotFound'; // Default CIN for testing
+  final String _defaultCin = 'VHUZ8128'; // Default CIN for testing
   late String role;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     // If CIN is provided via parameters, use it; otherwise, use the default
     final cinToUse = widget.cin ?? _defaultCin;
     _cinController.text = cinToUse;

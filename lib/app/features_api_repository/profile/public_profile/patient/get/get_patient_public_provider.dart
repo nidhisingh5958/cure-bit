@@ -1,117 +1,86 @@
-import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_repository.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_repository.dart';
+import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
 
-// Repository Provider
+// Repository provider
 final patientPublicProfileRepositoryProvider =
     Provider<PatientPublicProfileRepository>((ref) {
   return PatientPublicProfileRepository(
-    baseUrl: patientPublicProfile,
+    baseUrl:
+        patientPublicProfile, // Make sure this constant exists in api_constant.dart
   );
 });
 
-// Patient Public Profile Provider - fetches data based on CIN
+// Current patient CIN state provider
+final currentPatientCinProvider = StateProvider<String>((ref) => '');
+
+// Patient public profile data provider
 final patientPublicProfileProvider =
-    FutureProvider.family<PatientPublicProfileModel, String>((ref, cin) async {
+    FutureProvider.family<PatientPublicProfileModel?, String>((ref, cin) async {
+  if (cin.isEmpty || cin == 'default_cin') return null;
+
   final repository = ref.read(patientPublicProfileRepositoryProvider);
-  return repository.getPatientPublicProfile(cin);
+
+  try {
+    final profile = await repository.getPatientPublicProfile(cin);
+    return profile;
+  } catch (e) {
+    // Log the error but don't throw it, return null instead
+    print('Error fetching profile for CIN $cin: $e');
+    throw e; // Re-throw so the UI can handle the error state
+  }
 });
 
-// State Notifier for managing patient profile state with additional actions
-class PatientPublicProfileNotifier
-    extends StateNotifier<AsyncValue<PatientPublicProfileModel?>> {
-  final PatientPublicProfileRepository _repository;
-
-  PatientPublicProfileNotifier(this._repository)
-      : super(const AsyncValue.data(null));
-
-  // Load patient profile
-  Future<void> loadPatientProfile(String cin) async {
-    state = const AsyncValue.loading();
-    try {
-      final profile = await _repository.getPatientPublicProfile(cin);
-      state = AsyncValue.data(profile);
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-    }
-  }
-
-  // Clear patient profile data
-  Future<String?> clearPatientProfile(String cin) async {
-    try {
-      final result = await _repository.clearPatientPublicProfile(cin);
-      // Optionally reload the profile after clearing
-      await loadPatientProfile(cin);
-      return result;
-    } catch (error) {
-      // Handle error appropriately
-      rethrow;
-    }
-  }
-
-  // Clear cache
-  Future<String?> clearCache(String cin) async {
-    try {
-      final result = await _repository.clearCachePatientPublicProfile(cin);
-      return result;
-    } catch (error) {
-      rethrow;
-    }
-  }
-
-  // Refresh profile data
-  Future<void> refresh(String cin) async {
-    await loadPatientProfile(cin);
-  }
-
-  // Update profile locally (for optimistic updates)
-  void updateProfile(PatientPublicProfileModel updatedProfile) {
-    state = AsyncValue.data(updatedProfile);
-  }
-}
-
-// State Notifier Provider
-final patientPublicProfileNotifierProvider = StateNotifierProvider<
-    PatientPublicProfileNotifier,
-    AsyncValue<PatientPublicProfileModel?>>((ref) {
-  final repository = ref.read(patientPublicProfileRepositoryProvider);
-  return PatientPublicProfileNotifier(repository);
-});
-
-// Provider for current patient CIN (you might want to get this from authentication or routing)
-final currentPatientCinProvider = StateProvider<String?>((ref) => null);
-
-// Combined provider that automatically fetches profile when CIN changes
-final currentPatientProfileProvider =
-    Provider<AsyncValue<PatientPublicProfileModel?>>((ref) {
-  final cin = ref.watch(currentPatientCinProvider);
-
-  if (cin == null) {
-    return const AsyncValue.data(null);
-  }
-
-  return ref.watch(patientPublicProfileProvider(cin));
-});
-
-// Action providers for UI interactions
-final clearPatientProfileActionProvider = Provider((ref) {
+// Clear patient profile action provider
+final clearPatientProfileActionProvider =
+    Provider<Future<String> Function(String)>((ref) {
   return (String cin) async {
-    final notifier = ref.read(patientPublicProfileNotifierProvider.notifier);
-    return await notifier.clearPatientProfile(cin);
+    final repository = ref.read(patientPublicProfileRepositoryProvider);
+
+    try {
+      final result = await repository.clearPatientPublicProfile(cin);
+
+      // Invalidate the profile data after clearing
+      ref.invalidate(patientPublicProfileProvider(cin));
+
+      return result ?? 'Profile cleared successfully';
+    } catch (e) {
+      throw Exception('Failed to clear profile: $e');
+    }
   };
 });
 
-final clearCacheActionProvider = Provider((ref) {
+// Clear cache action provider
+final clearCacheActionProvider =
+    Provider<Future<String> Function(String)>((ref) {
   return (String cin) async {
-    final notifier = ref.read(patientPublicProfileNotifierProvider.notifier);
-    return await notifier.clearCache(cin);
+    final repository = ref.read(patientPublicProfileRepositoryProvider);
+
+    try {
+      final result = await repository.clearCachePatientPublicProfile(cin);
+
+      // Invalidate the profile data after clearing cache
+      ref.invalidate(patientPublicProfileProvider(cin));
+
+      return result ?? 'Cache cleared successfully';
+    } catch (e) {
+      throw Exception('Failed to clear cache: $e');
+    }
   };
 });
 
-final refreshProfileActionProvider = Provider((ref) {
-  return (String cin) async {
-    final notifier = ref.read(patientPublicProfileNotifierProvider.notifier);
-    await notifier.refresh(cin);
-  };
+// Auto-refresh provider (optional - for periodic updates)
+final autoRefreshProvider =
+    StreamProvider.family<PatientPublicProfileModel?, String>((ref, cin) {
+  return Stream.periodic(const Duration(minutes: 5), (count) async {
+    if (cin.isEmpty || cin == 'default_cin') return null;
+
+    final repository = ref.read(patientPublicProfileRepositoryProvider);
+    try {
+      return await repository.getPatientPublicProfile(cin);
+    } catch (e) {
+      return null;
+    }
+  }).asyncMap((futureProfile) => futureProfile);
 });

@@ -23,8 +23,8 @@ class _AllPatientsScreenState extends ConsumerState<AllPatientsScreen> {
   bool _isLoadingMore = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
     // Load data on first load
     WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -15,25 +15,42 @@ class PersonalProfile extends ConsumerStatefulWidget {
 }
 
 class _PersonalProfileState extends ConsumerState<PersonalProfile> {
-  late final String _cin;
+  String? _cin;
+  bool _isInitialized = false;
 
   @override
-  void initState() {
-    _cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
-    super.initState();
-    // Prefetch the patient profile data when the screen is loaded
-    Future.microtask(() => ref.read(patientProfileDataProvider(_cin).future));
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Initialize CIN here where inherited widgets are available
+    if (!_isInitialized) {
+      _cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? 'VHUZ8128';
+      _isInitialized = true;
+
+      // Prefetch profile data after CIN is available
+      if (_cin != null && _cin!.isNotEmpty) {
+        Future.microtask(
+            () => ref.read(patientProfileDataProvider(_cin!).future));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Return loading if CIN is not yet initialized
+    if (!_isInitialized || _cin == null || _cin!.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     // Get screen size information
     final Size screenSize = MediaQuery.of(context).size;
-    final double profileImageSize =
-        screenSize.width * 0.25; // 25% of screen width
+    final double profileImageSize = screenSize.width * 0.25;
 
-    // Watch the patient profile data
-    final profileDataAsync = ref.watch(patientProfileDataProvider(_cin));
+    final profileDataAsync = ref.watch(patientProfileDataProvider(_cin!));
 
     return Scaffold(
       appBar: AppHeader(
@@ -59,7 +76,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
 
                 // Call the refresh cache provider
                 final result = await ref
-                    .read(refreshPatientProfileCacheProvider(_cin).future);
+                    .read(refreshPatientProfileCacheProvider(_cin!).future);
 
                 if (context.mounted) {
                   ScaffoldMessenger.of(context)
@@ -116,7 +133,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    ref.invalidate(patientProfileDataProvider(_cin));
+                    ref.invalidate(patientProfileDataProvider(_cin!));
                   },
                   child: const Text('Try Again'),
                 ),
@@ -129,7 +146,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
   }
 
   Widget _buildProfileHeader(double imageSize, Map<String, dynamic> profile) {
-    final String cin = profile['cin'] ?? '@livysheleina';
+    final String cin = profile['cin'] ?? 'VHUZ8128';
     final String name = profile['name'] ?? 'Livy Sheleina';
     final String location = profile['location'] ?? 'New York';
     final String joinDate = profile['joined_date'] ?? 'August 2023';
@@ -153,7 +170,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: .2),
+                      color: black.withValues(alpha: .2),
                       spreadRadius: 2,
                       blurRadius: 8,
                       offset: const Offset(0, 2),
@@ -253,7 +270,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
     final String dob = profile['date_of_birth'] ?? 'January 1, 1990';
     final String age = profile['age'] ?? '35 yrs 4 months';
     final String email = profile['email'] ?? 'sh.agency@gmail.com';
-    final String phone = profile['phone'] ?? '+62 878 XXX XXX';
+    final String phone = profile['phone'] ?? '+92134567898';
     final String phoneType = profile['phone_type'] ?? 'Mobile';
     final String joined = profile['joined_date'] ?? 'August 2023';
 
@@ -360,7 +377,7 @@ class _PersonalProfileState extends ConsumerState<PersonalProfile> {
                   value,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[700],
+                    color: grey600,
                   ),
                 ),
               ),
@@ -378,7 +395,7 @@ class _ProfileDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Divider(
-      color: Colors.black12,
+      color: black,
       thickness: 1,
       indent: 20,
       endIndent: 20,

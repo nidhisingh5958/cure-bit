@@ -30,37 +30,89 @@ final class Doctor {
     this.fee = 0.0,
   });
 
-  factory Doctor.fromJson(Map<String, dynamic> json) {
+  factory Doctor.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return Doctor(
+        cin: '',
+        name: 'Unknown Doctor',
+        specialty: 'General',
+        location: 'Location not specified',
+        imageUrl: 'images/doctor.jpg',
+        rating: 0.0,
+      );
+    }
+
     return Doctor(
-      cin: json['cin']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
-      specialty: json['specialty']?.toString() ??
-          json['specialization']?.toString() ??
-          json['category']?.toString() ??
+      cin: _safeString(json['cin']) ??
+          _safeString(json['id']) ??
+          _safeString(json['doctorId']) ??
           '',
-      location: json['location']?.toString() ?? '',
-      imageUrl: json['image_url']?.toString() ??
-          json['imageUrl']?.toString() ??
-          json['image']?.toString() ??
+      name: _safeString(json['name']) ??
+          _safeString(json['doctorName']) ??
+          'Unknown Doctor',
+      specialty: _safeString(json['specialty']) ??
+          _safeString(json['specialization']) ??
+          _safeString(json['category']) ??
+          'General',
+      location: _safeString(json['location']) ??
+          _safeString(json['address']) ??
+          'Location not specified',
+      imageUrl: _safeString(json['image_url']) ??
+          _safeString(json['imageUrl']) ??
+          _safeString(json['image']) ??
           'images/doctor.jpg',
-      rating: (json['rating'] != null)
-          ? double.tryParse(json['rating'].toString()) ?? 0.0
-          : 0.0,
-      about: json['about']?.toString() ?? '',
-      experience: json['experience'] != null
-          ? int.tryParse(json['experience'].toString()) ?? 0
-          : 0,
-      patients: json['patients'] != null
-          ? int.tryParse(json['patients'].toString()) ?? 0
-          : 0,
-      reviews: json['reviews'] != null
-          ? int.tryParse(json['reviews'].toString()) ?? 0
-          : 0,
-      fee: json['fee'] != null
-          ? double.tryParse(json['fee'].toString()) ?? 0.0
-          : 0.0,
+      rating: _safeDouble(json['rating']) ?? 0.0,
+      about:
+          _safeString(json['about']) ?? _safeString(json['description']) ?? '',
+      experience: _safeInt(json['experience']) ?? 0,
+      patients:
+          _safeInt(json['patients']) ?? _safeInt(json['patient_count']) ?? 0,
+      reviews: _safeInt(json['reviews']) ?? _safeInt(json['review_count']) ?? 0,
+      fee: _safeDouble(json['fee']) ??
+          _safeDouble(json['consultation_fee']) ??
+          0.0,
     );
   }
+
+  // Helper methods for safe parsing
+  static String? _safeString(dynamic value) {
+    if (value == null) return null;
+    return value.toString().trim();
+  }
+
+  static double? _safeDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value);
+    }
+    return null;
+  }
+
+  static int? _safeInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) {
+      return int.tryParse(value);
+    }
+    return null;
+  }
+
+  @override
+  String toString() {
+    return 'Doctor(cin: $cin, name: $name, specialty: $specialty, location: $location)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Doctor && other.cin == cin;
+  }
+
+  @override
+  int get hashCode => cin.hashCode;
 }
 
 // State class to hold all doctor search related state
@@ -106,6 +158,11 @@ class DoctorSearchState {
       error: error ?? this.error,
     );
   }
+
+  @override
+  String toString() {
+    return 'DoctorSearchState(doctors: ${doctors.length}, filtered: ${filteredDoctors.length}, loading: $isLoading, error: $error)';
+  }
 }
 
 // StateNotifier to handle doctor search operations
@@ -114,127 +171,241 @@ class DoctorSearchNotifier extends StateNotifier<DoctorSearchState> {
 
   // Method to initialize with some default doctors
   Future<void> initialize() async {
-    state = state.copyWith(isLoading: true);
+    if (!mounted) return;
+
     try {
-      // Load some initial doctors
-      await searchDoctors('');
+      state = state.copyWith(isLoading: true, error: '');
+
+      // Load some initial doctors or mock data
+      final mockDoctors = _getMockDoctors();
+
+      if (mounted) {
+        state = state.copyWith(
+          doctors: mockDoctors,
+          filteredDoctors: mockDoctors,
+          isLoading: false,
+        );
+      }
     } catch (e) {
-      state = state.copyWith(error: 'Failed to load initial doctors: $e');
-    } finally {
-      state = state.copyWith(isLoading: false);
+      debugPrint('Error in initialize: $e');
+      if (mounted) {
+        state = state.copyWith(
+          error: 'Failed to load initial doctors: $e',
+          isLoading: false,
+          doctors: _getMockDoctors(),
+        );
+        _applyFilters();
+      }
     }
   }
 
   // Method to search doctors
   Future<void> searchDoctors(String query, {BuildContext? context}) async {
-    state = state.copyWith(isLoading: true, searchQuery: query);
+    if (!mounted) return;
 
     try {
-      final results = await DoctorSearchService.searchDoctors(query);
+      state = state.copyWith(isLoading: true, searchQuery: query, error: '');
+
+      List<Map<String, dynamic>>? results;
+
+      try {
+        results = await DoctorSearchService.searchDoctors(query);
+      } catch (apiError) {
+        debugPrint('API Error: $apiError');
+        // Continue with empty results, will use mock data
+        results = null;
+      }
+
       List<Doctor> doctorList;
 
-      if (results.isEmpty) {
+      if (results == null || results.isEmpty) {
         // If no results from API, use mock data for demonstration
         doctorList = _getMockDoctors();
       } else {
-        doctorList =
-            results.map<Doctor>((doctor) => Doctor.fromJson(doctor)).toList();
+        doctorList = results
+            .where((doctor) => doctor != null)
+            .map<Doctor?>((doctor) {
+              try {
+                return Doctor.fromJson(doctor);
+              } catch (e) {
+                debugPrint('Error parsing doctor: $e');
+                return null;
+              }
+            })
+            .where((doctor) => doctor != null)
+            .cast<Doctor>()
+            .toList();
+
+        // If parsing failed, fallback to mock data
+        if (doctorList.isEmpty) {
+          doctorList = _getMockDoctors();
+        }
       }
 
-      state = state.copyWith(doctors: doctorList);
-      // Apply any active filters
-      _applyFilters();
+      if (mounted) {
+        state = state.copyWith(doctors: doctorList, isLoading: false);
+        // Apply any active filters
+        _applyFilters();
+      }
     } catch (e) {
-      if (context != null) {
-        showSnackBar(context: context, message: 'Error: $e');
+      debugPrint('Error in searchDoctors: $e');
+
+      if (context != null && context.mounted) {
+        try {
+          showSnackBar(context: context, message: 'Error: $e');
+        } catch (snackError) {
+          debugPrint('Error showing snackbar: $snackError');
+        }
       }
 
       // Fall back to mock data in case of error
       final mockDoctors = _getMockDoctors();
-      state = state.copyWith(
-        error: 'Error searching doctors: $e',
-        doctors: mockDoctors,
-      );
-      _applyFilters();
-    } finally {
-      state = state.copyWith(isLoading: false);
+      if (mounted) {
+        state = state.copyWith(
+          error: 'Error searching doctors: $e',
+          doctors: mockDoctors,
+          isLoading: false,
+        );
+        _applyFilters();
+      }
     }
   }
 
   // Method to apply filters
   void _applyFilters() {
-    final filteredList = state.doctors.where((doctor) {
-      // Filter by specialty if selected
-      if (state.selectedSpecialty.isNotEmpty &&
-          !doctor.specialty
+    if (!mounted) return;
+
+    try {
+      if (state.doctors.isEmpty) {
+        state = state.copyWith(filteredDoctors: []);
+        return;
+      }
+
+      final filteredList = state.doctors.where((doctor) {
+        // Additional null check for safety
+        if (doctor == null) return false;
+
+        // Filter by specialty if selected
+        if (state.selectedSpecialty.isNotEmpty) {
+          final doctorSpecialty = doctor.specialty;
+          if (!doctorSpecialty
               .toLowerCase()
               .contains(state.selectedSpecialty.toLowerCase())) {
-        return false;
-      }
+            return false;
+          }
+        }
 
-      // Filter by location if selected
-      if (state.selectedLocation.isNotEmpty &&
-          !doctor.location
+        // Filter by location if selected
+        if (state.selectedLocation.isNotEmpty) {
+          final doctorLocation = doctor.location;
+          if (!doctorLocation
               .toLowerCase()
               .contains(state.selectedLocation.toLowerCase())) {
-        return false;
+            return false;
+          }
+        }
+
+        // Filter by rating if selected
+        if (state.selectedRating > 0) {
+          final doctorRating = doctor.rating;
+          if (doctorRating < state.selectedRating) {
+            return false;
+          }
+        }
+
+        return true;
+      }).toList();
+
+      if (mounted) {
+        state = state.copyWith(filteredDoctors: filteredList);
       }
-
-      // Filter by rating if selected
-      if (state.selectedRating > 0 && doctor.rating < state.selectedRating) {
-        return false;
+    } catch (e) {
+      debugPrint('Error applying filters: $e');
+      if (mounted) {
+        state = state.copyWith(filteredDoctors: state.doctors);
       }
-
-      return true;
-    }).toList();
-
-    state = state.copyWith(filteredDoctors: filteredList);
+    }
   }
 
   // Method to set specialty filter
   void setSpecialtyFilter(String specialty) {
-    state = state.copyWith(selectedSpecialty: specialty);
-    _applyFilters();
+    if (!mounted) return;
+    try {
+      state = state.copyWith(selectedSpecialty: specialty);
+      _applyFilters();
+    } catch (e) {
+      debugPrint('Error setting specialty filter: $e');
+    }
   }
 
   // Method to set location filter
   void setLocationFilter(String location) {
-    state = state.copyWith(selectedLocation: location);
-    _applyFilters();
+    if (!mounted) return;
+    try {
+      state = state.copyWith(selectedLocation: location);
+      _applyFilters();
+    } catch (e) {
+      debugPrint('Error setting location filter: $e');
+    }
   }
 
   // Method to set rating filter
   void setRatingFilter(int rating) {
-    state = state.copyWith(selectedRating: rating);
-    _applyFilters();
+    if (!mounted) return;
+    try {
+      state = state.copyWith(selectedRating: rating);
+      _applyFilters();
+    } catch (e) {
+      debugPrint('Error setting rating filter: $e');
+    }
   }
 
   // Method to clear all filters
   void clearFilters() {
-    state = state.copyWith(
-      selectedSpecialty: '',
-      selectedLocation: '',
-      selectedRating: 0,
-      filteredDoctors: state.doctors,
-    );
+    if (!mounted) return;
+    try {
+      state = state.copyWith(
+        selectedSpecialty: '',
+        selectedLocation: '',
+        selectedRating: 0,
+        filteredDoctors: state.doctors,
+      );
+    } catch (e) {
+      debugPrint('Error clearing filters: $e');
+    }
   }
 
   // Method to clear only location filter
   void clearLocationFilter() {
-    state = state.copyWith(selectedLocation: '');
-    _applyFilters();
+    if (!mounted) return;
+    try {
+      state = state.copyWith(selectedLocation: '');
+      _applyFilters();
+    } catch (e) {
+      debugPrint('Error clearing location filter: $e');
+    }
   }
 
   // Method to clear only rating filter
   void clearRatingFilter() {
-    state = state.copyWith(selectedRating: 0);
-    _applyFilters();
+    if (!mounted) return;
+    try {
+      state = state.copyWith(selectedRating: 0);
+      _applyFilters();
+    } catch (e) {
+      debugPrint('Error clearing rating filter: $e');
+    }
   }
 
   // Method to clear only specialty filter
   void clearSpecialtyFilter() {
-    state = state.copyWith(selectedSpecialty: '');
-    _applyFilters();
+    if (!mounted) return;
+    try {
+      state = state.copyWith(selectedSpecialty: '');
+      _applyFilters();
+    } catch (e) {
+      debugPrint('Error clearing specialty filter: $e');
+    }
   }
 
   // Mock data for offline testing or when API fails
@@ -257,34 +428,21 @@ class DoctorSearchNotifier extends StateNotifier<DoctorSearchState> {
         cin: '2AFG#%',
         name: 'Dr. Jane Smith',
         specialty: 'Cardiologist',
-        location: 'Mumbai, India',
+        location: 'Mumbai,, India',
         imageUrl: 'images/doctor.jpg',
-        rating: 5.0,
-        about: 'Specialized in heart diseases and treatments.',
-        experience: 15,
-        patients: 3200,
-        reviews: 425,
-        fee: 2500,
+        rating: 4.7,
+        about: 'Specialized in child healthcare.',
+        experience: 12,
+        patients: 2100,
+        reviews: 340,
+        fee: 1800,
       ),
     ];
   }
 }
 
-// Provider for DoctorSearchState
+// Provider
 final doctorSearchProvider =
-    StateNotifierProvider<DoctorSearchNotifier, DoctorSearchState>((ref) {
-  return DoctorSearchNotifier();
-});
-
-// Individual providers for easier consumption of specific pieces of state
-final doctorsProvider = Provider<List<Doctor>>((ref) {
-  return ref.watch(doctorSearchProvider).doctors;
-});
-
-final filteredDoctorsProvider = Provider<List<Doctor>>((ref) {
-  return ref.watch(doctorSearchProvider).filteredDoctors;
-});
-
-final isLoadingProvider = Provider<bool>((ref) {
-  return ref.watch(doctorSearchProvider).isLoading;
-});
+    StateNotifierProvider<DoctorSearchNotifier, DoctorSearchState>(
+  (ref) => DoctorSearchNotifier(),
+);

@@ -22,8 +22,8 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
   late String patientCin;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     patientCin = widget.cin ?? 'default_cin';
 
     // Set the current patient CIN in the provider
@@ -131,7 +131,7 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: black.withOpacity(0.2),
                       spreadRadius: 2,
                       blurRadius: 8,
                       offset: const Offset(0, 2),
@@ -352,7 +352,7 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
                   value,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[700],
+                    color: grey800,
                   ),
                 ),
               ),

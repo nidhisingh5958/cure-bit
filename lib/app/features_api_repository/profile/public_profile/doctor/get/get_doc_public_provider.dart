@@ -1,18 +1,10 @@
-import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
 import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/doctor_profile_repository.dart';
 import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/get_doctor_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Provider for the DoctorRepository
+/// Provider for the DoctorRepository - no baseUrl needed as it's handled in repository
 final doctorRepositoryProvider = Provider<GetDoctorProfileRepository>((ref) {
-  return GetDoctorProfileRepository(baseUrl: doctorPublicProfile);
-
-  // // Make sure to dispose of the repository when the provider is disposed
-  // ref.onDispose(() {
-  //   repository.dispose();
-  // });
-
-  // return repository;
+  return GetDoctorProfileRepository();
 });
 
 /// Provider for fetching doctor public profile data

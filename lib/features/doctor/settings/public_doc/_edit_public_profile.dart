@@ -127,8 +127,8 @@ class _DoctorEditPublicProfileState extends State<DoctorEditPublicProfile> {
   PostDoctorPublicProfile? _doctorProfile;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
     // If initial profile is provided, populate the fields
     if (widget.initialProfile != null) {

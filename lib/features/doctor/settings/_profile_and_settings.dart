@@ -23,10 +23,10 @@ class _ProfileScreenState extends ConsumerState<DoctorProfileSettings> {
   bool _manuallyAddReminders = true;
 
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     name = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
     cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
-    super.initState();
   }
 
   @override

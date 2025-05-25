@@ -1,23 +1,52 @@
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart';
+import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/get_doc_public_provider.dart';
 import 'package:CuraDocs/common/components/app_header.dart';
 import 'package:CuraDocs/common/components/colors.dart';
 import 'package:CuraDocs/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class DoctorPublicProfile extends StatefulWidget {
-  const DoctorPublicProfile({super.key});
+// Import your provider and model files here
+// import 'package:CuraDocs/path/to/your/provider_file.dart';
+// import 'package:CuraDocs/path/to/doctor_model.dart';
+
+class DoctorPublicProfile extends ConsumerStatefulWidget {
+  final String? cin; // CIN parameter for API call
+
+  const DoctorPublicProfile({
+    super.key,
+    this.cin,
+  });
 
   @override
-  State<DoctorPublicProfile> createState() => _DoctorPublicProfileState();
+  ConsumerState<DoctorPublicProfile> createState() =>
+      _DoctorPublicProfileState();
 }
 
-class _DoctorPublicProfileState extends State<DoctorPublicProfile> {
+class _DoctorPublicProfileState extends ConsumerState<DoctorPublicProfile> {
+  String get doctorCin =>
+      widget.cin ?? 'default_cin'; // Provide default or get from auth
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Trigger the API call when widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(doctorProfileNotifierProvider.notifier)
+          .getDoctorPublicProfile(doctorCin);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Watch the provider state
+    final profileState = ref.watch(doctorProfileNotifierProvider);
+
     // Get screen size information
     final Size screenSize = MediaQuery.of(context).size;
-    final double profileImageSize =
-        screenSize.width * 0.25; // 25% of screen width
+    final double profileImageSize = screenSize.width * 0.25;
 
     return Scaffold(
       appBar: AppHeader(
@@ -32,25 +61,224 @@ class _DoctorPublicProfileState extends State<DoctorPublicProfile> {
               context.pushNamed(RouteConstants.doctorEditPublicProfile);
             },
           ),
+          // Add refresh button
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              ref
+                  .read(doctorProfileNotifierProvider.notifier)
+                  .getDoctorPublicProfile(doctorCin);
+            },
+          ),
         ],
       ),
       backgroundColor: greyWithGreenTint,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Profile Header with Image
-            _buildProfileHeader(profileImageSize),
+      body: profileState.when(
+        data: (responseString) {
+          DoctorProfileModel? doctorProfile;
+          try {
+            if (responseString != null && responseString.isNotEmpty) {
+              doctorProfile =
+                  DoctorProfileModel.fromResponseString(responseString);
+            }
+          } catch (e) {
+            debugPrint('Error parsing doctor profile: $e');
+          }
+          return _buildProfileContent(profileImageSize, doctorProfile);
+        },
+        loading: () => _buildLoadingState(),
+        error: (error, stackTrace) => _buildErrorState(error),
+      ),
+    );
+  }
 
-            // Information Section
-            _buildInformationSection(),
+  Widget _buildProfileContent(
+      double profileImageSize, DoctorProfileModel? doctorProfile) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Profile Header with Image
+          _buildProfileHeader(profileImageSize, doctorProfile),
+
+          // Information Section
+          _buildInformationSection(doctorProfile),
+
+          // Additional sections if doctor profile has more data
+          if (doctorProfile?.bio != null && doctorProfile!.bio!.isNotEmpty)
+            _buildBioSection(doctorProfile.bio!),
+
+          if (doctorProfile?.specialization != null)
+            _buildSpecializationSection(doctorProfile!),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text(
+            'Loading profile...',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(Object error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Colors.red[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading profile',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.red[700],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error.toString(),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                ref
+                    .read(doctorProfileNotifierProvider.notifier)
+                    .getDoctorPublicProfile(doctorCin);
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(double imageSize) {
+  Widget _buildBioSection(String bio) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: white,
+        borderRadius: const BorderRadius.all(Radius.circular(25)),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'About',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            bio,
+            style: const TextStyle(
+              fontSize: 16,
+              height: 1.5,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecializationSection(DoctorProfileModel doctorProfile) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: white,
+        borderRadius: const BorderRadius.all(Radius.circular(25)),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Specialization',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Specialization chip
+          if (doctorProfile.specialization != null)
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                _buildSpecialtyChip(doctorProfile.specialization!),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecialtyChip(String specialty) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        border: Border.all(color: Colors.blue[200]!),
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Text(
+        specialty,
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.blue[700],
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader(
+      double imageSize, DoctorProfileModel? doctorProfile) {
     return Container(
       width: double.infinity,
       color: white,
@@ -110,10 +338,10 @@ class _DoctorPublicProfileState extends State<DoctorPublicProfile> {
 
           const SizedBox(height: 8),
 
-          // DoctorPublicProfilename handle
-          const Text(
-            '@livysheleina',
-            style: TextStyle(
+          // Username handle (use CIN or generate from name)
+          Text(
+            '@${doctorProfile?.cin ?? 'doctor'}',
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
             ),
@@ -121,44 +349,71 @@ class _DoctorPublicProfileState extends State<DoctorPublicProfile> {
 
           const SizedBox(height: 4),
 
-          // Name
-          const Text(
-            'Livy Sheleina',
-            style: TextStyle(
+          // Name (from API or fallback)
+          Text(
+            doctorProfile?.name ?? 'Doctor Name',
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
 
+          const SizedBox(height: 4),
+
+          // Specialization
+          if (doctorProfile?.specialization != null)
+            Text(
+              doctorProfile!.specialization!,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.blue[700],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
           const SizedBox(height: 8),
 
-          // Location and Join date
+          // Location and Experience
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'New York',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.blue,
+              if (doctorProfile?.address != null) ...[
+                Flexible(
+                  child: Text(
+                    doctorProfile!.address!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 6),
-                width: 4,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: grey400,
-                  shape: BoxShape.circle,
+                if (doctorProfile?.experience != null) ...[
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                    width: 4,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: grey400,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  Text(
+                    '${doctorProfile!.experience!} exp',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: grey600,
+                    ),
+                  ),
+                ],
+              ] else if (doctorProfile?.experience != null)
+                Text(
+                  '${doctorProfile!.experience!} experience',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: grey600,
+                  ),
                 ),
-              ),
-              Text(
-                'Joined August 2023',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: grey600,
-                ),
-              ),
             ],
           ),
         ],
@@ -166,7 +421,7 @@ class _DoctorPublicProfileState extends State<DoctorPublicProfile> {
     );
   }
 
-  Widget _buildInformationSection() {
+  Widget _buildInformationSection(DoctorProfileModel? doctorProfile) {
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(20),
@@ -193,44 +448,125 @@ class _DoctorPublicProfileState extends State<DoctorPublicProfile> {
           ),
           const SizedBox(height: 20),
 
-          // Website
-          _buildInfoItem(
-            icon: Icons.language,
-            label: 'Date of Birth',
-            value: 'January 1, 1990',
-            description: 'Age: 35 yrs 4 months',
-          ),
-
-          const _ProfileDivider(),
-
-          // Email
-          _buildInfoItem(
-            icon: Icons.mail,
-            label: 'Email',
-            value: 'sh.agency@gmail.com',
-          ),
-
-          const _ProfileDivider(),
-
-          // Phone
-          _buildInfoItem(
-            icon: Icons.phone,
-            label: 'Phone',
-            value: '+62 878 XXX XXX',
-            description: 'Mobile',
-          ),
-
-          const _ProfileDivider(),
-
-          // Joined
-          _buildInfoItem(
-            icon: Icons.calendar_today,
-            label: 'Joined',
-            value: 'August 2023',
-          ),
+          // Build info items dynamically based on available data
+          ..._buildDynamicInfoItems(doctorProfile),
         ],
       ),
     );
+  }
+
+  List<Widget> _buildDynamicInfoItems(DoctorProfileModel? doctorProfile) {
+    List<Widget> items = [];
+
+    // Qualification
+    if (doctorProfile?.qualification != null &&
+        doctorProfile!.qualification!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.school,
+        label: 'Qualification',
+        value: doctorProfile.qualification!,
+      ));
+      items.add(const _ProfileDivider());
+    }
+
+    // Email
+    if (doctorProfile?.email != null && doctorProfile!.email!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.mail,
+        label: 'Email',
+        value: doctorProfile.email!,
+      ));
+      items.add(const _ProfileDivider());
+    }
+
+    // Phone
+    if (doctorProfile?.phone != null && doctorProfile!.phone!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.phone,
+        label: 'Phone',
+        value: doctorProfile.phone!,
+        description: 'Mobile',
+      ));
+      items.add(const _ProfileDivider());
+    }
+
+    // Address
+    if (doctorProfile?.address != null && doctorProfile!.address!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.location_on,
+        label: 'Address',
+        value: doctorProfile.address!,
+      ));
+      items.add(const _ProfileDivider());
+    }
+
+    // Working Time
+    if (doctorProfile?.workingTime != null &&
+        doctorProfile!.workingTime!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.access_time,
+        label: 'Working Hours',
+        value: doctorProfile.workingTime!,
+      ));
+      items.add(const _ProfileDivider());
+    }
+
+    // Patients Attended
+    if (doctorProfile?.patientsAttended != null &&
+        doctorProfile!.patientsAttended!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.people,
+        label: 'Patients Attended',
+        value: doctorProfile.patientsAttended!,
+      ));
+      items.add(const _ProfileDivider());
+    }
+
+    // Experience
+    if (doctorProfile?.experience != null &&
+        doctorProfile!.experience!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.work,
+        label: 'Experience',
+        value: doctorProfile.experience!,
+      ));
+      items.add(const _ProfileDivider());
+    }
+
+    // CIN
+    if (doctorProfile?.cin != null && doctorProfile!.cin!.isNotEmpty) {
+      items.add(_buildInfoItem(
+        icon: Icons.badge,
+        label: 'CIN',
+        value: doctorProfile.cin!,
+      ));
+    }
+
+    // Remove last divider if items exist
+    if (items.isNotEmpty && items.last is _ProfileDivider) {
+      items.removeLast();
+    }
+
+    // If no data available, show placeholder
+    if (items.isEmpty) {
+      items.add(
+        const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text(
+              'No information available',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return items;
   }
 
   Widget _buildInfoItem({

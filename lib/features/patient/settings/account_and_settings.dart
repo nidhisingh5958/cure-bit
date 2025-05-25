@@ -16,27 +16,36 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  late String cin;
-  late String name;
+  String cin = '';
+  String name = '';
   bool _medicineModeReminder = true;
   bool _manuallyAddReminders = true;
+  bool _isInitialized = false;
 
   @override
-  void initState() {
-    cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
-    name = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      // Safe to access ref here
+      cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
+      name = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
+      _isInitialized = true;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Alternative: You can also get the values here in build method
+    // final currentCin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
+    // final currentName = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
+
     return Scaffold(
       backgroundColor: grey200,
       appBar: AppHeader(
         title: 'Profile and settings',
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               // Implement search functionality
             },
@@ -44,31 +53,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
         centerTitle: true,
       ),
-      drawer: SideMenu(),
+      drawer: const SideMenu(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // User Profile Header
-            Container(
-              child: Column(
-                children: [
-                  _buildProfileHeader(),
-                  SizedBox(height: 10),
-                  _buildProfileHeaderTitle(name: name, cin: cin),
-                ],
-              ),
+            Column(
+              children: [
+                _buildProfileHeader(),
+                const SizedBox(height: 10),
+                _buildProfileHeaderTitle(name: name, cin: cin),
+              ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
                 color: white,
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
-                boxShadow: const [
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+                boxShadow: [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -134,24 +141,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     icon: Icons.medication_liquid,
                     title: 'Medicine Remainder',
                     onTap: () {
-                      _buildSwitchItem(
-                        title: 'Medicine Reminder',
-                        value: _medicineModeReminder,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _medicineModeReminder = value;
-                          });
-                        },
-                      );
-                      _buildSwitchItem(
-                        title: 'Manually add reminders',
-                        value: _manuallyAddReminders,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _manuallyAddReminders = value;
-                          });
-                        },
-                      );
+                      // Show dialog or navigate to medicine settings
+                      _showMedicineReminderSettings();
                     },
                   ),
 
@@ -201,11 +192,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     onTap: () {},
                   ),
 
-                  // login settings
-                  // _buildSectionHeader('Login'),
-                  // _buildAdditionalSettings('Add account', Colors.blue),
-
-                  SizedBox(height: 70),
+                  const SizedBox(height: 70),
                 ],
               ),
             ),
@@ -223,7 +210,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           CircleAvatar(
             radius: 50,
             backgroundColor: Colors.grey.shade300,
-            child: Icon(Icons.person, size: 50, color: Colors.black54),
+            child: const Icon(Icons.person, size: 50, color: Colors.black54),
           ),
           // edit button in profile picture
           Positioned(
@@ -232,7 +219,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               radius: 15,
               backgroundColor: white,
               child: IconButton(
-                icon: Icon(Icons.edit),
+                icon: const Icon(Icons.edit),
                 iconSize: 16,
                 color: black,
                 onPressed: () {
@@ -253,7 +240,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text(
             name,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.bold,
             ),
@@ -264,14 +251,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: .1),
                   blurRadius: 8,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
-            margin: EdgeInsets.only(top: 5),
+            margin: const EdgeInsets.only(top: 5),
             child: Text(
               cin,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: black,
               ),
@@ -287,7 +274,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
       child: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           color: Colors.grey,
           fontWeight: FontWeight.w500,
@@ -359,11 +346,63 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return SwitchListTile(
       title: Text(
         title,
-        style: TextStyle(fontSize: 14),
+        style: const TextStyle(fontSize: 14),
       ),
       value: value,
       onChanged: onChanged,
       activeColor: black.withValues(alpha: .8),
+    );
+  }
+
+  void _showMedicineReminderSettings() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Medicine Reminder Settings'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SwitchListTile(
+                    title: const Text('Medicine Reminder'),
+                    value: _medicineModeReminder,
+                    onChanged: (bool value) {
+                      setDialogState(() {
+                        _medicineModeReminder = value;
+                      });
+                      setState(() {
+                        _medicineModeReminder = value;
+                      });
+                    },
+                  ),
+                  SwitchListTile(
+                    title: const Text('Manually add reminders'),
+                    value: _manuallyAddReminders,
+                    onChanged: (bool value) {
+                      setDialogState(() {
+                        _manuallyAddReminders = value;
+                      });
+                      setState(() {
+                        _manuallyAddReminders = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

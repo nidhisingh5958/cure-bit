@@ -27,14 +27,22 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
 
     // Initialize the doctor search provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(doctorSearchProvider.notifier).initialize();
+      try {
+        if (mounted) {
+          ref.read(doctorSearchProvider.notifier).initialize();
+        }
+      } catch (e) {
+        debugPrint('Error initializing doctor search: $e');
+      }
     });
 
     // Listen for changes to update the isExpanded state
     _textController.addListener(() {
-      setState(() {
-        isExpanded = _textController.text.isNotEmpty;
-      });
+      if (mounted) {
+        setState(() {
+          isExpanded = _textController.text.isNotEmpty;
+        });
+      }
     });
   }
 
@@ -47,49 +55,72 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
 
   // Update query and filter when text changes
   void onQueryChanged(String newQuery) {
-    if (newQuery.isEmpty) {
-      ref.read(doctorSearchProvider.notifier).clearFilters();
+    try {
+      if (newQuery.isEmpty) {
+        ref.read(doctorSearchProvider.notifier).clearFilters();
+      }
+      if (mounted) {
+        setState(() {
+          isExpanded = newQuery.isNotEmpty;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error in onQueryChanged: $e');
     }
-    setState(() {
-      isExpanded = newQuery.isNotEmpty;
-    });
   }
 
   // Method to apply filter based on selected filter type
   void applyFilter(String query) {
     if (query.isEmpty) return;
 
-    // Search doctors using the provider
-    ref
-        .read(doctorSearchProvider.notifier)
-        .searchDoctors(query, context: context);
+    try {
+      // Search doctors using the provider
+      ref
+          .read(doctorSearchProvider.notifier)
+          .searchDoctors(query, context: context);
 
-    // Apply filters based on the active filter
-    if (activeFilter == 'Name') {
-      // No specific API filter for name, as it's included in general search
-    } else if (activeFilter == 'Location') {
-      ref.read(doctorSearchProvider.notifier).setLocationFilter(query);
-    } else if (activeFilter == 'Specialty') {
-      ref.read(doctorSearchProvider.notifier).setSpecialtyFilter(query);
+      // Apply filters based on the active filter
+      if (activeFilter == 'Name') {
+        // No specific API filter for name, as it's included in general search
+      } else if (activeFilter == 'Location') {
+        ref.read(doctorSearchProvider.notifier).setLocationFilter(query);
+      } else if (activeFilter == 'Specialty') {
+        ref.read(doctorSearchProvider.notifier).setSpecialtyFilter(query);
+      }
+    } catch (e) {
+      debugPrint('Error applying filter: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error applying filter: $e')),
+        );
+      }
     }
   }
 
   // Delete items function to clear the text
   void _deleteItems() {
-    setState(() {
-      _textController.clear();
-      isExpanded = false;
-    });
-    ref.read(doctorSearchProvider.notifier).clearFilters();
+    try {
+      if (mounted) {
+        setState(() {
+          _textController.clear();
+          isExpanded = false;
+        });
+      }
+      ref.read(doctorSearchProvider.notifier).clearFilters();
+    } catch (e) {
+      debugPrint('Error clearing items: $e');
+    }
   }
 
   // Show filter options dialog
   void _showFilterOptions() {
+    if (!mounted) return;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Filter Search By'),
+          title: const Text('Filter Search By'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -110,25 +141,34 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
       title: Text(filterName),
       selected: activeFilter == filterName,
       onTap: () {
-        setState(() {
-          activeFilter = filterName;
-          // Apply the current search with the new filter
-          if (_textController.text.isNotEmpty) {
-            applyFilter(_textController.text);
+        try {
+          if (mounted) {
+            setState(() {
+              activeFilter = filterName;
+              // Apply the current search with the new filter
+              if (_textController.text.isNotEmpty) {
+                applyFilter(_textController.text);
+              }
+            });
           }
-        });
-        Navigator.pop(context);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        } catch (e) {
+          debugPrint('Error selecting filter option: $e');
+        }
       },
       trailing: activeFilter == filterName
-          ? Icon(Icons.check, color: Colors.blue)
+          ? const Icon(Icons.check, color: Colors.blue)
           : null,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch the doctor search state
+    // Watch the doctor search state with error handling
     final doctorSearchState = ref.watch(doctorSearchProvider);
+
     final isLoading = doctorSearchState.isLoading;
     final error = doctorSearchState.error;
     final doctors = doctorSearchState.doctors;
@@ -142,7 +182,7 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
         },
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             onPressed: _showFilterOptions,
           ),
         ],
@@ -166,7 +206,7 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
 
   Widget _buildActiveFilterChip() {
     // Only show filter chip if not set to 'All'
-    if (activeFilter == 'All') return SizedBox(height: 8);
+    if (activeFilter == 'All') return const SizedBox(height: 8);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -174,21 +214,34 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
         children: [
           Chip(
             label: Text('Filter: $activeFilter'),
-            deleteIcon: Icon(Icons.close, size: 16),
+            deleteIcon: const Icon(Icons.close, size: 16),
             onDeleted: () {
-              setState(() {
-                activeFilter = 'All';
-                // Clear specific filter based on the active filter
-                if (activeFilter == 'Location') {
-                  ref.read(doctorSearchProvider.notifier).clearLocationFilter();
-                } else if (activeFilter == 'Specialty') {
-                  ref
-                      .read(doctorSearchProvider.notifier)
-                      .clearSpecialtyFilter();
-                } else if (activeFilter == 'Rating') {
-                  ref.read(doctorSearchProvider.notifier).clearRatingFilter();
+              try {
+                if (mounted) {
+                  setState(() {
+                    // Store the current filter to clear the appropriate one
+                    final currentFilter = activeFilter;
+                    activeFilter = 'All';
+
+                    // Clear specific filter based on the previous active filter
+                    if (currentFilter == 'Location') {
+                      ref
+                          .read(doctorSearchProvider.notifier)
+                          .clearLocationFilter();
+                    } else if (currentFilter == 'Specialty') {
+                      ref
+                          .read(doctorSearchProvider.notifier)
+                          .clearSpecialtyFilter();
+                    } else if (currentFilter == 'Rating') {
+                      ref
+                          .read(doctorSearchProvider.notifier)
+                          .clearRatingFilter();
+                    }
+                  });
                 }
-              });
+              } catch (e) {
+                debugPrint('Error clearing filter chip: $e');
+              }
             },
           ),
         ],
@@ -207,7 +260,7 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           prefixIcon: Icon(
             Icons.search,
-            color: black,
+            color: Theme.of(context).primaryColor,
             size: 20,
           ),
           suffixIcon: Row(
@@ -217,7 +270,7 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: black,
+                    color: Theme.of(context).primaryColor,
                     size: 20,
                   ),
                   onPressed: _deleteItems,
@@ -225,7 +278,7 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
               else
                 Icon(
                   Icons.mic,
-                  color: black,
+                  color: Theme.of(context).primaryColor,
                   size: 20,
                 ),
             ],
@@ -239,7 +292,7 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
         ),
-        style: TextStyle(fontSize: 14),
+        style: const TextStyle(fontSize: 14),
         minLines: 1,
         maxLines: 1,
         onSubmitted: (value) {
@@ -259,7 +312,7 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
   }) {
     // Show loading state
     if (isLoading) {
-      return Expanded(
+      return const Expanded(
         child: Center(
           child: CircularProgressIndicator(),
         ),
@@ -273,17 +326,24 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red),
-              SizedBox(height: 16),
-              Text(
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text(
                 'Error loading doctors',
                 style: TextStyle(fontSize: 18, color: Colors.red),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 error,
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  ref.read(doctorSearchProvider.notifier).initialize();
+                },
+                child: const Text('Retry'),
               ),
             ],
           ),
@@ -292,11 +352,12 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
     }
 
     // Get the list of doctors to display
-    final displayDoctors = filteredDoctors.isEmpty ? doctors : filteredDoctors;
+    final displayDoctors =
+        filteredDoctors.isNotEmpty ? filteredDoctors : doctors;
 
     // Show empty state if no doctors found
     if (displayDoctors.isEmpty) {
-      return Expanded(
+      return const Expanded(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -322,12 +383,16 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
     return Expanded(
       child: ListView.builder(
         itemCount: displayDoctors.length,
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         itemBuilder: (context, index) {
+          if (index >= displayDoctors.length) {
+            return const SizedBox.shrink();
+          }
+
           final doctor = displayDoctors[index];
 
           return Card(
-            margin: EdgeInsets.symmetric(vertical: 8),
+            margin: const EdgeInsets.symmetric(vertical: 8),
             elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -337,95 +402,141 @@ class _DoctorSearchScreenState extends ConsumerState<DoctorSearchScreen> {
                 horizontal: getProportionateScreenHeight(16),
                 vertical: getProportionateScreenHeight(8),
               ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 64,
-                        minHeight: 64,
-                        maxWidth: 64,
-                        maxHeight: 64,
-                      ),
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(doctor.imageUrl),
-                        radius: 30,
+              child: ListTile(
+                leading: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: 64,
+                    minHeight: 64,
+                    maxWidth: 64,
+                    maxHeight: 64,
+                  ),
+                  child: CircleAvatar(
+                    backgroundImage: doctor.imageUrl.isNotEmpty
+                        ? NetworkImage(doctor.imageUrl)
+                        : null,
+                    radius: 30,
+                    child: doctor.imageUrl.isEmpty
+                        ? const Icon(Icons.person, size: 30)
+                        : null,
+                  ),
+                ),
+                title: Text(
+                  doctor?.name ?? 'Unknown Name',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4),
+                    Text(
+                      doctor?.specialty ?? 'Unknown Specialty',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
-                    title: Text(
-                      doctor.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: black.withValues(alpha: .8),
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 4),
+                    Row(
                       children: [
-                        SizedBox(height: 4),
-                        Text(
-                          doctor.specialty,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                            color: black.withValues(alpha: .8),
+                        const Icon(Icons.location_on,
+                            size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            doctor.location ?? 'Unknown Location',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: grey600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(Icons.location_on,
-                                size: 16, color: Colors.grey),
-                            SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                doctor.location,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[600],
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(Icons.star, size: 16, color: Colors.amber),
-                            SizedBox(width: 4),
-                            Text(
-                              '${doctor.rating}',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            if (doctor.reviews > 0) ...[
-                              SizedBox(width: 4),
-                              Text(
-                                '(${doctor.reviews} reviews)',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ],
                         ),
                       ],
                     ),
-                    onTap: () {
-                      // Navigate to doctor's details page
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, size: 16, color: Colors.amber),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${doctor?.rating ?? '0.0'}',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: grey600,
+                          ),
+                        ),
+                        if (doctor.reviews > 0) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '(${doctor?.reviews ?? '4.5'} reviews',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: grey600,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  try {
+                    // Check if doctor.cin is not null or empty before navigation
+                    if (doctor.cin.isNotEmpty) {
+                      debugPrint(
+                        'Navigating to doctor details with ID: ${doctor.cin}',
+                      );
                       context.pushNamed(
                         RouteConstants.doctorDetails,
-                        extra: doctor,
+                        pathParameters: {
+                          'doctorId':
+                              doctor.cin.isEmpty ? doctor.cin : 'GAJB8522',
+                        },
                       );
-                    },
-                  ),
-                ],
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Doctor ID not available')),
+                      );
+                    }
+                  } catch (e) {
+                    debugPrint('Error navigating to doctor details: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
+                },
+                trailing: IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onPressed: () {
+                    try {
+                      // Check if doctor.cin is not null or empty before navigation
+                      if (doctor.cin.isNotEmpty) {
+                        context.pushNamed(
+                          RouteConstants.doctorDetails,
+                          pathParameters: {
+                            'doctorId':
+                                doctor.cin.isEmpty ? doctor.cin : 'GAJB8522'
+                          },
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Doctor ID not available')),
+                        );
+                      }
+                    } catch (e) {
+                      debugPrint('Error navigating to doctor details: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: $e')),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           );

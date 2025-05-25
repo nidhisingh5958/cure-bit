@@ -27,14 +27,14 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
   final int _maxPatientsToShow = 10; // Maximum patients to show on main screen
 
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     docName = UserHelper.getUserAttribute<String>(ref, 'name') ?? '';
     specialization =
         UserHelper.getUserAttribute<String>(ref, 'specialization') ??
             'General Practitioner';
     _docCin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
 
-    super.initState();
     _searchController.addListener(_onSearchChanged);
 
     // Load patient data on widget initialization

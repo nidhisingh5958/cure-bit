@@ -358,7 +358,7 @@ class PrivateProfileRepository {
   Future<PrivateProfileData> getPrivateProfile(String cin, String role) async {
     try {
       http.Response response = await http.get(
-        Uri.parse('$privateProfile/$role/get_profile_profile_data/$cin'),
+        Uri.parse('$privateProfile/$role/get_profile_profile_data?$cin'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -384,14 +384,16 @@ class PrivateProfileRepository {
     try {
       String apiEndpoint;
       if (role.toLowerCase() == 'doctor') {
-        apiEndpoint = '/refresh_cache/private_doctor_profile_data';
+        apiEndpoint =
+            '$privateProfile/refresh_cache/private_doctor_profile_data';
       } else if (role.toLowerCase() == 'patient') {
-        apiEndpoint = '/refresh_cache/private_patient_profile_data';
+        apiEndpoint =
+            '$privateProfile/refresh_cache/private_patient_profile_data';
       } else {
         throw Exception('Invalid role: $role. Expected "Doctor" or "Patient"');
       }
 
-      final uri = Uri.parse('$privateProfile$apiEndpoint').replace(
+      final uri = Uri.parse('$apiEndpoint').replace(
         queryParameters: {'CIN': cin},
       );
 
@@ -424,14 +426,16 @@ class PrivateProfileRepository {
     try {
       String apiEndpoint;
       if (role.toLowerCase() == 'doctor') {
-        apiEndpoint = '/refresh_cache/private_doctor_profile_data';
+        apiEndpoint =
+            '$privateProfile/refresh_cache/private_doctor_profile_data';
       } else if (role.toLowerCase() == 'patient') {
-        apiEndpoint = '/refresh_cache/private_patient_profile_data';
+        apiEndpoint =
+            '$privateProfile/refresh_cache/private_patient_profile_data';
       } else {
         throw Exception('Invalid role: $role. Expected "Doctor" or "Patient"');
       }
 
-      final uri = Uri.parse('$privateProfile$apiEndpoint').replace(
+      final uri = Uri.parse('$apiEndpoint').replace(
         queryParameters: {'CIN': cin},
       );
 

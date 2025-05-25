@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
 import 'package:http/http.dart' as http;
 
+final String baseUrl = '$doctorPublicProfile';
+
 /// Exception thrown when doctor data retrieval fails
 class GetDoctorProfileRepositoryException implements Exception {
   final String message;
@@ -16,11 +18,9 @@ class GetDoctorProfileRepositoryException implements Exception {
 
 /// Repository for fetching doctor profile data
 class GetDoctorProfileRepository {
-  String baseUrl = doctorPublicProfile;
   final http.Client _httpClient;
 
   GetDoctorProfileRepository({
-    required this.baseUrl,
     http.Client? httpClient,
   }) : _httpClient = httpClient ?? http.Client();
 

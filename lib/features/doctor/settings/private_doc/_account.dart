@@ -19,9 +19,9 @@ class _DoctorPersonalProfileState extends ConsumerState<DoctorPersonalProfile> {
   late final String _cin;
 
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _cin = UserHelper.getUserAttribute<String>(ref, 'cin') ?? '';
-    super.initState();
     // Prefetch the doctor profile data when the screen is loaded
     Future.microtask(() => ref.read(doctorProfileDataProvider(_cin).future));
   }

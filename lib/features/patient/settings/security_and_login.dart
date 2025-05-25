@@ -23,6 +23,7 @@ class SecurityAndLoginSettings extends StatelessWidget {
           children: [
             _buildSectionHeader('Your account'),
             _buildSettingsItem(
+              context: context,
               icon: Icons.account_circle,
               title: 'Account information',
               onTap: () {
@@ -30,6 +31,7 @@ class SecurityAndLoginSettings extends StatelessWidget {
               },
             ),
             _buildSettingsItem(
+              context: context,
               icon: Icons.lock,
               title: 'Security and login',
               onTap: () {
@@ -47,7 +49,7 @@ class SecurityAndLoginSettings extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
       child: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           color: Colors.grey,
           fontWeight: FontWeight.w500,
@@ -57,6 +59,7 @@ class SecurityAndLoginSettings extends StatelessWidget {
   }
 
   Widget _buildSettingsItem({
+    required BuildContext context,
     required IconData icon,
     required String title,
     String? subtitle,
