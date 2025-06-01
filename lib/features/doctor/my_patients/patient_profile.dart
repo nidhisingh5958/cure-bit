@@ -477,14 +477,13 @@ class _PatientProfileState extends ConsumerState<PatientProfile>
     if (widget.patientCin == null) return;
 
     try {
-      final clearAction =
-          ref.read(_profileRepository.clearPatientProfileActionProvider);
+      final clearAction = ref.read(clearPatientProfileActionProvider);
       final result = await clearAction(widget.patientCin!);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result ?? 'Profile cleared successfully'),
+            content: Text(result),
             backgroundColor: Colors.green,
           ),
         );
@@ -501,7 +500,7 @@ class _PatientProfileState extends ConsumerState<PatientProfile>
     }
   }
 
-  // Method to clear cache
+// Method to clear cache
   Future<void> _clearCache() async {
     if (widget.patientCin == null) return;
 
@@ -512,7 +511,7 @@ class _PatientProfileState extends ConsumerState<PatientProfile>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result ?? 'Cache cleared successfully'),
+            content: Text(result),
             backgroundColor: Colors.green,
           ),
         );

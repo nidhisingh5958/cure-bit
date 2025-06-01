@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:CureBit/app/auth/api_const.dart';
-import 'package:Docs/app/auth/token/secure_storage.dart';
+import 'package:CureBit/app/auth/token/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';

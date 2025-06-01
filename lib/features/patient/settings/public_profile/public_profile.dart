@@ -397,8 +397,8 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
 
   Future<void> _clearCache() async {
     try {
-      final clearCacheAction = ref.read(clearCacheActionProvider);
-      final result = await clearCacheAction(patientCin);
+      final clearAction = ref.read(clearCachePatientPublicProfile);
+      final result = await clearAction(patientCin);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
