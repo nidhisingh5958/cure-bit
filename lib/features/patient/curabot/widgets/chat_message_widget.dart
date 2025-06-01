@@ -1,6 +1,6 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';
-import 'package:CuraDocs/features/patient/curabot/entities/message_group.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/patient/curabot/entities/message_bot.dart';
+import 'package:CureBit/features/patient/curabot/entities/message_group.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageWidget extends StatelessWidget {

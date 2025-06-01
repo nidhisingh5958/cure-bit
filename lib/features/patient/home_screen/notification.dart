@@ -1,7 +1,7 @@
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:CuraDocs/common/components/pop_up.dart';
+import 'package:CureBit/common/components/pop_up.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});

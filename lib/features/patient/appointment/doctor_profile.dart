@@ -1,18 +1,18 @@
 import 'dart:convert';
 
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/pop_up.dart';
-import 'package:CuraDocs/app/features_api_repository/connect/send_connect_provider.dart';
-import 'package:CuraDocs/app/features_api_repository/connect/send_connect_provider.dart'
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/pop_up.dart';
+import 'package:CureBit/app/features_api_repository/connect/send_connect_provider.dart';
+import 'package:CureBit/app/features_api_repository/connect/send_connect_provider.dart'
     as connect;
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/get_doc_public_provider.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/get/get_doc_public_provider.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart'
+import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart'
     as model;
 
 Color primaryColor = black;

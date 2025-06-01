@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/app/features_api_repository/search/external_search/doctor_search_repository.dart';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/app/features_api_repository/search/external_search/doctor_search_repository.dart';
+import 'package:CureBit/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 
 final class Doctor {

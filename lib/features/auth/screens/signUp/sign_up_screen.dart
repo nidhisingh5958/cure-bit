@@ -1,5 +1,5 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/auth/screens/signUp/sign_up_form.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/auth/screens/signUp/sign_up_form.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../utils/routes/route_constants.dart';

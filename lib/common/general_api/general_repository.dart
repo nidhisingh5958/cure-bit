@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:CuraDocs/common/general_api/general_api_constant.dart';
+import 'package:CureBit/common/general_api/general_api_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:CuraDocs/app/auth/token/token_repository.dart';
+import 'package:CureBit/app/auth/token/token_repository.dart';
 
 class GeneralApiRepository {
   // Singleton instance

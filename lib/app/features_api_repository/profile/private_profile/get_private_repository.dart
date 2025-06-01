@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_string_interpolations
 
 import 'dart:convert';
-import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
+import 'package:CureBit/app/features_api_repository/api_constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 

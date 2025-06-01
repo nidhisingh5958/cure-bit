@@ -1,7 +1,7 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/app/features_api_repository/appointment/doctor/previous_patients_provider.dart';
-import 'package:CuraDocs/features/doctor/patient_navigation_utility.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/app/features_api_repository/appointment/doctor/previous_patients_provider.dart';
+import 'package:CureBit/features/doctor/patient_navigation_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

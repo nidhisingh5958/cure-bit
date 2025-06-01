@@ -1,9 +1,9 @@
-import 'package:CuraDocs/app/auth/api_const.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/app/auth/api_const.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
+import 'package:CureBit/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/app/auth/auth_repository.dart';
+import 'package:CureBit/app/auth/auth_repository.dart';
 
 // login
 final loginControllerProvider = Provider((ref) {

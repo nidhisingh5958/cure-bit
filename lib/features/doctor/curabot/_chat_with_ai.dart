@@ -1,12 +1,12 @@
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/doctor/curabot/entities/message_group.dart';
-import 'package:CuraDocs/features/doctor/curabot/widgets/_bot_search_bar.dart';
-import 'package:CuraDocs/features/doctor/curabot/widgets/_chat_message_widget.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/doctor/curabot/entities/message_group.dart';
+import 'package:CureBit/features/doctor/curabot/widgets/_bot_search_bar.dart';
+import 'package:CureBit/features/doctor/curabot/widgets/_chat_message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/features/doctor/curabot/data/messages_bot.dart';
-import 'package:CuraDocs/features/doctor/curabot/entities/message_bot.dart';
+import 'package:CureBit/features/doctor/curabot/data/messages_bot.dart';
+import 'package:CureBit/features/doctor/curabot/entities/message_bot.dart';
 
 class DoctorBotScreen extends StatefulWidget {
   const DoctorBotScreen({super.key});

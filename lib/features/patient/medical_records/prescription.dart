@@ -1,7 +1,7 @@
-import 'package:CuraDocs/features/patient/medical_records/components/search.dart';
+import 'package:CureBit/features/patient/medical_records/components/search.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:CuraDocs/features/patient/medical_records/data/sample.dart'
+import 'package:CureBit/features/patient/medical_records/data/sample.dart'
     show Patient;
 
 class PatientManagementScreen extends StatefulWidget {

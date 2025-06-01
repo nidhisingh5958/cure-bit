@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/providers/auth_controllers.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
-import 'package:CuraDocs/utils/providers/user_provider.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/utils/providers/auth_controllers.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
+import 'package:CureBit/utils/providers/user_provider.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -332,7 +332,7 @@ class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
       icon: Icons.info_outline,
       label: 'About Cura Docs',
       onTap: () async {
-        final Uri url = Uri.parse('https://www.curadocs.in/about.html');
+        final Uri url = Uri.parse('https://www.CureBit.in/about.html');
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         } else {

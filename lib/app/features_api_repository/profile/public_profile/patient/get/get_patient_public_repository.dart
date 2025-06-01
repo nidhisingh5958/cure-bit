@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
+import 'package:CureBit/app/features_api_repository/api_constant.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
 import 'package:http/http.dart' as http;
 
 final String baseUrl = '$patientPublicProfile';

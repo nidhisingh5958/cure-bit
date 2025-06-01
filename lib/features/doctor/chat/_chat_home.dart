@@ -1,12 +1,12 @@
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/doctor/chat/_request_screen.dart';
-import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
-import 'package:CuraDocs/features/doctor/chat/entities/_request_provider.dart';
-import 'package:CuraDocs/features/doctor/home_screen/widgets/_side_menu.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/doctor/chat/_request_screen.dart';
+import 'package:CureBit/features/doctor/chat/entities/_chat_data.dart';
+import 'package:CureBit/features/doctor/chat/entities/_request_provider.dart';
+import 'package:CureBit/features/doctor/home_screen/widgets/_side_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/features/doctor/chat/data/chat_sample_data.dart';
-import 'package:CuraDocs/features/doctor/chat/_chat_screen.dart';
+import 'package:CureBit/features/doctor/chat/data/chat_sample_data.dart';
+import 'package:CureBit/features/doctor/chat/_chat_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DoctorChatListScreen extends StatefulWidget {

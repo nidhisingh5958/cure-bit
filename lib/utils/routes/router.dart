@@ -1,26 +1,26 @@
 // ignore_for_file: unused_local_variable, deprecated_member_use
 
 import 'dart:async';
-import 'package:CuraDocs/app/auth/auth_middleware.dart';
-import 'package:CuraDocs/common/contact_us.dart';
-import 'package:CuraDocs/common/scan_qr.dart';
-import 'package:CuraDocs/features/auth/landing/splash/main_splash_screen.dart';
-import 'package:CuraDocs/features/auth/screens/login/forgot_pass/pass.dart';
-import 'package:CuraDocs/features/auth/screens/signUp/sign_up_screen.dart';
-import 'package:CuraDocs/common/report_a_problem.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
-import 'package:CuraDocs/utils/routes/doctor_routes.dart';
-import 'package:CuraDocs/utils/routes/patients_routes.dart';
+import 'package:CureBit/app/auth/auth_middleware.dart';
+import 'package:CureBit/common/contact_us.dart';
+import 'package:CureBit/common/scan_qr.dart';
+import 'package:CureBit/features/auth/landing/splash/main_splash_screen.dart';
+import 'package:CureBit/features/auth/screens/login/forgot_pass/pass.dart';
+import 'package:CureBit/features/auth/screens/signUp/sign_up_screen.dart';
+import 'package:CureBit/common/report_a_problem.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
+import 'package:CureBit/utils/routes/doctor_routes.dart';
+import 'package:CureBit/utils/routes/patients_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:CuraDocs/features/auth/landing/role.dart';
-import 'package:CuraDocs/features/auth/screens/login/forgot_pass/forgot_pass.dart';
-import 'package:CuraDocs/features/auth/screens/login/login_screen.dart';
-import 'package:CuraDocs/features/auth/landing/onboarding_screen.dart';
-import 'package:CuraDocs/features/auth/screens/login/login_otp/otp.dart';
-import 'package:CuraDocs/utils/routes/components/navigation_keys.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
+import 'package:CureBit/features/auth/landing/role.dart';
+import 'package:CureBit/features/auth/screens/login/forgot_pass/forgot_pass.dart';
+import 'package:CureBit/features/auth/screens/login/login_screen.dart';
+import 'package:CureBit/features/auth/landing/onboarding_screen.dart';
+import 'package:CureBit/features/auth/screens/login/login_otp/otp.dart';
+import 'package:CureBit/utils/routes/components/navigation_keys.dart';
 
 const bool isDev = true; // Set to false before release
 

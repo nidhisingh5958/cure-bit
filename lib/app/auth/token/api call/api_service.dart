@@ -1,18 +1,18 @@
 // api_service.dart
 import 'dart:async';
 import 'dart:convert';
-import 'package:CuraDocs/app/auth/token/api%20call/api_interceptor.dart';
-import 'package:CuraDocs/app/auth/token/token_repository.dart';
+import 'package:CureBit/app/auth/token/api%20call/api_interceptor.dart';
+import 'package:CureBit/app/auth/token/token_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
 
 // Class to hold API configuration
 class ApiConfig {
   // Base URL - should be different per environment
   static const String baseUrl = String.fromEnvironment('BASE_URL',
       defaultValue:
-          'http://curadocs-auth-dev-444651946.us-east-1.elb.amazonaws.com');
+          'http://CureBit-auth-dev-444651946.us-east-1.elb.amazonaws.com');
 
   // Default timeout duration
   static const Duration defaultTimeout = Duration(seconds: 30);

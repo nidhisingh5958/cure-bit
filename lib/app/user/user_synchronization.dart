@@ -1,5 +1,5 @@
-import 'package:CuraDocs/app/user/user_singleton.dart';
-import 'package:CuraDocs/utils/providers/user_provider.dart';
+import 'package:CureBit/app/user/user_singleton.dart';
+import 'package:CureBit/utils/providers/user_provider.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

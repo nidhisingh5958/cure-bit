@@ -32,7 +32,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64",
+		"build" : "/home/hemant-kumar/Developer/CureBit/CureBit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64",
 		"source" : "/home/hemant-kumar/snap/flutter/common/flutter/packages/flutter_tools/gradle/src/main/groovy"
 	},
 	"version" : 

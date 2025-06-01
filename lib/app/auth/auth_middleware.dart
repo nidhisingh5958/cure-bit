@@ -1,10 +1,10 @@
 // Auth Middleware: Checks if the user is authenticated and if the token is valid before allowing access to protected routes.
-import 'package:CuraDocs/app/auth/token/token_repository.dart';
+import 'package:CureBit/app/auth/token/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 
 class AuthMiddleware extends ConsumerWidget {
   final Widget child;

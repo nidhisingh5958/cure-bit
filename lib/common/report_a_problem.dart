@@ -1,8 +1,8 @@
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/general_api/general_repository.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/common/general_api/general_repository.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
+import 'package:CureBit/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -125,7 +125,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
                       ],
                     ),
                     child: Text(
-                      '"Have questions about your medical history or CuraDocs services? We\'re here to help with prompt and accurate support."',
+                      '"Have questions about your medical history or CureBit services? We\'re here to help with prompt and accurate support."',
                       style: TextStyle(
                         fontSize: 16,
                         color: black.withValues(alpha: .8),

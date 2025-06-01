@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/app/models/user_model.dart';
+import 'package:CureBit/app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Provider that stores the current user

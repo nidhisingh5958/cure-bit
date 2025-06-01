@@ -1,4 +1,4 @@
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';

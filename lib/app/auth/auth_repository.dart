@@ -3,20 +3,20 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:CuraDocs/app/auth/api_const.dart';
-import 'package:CuraDocs/app/auth/token/token_repository.dart';
-import 'package:CuraDocs/app/models/user_model.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
+import 'package:CureBit/app/auth/api_const.dart';
+import 'package:CureBit/app/auth/token/token_repository.dart';
+import 'package:CureBit/app/models/user_model.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/utils/snackbar.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:CuraDocs/utils/providers/user_provider.dart';
+import 'package:CureBit/utils/providers/user_provider.dart';
 
 final authRepositoryProvider = Provider((ref) {
   final tokenRepository = ref.watch(tokenRepositoryProvider);

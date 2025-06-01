@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
-// import 'package:CuraDocs/screens/login/login_screen.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
+// import 'package:CureBit/screens/login/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

@@ -1,11 +1,11 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/components/pop_up.dart';
-import 'package:CuraDocs/features/doctor/chat/widgets/_build_message.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/common/components/pop_up.dart';
+import 'package:CureBit/features/doctor/chat/widgets/_build_message.dart';
 import 'data/chat_sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
-import 'package:CuraDocs/features/doctor/chat/entities/_message.dart';
+import 'package:CureBit/features/doctor/chat/entities/_chat_data.dart';
+import 'package:CureBit/features/doctor/chat/entities/_message.dart';
 
 class DoctorChatScreen extends StatefulWidget {
   final DocChatData chat;

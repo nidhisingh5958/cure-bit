@@ -1,4 +1,4 @@
-import 'package:CuraDocs/common/components/app_header.dart';
+import 'package:CureBit/common/components/app_header.dart';
 import 'package:flutter/material.dart';
 
 class DoctorQR extends StatefulWidget {

@@ -1,5 +1,5 @@
-import 'package:CuraDocs/features/patient/chat/entities/chat_data.dart';
-import 'package:CuraDocs/features/patient/chat/entities/message.dart';
+import 'package:CureBit/features/patient/chat/entities/chat_data.dart';
+import 'package:CureBit/features/patient/chat/entities/message.dart';
 
 final List<ChatData> requestData = [
   RequestData(

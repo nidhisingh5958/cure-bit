@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:CuraDocs/app/auth/token/token_repository.dart';
+import 'package:CureBit/app/auth/token/token_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,6 +1,6 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/components/circular_checkbox.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/common/components/circular_checkbox.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +28,7 @@ class _RoleScreenState extends State<RoleScreen> {
                 child: Column(
                   children: [
                     Text(
-                      'Welcome to CuraDocs',
+                      'Welcome to CureBit',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,

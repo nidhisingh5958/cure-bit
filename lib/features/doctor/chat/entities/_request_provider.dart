@@ -1,5 +1,5 @@
-import 'package:CuraDocs/features/doctor/chat/data/request_sample_data.dart';
-import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
+import 'package:CureBit/features/doctor/chat/data/request_sample_data.dart';
+import 'package:CureBit/features/doctor/chat/entities/_chat_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RequestNotifier extends Notifier<List<DocRequestData>> {

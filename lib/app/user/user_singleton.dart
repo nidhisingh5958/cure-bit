@@ -1,4 +1,4 @@
-import 'package:CuraDocs/app/models/user_model.dart';
+import 'package:CureBit/app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 

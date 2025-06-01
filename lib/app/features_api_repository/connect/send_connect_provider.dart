@@ -1,7 +1,7 @@
-import 'package:CuraDocs/app/features_api_repository/connect/connect_model.dart';
-import 'package:CuraDocs/utils/providers/user_provider.dart';
+import 'package:CureBit/app/features_api_repository/connect/connect_model.dart';
+import 'package:CureBit/utils/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/app/features_api_repository/connect/connect_repository.dart';
+import 'package:CureBit/app/features_api_repository/connect/connect_repository.dart';
 
 // Create a provider for the ConnectRepository
 final connectRepositoryProvider = Provider<ConnectRepository>((ref) {

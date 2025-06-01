@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 
 /// Utility class for handling patient profile navigation
 /// This provides a consistent way to navigate to patient profiles across the app

@@ -1,5 +1,5 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/patient/medical_records/components/search.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/patient/medical_records/components/search.dart';
 import 'package:flutter/material.dart';
 
 class TestRecords {

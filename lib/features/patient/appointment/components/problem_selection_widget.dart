@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/utils/size_config.dart';
+import 'package:CureBit/utils/size_config.dart';
 
 class ProblemSelectionWidget extends StatefulWidget {
   final List<String> availableProblems;

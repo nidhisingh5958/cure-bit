@@ -1,10 +1,10 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/patient/chat/widgets/build_message.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/patient/chat/widgets/build_message.dart';
 import 'data/chat_sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/features/patient/chat/entities/chat_data.dart';
-import 'package:CuraDocs/features/patient/chat/entities/message.dart';
+import 'package:CureBit/features/patient/chat/entities/chat_data.dart';
+import 'package:CureBit/features/patient/chat/entities/message.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatData chat;

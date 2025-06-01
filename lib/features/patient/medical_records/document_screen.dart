@@ -1,14 +1,14 @@
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/patient/medical_records/components/animated_fab_medicalrecords.dart';
-import 'package:CuraDocs/features/patient/medical_records/data/sample.dart'
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/patient/medical_records/components/animated_fab_medicalrecords.dart';
+import 'package:CureBit/features/patient/medical_records/data/sample.dart'
     show patientData;
-import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/features/patient/home_screen/widgets/side_menu.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/features/patient/medical_records/prescription.dart';
-import 'package:CuraDocs/features/patient/medical_records/timeline.dart';
-import 'package:CuraDocs/features/patient/medical_records/test_records.dart';
+import 'package:CureBit/features/patient/medical_records/prescription.dart';
+import 'package:CureBit/features/patient/medical_records/timeline.dart';
+import 'package:CureBit/features/patient/medical_records/test_records.dart';
 import 'package:go_router/go_router.dart';
 
 class DocumentScreen extends StatefulWidget {

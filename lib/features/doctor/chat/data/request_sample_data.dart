@@ -1,4 +1,4 @@
-import 'package:CuraDocs/features/doctor/chat/entities/_chat_data.dart';
+import 'package:CureBit/features/doctor/chat/entities/_chat_data.dart';
 
 final List<DocRequestData> docRequestData = [
   DocRequestData(

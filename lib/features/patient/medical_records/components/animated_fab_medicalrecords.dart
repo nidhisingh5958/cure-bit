@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CureBit/common/components/colors.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class AnimatedFloatingActionButtonRecords extends StatefulWidget {

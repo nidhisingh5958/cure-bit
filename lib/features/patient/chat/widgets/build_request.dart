@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/features/patient/chat/entities/message.dart';
+import 'package:CureBit/features/patient/chat/entities/message.dart';
 
 class RequestBubble extends StatefulWidget {
   final Message message;

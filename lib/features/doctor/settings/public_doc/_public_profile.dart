@@ -1,15 +1,15 @@
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/get/get_doc_public_provider.dart';
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/get/get_doc_public_provider.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 // Import your provider and model files here
-// import 'package:CuraDocs/path/to/your/provider_file.dart';
-// import 'package:CuraDocs/path/to/doctor_model.dart';
+// import 'package:CureBit/path/to/your/provider_file.dart';
+// import 'package:CureBit/path/to/doctor_model.dart';
 
 class DoctorPublicProfile extends ConsumerStatefulWidget {
   final String? cin; // CIN parameter for API call

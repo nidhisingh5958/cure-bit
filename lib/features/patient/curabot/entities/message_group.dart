@@ -1,4 +1,4 @@
-import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';
+import 'package:CureBit/features/patient/curabot/entities/message_bot.dart';
 
 class MessageGroup {
   final List<Message> messages;

@@ -1,9 +1,9 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/auth/screens/signUp/widgets/country_picker.dart';
-import 'package:CuraDocs/utils/providers/auth_controllers.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/auth/screens/signUp/widgets/country_picker.dart';
+import 'package:CureBit/utils/providers/auth_controllers.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/utils/snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:country_picker/country_picker.dart';

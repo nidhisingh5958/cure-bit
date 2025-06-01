@@ -1,4 +1,4 @@
-import 'package:CuraDocs/common/components/colors.dart';
+import 'package:CureBit/common/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

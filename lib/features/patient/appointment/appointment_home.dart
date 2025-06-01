@@ -1,9 +1,9 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/app/features_api_repository/search/external_search/doctor_search_provider.dart';
-import 'package:CuraDocs/features/patient/doctor_navigation_utility.dart';
-import 'package:CuraDocs/features/patient/home_screen/search_screen.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/app/features_api_repository/search/external_search/doctor_search_provider.dart';
+import 'package:CureBit/features/patient/doctor_navigation_utility.dart';
+import 'package:CureBit/features/patient/home_screen/search_screen.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

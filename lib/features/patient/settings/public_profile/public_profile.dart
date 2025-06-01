@@ -1,8 +1,8 @@
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_provider.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_provider.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,7 +63,9 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
       ),
       backgroundColor: greyWithGreenTint,
       body: profileAsyncValue.when(
-        data: (profile) => _buildProfileContent(profile, profileImageSize),
+        data: (profile) => profile != null
+            ? _buildProfileContent(profile, profileImageSize)
+            : const Center(child: Text('Profile not found')),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => _buildErrorWidget(error),
       ),

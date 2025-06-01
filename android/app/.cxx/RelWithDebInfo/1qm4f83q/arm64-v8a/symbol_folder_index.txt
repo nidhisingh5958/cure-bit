@@ -1,1 +1,1 @@
-/home/hemant-kumar/Developer/cure-bit/cure-bit/build/app/intermediates/cxx/RelWithDebInfo/1qm4f83q/obj/arm64-v8a
+/home/hemant-kumar/Developer/CureBit/CureBit/build/app/intermediates/cxx/RelWithDebInfo/1qm4f83q/obj/arm64-v8a

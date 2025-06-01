@@ -1,7 +1,7 @@
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/doctor/doctor_profile_repository.dart';
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/doctor_profile_repository.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 
 // reusable text field widget function

@@ -1,12 +1,12 @@
 // Enhanced TokenRepository with better persistence and refresh logic
 import 'dart:async';
 import 'dart:convert';
-import 'package:CuraDocs/app/auth/api_const.dart';
-import 'package:CuraDocs/app/auth/token/secure_storage.dart';
+import 'package:CureBit/app/auth/api_const.dart';
+import 'package:Docs/app/auth/token/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/utils/snackbar.dart';
 
 final tokenRepositoryProvider = Provider((ref) => TokenRepository());
 

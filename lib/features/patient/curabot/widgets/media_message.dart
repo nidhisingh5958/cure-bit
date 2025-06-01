@@ -1,4 +1,4 @@
-import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';
+import 'package:CureBit/features/patient/curabot/entities/message_bot.dart';
 
 import 'package:flutter/material.dart';
 

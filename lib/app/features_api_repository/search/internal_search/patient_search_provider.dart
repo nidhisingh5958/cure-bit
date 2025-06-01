@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/app/features_api_repository/search/internal_search/patient_search_repository.dart';
+import 'package:CureBit/app/features_api_repository/search/internal_search/patient_search_repository.dart';
 
 // State class for patient search
 class PatientSearchState {

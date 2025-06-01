@@ -1,8 +1,8 @@
-import 'package:CuraDocs/app/user/user_helper.dart';
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
-import 'package:CuraDocs/features/patient/home_screen/widgets/side_menu.dart';
+import 'package:CureBit/app/user/user_helper.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
+import 'package:CureBit/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

@@ -1,7 +1,7 @@
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/common/components/status_bar_color.dart';
-import 'package:CuraDocs/features/patient/medicine.dart/widgets/hero_dialog_route.dart';
-import 'package:CuraDocs/features/patient/medicine.dart/reminder_details.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/common/components/status_bar_color.dart';
+import 'package:CureBit/features/patient/medicine.dart/widgets/hero_dialog_route.dart';
+import 'package:CureBit/features/patient/medicine.dart/reminder_details.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';

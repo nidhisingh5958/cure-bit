@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
-import 'package:CuraDocs/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_repository.dart';
-import 'package:CuraDocs/app/features_api_repository/api_constant.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
+import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_repository.dart';
+import 'package:CureBit/app/features_api_repository/api_constant.dart';
 
 // Repository provider
 final patientPublicProfileRepositoryProvider =

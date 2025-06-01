@@ -1,5 +1,5 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/features/auth/landing/splash/splash_screen_animation.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/features/auth/landing/splash/splash_screen_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

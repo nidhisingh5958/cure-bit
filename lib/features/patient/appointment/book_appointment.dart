@@ -1,9 +1,9 @@
-import 'package:CuraDocs/app/features_api_repository/appointment/patient/get/get_patient_repository.dart';
+import 'package:CureBit/app/features_api_repository/appointment/patient/get/get_patient_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:CuraDocs/app/features_api_repository/appointment/patient/get/available_slot_provider.dart';
-import 'package:CuraDocs/utils/snackbar.dart';
+import 'package:CureBit/app/features_api_repository/appointment/patient/get/available_slot_provider.dart';
+import 'package:CureBit/utils/snackbar.dart';
 
 // Import the busy dates provider
 final busyDatesProvider =

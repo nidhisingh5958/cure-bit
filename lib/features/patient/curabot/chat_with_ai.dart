@@ -1,13 +1,13 @@
-import 'package:CuraDocs/common/components/app_header.dart';
-import 'package:CuraDocs/features/patient/curabot/entities/message_group.dart';
-import 'package:CuraDocs/features/patient/curabot/widgets/bot_search_bar.dart';
-import 'package:CuraDocs/features/patient/curabot/widgets/chat_message_widget.dart';
+import 'package:CureBit/common/components/app_header.dart';
+import 'package:CureBit/features/patient/curabot/entities/message_group.dart';
+import 'package:CureBit/features/patient/curabot/widgets/bot_search_bar.dart';
+import 'package:CureBit/features/patient/curabot/widgets/chat_message_widget.dart';
 import 'package:flutter/material.dart';
-// import 'package:CuraDocs/components/routes/route_constants.dart';
-import 'package:CuraDocs/features/patient/curabot/data/messages_bot.dart';
-import 'package:CuraDocs/features/patient/curabot/entities/message_bot.dart';
-// import 'package:CuraDocs/screens/chatbot/widgets/media_message.dart';
-// import 'package:CuraDocs/screens/chatbot/widgets/text_message.dart';
+// import 'package:CureBit/components/routes/route_constants.dart';
+import 'package:CureBit/features/patient/curabot/data/messages_bot.dart';
+import 'package:CureBit/features/patient/curabot/entities/message_bot.dart';
+// import 'package:CureBit/screens/chatbot/widgets/media_message.dart';
+// import 'package:CureBit/screens/chatbot/widgets/text_message.dart';
 
 class ChatBotScreen extends StatefulWidget {
   const ChatBotScreen({super.key});

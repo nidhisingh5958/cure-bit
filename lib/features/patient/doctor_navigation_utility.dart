@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 
 /// Utility class for doctor-related navigation
 class DoctorNavigationUtil {

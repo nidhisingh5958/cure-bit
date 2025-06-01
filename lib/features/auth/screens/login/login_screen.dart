@@ -1,7 +1,7 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
-import 'package:CuraDocs/features/auth/screens/login/login_form.dart';
+import 'package:CureBit/features/auth/screens/login/login_form.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {

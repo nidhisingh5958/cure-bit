@@ -39,13 +39,13 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = /home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64/
+cmake_ninja_workdir = /home/hemant-kumar/Developer/CureBit/CureBit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64/
 
 #############################################
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64 && /home/hemant-kumar/Android/Sdk/cmake/3.22.1/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  COMMAND = cd /home/hemant-kumar/Developer/CureBit/CureBit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64 && /home/hemant-kumar/Android/Sdk/cmake/3.22.1/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -56,7 +56,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64 && /home/hemant-kumar/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/hemant-kumar/snap/flutter/common/flutter/packages/flutter_tools/gradle/src/main/groovy -B/home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64
+  COMMAND = cd /home/hemant-kumar/Developer/CureBit/CureBit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64 && /home/hemant-kumar/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/hemant-kumar/snap/flutter/common/flutter/packages/flutter_tools/gradle/src/main/groovy -B/home/hemant-kumar/Developer/CureBit/CureBit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -72,7 +72,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 
 #############################################
-# Folder: /home/hemant-kumar/Developer/cure-bit/cure-bit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64
+# Folder: /home/hemant-kumar/Developer/CureBit/CureBit/android/app/.cxx/RelWithDebInfo/1qm4f83q/x86_64
 
 build all: phony
 

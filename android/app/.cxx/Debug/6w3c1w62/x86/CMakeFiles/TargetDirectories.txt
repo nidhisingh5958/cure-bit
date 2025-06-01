@@ -1,2 +1,2 @@
-/Users/nidhisingh/Developer/cure-bit/android/app/.cxx/Debug/6w3c1w62/x86/CMakeFiles/edit_cache.dir
-/Users/nidhisingh/Developer/cure-bit/android/app/.cxx/Debug/6w3c1w62/x86/CMakeFiles/rebuild_cache.dir
+/Users/nidhisingh/Developer/CureBit/android/app/.cxx/Debug/6w3c1w62/x86/CMakeFiles/edit_cache.dir
+/Users/nidhisingh/Developer/CureBit/android/app/.cxx/Debug/6w3c1w62/x86/CMakeFiles/rebuild_cache.dir

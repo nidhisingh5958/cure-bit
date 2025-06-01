@@ -1,12 +1,12 @@
-import 'package:CuraDocs/common/components/colors.dart';
-import 'package:CuraDocs/utils/providers/user_provider.dart';
-import 'package:CuraDocs/utils/routes/route_constants.dart';
+import 'package:CureBit/common/components/colors.dart';
+import 'package:CureBit/utils/providers/user_provider.dart';
+import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/utils/providers/auth_controllers.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
+import 'package:CureBit/utils/providers/auth_controllers.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
   const SideMenu({super.key});
@@ -231,7 +231,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
           GestureDetector(
             onTap: () async {
               Navigator.pop(context); // Close drawer first
-              final Uri url = Uri.parse('https://www.curadocs.in/about');
+              final Uri url = Uri.parse('https://www.CureBit.in/about');
               if (await canLaunchUrl(url)) {
                 await launchUrl(url);
               } else {

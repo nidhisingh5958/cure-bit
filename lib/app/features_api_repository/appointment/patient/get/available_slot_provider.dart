@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CuraDocs/app/features_api_repository/appointment/patient/get/get_patient_repository.dart';
+import 'package:CureBit/app/features_api_repository/appointment/patient/get/get_patient_repository.dart';
 
 // Define the state class for available slots
 class AvailableSlotsState {

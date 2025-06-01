@@ -1,4 +1,4 @@
-import 'package:CuraDocs/features/doctor/curabot/entities/message_bot.dart';
+import 'package:CureBit/features/doctor/curabot/entities/message_bot.dart';
 
 List<Message> messages = [
   Message(

@@ -1,1 +1,1 @@
-/Users/nidhisingh/Developer/cure-bit/build/app/intermediates/cxx/RelWithDebInfo/53g4z141/obj/x86_64
+/Users/nidhisingh/Developer/CureBit/build/app/intermediates/cxx/RelWithDebInfo/53g4z141/obj/x86_64

@@ -1,13 +1,13 @@
-import 'package:CuraDocs/app/auth/auth_repository.dart';
-import 'package:CuraDocs/app/auth/token/token_lifeguard.dart';
-import 'package:CuraDocs/utils/providers/auth_providers.dart';
-import 'package:CuraDocs/utils/routes/router.dart';
-import 'package:CuraDocs/theme.dart';
+import 'package:CureBit/app/auth/auth_repository.dart';
+import 'package:CureBit/app/auth/token/token_lifeguard.dart';
+import 'package:CureBit/utils/providers/auth_providers.dart';
+import 'package:CureBit/utils/routes/router.dart';
+import 'package:CureBit/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:restart_app/restart_app.dart';
 
-final nameProvider = Provider<String>((ref) => 'Cura Docs');
+final nameProvider = Provider<String>((ref) => 'CureBit');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -175,7 +175,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
     return asyncRouter.when(
       loading: () => MaterialApp(
-        title: 'Cura Docs',
+        title: 'CureBit',
         theme: theme(),
         home: const Scaffold(
           body: AppLoadingWidget(),
@@ -187,7 +187,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         debugPrint('Stack trace: $stack');
 
         return MaterialApp(
-          title: 'Cura Docs',
+          title: 'CureBit',
           theme: theme(),
           home: AppErrorWidget(
             title: 'App Error',
@@ -204,7 +204,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       data: (router) => MaterialApp.router(
         routerConfig: router,
         debugShowCheckedModeBanner: false,
-        title: 'Cura Docs',
+        title: 'CureBit',
         theme: theme(),
         builder: (context, child) {
           return MediaQuery(

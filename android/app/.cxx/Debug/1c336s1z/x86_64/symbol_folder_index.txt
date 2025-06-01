@@ -1,1 +1,1 @@
-/home/hemant-kumar/Developer/cure-bit/cure-bit/build/app/intermediates/cxx/Debug/1c336s1z/obj/x86_64
+/home/hemant-kumar/Developer/CureBit/CureBit/build/app/intermediates/cxx/Debug/1c336s1z/obj/x86_64
