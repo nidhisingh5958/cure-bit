@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/features/doctor/appointment/components/animated_fab.dart';
-import 'package:CureBit/app/features_api_repository/appointment/doctor/post_doctor_repository.dart';
+import 'package:CureBit/services/features_api_repository/appointment/doctor/post_doctor_repository.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

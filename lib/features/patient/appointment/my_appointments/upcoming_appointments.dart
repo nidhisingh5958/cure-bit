@@ -1,5 +1,5 @@
 import 'package:CureBit/common/components/colors.dart';
-import 'package:CureBit/app/features_api_repository/appointment/patient/post_patient_repository.dart';
+import 'package:CureBit/services/features_api_repository/appointment/patient/post_patient_repository.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -3,7 +3,7 @@ import 'package:CureBit/common/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:CureBit/app/features_api_repository/search/internal_search/patient_search_provider.dart';
+import 'package:CureBit/services/features_api_repository/search/internal_search/patient_search_provider.dart';
 
 class PatientSearch extends ConsumerStatefulWidget {
   final String doctorCIN;

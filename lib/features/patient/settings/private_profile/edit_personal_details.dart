@@ -1,8 +1,8 @@
-import 'package:CureBit/app/user/user_helper.dart';
+import 'package:CureBit/services/user/user_helper.dart';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
-import 'package:CureBit/app/features_api_repository/profile/private_profile/get_private_repository.dart';
-import 'package:CureBit/app/features_api_repository/profile/private_profile/private_profile_repository.dart'
+import 'package:CureBit/services/features_api_repository/profile/private_profile/get_private_repository.dart';
+import 'package:CureBit/services/features_api_repository/profile/private_profile/private_profile_repository.dart'
     as impl;
 import 'package:CureBit/utils/snackbar.dart';
 import 'package:flutter/material.dart';

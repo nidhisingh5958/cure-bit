@@ -1,8 +1,8 @@
-import 'package:CureBit/app/user/user_helper.dart';
+import 'package:CureBit/services/user/user_helper.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/common/components/app_header.dart';
-import 'package:CureBit/app/features_api_repository/search/internal_search/patient_search_provider.dart';
-import 'package:CureBit/app/features_api_repository/appointment/doctor/previous_patients_provider.dart';
+import 'package:CureBit/services/features_api_repository/search/internal_search/patient_search_provider.dart';
+import 'package:CureBit/services/features_api_repository/appointment/doctor/previous_patients_provider.dart';
 import 'package:CureBit/features/doctor/patient_navigation_utility.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
-import 'package:CureBit/app/features_api_repository/search/external_search/doctor_search_provider.dart';
+import 'package:CureBit/services/features_api_repository/search/external_search/doctor_search_provider.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:CureBit/utils/size_config.dart';
 import 'package:flutter/material.dart';

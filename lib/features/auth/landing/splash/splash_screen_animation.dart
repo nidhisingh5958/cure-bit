@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:CureBit/app/auth/token/token_repository.dart';
+import 'package:CureBit/services/auth/token/token_repository.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/utils/providers/auth_providers.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';

@@ -1,12 +1,12 @@
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
-import 'package:CureBit/app/features_api_repository/appointment/patient/my_appointments/active_provider.dart';
+import 'package:CureBit/services/features_api_repository/appointment/patient/my_appointments/active_provider.dart';
 import 'package:CureBit/features/patient/appointment/components/animated_fab.dart';
 import 'package:CureBit/features/patient/appointment/my_appointments/active_appointments.dart';
 import 'package:CureBit/features/patient/appointment/my_appointments/completed_appointments.dart';
 import 'package:CureBit/features/patient/appointment/my_appointments/upcoming_appointments.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
-import 'package:CureBit/app/user/user_singleton.dart';
+import 'package:CureBit/services/user/user_singleton.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

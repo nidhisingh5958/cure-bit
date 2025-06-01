@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:CureBit/common/general_api/general_api_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:CureBit/app/auth/token/token_repository.dart';
+import 'package:CureBit/services/auth/token/token_repository.dart';
 
 class GeneralApiRepository {
   // Singleton instance

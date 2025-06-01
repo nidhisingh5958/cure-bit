@@ -1,7 +1,7 @@
 // ignore_for_file: unused_local_variable, deprecated_member_use
 
 import 'dart:async';
-import 'package:CureBit/app/auth/auth_middleware.dart';
+import 'package:CureBit/services/auth/auth_middleware.dart';
 import 'package:CureBit/common/contact_us.dart';
 import 'package:CureBit/common/scan_qr.dart';
 import 'package:CureBit/features/auth/landing/splash/main_splash_screen.dart';

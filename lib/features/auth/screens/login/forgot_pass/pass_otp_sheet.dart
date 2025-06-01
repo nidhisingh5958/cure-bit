@@ -1,4 +1,4 @@
-import 'package:CureBit/app/auth/auth_repository.dart';
+import 'package:CureBit/services/auth/auth_repository.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/utils/providers/auth_providers.dart';
 import 'package:CureBit/utils/snackbar.dart';

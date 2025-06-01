@@ -1,4 +1,4 @@
-import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart'
+import 'package:CureBit/services/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart'
     as model;
 import 'package:CureBit/features/patient/appointment/my_appointments/reschedule_appointment.dart';
 import 'package:CureBit/features/patient/medical_records/basic_medical_info.dart';

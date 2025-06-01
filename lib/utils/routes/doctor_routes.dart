@@ -4,7 +4,7 @@ import 'package:CureBit/features/doctor/my_patients/patient_profile.dart';
 import 'package:CureBit/features/doctor/settings/private_doc/_account.dart';
 import 'package:CureBit/features/doctor/settings/private_doc/_edit_personal_details.dart';
 import 'package:flutter/material.dart';
-import 'package:CureBit/app/auth/auth_middleware.dart';
+import 'package:CureBit/services/auth/auth_middleware.dart';
 import 'package:CureBit/features/doctor/appointment/_reschedule_screen.dart';
 import 'package:CureBit/features/doctor/appointment/schedule_screen.dart';
 import 'package:CureBit/features/doctor/appointment/scheduling_details.dart';

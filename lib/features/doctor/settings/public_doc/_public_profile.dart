@@ -1,5 +1,5 @@
-import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart';
-import 'package:CureBit/app/features_api_repository/profile/public_profile/doctor/get/get_doc_public_provider.dart';
+import 'package:CureBit/services/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart';
+import 'package:CureBit/services/features_api_repository/profile/public_profile/doctor/get/get_doc_public_provider.dart';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';

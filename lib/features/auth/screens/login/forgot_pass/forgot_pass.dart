@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
-import 'package:CureBit/app/auth/auth_repository.dart';
+import 'package:CureBit/services/auth/auth_repository.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:CureBit/utils/snackbar.dart';
 

@@ -1,11 +1,11 @@
-import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/patient_profile_repository.dart';
+import 'package:CureBit/services/features_api_repository/profile/public_profile/patient/patient_profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
-import 'package:CureBit/app/features_api_repository/profile/public_profile/patient/get/get_patient_public_provider.dart';
+import 'package:CureBit/services/features_api_repository/profile/public_profile/patient/get/patient_public_model.dart';
+import 'package:CureBit/services/features_api_repository/profile/public_profile/patient/get/get_patient_public_provider.dart';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/common/components/pop_up.dart';

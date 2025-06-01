@@ -1,4 +1,4 @@
-import 'package:CureBit/app/user/user_helper.dart';
+import 'package:CureBit/services/user/user_helper.dart';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';

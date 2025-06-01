@@ -1,5 +1,5 @@
 import 'package:CureBit/common/components/colors.dart';
-import 'package:CureBit/app/features_api_repository/appointment/doctor/post_doctor_repository.dart';
+import 'package:CureBit/services/features_api_repository/appointment/doctor/post_doctor_repository.dart';
 import 'package:CureBit/features/patient/appointment/my_appointments/reschedule_appointment.dart';
 import 'package:CureBit/utils/providers/user_provider.dart';
 import 'package:flutter/material.dart';
