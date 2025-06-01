@@ -24,9 +24,6 @@
 
 ## 📱 Screenshots
 
-> *(Add screenshots or screen recordings here for better visual reference.)*
-
----
 
 ## 🛠️ Tech Stack
 
@@ -43,10 +40,10 @@
 ```
 CureBit/
 ├── lib/
-│   ├── screens/           # All app screens (home, chat, profile, etc.)
-│   ├── widgets/           # Reusable widgets
-│   ├── models/            # Data models
-│   ├── services/          # APIs, Firebase logic, etc.
+│   ├── services/           # All the repositories, APIs and models
+│   ├── common/           # Reusable widgets
+│   ├── features/
+|       |── screens/           # All app screens (home, chat, profile, etc.)          
 │   ├── main.dart          # Entry point
 │
 ├── assets/                # Fonts, images, icons
