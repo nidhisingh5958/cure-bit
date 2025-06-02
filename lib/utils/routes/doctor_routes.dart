@@ -18,14 +18,10 @@ import 'package:go_router/go_router.dart';
 import 'package:CureBit/utils/routes/components/navigation_keys.dart';
 
 // DOCTOR
-// chat
-import 'package:CureBit/features/doctor/chat/_chat_screen.dart';
-import 'package:CureBit/features/doctor/chat/_chat_home.dart';
-import 'package:CureBit/features/doctor/chat/entities/_chat_data.dart';
 // chatbot
-import 'package:CureBit/features/doctor/curabot/_chat_bot_home.dart';
-import 'package:CureBit/features/doctor/curabot/_chat_history.dart';
-import 'package:CureBit/features/doctor/curabot/_chat_with_ai.dart';
+import 'package:CureBit/features/doctor/curebot/_chat_bot_home.dart';
+import 'package:CureBit/features/doctor/curebot/_chat_history.dart';
+import 'package:CureBit/features/doctor/curebot/_chat_with_ai.dart';
 // home
 import 'package:CureBit/features/doctor/home_screen/_home_screen_doc.dart';
 import 'package:CureBit/features/doctor/home_screen/_notification.dart';
@@ -196,38 +192,6 @@ List<RouteBase> get doctorRoutes {
                     //   );
                     // },
                     ),
-              ],
-            ),
-          ],
-        ),
-
-        // Chat Branch
-        StatefulShellBranch(
-          navigatorKey: doctorChatNavigatorKey,
-          routes: [
-            GoRoute(
-              path: '/doctor/chat',
-              name: RouteConstants.doctorChat,
-              builder: (context, state) => AuthMiddleware(
-                requiresAuth: false,
-                child: const DoctorChatListScreen(),
-              ),
-              routes: [
-                GoRoute(
-                  // Individual Chat Screen
-                  path: 'chat-screen',
-                  parentNavigatorKey: rootNavigatorKey,
-                  name: RouteConstants.doctorChatScreen,
-                  builder: (context, state) => AuthMiddleware(
-                    requiresAuth: false,
-                    child: Builder(
-                      builder: (context) {
-                        final chat = state.extra as DocChatData;
-                        return DoctorChatScreen(chat: chat);
-                      },
-                    ),
-                  ),
-                ),
               ],
             ),
           ],

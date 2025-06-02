@@ -10,6 +10,7 @@ import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/common/components/pop_up.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final PostPublicProfileRepository _profileRepository =
     PostPublicProfileRepository();
@@ -360,7 +361,19 @@ class _PatientProfileState extends ConsumerState<PatientProfile>
         Expanded(
           child: ElevatedButton.icon(
             onPressed: () {
-              context.goNamed(RouteConstants.chat);
+              // redirect to whatsapp or messaging app
+              final whatsappUrl =
+                  'https://wa.me/?phone=${patientData.phone}&text=Hello%20${patientData.name},%20I%20would%20like%20to%20discuss%20your%20health%20profile.';
+              if (Uri.tryParse(whatsappUrl) != null) {
+                launchUrl(Uri.parse(whatsappUrl));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Invalid phone number or URL'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             icon: Icon(Icons.message_outlined),
             label: Text('Message'),

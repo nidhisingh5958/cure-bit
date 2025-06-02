@@ -1,11 +1,12 @@
+import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/services/user/user_helper.dart';
 import 'package:CureBit/common/components/app_header.dart';
-import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
 import 'package:CureBit/features/patient/home_screen/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -48,6 +49,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       drawer: const Drawer(
         child: SideMenu(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.goNamed(RouteConstants.chatBot);
+        },
+        backgroundColor: black,
+        child: Image.asset(
+          'assets/icons/robot.png',
+          width: 30,
+          height: 30,
+          color: white,
+        ),
       ),
       body: Container(
         height: double.infinity,
@@ -148,11 +161,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Health stats card (1/3 width)
-                  // Expanded(
-                  //   flex: 2, // Reduced width compared to medication card
-                  //   child: _buildHealthStatsCard(isSmallScreen),
-                  // ),
-                  // SizedBox(width: horizontalSpacing),
+                  Expanded(
+                    flex: 2, // Reduced width compared to medication card
+                    child: _buildHealthStatsCard(isSmallScreen),
+                  ),
+                  SizedBox(width: horizontalSpacing),
                   // Medication card (2/3 width)
                   Expanded(
                     flex: 3, // Increased width compared to health stats card

@@ -6,6 +6,7 @@ import 'package:CureBit/features/doctor/home_screen/widgets/_side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
@@ -160,6 +161,18 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
       ),
       drawer: const Drawer(
         child: DoctorSideMenu(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.goNamed(RouteConstants.chatBot);
+        },
+        backgroundColor: black,
+        child: Image.asset(
+          'assets/icons/robot.png',
+          height: 32,
+          width: 32,
+          color: white,
+        ),
       ),
       body: Container(
         height: double.infinity,

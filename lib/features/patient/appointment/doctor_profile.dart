@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:CureBit/services/features_api_repository/profile/public_profile/doctor/get/doctor_model.dart'
     as model;
+import 'package:url_launcher/url_launcher.dart';
 
 Color primaryColor = black;
 Color secondaryColor = grey400;
@@ -495,7 +496,14 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
         Expanded(
           child: ElevatedButton.icon(
             onPressed: () {
-              context.goNamed(RouteConstants.chat);
+              // redirect to whatsapp or messaging app
+              final message =
+                  'Hello Dr. ${doctorData.name}, I would like to connect with you.';
+              final encodedMessage = Uri.encodeComponent(message);
+              final whatsappUrl = 'https://wa.me/?text=$encodedMessage';
+              // Open the URL in the default browser
+              launchUrl(Uri.parse(whatsappUrl),
+                  mode: LaunchMode.externalApplication);
             },
             icon: Icon(Icons.message_outlined),
             label: Text('Message'),

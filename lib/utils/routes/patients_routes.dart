@@ -18,13 +18,9 @@ import 'package:CureBit/features/patient/appointment/book_appointment.dart';
 import 'package:CureBit/features/patient/appointment/my_appointments/my_appointments.dart';
 import 'package:CureBit/features/patient/appointment/favourite_doc.dart';
 // chatbot
-import 'package:CureBit/features/patient/curabot/chat_bot_home.dart';
-import 'package:CureBit/features/patient/curabot/chat_with_ai.dart';
-import 'package:CureBit/features/patient/curabot/bot_history.dart' as patient;
-// chat
-import 'package:CureBit/features/patient/chat/chat_home.dart';
-import 'package:CureBit/features/patient/chat/chat_screen.dart';
-import '../../features/patient/chat/entities/chat_data.dart';
+import 'package:CureBit/features/patient/curebot/chat_bot_home.dart';
+import 'package:CureBit/features/patient/curebot/chat_with_ai.dart';
+import 'package:CureBit/features/patient/curebot/bot_history.dart' as patient;
 // documents
 import 'package:CureBit/features/patient/medical_records/document_screen.dart';
 // home
@@ -166,30 +162,6 @@ List<RouteBase> get patientRoutes {
                   parentNavigatorKey: rootNavigatorKey,
                   name: RouteConstants.favouriteDoctors,
                   builder: (context, state) => FavouritesPage(),
-                ),
-              ],
-            ),
-          ],
-        ),
-
-        // Chat Branch
-        StatefulShellBranch(
-          navigatorKey: chatNavigatorKey,
-          routes: [
-            GoRoute(
-              path: '/chat',
-              name: RouteConstants.chat,
-              builder: (context, state) => const ChatListScreen(),
-              routes: [
-                GoRoute(
-                  // Individual Chat Screen
-                  path: 'chat-screen',
-                  parentNavigatorKey: rootNavigatorKey,
-                  name: RouteConstants.chatScreen,
-                  builder: (context, state) {
-                    final chat = state.extra as ChatData;
-                    return ChatScreen(chat: chat);
-                  },
                 ),
               ],
             ),

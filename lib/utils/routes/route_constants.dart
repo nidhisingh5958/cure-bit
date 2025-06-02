@@ -47,10 +47,6 @@ class RouteConstants {
   static String chatBotScreen = "chatBotScreen";
   static String chatBotHistory = "chatBotHistory";
 
-  // chat routes
-  static String chat = "chat";
-  static String chatScreen = "chatScreen";
-
   // medical records routes
   static String documents = "documents";
   static String prescription = "prescriptions";
@@ -91,10 +87,6 @@ class RouteConstants {
   static String doctorChatBot = "doctorChatBot";
   static String doctorChatBotScreen = "doctorChatBotScreen";
   static String doctorChatBotHistory = "doctorChatBotHistory";
-
-  // chat routes
-  static String doctorChat = "doctorChat";
-  static String doctorChatScreen = "doctorChatScreen";
 
   // profile routes
   static String doctorPersonalProfile = "doctortorPersonalProfile";

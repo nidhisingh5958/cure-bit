@@ -26,6 +26,8 @@
 
 
 
+![alt text](image-1.png)
+
 
 ## 🛠️ Tech Stack
 
@@ -45,8 +47,8 @@ CureBit/
 │   ├── common/            # Reusable widgets
 │   ├── features/          # All app features
 │   │    ├── auth/         # All authentication screens (login, sign up, forgot password, etc.)   
-│   │    ├── doctor/       # All doctor side screens (chat, chat bot, schedule, etc.)   
-│   │    ├── patient/      # All patient side screens (chat, chat bot, medical records, etc.)   
+│   │    ├── doctor/       # All doctor side screens (appointments, chat bot, schedule, etc.)   
+│   │    ├── patient/      # All patient side screens (chat bot, medical records, etc.)   
 │   ├── services/          # All the repositories, APIs and models   
 │   ├── utils/             # All utility files (Router files, providers, etc.)
 │   └── main.dart          # Entry point
@@ -103,5 +105,7 @@ flutter run
 ## 📄 License
 
 This project is open-source and available under the [MIT License](LICENSE).
+
+**The icons used are downloaded from <a href="https://www.flaticon.com/free-icons/">icons from Flaticon</a> and the animations are downloaded from <a href="https://lottiefiles.com/free-animation/">animations from Flaticon</a> 
 
 <!-- <a href="https://www.flaticon.com/free-icons/login" title="icons"></a> -->

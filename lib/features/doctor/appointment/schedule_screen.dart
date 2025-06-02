@@ -218,10 +218,10 @@ class _DoctorScheduleScreenState extends ConsumerState<DoctorScheduleScreen> {
                 title: 'Send Message',
                 subtitle: 'Chat with the patient',
                 onTap: () {
+                  //   redirect to messaging app
                   Navigator.pop(context);
-                  context.goNamed(
-                    RouteConstants.doctorChat,
-                    extra: patient,
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Messaging ${patient.name}...')),
                   );
                 },
               ),
@@ -826,10 +826,7 @@ class _DoctorScheduleScreenState extends ConsumerState<DoctorScheduleScreen> {
                                                     size: 20,
                                                   ),
                                                   onPressed: () {
-                                                    context.goNamed(
-                                                      RouteConstants.doctorChat,
-                                                      extra: patient,
-                                                    );
+                                                    // redirect to whatsapp or messaging app
                                                   },
                                                 ),
                                               ),

@@ -113,10 +113,6 @@ var destinations = <Destination>[
     icon: Icon(LucideIcons.calendarCheck),
     label: 'Bookings',
   ),
-  // Destination(
-  //   icon: Icon(LucideIcons.messageCircle),
-  //   label: 'Chat',
-  // ),
   const Destination(
     icon: Icon(LucideIcons.user),
     label: 'Profile',
