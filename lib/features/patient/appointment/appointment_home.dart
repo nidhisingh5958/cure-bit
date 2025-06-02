@@ -18,7 +18,7 @@ class AppointmentHome extends ConsumerStatefulWidget {
 }
 
 class _AppointmentHomeState extends ConsumerState<AppointmentHome> {
-  int _selectedRating = 0;
+  final int _selectedRating = 0;
   int _selectedCategoryIndex = 0;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -750,13 +750,13 @@ class _AppointmentHomeState extends ConsumerState<AppointmentHome> {
                   ),
                 );
               },
-              child: Text('See All Doctors'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              child: Text('See All Doctors'),
             ),
           ),
         SizedBox(height: 20),

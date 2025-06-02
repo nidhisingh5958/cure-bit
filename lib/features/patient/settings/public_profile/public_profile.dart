@@ -133,7 +133,7 @@ class _PatientPublicProfileState extends ConsumerState<PatientPublicProfile> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: black.withOpacity(0.2),
+                      color: black.withValues(alpha: .2),
                       spreadRadius: 2,
                       blurRadius: 8,
                       offset: const Offset(0, 2),

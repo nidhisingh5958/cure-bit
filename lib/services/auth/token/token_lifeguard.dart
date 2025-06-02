@@ -1,5 +1,7 @@
 // TokenLifeguard: Runs periodic checks to refresh tokens in the background
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'package:CureBit/services/auth/token/token_repository.dart';
 import 'package:flutter/material.dart';

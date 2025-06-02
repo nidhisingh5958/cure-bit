@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/features/auth/screens/signUp/widgets/country_picker.dart';
 import 'package:CureBit/utils/providers/auth_controllers.dart';

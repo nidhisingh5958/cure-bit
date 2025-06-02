@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/common/general_api/general_repository.dart';
@@ -202,7 +204,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha: .1),
                             spreadRadius: 1,
                             blurRadius: 4,
                             offset: Offset(0, 2)),
@@ -212,7 +214,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       '"Have questions about your medical history or CureBit services? We\'re here to help with prompt and accurate support."',
                       style: TextStyle(
                         fontSize: 16,
-                        color: black.withOpacity(0.8),
+                        color: black.withValues(alpha: .8),
                         fontWeight: FontWeight.w400,
                         height: 1.5,
                       ),
@@ -227,7 +229,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.15),
+                          color: Colors.grey.withValues(alpha: .15),
                           spreadRadius: 1,
                           blurRadius: 6,
                           offset: Offset(0, 3),
@@ -283,7 +285,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: black.withOpacity(0.8),
+          color: black.withValues(alpha: .8),
         ),
       ),
     );
@@ -300,7 +302,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -354,7 +356,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -450,7 +452,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -474,7 +476,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             filled: true,
             fillColor: Colors.grey.shade50,
             prefixIcon: Icon(Icons.email_outlined,
-                color: black.withOpacity(0.8), size: 20),
+                color: black.withValues(alpha: .8), size: 20),
           ),
           style: TextStyle(
             fontSize: 14,
@@ -506,7 +508,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -552,7 +554,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -600,7 +602,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: isSelected
-                      ? black.withOpacity(0.8)
+                      ? black.withValues(alpha: .8)
                       : Colors.grey.shade400,
                   width: 2,
                 ),
@@ -618,7 +620,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 label,
                 style: TextStyle(
                   fontSize: 14,
-                  color: black.withOpacity(0.8),
+                  color: black.withValues(alpha: .8),
                   fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
                 ),
               ),
@@ -682,7 +684,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),
@@ -737,7 +739,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: black.withOpacity(0.8),
+              color: black.withValues(alpha: .8),
             ),
           ),
         ),

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/services/features_api_repository/profile/public_profile/doctor/doctor_profile_repository.dart';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';

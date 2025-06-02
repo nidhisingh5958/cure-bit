@@ -184,6 +184,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   static final StreamController<AuthState> _streamController =
       StreamController<AuthState>.broadcast();
 
+  @override
   Stream<AuthState> get stream => _streamController.stream;
 
   Future<void> _initialize() async {

@@ -25,11 +25,13 @@
 ## 📱 Screenshots
 
 
+
+
 ## 🛠️ Tech Stack
 
 * **Frontend:** Flutter (Dart)
 * **Backend:** Firebase (or your API if integrated)
-* **State Management:** Riverpod (recommended)
+* **State Management:** Riverpod 
 * **Authentication:** Firebase Auth / OTP-based login (if integrated)
 * **Database:** Firestore / SQLite (depending on implementation)
 
@@ -40,11 +42,14 @@
 ```
 CureBit/
 ├── lib/
-│   ├── services/           # All the repositories, APIs and models
-│   ├── common/           # Reusable widgets
-│   ├── features/
-|       |── screens/           # All app screens (home, chat, profile, etc.)          
-│   ├── main.dart          # Entry point
+│   ├── common/            # Reusable widgets
+│   ├── features/          # All app features
+│   │    ├── auth/         # All authentication screens (login, sign up, forgot password, etc.)   
+│   │    ├── doctor/       # All doctor side screens (chat, chat bot, schedule, etc.)   
+│   │    ├── patient/      # All patient side screens (chat, chat bot, medical records, etc.)   
+│   ├── services/          # All the repositories, APIs and models   
+│   ├── utils/             # All utility files (Router files, providers, etc.)
+│   └── main.dart          # Entry point
 │
 ├── assets/                # Fonts, images, icons
 ├── pubspec.yaml           # Project dependencies

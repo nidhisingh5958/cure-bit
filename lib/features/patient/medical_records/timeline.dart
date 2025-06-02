@@ -404,7 +404,7 @@ class _ExpandableTimelineItemState extends State<ExpandableTimelineItem> {
                       boxShadow: [
                         BoxShadow(
                           color: const Color.fromARGB(255, 182, 77, 232)
-                              .withOpacity(0.2),
+                              .withValues(alpha: .2),
                           spreadRadius: 1,
                           blurRadius: 2,
                         ),
@@ -488,7 +488,7 @@ class _ExpandableTimelineItemState extends State<ExpandableTimelineItem> {
                         borderRadius: BorderRadius.circular(8.0),
                         boxShadow: [
                           BoxShadow(
-                            color: black.withOpacity(0.08),
+                            color: black.withValues(alpha: .08),
                             spreadRadius: 0.5,
                             blurRadius: 2,
                             offset: const Offset(0, 1),
@@ -606,7 +606,7 @@ class _ExpandableTimelineItemState extends State<ExpandableTimelineItem> {
                               //           decoration: BoxDecoration(
                               //             boxShadow: [
                               //               BoxShadow(
-                              //                 color: Colors.black.withOpacity(0.1),
+                              //                 color: Colors.black.withValues(alpha: .1),
                               //                 spreadRadius: 1,
                               //                 blurRadius: 3,
                               //                 offset: const Offset(0, 2),

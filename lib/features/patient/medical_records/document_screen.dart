@@ -21,7 +21,7 @@ class DocumentScreen extends StatefulWidget {
 class _DocumentScreenState extends State<DocumentScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  bool _isViewingPreviousAppointments = false;
+  final bool _isViewingPreviousAppointments = false;
 
   // Sample timeline data
   // final List<TimelineRecord> timelineData = [

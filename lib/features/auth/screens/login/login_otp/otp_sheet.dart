@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/services/auth/auth_repository.dart';
 import 'package:CureBit/utils/providers/auth_providers.dart';
@@ -207,7 +209,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
         ),
         boxShadow: [
           BoxShadow(
-            color: black.withOpacity(0.1),
+            color: black.withValues(alpha: .1),
             blurRadius: 10,
             offset: Offset(0, -5),
           ),

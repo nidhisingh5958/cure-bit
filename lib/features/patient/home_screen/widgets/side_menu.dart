@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/utils/providers/user_provider.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';
@@ -39,7 +41,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
 
       context.goNamed(RouteConstants.login);
     } catch (e) {
-      print('Login error: $e');
+      debugPrint('Login error: $e');
     }
   }
 

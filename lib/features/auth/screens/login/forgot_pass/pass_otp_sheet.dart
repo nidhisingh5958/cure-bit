@@ -1,6 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/services/auth/auth_repository.dart';
 import 'package:CureBit/common/components/colors.dart';
-import 'package:CureBit/utils/providers/auth_providers.dart';
 import 'package:CureBit/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -104,7 +105,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
 
       if (success && mounted) {
         // Request was successful
-        final prefs = await SharedPreferences.getInstance();
+        final refs = await SharedPreferences.getInstance();
 
         // Start the timer again
         _startResendTimer();
@@ -216,7 +217,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: .1),
             blurRadius: 10,
             offset: Offset(0, -5),
           ),
@@ -266,7 +267,7 @@ class _OtpEntrySheetState extends ConsumerState<OtpEntrySheet> {
               child: Text(
                 'Resend Reset Code',
                 style: TextStyle(
-                  color: _isLoading ? black.withOpacity(0.5) : grey800,
+                  color: _isLoading ? black.withValues(alpha: .5) : grey800,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

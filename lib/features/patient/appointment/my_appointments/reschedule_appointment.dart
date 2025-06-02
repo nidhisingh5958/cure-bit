@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/services/features_api_repository/appointment/patient/post_patient_repository.dart';
 import 'package:CureBit/services/features_api_repository/appointment/patient/get/get_patient_repository.dart';
@@ -158,7 +160,7 @@ class _PatientRescheduleAppointmentState
   final _formKey = GlobalKey<FormState>();
 
   // Instance of PatientAppointmentRepository
-  final PatientAppointmentRepository _PatientappointmentRepository =
+  final PatientAppointmentRepository _patientAppointmentRepository =
       PatientAppointmentRepository();
 
   @override
@@ -391,7 +393,7 @@ class _PatientRescheduleAppointmentState
 
         // Call the API to reschedule appointment
         final success =
-            await _PatientappointmentRepository.rescheduleAppointment(
+            await _patientAppointmentRepository.rescheduleAppointment(
           context,
           appointmentData['appointmentId'] ?? '',
           appointmentData['title'] ?? '',

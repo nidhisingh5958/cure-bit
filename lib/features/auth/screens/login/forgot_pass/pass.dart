@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:CureBit/services/auth/auth_repository.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/utils/providers/auth_providers.dart';
@@ -315,7 +317,7 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -380,7 +382,7 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen>
                                   Container(
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      color: black.withOpacity(0.2),
+                                      color: black.withValues(alpha: .2),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
@@ -403,7 +405,7 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen>
                                     'Please create a strong password for your account',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: grey800.withOpacity(0.9),
+                                      color: grey800.withValues(alpha: .9),
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -474,7 +476,7 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen>
                                     Theme.of(context).primaryColor,
                                     Theme.of(context)
                                         .primaryColor
-                                        .withOpacity(0.8),
+                                        .withValues(alpha: .8),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(12),
@@ -482,7 +484,7 @@ class _PasswordInputScreenState extends ConsumerState<PasswordInputScreen>
                                   BoxShadow(
                                     color: Theme.of(context)
                                         .primaryColor
-                                        .withOpacity(0.3),
+                                        .withValues(alpha: .3),
                                     blurRadius: 15,
                                     offset: const Offset(0, 6),
                                   ),

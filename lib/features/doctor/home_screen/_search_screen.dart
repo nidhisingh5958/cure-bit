@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_is_empty
+
 import 'dart:math';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +11,9 @@ class PatientSearch extends ConsumerStatefulWidget {
   final String doctorCIN;
 
   const PatientSearch({
-    Key? key,
+    super.key,
     required this.doctorCIN,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<PatientSearch> createState() => _PatientSearchState();
@@ -159,7 +161,8 @@ class _PatientSearchState extends ConsumerState<PatientSearch>
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Card(
-                    color: theme.colorScheme.errorContainer.withOpacity(0.7),
+                    color:
+                        theme.colorScheme.errorContainer.withValues(alpha: .7),
                     margin: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -245,10 +248,10 @@ class _PatientSearchState extends ConsumerState<PatientSearch>
     return Container(
       padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.05),
+        color: primaryColor.withValues(alpha: .05),
         border: Border(
           bottom: BorderSide(
-            color: primaryColor.withOpacity(0.1),
+            color: primaryColor.withValues(alpha: .1),
             width: 1,
           ),
         ),
@@ -273,7 +276,7 @@ class _PatientSearchState extends ConsumerState<PatientSearch>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
+              color: primaryColor.withValues(alpha: .1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -309,11 +312,11 @@ class _PatientSearchState extends ConsumerState<PatientSearch>
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: .2),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: .03),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -354,7 +357,7 @@ class _PatientSearchState extends ConsumerState<PatientSearch>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withOpacity(0.3),
+            color: primaryColor.withValues(alpha: .3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -435,12 +438,12 @@ class PatientResultCard extends StatelessWidget {
   final bool isLast;
 
   const PatientResultCard({
-    Key? key,
+    super.key,
     required this.patientData,
     required this.theme,
     this.isFirst = false,
     this.isLast = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -477,7 +480,7 @@ class PatientResultCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withValues(alpha: .1),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
@@ -499,7 +502,8 @@ class PatientResultCard extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 28,
-                    backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                    backgroundColor:
+                        theme.colorScheme.primary.withValues(alpha: .1),
                     child: Text(
                       initials.toUpperCase(),
                       style: TextStyle(
@@ -545,7 +549,7 @@ class PatientResultCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: .1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

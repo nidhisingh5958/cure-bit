@@ -173,28 +173,28 @@ List<RouteBase> get patientRoutes {
         ),
 
         // Chat Branch
-        // StatefulShellBranch(
-        //   navigatorKey: chatNavigatorKey,
-        //   routes: [
-        //     GoRoute(
-        //       path: '/chat',
-        //       name: RouteConstants.chat,
-        //       builder: (context, state) => const ChatListScreen(),
-        //       routes: [
-        //         GoRoute(
-        //           // Individual Chat Screen
-        //           path: 'chat-screen',
-        //           parentNavigatorKey: rootNavigatorKey,
-        //           name: RouteConstants.chatScreen,
-        //           builder: (context, state) {
-        //             final chat = state.extra as ChatData;
-        //             return ChatScreen(chat: chat);
-        //           },
-        //         ),
-        //       ],
-        //     ),
-        //   ],
-        // ),
+        StatefulShellBranch(
+          navigatorKey: chatNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/chat',
+              name: RouteConstants.chat,
+              builder: (context, state) => const ChatListScreen(),
+              routes: [
+                GoRoute(
+                  // Individual Chat Screen
+                  path: 'chat-screen',
+                  parentNavigatorKey: rootNavigatorKey,
+                  name: RouteConstants.chatScreen,
+                  builder: (context, state) {
+                    final chat = state.extra as ChatData;
+                    return ChatScreen(chat: chat);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
 
         // Medical Records Branch
         StatefulShellBranch(

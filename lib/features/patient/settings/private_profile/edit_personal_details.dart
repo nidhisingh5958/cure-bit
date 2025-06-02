@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/services/user/user_helper.dart';
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';

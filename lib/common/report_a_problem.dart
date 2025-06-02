@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+
 import 'package:CureBit/common/components/app_header.dart';
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/common/general_api/general_repository.dart';

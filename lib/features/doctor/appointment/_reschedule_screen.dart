@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/services/features_api_repository/appointment/doctor/post_doctor_repository.dart';
 import 'package:CureBit/features/patient/appointment/my_appointments/reschedule_appointment.dart';
@@ -506,7 +508,7 @@ class _DoctorRescheduleAppointmentState
                           width: 100,
                           height: 100,
                           decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.1),
+                            color: primaryColor.withValues(alpha: .1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -581,7 +583,7 @@ class _DoctorRescheduleAppointmentState
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: primaryColor.withOpacity(0.1),
+                                  color: primaryColor.withValues(alpha: .1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
@@ -636,7 +638,7 @@ class _DoctorRescheduleAppointmentState
                                 ),
                               ),
                               Icon(Icons.calendar_today,
-                                  color: black.withOpacity(0.5)),
+                                  color: black.withValues(alpha: .5)),
                             ],
                           ),
                         ),

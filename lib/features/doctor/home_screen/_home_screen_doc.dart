@@ -313,8 +313,10 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
                   shape: BoxShape.circle,
                   color: Colors.white,
                   border: Border.all(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: .5),
                     width: 2,
                   ),
                   image: const DecorationImage(
@@ -336,10 +338,10 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: .1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: .3),
         ),
       ),
       child: Row(
@@ -468,10 +470,10 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: .1),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: .3),
                   width: 1,
                 ),
               ),
@@ -577,7 +579,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: .05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -713,7 +715,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
                         color: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.3),
+                            .withValues(alpha: .3),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -906,7 +908,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
         border: Border.all(color: grey200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: .03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -918,7 +920,8 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: .1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -979,7 +982,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
+              color: statusColor.withValues(alpha: .1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -1254,7 +1257,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1334,7 +1337,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
         border: Border.all(color: grey200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: .03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -1458,7 +1461,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: .03),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1470,7 +1473,8 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: .1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -1611,7 +1615,7 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
         border: Border.all(color: grey200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: .03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),

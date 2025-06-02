@@ -305,10 +305,10 @@ class _DoctorProfileState extends ConsumerState<DoctorProfile>
           SizedBox(height: 24),
           ElevatedButton(
             onPressed: _fetchDoctorData,
-            child: Text('Retry'),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             ),
+            child: Text('Retry'),
           ),
         ],
       ),

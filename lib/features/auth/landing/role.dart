@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/common/components/circular_checkbox.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';

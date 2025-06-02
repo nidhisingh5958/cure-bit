@@ -41,7 +41,7 @@ class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
 
       context.goNamed(RouteConstants.login);
     } catch (e) {
-      print('Login error: $e');
+      debugPrint('Login error: $e');
     }
   }
 
@@ -146,7 +146,7 @@ class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
                   "$email",
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: .8),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -158,7 +158,7 @@ class _DoctorSideMenuState extends ConsumerState<DoctorSideMenu> {
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: .2),
                     ),
                     child: Text(
                       "Edit Profile",

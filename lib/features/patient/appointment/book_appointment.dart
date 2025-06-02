@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/services/features_api_repository/appointment/patient/get/get_patient_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -375,7 +377,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                             calendarStyle: CalendarStyle(
                               // Style for busy dates that are disabled
                               disabledDecoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.3),
+                                color: Colors.red.withValues(alpha: .3),
                                 shape: BoxShape.circle,
                               ),
                               disabledTextStyle: const TextStyle(
@@ -394,7 +396,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                                     width: 12,
                                     height: 12,
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(0.3),
+                                      color: Colors.red.withValues(alpha: .3),
                                       shape: BoxShape.circle,
                                     ),
                                   ),

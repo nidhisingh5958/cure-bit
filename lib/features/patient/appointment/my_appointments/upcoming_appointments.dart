@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:CureBit/common/components/colors.dart';
 import 'package:CureBit/services/features_api_repository/appointment/patient/post_patient_repository.dart';
 import 'package:CureBit/utils/routes/route_constants.dart';

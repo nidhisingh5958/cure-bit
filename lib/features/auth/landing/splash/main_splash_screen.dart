@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainSplashScreen extends ConsumerStatefulWidget {
-  const MainSplashScreen({Key? key}) : super(key: key);
+  const MainSplashScreen({super.key});
 
   @override
   _MainSplashScreenState createState() => _MainSplashScreenState();

@@ -393,7 +393,7 @@ class PrivateProfileRepository {
         throw Exception('Invalid role: $role. Expected "Doctor" or "Patient"');
       }
 
-      final uri = Uri.parse('$apiEndpoint').replace(
+      final uri = Uri.parse(apiEndpoint).replace(
         queryParameters: {'CIN': cin},
       );
 

@@ -311,7 +311,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: .1),
               spreadRadius: 1,
               blurRadius: 5,
               offset: const Offset(0, 2),
@@ -421,7 +421,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: .1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -620,7 +620,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                                   colors: [
                                     Colors.grey.shade300,
                                     black.withValues(alpha: .8),
-                                    appointment['color'].withOpacity(0.6),
+                                    appointment['color'].withValues(alpha: .6),
                                   ],
                                 ),
                               ),
@@ -646,7 +646,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: grey200.withOpacity(0.3),
+                                    color: grey200.withValues(alpha: .3),
                                     spreadRadius: 1,
                                     blurRadius: 3,
                                     offset: const Offset(0, 1),
@@ -689,7 +689,8 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
                                     colors: [
-                                      appointment['color'].withOpacity(0.6),
+                                      appointment['color']
+                                          .withValues(alpha: .6),
                                       isLastItem
                                           ? Colors.grey.shade300
                                           : black.withValues(alpha: .8),
@@ -722,7 +723,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
+                                color: Colors.grey.withValues(alpha: .1),
                                 spreadRadius: 1,
                                 blurRadius: 5,
                                 offset: const Offset(0, 2),
@@ -757,7 +758,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: appointment['color']
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: .3),
                                       ),
                                     ),
                                     child: Text(
@@ -1114,7 +1115,7 @@ class _DoctorScheduleScreenState extends State<DoctorCalendarSchedule> {
                                   : null,
                               boxShadow: [
                                 BoxShadow(
-                                  color: color.withOpacity(0.3),
+                                  color: color.withValues(alpha: .3),
                                   spreadRadius: 1,
                                   blurRadius: 3,
                                 ),
