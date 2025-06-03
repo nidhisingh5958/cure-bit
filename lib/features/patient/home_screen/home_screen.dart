@@ -54,12 +54,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onPressed: () {
           context.goNamed(RouteConstants.chatBot);
         },
-        backgroundColor: black,
+        backgroundColor: grey800,
         child: Image.asset(
-          'assets/icons/robot.png',
-          width: 30,
-          height: 30,
-          color: white,
+          'assets/icons/bot.png',
+          height: 32,
+          width: 32,
+          color: grey200,
         ),
       ),
       body: Container(

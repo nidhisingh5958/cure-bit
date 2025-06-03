@@ -166,12 +166,12 @@ class _DoctorHomeScreenState extends ConsumerState<DoctorHomeScreen>
         onPressed: () {
           context.goNamed(RouteConstants.chatBot);
         },
-        backgroundColor: black,
+        backgroundColor: grey800,
         child: Image.asset(
-          'assets/icons/robot.png',
+          'assets/icons/bot.png',
           height: 32,
           width: 32,
-          color: white,
+          color: grey200,
         ),
       ),
       body: Container(
